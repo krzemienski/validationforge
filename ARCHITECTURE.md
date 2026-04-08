@@ -355,12 +355,78 @@ npm test  # Watch it pass despite bug
 
 ---
 
-## Current State (March 2026)
+---
 
-- 179 files, 9,424 total lines
+## Dual-Platform Architecture
+
+ValidationForge ships as both a Claude Code plugin and an OpenCode plugin. The enforcement logic is equivalent across platforms.
+
+### Claude Code Plugin (CC)
+
+Hooks are Node.js scripts that receive JSON on stdin and communicate via exit codes:
+
+```
+Claude Code Harness
+  │
+  ├─ PreToolUse hooks (exit 0 + stdout JSON)
+  │   ├─ block-test-files.js      → permissionDecision: "deny"
+  │   └─ evidence-gate-reminder.js → additionalContext (checklist)
+  │
+  └─ PostToolUse hooks (stderr + exit 2 for feedback)
+      ├─ validation-not-compilation.js
+      ├─ completion-claim-validator.js
+      ├─ validation-state-tracker.js
+      ├─ mock-detection.js
+      └─ evidence-quality-check.js
+
+Hook registration: hooks/hooks.json
+Path interpolation: ${CLAUDE_PLUGIN_ROOT}/hooks/<name>.js
+```
+
+### OpenCode Plugin (OC)
+
+TypeScript plugin using `@opencode-ai/plugin` SDK:
+
+```
+OpenCode Harness
+  │
+  ├─ permission.ask hook         → blocks test file writes
+  ├─ tool.execute.after hook     → mirrors all 5 PostToolUse hooks
+  ├─ shell.env hook              → injects VF_EVIDENCE_DIR, VF_VERSION
+  └─ Custom tools
+      ├─ vf_validate             → proxy to /validate command
+      └─ vf_check_evidence       → check evidence directory status
+
+Entry: .opencode/plugins/validationforge/index.ts
+```
+
+### Pattern Sharing Architecture
+
+```
+.opencode/plugins/validationforge/patterns.ts   ← Single source of truth
+  │
+  ├── Exports: TEST_PATTERNS, ALLOWLIST, MOCK_PATTERNS,
+  │            BUILD_PATTERNS, COMPLETION_PATTERNS,
+  │            VALIDATION_COMMAND_PATTERNS
+  │
+  ├── OC plugin (index.ts) imports directly via TypeScript
+  │
+  └── CC hooks import via hooks/patterns.js (CommonJS re-export)
+      ├── block-test-files.js     → require('./patterns')
+      ├── completion-claim-validator.js
+      ├── mock-detection.js
+      ├── validation-not-compilation.js
+      └── validation-state-tracker.js
+```
+
+---
+
+## Current State (April 2026)
+
 - 40 skills across 5 layers (L0 Foundation → L4 Orchestrator)
 - 15 commands (9 validate + 6 forge)
-- 7 hooks (3 blocking, 4 advisory)
+- 7 hooks (2 PreToolUse blocking, 5 PostToolUse advisory)
 - 5 agents, 8 rules, 3 config profiles
-- Core orchestrator (e2e-validate): 2,563 lines with 8 workflow files + 6 platform references
-- See [PRD.md](./PRD.md) Section 13 for full roadmap (M0 → V3.0)
+- Dual-platform: Claude Code plugin + OpenCode plugin
+- Shared pattern library: patterns.ts (single source of truth)
+- See [SKILLS.md](./SKILLS.md) and [COMMANDS.md](./COMMANDS.md) for full indexes

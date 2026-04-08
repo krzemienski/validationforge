@@ -6,6 +6,12 @@ set -euo pipefail
 
 EVIDENCE_DIR="${1:-e2e-evidence}"
 
+# Validate path does not escape project directory
+case "$EVIDENCE_DIR" in
+  /*) echo "[VF] ERROR: Evidence dir must be a relative path. Got: $EVIDENCE_DIR" >&2; exit 1 ;;
+  *../*) echo "[VF] ERROR: Evidence dir must not contain traversal (../). Got: $EVIDENCE_DIR" >&2; exit 1 ;;
+esac
+
 mkdir -p "$EVIDENCE_DIR/baseline"
 
 cat > "$EVIDENCE_DIR/.gitkeep" << 'EOF'

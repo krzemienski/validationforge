@@ -1,8 +1,8 @@
 # ValidationForge
 
-**No-mock functional validation for Claude Code.** Ship verified code, not "it compiled" code.
+**No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
 
-> **179 files | 9,424 lines | 40 skills | 15 commands | 7 hooks | 5 agents | 8 rules**
+> **40 skills | 15 commands | 7 hooks | 5 agents | 8 rules | Dual-platform: Claude Code plugin + OpenCode plugin**
 
 ## The Iron Rule
 
@@ -51,20 +51,25 @@ These are design scenarios — situations where mock-based testing is structural
 
 ## Quick Start
 
-### Install
+### Install (Claude Code)
 
 ```bash
-# Option 1: Symlink into Claude Code plugin cache
-mkdir -p ~/.claude/plugins/cache/validationforge/validationforge
-ln -sf /path/to/validationforge ~/.claude/plugins/cache/validationforge/validationforge/1.0.0
+# Quick install via curl
+curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
 
-# Option 2: Clone from GitHub (when published)
-# git clone https://github.com/krzemienski/validationforge ~/.claude/plugins/cache/validationforge/validationforge/1.0.0
+# Or manual: clone + symlink
+git clone --depth 1 https://github.com/krzemienski/validationforge ~/.claude/plugins/validationforge
+```
 
-# Then register in ~/.claude/plugins/installed_plugins.json:
-# "validationforge@validationforge": [{"scope": "user", "installPath": "~/.claude/plugins/cache/validationforge/validationforge/1.0.0", "version": "1.0.0"}]
+The installer clones the repo, copies rules to `~/.claude/rules/vf-*.md`, creates the evidence directory, and saves config to `~/.claude/.vf-config.json`.
 
-# Restart Claude Code to load the plugin.
+### Install (OpenCode)
+
+```bash
+# Clone into your project's .opencode/plugins/ directory
+git clone --depth 1 https://github.com/krzemienski/validationforge .opencode/plugins/validationforge
+# Or symlink shared skills/commands
+bash scripts/sync-opencode.sh
 ```
 
 ### Initialize for Your Project
@@ -291,10 +296,19 @@ validationforge/
 │   ├── e2e-report.md                  Full report format
 │   └── verdict.md                     Per-journey verdict format
 │
-├── scripts/                         3 utility scripts
+├── scripts/                         4 utility scripts
 │   ├── detect-platform.sh             Platform auto-detection
 │   ├── health-check.sh                Service health polling
-│   └── evidence-collector.sh          Evidence directory setup
+│   ├── evidence-collector.sh          Evidence directory setup
+│   └── sync-opencode.sh              Symlink skills/commands to .opencode/
+│
+├── .opencode/plugins/validationforge/ OpenCode plugin layer
+│   ├── index.ts                       Plugin entry (hooks, tools, env)
+│   ├── patterns.ts                    Shared regex patterns (single source of truth)
+│   ├── package.json                   Package manifest
+│   └── tsconfig.json                  TypeScript config
+│
+├── install.sh                       Global installer (curl-pipe safe)
 │
 └── demo/
     └── DEMO-SCENARIO.md              Walkthrough scenario

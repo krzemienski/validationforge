@@ -4,8 +4,8 @@
 
 set -euo pipefail
 
-REPO="https://github.com/krzemienski/validationforge"
-INSTALL_DIR="${HOME}/.claude/plugins/validationforge"
+REPO="${VF_SOURCE:-https://github.com/krzemienski/validationforge}"
+INSTALL_DIR="${VF_INSTALL_DIR:-${HOME}/.claude/plugins/validationforge}"
 RULES_DIR="${HOME}/.claude/rules"
 CONFIG_FILE="${HOME}/.claude/.vf-config.json"
 
@@ -16,14 +16,20 @@ ok()   { echo "[VF] OK: $1"; }
 # Check prerequisites
 command -v git >/dev/null 2>&1 || { warn "git is required but not installed."; exit 1; }
 
+# Validate clone target is under HOME or /tmp (prevent writing to system dirs)
+case "$INSTALL_DIR" in
+  "$HOME"/*|/tmp/*|/private/tmp/*|/var/folders/*|/private/var/folders/*) ;;
+  *) warn "INSTALL_DIR must be under \$HOME or temp directory. Got: $INSTALL_DIR"; exit 1 ;;
+esac
+
 # Install or update
-if [ -d "$INSTALL_DIR" ]; then
+if [ -d "$INSTALL_DIR/.git" ]; then
   info "Updating existing installation..."
   cd "$INSTALL_DIR" && git pull --ff-only
 else
   info "Installing ValidationForge..."
   mkdir -p "$(dirname "$INSTALL_DIR")"
-  git clone "$REPO" "$INSTALL_DIR"
+  git clone --depth 1 "$REPO" "$INSTALL_DIR"
 fi
 
 # Install global rules with vf- prefix
