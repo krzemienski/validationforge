@@ -1,5 +1,5 @@
 ---
-name: validate
+name: e2e-validate
 description: >
   Full end-to-end validation orchestrator. Detects platform, maps user journeys,
   defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks.
