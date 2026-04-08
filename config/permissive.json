@@ -1,0 +1,25 @@
+{
+  "name": "permissive",
+  "description": "Minimal enforcement — warns but does not block. For teams transitioning from unit tests.",
+  "strictness": "permissive",
+  "evidence_dir": "e2e-evidence",
+  "ci_mode": false,
+  "rules": {
+    "block_test_files": false,
+    "block_mock_patterns": false,
+    "require_evidence_on_completion": false,
+    "require_validation_plan": false,
+    "require_preflight": false,
+    "require_baseline": false,
+    "max_recovery_attempts": 5,
+    "fail_on_missing_evidence": false,
+    "require_screenshot_review": false
+  },
+  "hooks": {
+    "block-test-files": "warn",
+    "evidence-gate-reminder": "enabled",
+    "validation-not-compilation": "enabled",
+    "completion-claim-validator": "warn",
+    "mock-detection": "warn"
+  }
+}

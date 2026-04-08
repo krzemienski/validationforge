@@ -1,0 +1,419 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775666904128,
+  "projectRoot": "/Users/nick/Desktop/validationforge",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs",
+      "scripts"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "agents": {
+      "path": "agents",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1775666904114,
+      "keyFiles": [
+        "evidence-capturer.md",
+        "platform-detector.md",
+        "sweep-controller.md",
+        "validation-lead.md",
+        "verdict-writer.md"
+      ]
+    },
+    "commands": {
+      "path": "commands",
+      "purpose": null,
+      "fileCount": 15,
+      "lastAccessed": 1775666904114,
+      "keyFiles": [
+        "forge-benchmark.md",
+        "forge-execute.md",
+        "forge-install-rules.md",
+        "forge-plan.md",
+        "forge-setup.md"
+      ]
+    },
+    "config": {
+      "path": "config",
+      "purpose": "Configuration files",
+      "fileCount": 3,
+      "lastAccessed": 1775666904121,
+      "keyFiles": [
+        "permissive.json",
+        "standard.json",
+        "strict.json"
+      ]
+    },
+    "demo": {
+      "path": "demo",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1775666904121,
+      "keyFiles": [
+        "DEMO-SCENARIO.md"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 1,
+      "lastAccessed": 1775666904122,
+      "keyFiles": [
+        "competitive-analysis.md"
+      ]
+    },
+    "e2e-evidence": {
+      "path": "e2e-evidence",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1775666904124,
+      "keyFiles": []
+    },
+    "hooks": {
+      "path": "hooks",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1775666904126,
+      "keyFiles": [
+        "block-test-files.js",
+        "completion-claim-validator.js",
+        "evidence-gate-reminder.js",
+        "evidence-quality-check.js",
+        "hooks.json"
+      ]
+    },
+    "plans": {
+      "path": "plans",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1775666904127,
+      "keyFiles": []
+    },
+    "rules": {
+      "path": "rules",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1775666904127,
+      "keyFiles": [
+        "benchmarking.md",
+        "evidence-management.md",
+        "execution-workflow.md",
+        "forge-execution.md",
+        "forge-team-orchestration.md"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 3,
+      "lastAccessed": 1775666904127,
+      "keyFiles": [
+        "detect-platform.sh",
+        "evidence-collector.sh",
+        "health-check.sh"
+      ]
+    },
+    "skills": {
+      "path": "skills",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1775666904128,
+      "keyFiles": []
+    },
+    "templates": {
+      "path": "templates",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1775666904128,
+      "keyFiles": [
+        "audit-report.md",
+        "e2e-report.md",
+        "validation-plan.md",
+        "verdict.md"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "",
+      "accessCount": 9,
+      "lastAccessed": 1775668410612,
+      "type": "directory"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 5,
+      "lastAccessed": 1773096676886,
+      "type": "file"
+    },
+    {
+      "path": "commands",
+      "accessCount": 4,
+      "lastAccessed": 1773096592451,
+      "type": "directory"
+    },
+    {
+      "path": "skills/functional-validation/SKILL.md",
+      "accessCount": 4,
+      "lastAccessed": 1775668513749,
+      "type": "file"
+    },
+    {
+      "path": "hooks/completion-claim-validator.js",
+      "accessCount": 4,
+      "lastAccessed": 1775668545785,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate.md",
+      "accessCount": 3,
+      "lastAccessed": 1775668514753,
+      "type": "file"
+    },
+    {
+      "path": "commands/vf-setup.md",
+      "accessCount": 3,
+      "lastAccessed": 1775668515225,
+      "type": "file"
+    },
+    {
+      "path": "hooks/validation-not-compilation.js",
+      "accessCount": 3,
+      "lastAccessed": 1775668545747,
+      "type": "file"
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "accessCount": 3,
+      "lastAccessed": 1775669602677,
+      "type": "file"
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "accessCount": 3,
+      "lastAccessed": 1775669603524,
+      "type": "file"
+    },
+    {
+      "path": "hooks/hooks.json",
+      "accessCount": 3,
+      "lastAccessed": 1775669603871,
+      "type": "file"
+    },
+    {
+      "path": "task_plan.md",
+      "accessCount": 2,
+      "lastAccessed": 1773096699410,
+      "type": "file"
+    },
+    {
+      "path": "progress.md",
+      "accessCount": 2,
+      "lastAccessed": 1773096715898,
+      "type": "file"
+    },
+    {
+      "path": "findings.md",
+      "accessCount": 2,
+      "lastAccessed": 1773096729464,
+      "type": "file"
+    },
+    {
+      "path": "skills/e2e-validate/SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1775668514274,
+      "type": "file"
+    },
+    {
+      "path": "hooks/mock-detection.js",
+      "accessCount": 2,
+      "lastAccessed": 1775668516222,
+      "type": "file"
+    },
+    {
+      "path": "skills/web-validation/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096314206,
+      "type": "file"
+    },
+    {
+      "path": "skills/forge-setup/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096314680,
+      "type": "file"
+    },
+    {
+      "path": "skills/ios-validation/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096315144,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-audit.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096577751,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-ci.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096577969,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-fix.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096578199,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-plan.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096578381,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-team.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096578604,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-sweep.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096578803,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-benchmark.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096582594,
+      "type": "file"
+    },
+    {
+      "path": "commands/forge-setup.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096582786,
+      "type": "file"
+    },
+    {
+      "path": "commands/forge-plan.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096583028,
+      "type": "file"
+    },
+    {
+      "path": "commands/forge-execute.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096583083,
+      "type": "file"
+    },
+    {
+      "path": "commands/forge-team.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096583220,
+      "type": "file"
+    },
+    {
+      "path": "commands/forge-benchmark.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096583591,
+      "type": "file"
+    },
+    {
+      "path": "commands/forge-install-rules.md",
+      "accessCount": 1,
+      "lastAccessed": 1773096583640,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 1,
+      "lastAccessed": 1775668428307,
+      "type": "file"
+    },
+    {
+      "path": "hooks/block-test-files.js",
+      "accessCount": 1,
+      "lastAccessed": 1775668515704,
+      "type": "file"
+    },
+    {
+      "path": "agents/validation-lead.md",
+      "accessCount": 1,
+      "lastAccessed": 1775668516669,
+      "type": "file"
+    },
+    {
+      "path": "rules/validation-discipline.md",
+      "accessCount": 1,
+      "lastAccessed": 1775668516798,
+      "type": "file"
+    },
+    {
+      "path": "hooks/evidence-quality-check.js",
+      "accessCount": 1,
+      "lastAccessed": 1775668545712,
+      "type": "file"
+    },
+    {
+      "path": "hooks/validation-state-tracker.js",
+      "accessCount": 1,
+      "lastAccessed": 1775668545730,
+      "type": "file"
+    },
+    {
+      "path": "install.sh",
+      "accessCount": 1,
+      "lastAccessed": 1775668545773,
+      "type": "file"
+    },
+    {
+      "path": "hooks/evidence-gate-reminder.js",
+      "accessCount": 1,
+      "lastAccessed": 1775668545839,
+      "type": "file"
+    },
+    {
+      "path": "plans/260408-1313-hybrid-opencode-audit/phase-00-scoping.md",
+      "accessCount": 1,
+      "lastAccessed": 1775668679261,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

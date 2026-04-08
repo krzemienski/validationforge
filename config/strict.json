@@ -1,0 +1,25 @@
+{
+  "name": "strict",
+  "description": "Maximum enforcement — blocks all test files, requires evidence for every gate, no exceptions",
+  "strictness": "strict",
+  "evidence_dir": "e2e-evidence",
+  "ci_mode": false,
+  "rules": {
+    "block_test_files": true,
+    "block_mock_patterns": true,
+    "require_evidence_on_completion": true,
+    "require_validation_plan": true,
+    "require_preflight": true,
+    "require_baseline": true,
+    "max_recovery_attempts": 3,
+    "fail_on_missing_evidence": true,
+    "require_screenshot_review": true
+  },
+  "hooks": {
+    "block-test-files": "enabled",
+    "evidence-gate-reminder": "enabled",
+    "validation-not-compilation": "enabled",
+    "completion-claim-validator": "enabled",
+    "mock-detection": "enabled"
+  }
+}

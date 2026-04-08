@@ -1,0 +1,35 @@
+{
+  "name": "validationforge",
+  "version": "1.0.0",
+  "description": "No-mock functional validation for Claude Code. Ship verified code, not 'it compiled' code.",
+  "author": "Nick Krzemienski <nick@krzemienski.com>",
+  "license": "MIT",
+  "homepage": "https://validationforge.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krzemienski/validationforge"
+  },
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "validation",
+    "no-mock",
+    "functional-testing",
+    "evidence-based",
+    "quality-assurance",
+    "e2e-validation"
+  ],
+  "files": [
+    ".claude-plugin/",
+    "CLAUDE.md",
+    "README.md",
+    "skills/",
+    "hooks/",
+    "agents/",
+    "commands/",
+    "rules/",
+    "config/",
+    "templates/",
+    "scripts/"
+  ]
+}

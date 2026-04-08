@@ -1,0 +1,188 @@
+---
+name: validate-team
+description: Spawn coordinated validation agents across platforms with evidence handoff
+triggers:
+  - "validate team"
+  - "team validation"
+  - "parallel validate"
+  - "multi-platform validate"
+---
+
+# Validate Team
+
+Spawn N coordinated validation agents working on a shared validation task list. Each agent validates a specific platform or journey set, producing evidence that flows to a unified verdict.
+
+## Usage
+
+```
+/validate-team                              # Auto-detect platforms, auto-size team
+/validate-team N "scope description"        # N agents on specific scope
+/validate-team --platforms ios,web,api      # Explicit platform split
+```
+
+### Parameters
+
+- **N** — Number of validation agents (1-6). Auto-sized if omitted.
+- **scope** — What to validate. Defaults to full application.
+- **--platforms** — Comma-separated platform list for explicit assignment.
+
+## Architecture
+
+```
+User: "/validate-team 3 validate the full application"
+              |
+              v
+      [VALIDATION LEAD]
+              |
+              +-- platform-detector agent
+              |       -> detects: ios, web, api
+              |
+              +-- create-validation-plan skill
+              |       -> generates journey list per platform
+              |
+              +-- TeamCreate("vf-validation")
+              |
+              +-- TaskCreate per journey cluster
+              |       -> ios-journeys (agent-1)
+              |       -> web-journeys (agent-2)
+              |       -> api-journeys (agent-3)
+              |
+              +-- Task(name="ios-validator") x 1
+              +-- Task(name="web-validator") x 1
+              +-- Task(name="api-validator") x 1
+              |
+              +-- Monitor loop
+              |       <- evidence files accumulate
+              |       -> TaskList polling
+              |
+              +-- verdict-writer agent
+              |       -> reads all e2e-evidence/
+              |       -> unified report
+              |
+              +-- Shutdown
+                      -> SendMessage(shutdown_request) to each
+                      -> TeamDelete("vf-validation")
+```
+
+## Agent Roles
+
+| Role | Agent Type | Responsibility | Evidence Directory |
+|------|-----------|----------------|-------------------|
+| Lead | orchestrator | Decomposes, assigns, monitors, produces verdict | e2e-evidence/ |
+| iOS Validator | general-purpose | Builds, runs simulator, captures iOS evidence | e2e-evidence/ios/ |
+| Web Validator | general-purpose | Launches dev server, Playwright captures | e2e-evidence/web/ |
+| API Validator | general-purpose | Exercises endpoints, saves responses | e2e-evidence/api/ |
+| Design Validator | general-purpose | Stitch references, fidelity scoring | e2e-evidence/design/ |
+| CLI Validator | general-purpose | Runs commands, captures stdout/stderr | e2e-evidence/cli/ |
+
+## Team Sizing
+
+| Application | Agents | Assignment |
+|-------------|--------|------------|
+| Single platform | 1-2 | 1 validator + lead |
+| Web + API | 2-3 | 1 web + 1 api + lead |
+| iOS + Web + API | 3-4 | 1 per platform + lead |
+| Fullstack + Design | 4-5 | platform validators + design validator + lead |
+| Everything | 5-6 | All platform types + lead |
+
+## Agent Prompt Template
+
+Each validator agent receives:
+
+```markdown
+You are a ValidationForge {platform} validation agent.
+
+## Your Assignment
+- Platform: {platform}
+- Journeys: {journey list with acceptance criteria}
+- Evidence directory: e2e-evidence/{platform}/
+
+## Rules (NON-NEGOTIABLE)
+1. NO mocks, stubs, or test files — validate the REAL system
+2. Build and run the actual application
+3. Capture evidence for EVERY step (screenshots, logs, responses)
+4. Name files: step-{NN}-{action}-{result}.{ext}
+5. Write report.md in your evidence directory
+6. Every PASS must cite a specific evidence file
+7. Every FAIL must include root cause and remediation (fix real system, not tests)
+
+## Journeys
+{detailed journey descriptions}
+
+## When Done
+1. Write evidence-inventory.txt listing all captured files
+2. Write report.md with per-journey verdicts
+3. Mark your task as completed via TaskUpdate
+4. Send completion message to lead
+```
+
+## Validation Pipeline Per Agent
+
+Each agent follows the standard 7-phase pipeline independently:
+
+```
+Research → Plan → Preflight → Execute → Analyze → Verdict
+```
+
+1. **Research**: Read codebase, understand the platform layer
+2. **Plan**: Map journeys to concrete steps
+3. **Preflight**: Verify build succeeds, dependencies available
+4. **Execute**: Run the real system, interact through actual UI/API
+5. **Analyze**: Review captured evidence against criteria
+6. **Verdict**: Write per-journey PASS/FAIL with evidence citations
+
+## Evidence Handoff
+
+```
+ios-validator  → e2e-evidence/ios/report.md
+web-validator  → e2e-evidence/web/report.md
+api-validator  → e2e-evidence/api/report.md
+                        |
+                        v
+              verdict-writer agent
+                        |
+                        v
+              e2e-evidence/report.md (unified)
+```
+
+## Verdict Aggregation
+
+The lead runs the `verdict-writer` agent after all validators complete:
+
+```
+Overall = worst(all platform verdicts)
+
+If ANY platform = FAIL → Overall = FAIL
+If ANY platform = CONDITIONAL, none FAIL → Overall = CONDITIONAL
+If ALL platforms = PASS → Overall = PASS
+If ANY agent incomplete → Overall = INCOMPLETE
+```
+
+## File Ownership (CRITICAL)
+
+| Owner | Writes To | Never Touches |
+|-------|-----------|---------------|
+| ios-validator | e2e-evidence/ios/* | e2e-evidence/web/*, api/*, design/* |
+| web-validator | e2e-evidence/web/* | e2e-evidence/ios/*, api/*, design/* |
+| api-validator | e2e-evidence/api/* | e2e-evidence/ios/*, web/*, design/* |
+| design-validator | e2e-evidence/design/* | e2e-evidence/ios/*, web/*, api/* |
+| lead | e2e-evidence/report.md | Platform subdirectories |
+
+## Fix Loop
+
+If overall verdict is FAIL:
+
+1. Lead identifies which platform(s) failed
+2. For each failed platform, create fix tasks
+3. Assign fix tasks to the same validator that found the issue
+4. Re-validate after fix (max 3 attempts per journey)
+5. Re-aggregate verdict
+6. If still FAIL after 3 attempts, report with evidence of all attempts
+
+## Integration
+
+- Uses `create-validation-plan` to decompose into journeys
+- Each agent uses platform-specific skills (ios-validation, web-validation, etc.)
+- Evidence consumed by `verdict-writer` agent
+- Pairs with `/validate` for single-agent mode
+- Pairs with `/validate-ci` for CI/CD pipeline mode

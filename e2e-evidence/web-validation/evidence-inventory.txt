@@ -1,0 +1,28 @@
+Evidence Inventory: ValidationForge Web Validation of blog-series/site
+Date: 2026-03-09
+Target: http://localhost:3847 (Next.js 15, production build)
+
+Files:
+  step-01-homepage-full.png    — Full-page screenshot of homepage
+  step-02-post03-viewport.png  — Viewport screenshot of Post 03 article
+  step-03-post03-full.png      — Full-page screenshot of Post 03 article
+  step-04-post04-navigation.png — Viewport screenshot of Post 04 (navigated via Next link)
+  evidence-inventory.txt       — This file
+
+Validation Steps Performed:
+  1. Platform detection: identified as Web (Next.js) from package.json
+  2. Build: `pnpm build` completed — 27 static pages generated
+  3. Server: `npx next start -p 3847` — HTTP 200 confirmed via curl
+  4. Homepage navigation: Playwright navigated to localhost:3847
+  5. Homepage snapshot: accessibility tree captured — all 18 posts listed
+  6. Homepage screenshot: step-01 — hero section, stats, all 18 post cards visible
+  7. Post navigation: navigated to /posts/post-03-functional-validation
+  8. Post content verification: title, subtitle, code blocks, Mermaid diagrams, data tables, tags, navigation all rendered
+  9. Post screenshots: step-02 (viewport), step-03 (full page)
+  10. Post-to-post navigation: clicked "Next" link, navigated to Post 04
+  11. Post 04 verification: title, subtitle, tags, content rendered correctly
+  12. Post 04 screenshot: step-04
+
+Console Errors:
+  - Vercel analytics/speed-insights script failures (expected on localhost — these scripts only load on Vercel deployment)
+  - No application errors detected

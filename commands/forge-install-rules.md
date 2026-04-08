@@ -1,0 +1,41 @@
+---
+description: "Install ValidationForge rules to .claude/rules/ for cross-session enforcement"
+allowed-tools: "Read, Write, Bash, Glob"
+---
+
+# /forge-install-rules
+
+Install ValidationForge rules into `.claude/rules/` so they persist across sessions.
+
+## What It Does
+
+Copies all rules from the plugin's `rules/` directory to `.claude/rules/` with a `vf-` prefix:
+
+| Source | Destination |
+|--------|------------|
+| `rules/validation-discipline.md` | `.claude/rules/vf-validation-discipline.md` |
+| `rules/execution-workflow.md` | `.claude/rules/vf-execution-workflow.md` |
+| `rules/evidence-management.md` | `.claude/rules/vf-evidence-management.md` |
+| `rules/platform-detection.md` | `.claude/rules/vf-platform-detection.md` |
+| `rules/team-validation.md` | `.claude/rules/vf-team-validation.md` |
+| `rules/forge-execution.md` | `.claude/rules/vf-forge-execution.md` |
+| `rules/forge-team-orchestration.md` | `.claude/rules/vf-forge-team-orchestration.md` |
+| `rules/benchmarking.md` | `.claude/rules/vf-benchmarking.md` |
+
+## Three-Layer Enforcement
+
+1. **CLAUDE.md** (auto-loaded) — Core philosophy and iron rules
+2. **rules/** (installed via this command) — Detailed behavioral rules loaded per-session
+3. **hooks/** (auto-loaded) — Programmatic real-time enforcement
+
+## Usage
+
+```
+/forge-install-rules            # Install all rules (skip existing)
+/forge-install-rules --force    # Overwrite existing rules
+/forge-install-rules --list     # List rules without installing
+```
+
+## Why Not Auto-Discovery?
+
+Claude Code plugins auto-discover `skills/`, `agents/`, `commands/`, and `hooks/`. The `rules/` directory is NOT auto-discovered — rules must be installed to `.claude/rules/` to take effect. This command handles that installation.

@@ -1,0 +1,9 @@
+{
+  "name": "validationforge",
+  "version": "1.0.0",
+  "description": "No-mock validation platform for Claude Code. Ship verified code, not 'it compiled' code.",
+  "author": {
+    "name": "Nick Krzemienski",
+    "url": "https://github.com/krzemienski"
+  }
+}

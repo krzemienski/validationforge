@@ -1,0 +1,25 @@
+{
+  "name": "standard",
+  "description": "Balanced enforcement — blocks test files, reminds about evidence, allows flexibility",
+  "strictness": "standard",
+  "evidence_dir": "e2e-evidence",
+  "ci_mode": false,
+  "rules": {
+    "block_test_files": true,
+    "block_mock_patterns": true,
+    "require_evidence_on_completion": true,
+    "require_validation_plan": false,
+    "require_preflight": false,
+    "require_baseline": false,
+    "max_recovery_attempts": 3,
+    "fail_on_missing_evidence": false,
+    "require_screenshot_review": false
+  },
+  "hooks": {
+    "block-test-files": "enabled",
+    "evidence-gate-reminder": "enabled",
+    "validation-not-compilation": "enabled",
+    "completion-claim-validator": "enabled",
+    "mock-detection": "enabled"
+  }
+}

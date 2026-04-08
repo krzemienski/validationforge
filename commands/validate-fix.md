@@ -1,0 +1,101 @@
+---
+name: validate-fix
+description: Fix validation failures and re-validate until all journeys pass (3-strike limit).
+---
+
+# /validate-fix
+
+Read the most recent validation report, diagnose FAIL verdicts, fix the real system, and re-validate until all journeys pass. Follows a strict 3-strike protocol.
+
+## Usage
+
+```
+/validate-fix                              # Fix all FAIL verdicts from latest report
+/validate-fix --journey "J2: Login Flow"   # Fix a specific journey only
+```
+
+## Supported Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--journey NAME` | all FAILs | Fix only the named journey |
+
+## Process
+
+### 1. Read Last Report
+```
+Read e2e-evidence/report.md
+Extract all journeys with FAIL verdict
+List root causes and remediation suggestions
+```
+
+If no report exists, abort with message: "No validation report found. Run `/validate` first."
+
+### 2. Diagnose Each Failure
+For each FAIL verdict:
+- Read the cited evidence files
+- Read the root cause from the verdict
+- Trace the root cause to specific source code
+- Identify the minimal fix needed
+
+### 3. Apply Fix
+- Edit the source file(s) to fix the root cause
+- Rebuild if necessary (compile, bundle, restart server)
+- Verify the fix addresses the root cause, not a symptom
+
+### 4. Re-Validate
+- Re-run only the failed journey's validation steps
+- Capture fresh evidence with new filenames (append `-fix-1`, `-fix-2`, etc.)
+- Write updated verdict
+
+### 5. Update Report
+- Replace the FAIL verdict with the new result in `e2e-evidence/report.md`
+- If still FAIL, increment strike counter and return to step 2
+
+## The 3-Strike Protocol
+
+Each failing journey gets 3 fix attempts:
+
+| Strike | Action |
+|--------|--------|
+| Strike 1 | Diagnose root cause, apply targeted fix, re-validate |
+| Strike 2 | Broader investigation — check related code, dependencies, configuration |
+| Strike 3 | Deep analysis — read full call chain, check for systemic issues, apply fix |
+| After 3 | **STOP.** Report the journey as UNRESOLVED with full diagnosis |
+
+After 3 failed attempts, the journey is marked UNRESOLVED in the report with:
+- All 3 fix attempts documented
+- Evidence from each attempt
+- Analysis of why fixes did not resolve the issue
+- Recommendation for manual investigation
+
+## Rules
+
+1. **Fix the REAL system.** Never add mocks, stubs, workarounds, or test harnesses.
+2. **Re-validate after every fix.** Never assume a fix worked — prove it with evidence.
+3. **Never repeat the same failing action.** If a fix didn't work, try a different approach.
+4. **Minimal fixes only.** Fix the root cause, do not refactor surrounding code.
+5. **Document every attempt.** Each fix attempt gets its own evidence files.
+
+## Example Flow
+
+```
+Report says: FAIL — J2: Login Flow
+  Root cause: POST /auth/login returns 500, missing DATABASE_URL env var
+
+Fix attempt 1:
+  → Read server startup code
+  → Add DATABASE_URL to .env.local
+  → Restart dev server
+  → Re-validate: POST /auth/login now returns 200 with token
+  → Verdict: PASS
+
+Report updated: J2: Login Flow — PASS (fixed on attempt 1)
+```
+
+## Output
+
+Updated `e2e-evidence/report.md` with:
+- Fixed verdicts updated from FAIL to PASS (with fix notes)
+- Unresolved verdicts documented with all 3 attempts
+- Fix evidence files in `e2e-evidence/` with `-fix-N` suffix

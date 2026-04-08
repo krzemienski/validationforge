@@ -1,0 +1,160 @@
+---
+name: validate-sweep
+description: Autonomous validation loop — detect, validate, fix, re-validate until PASS or max attempts
+triggers:
+  - "validate sweep"
+  - "sweep validation"
+  - "validate until pass"
+  - "continuous validation"
+---
+
+# Validate Sweep
+
+Autonomous validation loop that runs the full pipeline, fixes failures, and re-validates until all journeys PASS or max attempts are exhausted. This is ValidationForge's equivalent of a persistent execution mode.
+
+## Usage
+
+```
+/validate-sweep                           # Full sweep with defaults
+/validate-sweep --max-attempts 5          # Custom retry limit
+/validate-sweep --platform ios            # Sweep specific platform
+/validate-sweep --scope "auth flow"       # Sweep specific scope
+/validate-sweep --team                    # Use multi-agent team mode
+```
+
+### Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--max-attempts` | 3 | Max fix-and-revalidate cycles per journey |
+| `--platform` | auto | Target platform |
+| `--scope` | all | Specific scope to validate |
+| `--team` | false | Use validate-team for parallel execution |
+| `--fix-only` | false | Skip initial validation, start from existing FAIL verdicts |
+
+## Sweep Loop
+
+```
+                    ┌─────────────┐
+                    │  DETECT     │ Platform detection
+                    └──────┬──────┘
+                           │
+                    ┌──────▼──────┐
+                    │  PLAN       │ Generate validation plan
+                    └──────┬──────┘
+                           │
+              ┌────────────▼────────────┐
+              │  VALIDATE               │ Run full pipeline
+              │  (single or team mode)  │
+              └────────────┬────────────┘
+                           │
+                    ┌──────▼──────┐
+                    │  VERDICT?   │
+                    └──────┬──────┘
+                     ╱           ╲
+                PASS              FAIL
+                 │                  │
+          ┌──────▼──────┐   ┌──────▼──────┐
+          │  SHIP       │   │  Attempts   │
+          │  (report)   │   │  < max?     │
+          └─────────────┘   └──────┬──────┘
+                              ╱         ╲
+                           YES           NO
+                            │             │
+                     ┌──────▼──────┐  ┌──────▼──────┐
+                     │  FIX        │  │  REPORT     │
+                     │  real code  │  │  (failures) │
+                     └──────┬──────┘  └─────────────┘
+                            │
+                     ┌──────▼──────┐
+                     │  RE-VALIDATE│
+                     └──────┬──────┘
+                            │
+                     (back to VERDICT?)
+```
+
+## Fix Strategy
+
+When a journey FAILs, the sweep analyzes the root cause from the verdict report and applies fixes:
+
+### Fix Categories
+
+| Category | Action | Example |
+|----------|--------|---------|
+| Build failure | Fix compilation errors | Missing import, type error |
+| Runtime error | Fix application code | Null pointer, missing handler |
+| UI mismatch | Fix layout/styling | Wrong color, broken layout |
+| Missing feature | Implement the feature | Route not defined, component missing |
+| Data issue | Fix data handling | Wrong query, missing migration |
+| Config issue | Fix configuration | Wrong port, missing env var |
+
+### Fix Rules
+
+1. **Read the verdict report** — understand the root cause before fixing
+2. **Fix the real system** — modify application code, not test harnesses
+3. **One fix per attempt** — don't try to fix everything at once
+4. **Verify the fix compiles** — build before re-validating
+5. **Re-validate only failed journeys** — don't re-run passing journeys
+
+## Evidence Tracking
+
+Each sweep iteration creates a numbered evidence set:
+
+```
+e2e-evidence/
+  sweep-attempt-1/
+    {journey}/
+      step-01-*.png
+      report.md
+  sweep-attempt-2/
+    {journey}/
+      step-01-*.png
+      report.md
+  sweep-final-report.md
+```
+
+## Report Template
+
+```markdown
+# Validation Sweep Report
+
+**Platform:** {platform}
+**Scope:** {scope}
+**Attempts:** N / max
+**Date:** YYYY-MM-DD
+
+## Sweep History
+
+| Attempt | Journeys Tested | Pass | Fail | Action Taken |
+|---------|----------------|------|------|-------------|
+| 1 | 5 | 3 | 2 | Fixed: auth redirect, missing API route |
+| 2 | 2 (re-test) | 1 | 1 | Fixed: CORS header missing |
+| 3 | 1 (re-test) | 1 | 0 | — |
+
+## Final Verdict: PASS
+
+## Fixes Applied
+1. [attempt 1] Fixed auth redirect in `src/auth/callback.ts:42`
+2. [attempt 1] Added missing `/api/users` route in `src/routes/index.ts`
+3. [attempt 2] Added CORS header to API middleware in `src/middleware.ts:15`
+
+## Evidence
+[links to all evidence directories]
+```
+
+## Stop Conditions
+
+The sweep stops when:
+
+1. **All journeys PASS** — success, report generated
+2. **Max attempts reached** — report with remaining failures and all fix attempts documented
+3. **Unfixable issue** — issue requires user decision (e.g., design choice, external dependency)
+4. **User interrupt** — user cancels the sweep
+
+## Integration
+
+- Uses `/validate` or `/validate-team` for each validation pass
+- Uses `/validate-fix` protocol for the fix phase
+- Evidence from all attempts preserved for audit trail
+- Final report references all sweep iterations
+- Can be triggered from `/validate-ci` with `--sweep` flag

@@ -1,0 +1,15 @@
+{
+  "name": "validationforge",
+  "owner": {
+    "name": "Nick Krzemienski",
+    "url": "https://github.com/krzemienski"
+  },
+  "plugins": [
+    {
+      "name": "validationforge",
+      "source": "./",
+      "description": "No-mock functional validation for Claude Code. Ship verified code, not 'it compiled' code.",
+      "version": "1.0.0"
+    }
+  ]
+}
