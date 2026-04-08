@@ -175,63 +175,111 @@
       "type": "directory"
     },
     {
+      "path": "hooks/completion-claim-validator.js",
+      "accessCount": 7,
+      "lastAccessed": 1775670473401,
+      "type": "file"
+    },
+    {
+      "path": "hooks/validation-not-compilation.js",
+      "accessCount": 6,
+      "lastAccessed": 1775670475322,
+      "type": "file"
+    },
+    {
       "path": "README.md",
       "accessCount": 5,
       "lastAccessed": 1773096676886,
       "type": "file"
     },
     {
-      "path": "commands",
-      "accessCount": 4,
-      "lastAccessed": 1773096592451,
-      "type": "directory"
-    },
-    {
       "path": "skills/functional-validation/SKILL.md",
-      "accessCount": 4,
-      "lastAccessed": 1775668513749,
+      "accessCount": 5,
+      "lastAccessed": 1775669706034,
       "type": "file"
     },
     {
-      "path": "hooks/completion-claim-validator.js",
-      "accessCount": 4,
-      "lastAccessed": 1775668545785,
+      "path": "hooks/mock-detection.js",
+      "accessCount": 5,
+      "lastAccessed": 1775670474832,
       "type": "file"
     },
     {
       "path": "commands/validate.md",
-      "accessCount": 3,
-      "lastAccessed": 1775668514753,
+      "accessCount": 5,
+      "lastAccessed": 1775670480304,
       "type": "file"
+    },
+    {
+      "path": "commands",
+      "accessCount": 5,
+      "lastAccessed": 1775670489507,
+      "type": "directory"
     },
     {
       "path": "commands/vf-setup.md",
-      "accessCount": 3,
-      "lastAccessed": 1775668515225,
-      "type": "file"
-    },
-    {
-      "path": "hooks/validation-not-compilation.js",
-      "accessCount": 3,
-      "lastAccessed": 1775668545747,
-      "type": "file"
-    },
-    {
-      "path": ".claude-plugin/plugin.json",
-      "accessCount": 3,
-      "lastAccessed": 1775669602677,
-      "type": "file"
-    },
-    {
-      "path": ".claude-plugin/marketplace.json",
-      "accessCount": 3,
-      "lastAccessed": 1775669603524,
+      "accessCount": 4,
+      "lastAccessed": 1775669711260,
       "type": "file"
     },
     {
       "path": "hooks/hooks.json",
+      "accessCount": 4,
+      "lastAccessed": 1775670302163,
+      "type": "file"
+    },
+    {
+      "path": ".claude-plugin/plugin.json",
+      "accessCount": 4,
+      "lastAccessed": 1775670353475,
+      "type": "file"
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "accessCount": 4,
+      "lastAccessed": 1775670355247,
+      "type": "file"
+    },
+    {
+      "path": "hooks/block-test-files.js",
+      "accessCount": 4,
+      "lastAccessed": 1775670472950,
+      "type": "file"
+    },
+    {
+      "path": "hooks/evidence-gate-reminder.js",
+      "accessCount": 4,
+      "lastAccessed": 1775670473862,
+      "type": "file"
+    },
+    {
+      "path": "hooks/evidence-quality-check.js",
+      "accessCount": 4,
+      "lastAccessed": 1775670474371,
+      "type": "file"
+    },
+    {
+      "path": "hooks/validation-state-tracker.js",
+      "accessCount": 4,
+      "lastAccessed": 1775670475762,
+      "type": "file"
+    },
+    {
+      "path": "skills/forge-setup/SKILL.md",
+      "accessCount": 4,
+      "lastAccessed": 1775670678223,
+      "type": "file"
+    },
+    {
+      "path": "skills/e2e-validate/SKILL.md",
       "accessCount": 3,
-      "lastAccessed": 1775669603871,
+      "lastAccessed": 1775669701504,
+      "type": "file"
+    },
+    {
+      "path": "commands/forge-execute.md",
+      "accessCount": 3,
+      "lastAccessed": 1775670480804,
       "type": "file"
     },
     {
@@ -253,111 +301,93 @@
       "type": "file"
     },
     {
-      "path": "skills/e2e-validate/SKILL.md",
+      "path": "commands/forge-benchmark.md",
       "accessCount": 2,
-      "lastAccessed": 1775668514274,
-      "type": "file"
-    },
-    {
-      "path": "hooks/mock-detection.js",
-      "accessCount": 2,
-      "lastAccessed": 1775668516222,
-      "type": "file"
-    },
-    {
-      "path": "skills/web-validation/SKILL.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096314206,
-      "type": "file"
-    },
-    {
-      "path": "skills/forge-setup/SKILL.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096314680,
+      "lastAccessed": 1775669706530,
       "type": "file"
     },
     {
       "path": "skills/ios-validation/SKILL.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096315144,
-      "type": "file"
-    },
-    {
-      "path": "commands/validate-audit.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096577751,
-      "type": "file"
-    },
-    {
-      "path": "commands/validate-ci.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096577969,
-      "type": "file"
-    },
-    {
-      "path": "commands/validate-fix.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096578199,
-      "type": "file"
-    },
-    {
-      "path": "commands/validate-plan.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096578381,
-      "type": "file"
-    },
-    {
-      "path": "commands/validate-team.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096578604,
-      "type": "file"
-    },
-    {
-      "path": "commands/validate-sweep.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096578803,
-      "type": "file"
-    },
-    {
-      "path": "commands/validate-benchmark.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096582594,
-      "type": "file"
-    },
-    {
-      "path": "commands/forge-setup.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096582786,
+      "accessCount": 2,
+      "lastAccessed": 1775669706615,
       "type": "file"
     },
     {
       "path": "commands/forge-plan.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096583028,
-      "type": "file"
-    },
-    {
-      "path": "commands/forge-execute.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096583083,
-      "type": "file"
-    },
-    {
-      "path": "commands/forge-team.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096583220,
-      "type": "file"
-    },
-    {
-      "path": "commands/forge-benchmark.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096583591,
+      "accessCount": 2,
+      "lastAccessed": 1775669706854,
       "type": "file"
     },
     {
       "path": "commands/forge-install-rules.md",
-      "accessCount": 1,
-      "lastAccessed": 1773096583640,
+      "accessCount": 2,
+      "lastAccessed": 1775669706894,
+      "type": "file"
+    },
+    {
+      "path": "commands/forge-setup.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669707044,
+      "type": "file"
+    },
+    {
+      "path": "commands/forge-team.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669707280,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-audit.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669707472,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-benchmark.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669708069,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-ci.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669710299,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-fix.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669710478,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-plan.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669710530,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-sweep.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669710686,
+      "type": "file"
+    },
+    {
+      "path": "commands/validate-team.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669710901,
+      "type": "file"
+    },
+    {
+      "path": "skills/web-validation/SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1775669712847,
+      "type": "file"
+    },
+    {
+      "path": "agents/validation-lead.md",
+      "accessCount": 2,
+      "lastAccessed": 1775670483059,
       "type": "file"
     },
     {
@@ -367,33 +397,9 @@
       "type": "file"
     },
     {
-      "path": "hooks/block-test-files.js",
-      "accessCount": 1,
-      "lastAccessed": 1775668515704,
-      "type": "file"
-    },
-    {
-      "path": "agents/validation-lead.md",
-      "accessCount": 1,
-      "lastAccessed": 1775668516669,
-      "type": "file"
-    },
-    {
       "path": "rules/validation-discipline.md",
       "accessCount": 1,
       "lastAccessed": 1775668516798,
-      "type": "file"
-    },
-    {
-      "path": "hooks/evidence-quality-check.js",
-      "accessCount": 1,
-      "lastAccessed": 1775668545712,
-      "type": "file"
-    },
-    {
-      "path": "hooks/validation-state-tracker.js",
-      "accessCount": 1,
-      "lastAccessed": 1775668545730,
       "type": "file"
     },
     {
@@ -403,15 +409,63 @@
       "type": "file"
     },
     {
-      "path": "hooks/evidence-gate-reminder.js",
-      "accessCount": 1,
-      "lastAccessed": 1775668545839,
-      "type": "file"
-    },
-    {
       "path": "plans/260408-1313-hybrid-opencode-audit/phase-00-scoping.md",
       "accessCount": 1,
       "lastAccessed": 1775668679261,
+      "type": "file"
+    },
+    {
+      "path": "skills/accessibility-audit/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1775669696872,
+      "type": "file"
+    },
+    {
+      "path": "skills/api-validation/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1775669697011,
+      "type": "file"
+    },
+    {
+      "path": "skills/baseline-quality-assessment/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1775669697221,
+      "type": "file"
+    },
+    {
+      "path": "skills/chrome-devtools/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1775669697642,
+      "type": "file"
+    },
+    {
+      "path": "skills/cli-validation/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1775669697851,
+      "type": "file"
+    },
+    {
+      "path": "skills/condition-based-waiting/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1775669698064,
+      "type": "file"
+    },
+    {
+      "path": "skills/create-validation-plan/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1775669698279,
+      "type": "file"
+    },
+    {
+      "path": "skills/design-token-audit/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1775669698487,
+      "type": "file"
+    },
+    {
+      "path": "skills/design-validation/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1775669698741,
       "type": "file"
     }
   ],
