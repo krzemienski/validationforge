@@ -2,7 +2,7 @@
 
 **No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
 
-> **40 skills | 15 commands | 7 hooks | 5 agents | 8 rules | Dual-platform: Claude Code plugin + OpenCode plugin**
+> **41 skills | 15 commands | 8 hooks | 5 agents | 8 rules | 8 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
 
 ## The Iron Rule
 
@@ -15,29 +15,9 @@ ALWAYS capture evidence. ALWAYS review evidence. ALWAYS write verdicts.
 
 ValidationForge enforces this through hooks that block test file creation, skills that guide real-system validation, and agents that capture and review evidence through actual user interfaces.
 
-## Verification Status
-
-What has been verified, and what hasn't. A validation tool must be honest about its own validation.
-
-| Area | Status | Evidence |
-|------|--------|----------|
-| File inventory (40 skills, 15 commands, 7 hooks, 5 agents, 8 rules) | Verified | Disk scan, all files exist with content |
-| Hook syntax (all 7 hooks) | Verified | Each hook parsed and executed with real JSON stdin |
-| Hook functional behavior (all 7 hooks) | Verified | Piped real tool_result objects, verified correct stdout |
-| Cross-references (commands -> skills, agents, rules) | Verified | All 15 commands audited, zero broken references |
-| Plugin manifest format (plugin.json, hooks.json) | Verified | Matches Claude Code plugin spec |
-| `${CLAUDE_PLUGIN_ROOT}` resolution | Not verified | Requires live plugin load in Claude Code session |
-| Plugin loaded in Claude Code session | Not verified | Registered in installed_plugins.json, awaiting session restart |
-| `/validate` run against a real project | Not verified | Requires live plugin + running target project |
-| `/vf-setup` run end-to-end | Not verified | Requires live plugin session |
-| Benchmark scores | Not verified | No project has been benchmarked |
-| Skill content quality (all 40) | Partially verified | 5 of 40 skills deep-audited; remaining spot-checked |
-
-**Bottom line:** The plugin structure is sound and internally consistent. Hooks work correctly when tested standalone. But the full pipeline has never been exercised against a real project in a live Claude Code session. That test is next.
-
 ## Why Not Unit Tests?
 
-Unit tests verify code in isolation with mocks. Mocks drift from reality. ValidationForge verifies **systems in production** — through the same interfaces your users experience.
+Unit tests verify code in isolation with mocks. Mocks drift from reality. ValidationForge verifies **systems in production** through the same interfaces your users experience.
 
 | Scenario | Unit Tests | ValidationForge |
 |----------|:----------:|:---------------:|
@@ -47,11 +27,11 @@ Unit tests verify code in isolation with mocks. Mocks drift from reality. Valida
 | DB migration with duplicate emails | PASS (clean in-memory DB) | **FAIL** (real migration fails on duplicates) |
 | CSS grid overflow on small screens | PASS (no visual rendering) | **FAIL** (Playwright screenshot shows overflow) |
 
-These are design scenarios — situations where mock-based testing is structurally blind. ValidationForge's approach targets exactly these gaps by validating against live systems.
+These are design scenarios where mock-based testing is structurally blind. ValidationForge targets exactly these gaps by validating against live systems.
 
-## Quick Start
+## Installation
 
-### Install (Claude Code)
+### Claude Code (install.sh)
 
 ```bash
 # Quick install via curl
@@ -61,16 +41,21 @@ curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/in
 git clone --depth 1 https://github.com/krzemienski/validationforge ~/.claude/plugins/validationforge
 ```
 
-The installer clones the repo, copies rules to `~/.claude/rules/vf-*.md`, creates the evidence directory, and saves config to `~/.claude/.vf-config.json`.
+The installer clones the repo to `~/.claude/plugins/validationforge`, copies 8 rules to `~/.claude/rules/vf-*.md`, creates the `e2e-evidence/` directory (if inside a git repo), and saves config to `~/.claude/.vf-config.json`.
 
-### Install (OpenCode)
+Environment variables: `VF_SOURCE` (override repo URL), `VF_INSTALL_DIR` (override install path, must be under `$HOME` or temp).
+
+### OpenCode (opencode.json)
 
 ```bash
 # Clone into your project's .opencode/plugins/ directory
+mkdir -p .opencode/plugins
 git clone --depth 1 https://github.com/krzemienski/validationforge .opencode/plugins/validationforge
 # Or symlink shared skills/commands
 bash scripts/sync-opencode.sh
 ```
+
+The OpenCode plugin (`index.ts`) registers `permission.ask`, `tool.execute.after`, and `shell.env` hooks along with two custom tools (`vf_validate`, `vf_check_evidence`). Patterns are imported directly from `patterns.ts`.
 
 ### Initialize for Your Project
 
@@ -82,7 +67,9 @@ bash scripts/sync-opencode.sh
 
 Setup detects your platform, selects enforcement level, scaffolds `e2e-evidence/`, installs rules to `.claude/rules/vf-*`, and verifies MCP server availability.
 
-### Validate
+## Quick Start
+
+### Validation Commands
 
 ```bash
 /validate                    # Full pipeline: detect -> plan -> execute -> verdict
@@ -94,6 +81,36 @@ Setup detects your platform, selects enforcement level, scaffolds `e2e-evidence/
 /validate-sweep              # Autonomous fix-and-revalidate loop until PASS
 /validate-benchmark          # Measure validation posture (coverage, evidence, speed)
 ```
+
+### Forge Commands
+
+```bash
+/forge-setup                 # Initialize VF for current project
+/forge-plan                  # Generate validation plan with journey discovery
+/forge-execute               # Run journeys with autonomous fix loop
+/forge-team                  # Multi-agent parallel validation across platforms
+/forge-benchmark             # Measure posture across 5 dimensions
+/forge-install-rules         # Install rules to .claude/rules/
+```
+
+### Skills
+
+Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 41 skills across 7 categories.
+
+### Hooks
+
+Hooks enforce discipline automatically. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full hook lifecycle.
+
+| Hook | Event | Matcher | Effect |
+|------|-------|---------|--------|
+| `block-test-files.js` | PreToolUse | Write\|Edit\|MultiEdit | Blocks 15 test/mock patterns: `*.test.*`, `*.spec.*`, `_test.go`, `test_*.py`, `*Tests.swift`, `__tests__/`, `__mocks__/`, etc. |
+| `evidence-gate-reminder.js` | PreToolUse | TaskUpdate | Injects evidence checklist on task completion |
+| `validation-not-compilation.js` | PostToolUse | Bash | Reminds that build success is not validation |
+| `completion-claim-validator.js` | PostToolUse | Bash | Catches claims without functional evidence |
+| `validation-state-tracker.js` | PostToolUse | Bash | Tracks validation activity, reminds to capture evidence |
+| `mock-detection.js` | PostToolUse | Edit\|Write\|MultiEdit | Warns on `jest.mock`, `sinon.stub`, `unittest.mock`, etc. |
+| `evidence-quality-check.js` | PostToolUse | Edit\|Write\|MultiEdit | Warns on empty evidence files |
+| `patterns.js` | (bridge) | (none) | CommonJS bridge: loads `patterns.ts` for CC hooks via `vm` sandbox |
 
 ## The 7-Phase Pipeline
 
@@ -122,8 +139,6 @@ Setup detects your platform, selects enforcement level, scaffolds `e2e-evidence/
 
 ## Platform Auto-Detection
 
-ValidationForge scans your codebase and loads the right validation strategy:
-
 | Platform | Detection Signals | Validation Approach |
 |----------|-------------------|---------------------|
 | **iOS** | `.xcodeproj`, `.xcworkspace`, `Package.swift` | `xcodebuild` -> simulator -> `idb` screenshots -> deep links |
@@ -141,178 +156,14 @@ For multi-platform projects, spawn coordinated validators with `/validate-team`:
 
 ```
 Lead (you)
-├── Web Validator    -> e2e-evidence/web/
-├── API Validator    -> e2e-evidence/api/
-├── iOS Validator    -> e2e-evidence/ios/
-├── Design Validator -> e2e-evidence/design/
-└── Verdict Writer   -> e2e-evidence/report.md
++-- Web Validator    -> e2e-evidence/web/
++-- API Validator    -> e2e-evidence/api/
++-- iOS Validator    -> e2e-evidence/ios/
++-- Design Validator -> e2e-evidence/design/
++-- Verdict Writer   -> e2e-evidence/report.md
 ```
 
-Each validator owns its evidence directory exclusively. The lead synthesizes per-validator verdicts into a unified report. Validators run in parallel across platforms for maximum throughput.
-
-## Architecture
-
-### Skill Dependency Graph
-
-Skills are layered. Higher skills depend on lower ones:
-
-```
-                    ┌─────────────────┐
-         Layer 4:   │   e2e-validate   │  (Orchestrator)
-                    └────────┬────────┘
-                             │
-              ┌──────────────┼──────────────┐
-              v              v              v
-    ┌──────────────┐  ┌────────────┐  ┌──────────────┐
-L3: │create-        │  │full-       │  │baseline-     │  (Planners)
-    │validation-plan│  │functional- │  │quality-      │
-    └──────┬───────┘  │audit       │  │assessment    │
-           │          └─────┬──────┘  └──────┬───────┘
-              ┌─────────────┼────────────┐
-              v             v            v
-    ┌──────────────┐  ┌──────────┐  ┌──────────────┐
-L2: │functional-   │  │preflight │  │condition-    │  (Protocols)
-    │validation    │  │          │  │based-waiting │
-    └──────┬───────┘  └──────────┘  └──────┬───────┘
-           v                               v
-    ┌──────────────────┐  ┌──────────────────────┐
-L1: │no-mocking-       │  │gate-validation-      │  (Guardrails)
-    │validation-gates  │  │discipline            │
-    └──────────────────┘  └──────────────────────┘
-           │                        │
-           v                        v
-    ┌──────────────────────────────────────────┐
-L0: │verification-before-completion            │  (Foundation)
-    │error-recovery                            │
-    └──────────────────────────────────────────┘
-```
-
-### File Structure
-
-```
-validationforge/
-├── .claude-plugin/
-│   └── plugin.json                  Plugin manifest (skills, hooks)
-├── package.json                     npm package config
-├── CLAUDE.md                        Master reference document
-├── README.md                        This file
-├── ARCHITECTURE.md                  Pipeline details, benchmarks
-├── SPECIFICATION.md                 Full technical specification
-│
-├── skills/                          40 skills
-│   ├── e2e-validate/                  Orchestrator — 8 workflows, 6 platform refs
-│   ├── functional-validation/         Iron Rule protocol + 4 reference files
-│   ├── create-validation-plan/        Journey discovery + PASS criteria
-│   ├── gate-validation-discipline/    Evidence-based completion gates
-│   ├── no-mocking-validation-gates/   Mock detection + blocking
-│   ├── verification-before-completion/ Prevents premature completion
-│   ├── error-recovery/                3-strike fix protocol
-│   ├── condition-based-waiting/       Smart async waiting
-│   ├── preflight/                     Prerequisites check
-│   ├── baseline-quality-assessment/   Pre-change state capture
-│   ├── full-functional-audit/         Read-only audit protocol
-│   ├── ios-validation/                iOS simulator validation
-│   ├── ios-validation-gate/           iOS build gates
-│   ├── ios-validation-runner/         iOS test execution
-│   ├── ios-simulator-control/         Simulator lifecycle
-│   ├── web-validation/                Browser automation
-│   ├── web-testing/                   Web testing patterns
-│   ├── playwright-validation/         Playwright MCP integration
-│   ├── chrome-devtools/               Chrome DevTools MCP
-│   ├── api-validation/                HTTP endpoint validation
-│   ├── cli-validation/                Binary execution validation
-│   ├── fullstack-validation/          Bottom-up integration
-│   ├── design-validation/             Design system compliance
-│   ├── design-token-audit/            Token verification
-│   ├── stitch-integration/            Stitch MCP design validation
-│   ├── visual-inspection/             Visual regression detection
-│   ├── accessibility-audit/           Accessibility compliance
-│   ├── responsive-validation/         Responsive layout testing
-│   ├── parallel-validation/           Parallel journey execution
-│   ├── e2e-testing/                   End-to-end test patterns
-│   ├── sequential-analysis/           Sequential thinking analysis
-│   ├── research-validation/           Research phase protocol
-│   ├── retrospective-validation/      Post-validation retrospective
-│   ├── build-quality-gates/           Build quality enforcement
-│   ├── production-readiness-audit/    Ship decision protocol
-│   ├── forge-setup/                   Setup orchestration
-│   ├── forge-plan/                    Plan orchestration
-│   ├── forge-execute/                 Execute orchestration
-│   ├── forge-team/                    Team orchestration
-│   └── forge-benchmark/               Benchmark orchestration
-│
-├── commands/                        15 slash commands
-│   ├── validate.md                    Full pipeline
-│   ├── validate-plan.md               Plan only
-│   ├── validate-audit.md              Read-only audit
-│   ├── validate-fix.md                Fix + re-validate
-│   ├── validate-ci.md                 CI/CD mode
-│   ├── validate-team.md               Multi-agent parallel
-│   ├── validate-sweep.md              Autonomous fix loop
-│   ├── validate-benchmark.md          Posture scoring
-│   ├── vf-setup.md                    Setup wizard (10-step)
-│   ├── forge-setup.md                 Forge setup entry point
-│   ├── forge-plan.md                  Forge plan entry point
-│   ├── forge-execute.md               Forge execute entry point
-│   ├── forge-team.md                  Forge team entry point
-│   ├── forge-benchmark.md             Forge benchmark entry point
-│   └── forge-install-rules.md         Rule installation utility
-│
-├── hooks/                           7 enforcement hooks
-│   ├── hooks.json                     Hook registration manifest
-│   ├── block-test-files.js            Blocks *.test.*, *.spec.*, __tests__/
-│   ├── evidence-gate-reminder.js      Evidence checklist on task completion
-│   ├── validation-not-compilation.js  Build success != validation
-│   ├── completion-claim-validator.js  Catches claims without evidence
-│   ├── mock-detection.js              Detects jest.mock, sinon.stub, etc.
-│   ├── evidence-quality-check.js      Warns on empty evidence files
-│   └── validation-state-tracker.js    Tracks validation activity
-│
-├── agents/                          5 specialist agents
-│   ├── platform-detector.md           Codebase scanning + routing
-│   ├── evidence-capturer.md           Evidence collection + review
-│   ├── verdict-writer.md              PASS/FAIL verdicts with citations
-│   ├── validation-lead.md             Multi-agent team coordination
-│   └── sweep-controller.md            Autonomous fix-and-revalidate loops
-│
-├── rules/                           8 enforcement rules
-│   ├── validation-discipline.md       No-mock mandate, evidence standards
-│   ├── execution-workflow.md          7-phase pipeline details
-│   ├── evidence-management.md         Directory structure, naming, quality
-│   ├── platform-detection.md          Detection priority, platform routing
-│   ├── team-validation.md             Multi-agent roles, coordination
-│   ├── benchmarking.md                Metric collection, analysis
-│   ├── forge-execution.md             Phase gates, fix loop discipline
-│   └── forge-team-orchestration.md    Validator assignment, verdict synthesis
-│
-├── config/                          3 enforcement profiles
-│   ├── strict.json                    Maximum enforcement
-│   ├── standard.json                  Balanced enforcement
-│   └── permissive.json               Minimal enforcement
-│
-├── templates/                       4 report templates
-│   ├── validation-plan.md             Plan format
-│   ├── audit-report.md                Audit findings format
-│   ├── e2e-report.md                  Full report format
-│   └── verdict.md                     Per-journey verdict format
-│
-├── scripts/                         4 utility scripts
-│   ├── detect-platform.sh             Platform auto-detection
-│   ├── health-check.sh                Service health polling
-│   ├── evidence-collector.sh          Evidence directory setup
-│   └── sync-opencode.sh              Symlink skills/commands to .opencode/
-│
-├── .opencode/plugins/validationforge/ OpenCode plugin layer
-│   ├── index.ts                       Plugin entry (hooks, tools, env)
-│   ├── patterns.ts                    Shared regex patterns (single source of truth)
-│   ├── package.json                   Package manifest
-│   └── tsconfig.json                  TypeScript config
-│
-├── install.sh                       Global installer (curl-pipe safe)
-│
-└── demo/
-    └── DEMO-SCENARIO.md              Walkthrough scenario
-```
+Each validator owns its evidence directory exclusively. The lead synthesizes per-validator verdicts into a unified report.
 
 ## Configuration
 
@@ -352,94 +203,79 @@ Evidence is captured to `e2e-evidence/` and **must be reviewed, not just capture
 
 Grades: A (90+), B (80-89), C (70-79), D (60-69), F (<60).
 
-## Skills Reference
+## Inventory
 
-### Core Pipeline (11 skills)
+| Primitive | Count | Location |
+|-----------|------:|----------|
+| Skills | 41 | `skills/*/SKILL.md` |
+| Commands | 15 | `commands/*.md` |
+| CC Hooks | 8 | `hooks/*.js` + `hooks/hooks.json` |
+| Agents | 5 | `agents/*.md` |
+| Rules | 8 | `rules/*.md` |
+| Shell Scripts | 8 | `scripts/*.sh` + `scripts/benchmark/*.sh` |
+| OC Plugin Files | 2 | `.opencode/plugins/validationforge/{index.ts,patterns.ts}` |
+| Config Profiles | 3 | `config/*.json` |
+| Report Templates | 4 | `templates/*.md` |
+| Installer | 1 | `install.sh` |
 
-| Skill | Layer | Purpose |
-|-------|:-----:|---------|
-| `e2e-validate` | L4 | Routes everything -- 8 workflows, 6 platform refs |
-| `create-validation-plan` | L3 | Journey discovery, PASS criteria |
-| `full-functional-audit` | L3 | Read-only audit with severity classification |
-| `baseline-quality-assessment` | L3 | Pre-change state capture |
-| `functional-validation` | L2 | Iron Rule enforcement, 4-step protocol |
-| `preflight` | L2 | Prerequisites check before validation |
-| `condition-based-waiting` | L2 | Smart async waiting (8 strategies) |
-| `no-mocking-validation-gates` | L1 | Block test files, detect mock patterns |
-| `gate-validation-discipline` | L1 | Evidence-based completion gates |
-| `verification-before-completion` | L0 | Prevents premature completion claims |
-| `error-recovery` | L0 | 3-strike fix protocol with escalation |
+Full indexes: [SKILLS.md](./SKILLS.md) | [COMMANDS.md](./COMMANDS.md) | [ARCHITECTURE.md](./ARCHITECTURE.md)
 
-### Platform Validation (11 skills)
+## File Structure
 
-| Skill | Platform |
-|-------|----------|
-| `ios-validation` | iOS/macOS simulator |
-| `ios-validation-gate` | iOS build quality gates |
-| `ios-validation-runner` | iOS validation execution |
-| `ios-simulator-control` | Simulator lifecycle management |
-| `web-validation` | Browser automation |
-| `web-testing` | Web testing patterns |
-| `playwright-validation` | Playwright MCP integration |
-| `chrome-devtools` | Chrome DevTools MCP |
-| `api-validation` | HTTP endpoint validation |
-| `cli-validation` | Binary execution |
-| `fullstack-validation` | Bottom-up integration |
+```
+validationforge/
++-- .claude-plugin/plugin.json        Plugin manifest
++-- .opencode/plugins/validationforge/ OpenCode plugin
+|   +-- index.ts                      Plugin entry (hooks, tools, env)
+|   +-- patterns.ts                   Shared regex patterns (source of truth)
+|   +-- package.json                  Package manifest
+|   +-- tsconfig.json                 TypeScript config
++-- skills/                           41 skills (SKILL.md frontmatter)
++-- commands/                         15 slash commands
++-- hooks/                            7 enforcement hooks + 1 patterns bridge
+|   +-- hooks.json                    Hook registration manifest
+|   +-- patterns.js                   CommonJS bridge to patterns.ts
++-- agents/                           5 specialist agents
++-- rules/                            8 enforcement rules
++-- config/                           3 enforcement profiles
++-- templates/                        4 report templates
++-- scripts/                          4 core + 4 benchmark shell scripts
++-- install.sh                        Global installer (curl-pipe safe)
++-- CLAUDE.md                         Master reference document
++-- README.md                         This file
++-- ARCHITECTURE.md                   Pipeline and platform details
++-- SKILLS.md                         Complete skills index
++-- COMMANDS.md                       Complete commands index
+```
 
-### Design & Visual (4 skills)
+## Troubleshooting
 
-| Skill | Purpose |
-|-------|---------|
-| `design-validation` | Design system compliance |
-| `design-token-audit` | Token verification |
-| `stitch-integration` | Stitch MCP design validation |
-| `visual-inspection` | Visual regression detection |
+### Hooks not firing
 
-### Specialized (9 skills)
+1. Verify the plugin is registered: check `~/.claude/installed_plugins.json` contains the validationforge path.
+2. Confirm `hooks/hooks.json` exists and `${CLAUDE_PLUGIN_ROOT}` resolves to the install directory.
+3. Run a hook manually to check syntax: `echo '{"tool_name":"Write","tool_input":{"file_path":"foo.test.ts"}}' | node hooks/block-test-files.js`
 
-| Skill | Purpose |
-|-------|---------|
-| `accessibility-audit` | Accessibility compliance |
-| `responsive-validation` | Responsive layout testing |
-| `parallel-validation` | Parallel journey execution |
-| `e2e-testing` | End-to-end test patterns |
-| `sequential-analysis` | Sequential thinking analysis |
-| `research-validation` | Research phase protocol |
-| `retrospective-validation` | Post-validation retrospective |
-| `build-quality-gates` | Build quality enforcement |
-| `production-readiness-audit` | Ship decision protocol |
+### Skills not discovered
 
-### Forge Orchestration (5 skills)
+1. Skills require `SKILL.md` with valid YAML frontmatter (`name`, `description`, `triggers`).
+2. Verify the skill directory exists under `skills/` and contains a `SKILL.md`.
+3. Restart the Claude Code session after plugin installation.
 
-| Skill | Purpose |
-|-------|---------|
-| `forge-setup` | Project initialization orchestration |
-| `forge-plan` | Validation plan orchestration |
-| `forge-execute` | Execution pipeline orchestration |
-| `forge-team` | Multi-agent team orchestration |
-| `forge-benchmark` | Benchmark scoring orchestration |
+### OpenCode plugin not loading
 
-## Hooks Reference
+1. Verify `.opencode/plugins/validationforge/index.ts` exists in your project root.
+2. Check `package.json` lists `@opencode-ai/plugin` as a dependency.
+3. Run `npm install` inside `.opencode/plugins/validationforge/`.
 
-| Hook | Event | Matcher | Effect |
-|------|-------|---------|--------|
-| `block-test-files.js` | PreToolUse | Write\|Edit\|MultiEdit | **Blocks** `*.test.*`, `*.spec.*`, `__tests__/`, `__mocks__/` |
-| `evidence-gate-reminder.js` | PreToolUse | TaskUpdate | Injects evidence checklist on task completion |
-| `validation-not-compilation.js` | PostToolUse | Bash | Reminds that build success is not validation |
-| `completion-claim-validator.js` | PostToolUse | Bash | Catches claims without functional evidence |
-| `mock-detection.js` | PostToolUse | Edit\|Write\|MultiEdit | Warns on `jest.mock`, `sinon.stub`, `unittest.mock`, etc. |
-| `evidence-quality-check.js` | PostToolUse | Edit\|Write\|MultiEdit | Warns on empty evidence files |
-| `validation-state-tracker.js` | PostToolUse | Bash | Tracks validation activity, reminds to capture evidence |
+### Evidence directory missing
 
-## Agents Reference
+1. Run `/vf-setup` or `mkdir -p e2e-evidence` in your project root.
+2. The installer creates this automatically if you run it inside a git repository.
 
-| Agent | Purpose |
-|-------|---------|
-| `platform-detector` | Scans codebase to classify platform type with confidence scoring |
-| `evidence-capturer` | Captures screenshots, logs, API responses to `e2e-evidence/` |
-| `verdict-writer` | Synthesizes evidence into PASS/FAIL verdicts with citations |
-| `validation-lead` | Orchestrates multi-agent validation teams across platforms |
-| `sweep-controller` | Controls autonomous fix-and-revalidate loops (3-strike limit) |
+### patterns.js bridge failure
+
+If CC hooks log `[ValidationForge] patterns.js: Could not load ...`, the bridge falls back to inline patterns. Check that `patterns.ts` exists at `.opencode/plugins/validationforge/patterns.ts` relative to the project root. The bridge uses `vm.runInNewContext` to strip TypeScript syntax at runtime.
 
 ## License
 

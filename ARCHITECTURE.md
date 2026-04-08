@@ -1,432 +1,374 @@
 # ValidationForge Architecture
 
-> **NOTE:** This document covers the core validation pipeline architecture (9 validate commands).
-> For complete inventory (40 skills, 15 commands, 7 hooks, 5 agents, 8 rules),
-> FORGE engine architecture, and CONSENSUS engine details, see [PRD.md](./PRD.md) v2.0.0.
+Dual-platform enforcement architecture for Claude Code (CC) and OpenCode (OC). Both platforms share the same pattern library and enforce the same validation discipline.
 
-## Command Orchestration System
+## Inventory
 
-All 15 commands (9 validate + 6 forge) are entry points into the validation and execution pipelines. The validate commands share a single validation pipeline, each activating a different subset of stages:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                    ValidationForge Pipeline                         │
-│                                                                     │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐           │
-│  │ PREFLIGHT│→ │  PLAN    │→ │ EXECUTE  │→ │  REPORT  │           │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘           │
-│       ↑              ↑             ↑             ↑                 │
-│   preflight     create-         e2e-validate  verdict-             │
-│   skill         validation-     + platform    writer               │
-│                 plan skill      routing       agent                │
-│                                                                     │
-│  ┌──────────┐  ┌──────────┐                                        │
-│  │   FIX    │→ │RE-EXECUTE│  (fix loop, max 3 strikes)            │
-│  └──────────┘  └──────────┘                                        │
-│       ↑                                                             │
-│   error-recovery                                                    │
-│   skill                                                             │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-### Command → Pipeline Stage Mapping
-
-| Command | Preflight | Plan | Execute | Report | Fix Loop |
-|---------|:---------:|:----:|:-------:|:------:|:--------:|
-| `/validate` | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/validate-plan` | ✅ | ✅ | ❌ | ❌ | ❌ |
-| `/validate-fix` | ❌ | ❌ | ✅ | ✅ | ✅ |
-| `/validate-audit` | ✅ | ❌ | ✅ (read-only) | ✅ | ❌ |
-| `/validate-ci` | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/validate-team` | ✅ | ✅ | ✅ (parallel) | ✅ | ❌ |
-| `/validate-sweep` | ❌ | ❌ | ✅ | ✅ | ✅ (loop) |
-| `/validate-benchmark` | ❌ | ❌ | ✅ (measure) | ✅ (score) | ❌ |
-| `/vf-setup` | — | — | — | — | — |
-
-### Command Flow Details
-
-#### `/validate` — Full Pipeline (Default)
-```
-1. PREFLIGHT: Check prerequisites (servers, DBs, tools, evidence dir)
-   ├─ BLOCKED? → List unmet prerequisites, exit
-   └─ CLEAR? → Continue
-
-2. PLATFORM DETECT: Scan codebase → ios/web/api/cli/fullstack/generic
-   ├─ Load platform-specific validation reference
-   └─ Override available via --platform flag
-
-3. PLAN: Map user journeys → define PASS criteria → generate plan
-   ├─ User approval gate (unless --ci)
-   └─ Save plan to e2e-evidence/validation-plan.md
-
-4. EXECUTE: For each journey:
-   ├─ Run real system (not mocks)
-   ├─ Capture evidence (screenshots, responses, output)
-   ├─ READ every piece of evidence (not just existence check)
-   └─ Write PASS/FAIL verdict with citations
-
-5. REPORT: Aggregate verdicts → save to e2e-evidence/report.md
-   ├─ Overall: ALL PASS / PARTIAL / ALL FAIL
-   ├─ Per-journey: verdict + evidence refs + root cause (if fail)
-   └─ Recommendations for failures
-```
-
-#### `/validate-plan` — Plan Only
-```
-1. PREFLIGHT → 2. PLATFORM DETECT → 3. PLAN → STOP
-Output: e2e-evidence/validation-plan.md with all journeys + PASS criteria
-Use case: Review what will be tested before committing to execution
-```
-
-#### `/validate-fix` — Fix + Re-validate
-```
-1. READ last report (e2e-evidence/report.md)
-2. IDENTIFY failed journeys and root causes
-3. For each failure (3-strike protocol):
-   ├─ Strike 1: Targeted fix based on root cause
-   ├─ Re-validate just that journey
-   ├─ PASS? → Move to next failure
-   ├─ Strike 2: Alternative approach
-   ├─ Re-validate
-   ├─ Strike 3: Broader rethink
-   └─ Still failing? → Escalate with what was tried
-4. REPORT: Updated report with fix history
-```
-
-#### `/validate-audit` — Read-Only Audit
-```
-1. PREFLIGHT (no-change mode)
-2. PLATFORM DETECT
-3. EXECUTE in read-only mode:
-   ├─ Capture evidence but make NO code changes
-   ├─ Classify findings: CRITICAL / HIGH / MEDIUM / LOW / INFO
-   └─ No fix loop, no plan modification
-4. REPORT: Audit report with severity breakdown
-Use case: Compliance documentation, pre-release assessment
-```
-
-#### `/validate-ci` — CI/CD Mode
-```
-Same as /validate but:
-- No approval gates (auto-approve plan)
-- No interactive prompts
-- Exit code: 0 = all PASS, 1 = any FAIL
-- Evidence artifacts saved for CI upload
-- Stdout: structured summary for pipeline logs
-```
+| Primitive | Count | CC Location | OC Location |
+|-----------|------:|-------------|-------------|
+| Skills | 41 | `skills/*/SKILL.md` | (shared via symlink) |
+| Commands | 15 | `commands/*.md` | (shared via symlink) |
+| Hooks | 8 | `hooks/*.js` + `hooks.json` | `.opencode/plugins/validationforge/index.ts` |
+| Agents | 5 | `agents/*.md` | (shared) |
+| Rules | 8 | `rules/*.md` | (shared) |
+| Shell Scripts | 8 | `scripts/` + `scripts/benchmark/` | (shared) |
+| Config Profiles | 3 | `config/*.json` | (shared) |
 
 ---
 
-## Skill Dependency Graph
+## Claude Code Plugin (CC)
+
+### Hook Lifecycle
+
+CC hooks are Node.js scripts registered in `hooks/hooks.json`. The CC harness pipes a JSON object to each hook's stdin and reads the response.
+
+**PreToolUse hooks** (run before the tool executes):
+
+```
+CC Harness                            Hook Script
+   |                                      |
+   |-- stdin: JSON {tool_name, tool_input} -->|
+   |                                      |-- parse stdin
+   |                                      |-- evaluate patterns
+   |                                      |
+   |                          (if blocking)|-- stdout: JSON {decision, ...}
+   |                          (if blocking)|-- exit 0
+   |                                      |
+   |                          (if passing) |-- exit 0 (silent, no output)
+   |<-------------------------------------|
+```
+
+- `block-test-files.js` -- Matches `Write|Edit|MultiEdit`. Reads `tool_input.file_path`, checks against `TEST_PATTERNS` from patterns.js. If matched and not in `ALLOWLIST`, writes `{"permissionDecision":"deny","reason":"..."}` to stdout and exits 0.
+- `evidence-gate-reminder.js` -- Matches `TaskUpdate`. Writes `{"additionalContext":"..."}` to stdout with an evidence checklist and exits 0.
+
+**PostToolUse hooks** (run after the tool executes):
+
+```
+CC Harness                            Hook Script
+   |                                      |
+   |-- stdin: JSON {tool_name, tool_input,-->|
+   |          tool_result}                |-- parse stdin
+   |                                      |-- evaluate patterns
+   |                                      |
+   |                        (if feedback) |-- stderr: reminder text
+   |                        (if feedback) |-- exit 2
+   |                                      |
+   |                        (if no-op)    |-- exit 0 (silent)
+   |<-------------------------------------|
+```
+
+- `validation-not-compilation.js` -- Matches `Bash`. Checks `tool_result` against `BUILD_PATTERNS`. If build success detected, writes reminder to stderr, exits 2.
+- `completion-claim-validator.js` -- Matches `Bash`. Checks `tool_result` against `COMPLETION_PATTERNS`. If completion claim detected without evidence directory, writes warning to stderr, exits 2.
+- `validation-state-tracker.js` -- Matches `Bash`. Checks command against `VALIDATION_COMMAND_PATTERNS`. If validation tool detected, writes evidence reminder to stderr, exits 2.
+- `mock-detection.js` -- Matches `Edit|Write|MultiEdit`. Checks written content against `MOCK_PATTERNS`. If mock patterns detected, writes warning to stderr, exits 2.
+- `evidence-quality-check.js` -- Matches `Edit|Write|MultiEdit`. Checks if file path is in `e2e-evidence/` and content is empty. If so, writes warning to stderr, exits 2.
+
+### Hook Registration (hooks.json)
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Write|Edit|MultiEdit", "hooks": [{"type":"command","command":"${CLAUDE_PLUGIN_ROOT}/hooks/block-test-files.js"}] },
+      { "matcher": "TaskUpdate",           "hooks": [{"type":"command","command":"${CLAUDE_PLUGIN_ROOT}/hooks/evidence-gate-reminder.js"}] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Bash",                 "hooks": [
+          {"type":"command","command":"${CLAUDE_PLUGIN_ROOT}/hooks/validation-not-compilation.js"},
+          {"type":"command","command":"${CLAUDE_PLUGIN_ROOT}/hooks/completion-claim-validator.js"},
+          {"type":"command","command":"${CLAUDE_PLUGIN_ROOT}/hooks/validation-state-tracker.js"}
+      ]},
+      { "matcher": "Edit|Write|MultiEdit", "hooks": [
+          {"type":"command","command":"${CLAUDE_PLUGIN_ROOT}/hooks/mock-detection.js"},
+          {"type":"command","command":"${CLAUDE_PLUGIN_ROOT}/hooks/evidence-quality-check.js"}
+      ]}
+    ]
+  }
+}
+```
+
+`${CLAUDE_PLUGIN_ROOT}` resolves to the plugin installation directory at runtime.
+
+### Skill Lifecycle
+
+Skills are directories under `skills/` containing a `SKILL.md` with YAML frontmatter:
+
+```yaml
+---
+name: skill-name
+description: What the skill does
+triggers:
+  - "keyword phrase"
+  - "another trigger"
+---
+```
+
+Claude Code discovers skills by scanning `SKILL.md` files in the plugin directory. When a user message or agent prompt matches a trigger phrase, the skill's content is loaded into context. Skills reference other skills by name (e.g., "invoke `preflight` skill first").
+
+### Command Lifecycle
+
+Commands are `.md` files in `commands/` with YAML frontmatter:
+
+```yaml
+---
+name: command-name
+description: What the command does
+allowed-tools: "Read, Write, Bash, Glob"   # forge commands only
+---
+```
+
+Validation commands (9) have no `allowed-tools` restriction. Forge commands (6) specify which Claude Code tools they may invoke, constraining the execution scope.
+
+---
+
+## OpenCode Plugin (OC)
+
+### Plugin Entry Point
+
+`.opencode/plugins/validationforge/index.ts` exports a `Plugin` function that registers three hooks and two tools.
+
+### Hook Lifecycle
+
+```
+OpenCode Harness                      Plugin Hooks
+   |                                      |
+   |-- permission.ask(input, output) ---->|
+   |   (before Write/Edit/MultiEdit)      |-- isBlockedTestFile(filePath)
+   |                                      |-- if blocked: output.status = "deny"
+   |<-------------------------------------|
+   |                                      |
+   |-- tool.execute.after(input, output)->|
+   |   (after any tool)                   |-- if Bash: isBuildSuccess? isCompletionClaim?
+   |                                      |-- if Write/Edit: detectMockPatterns? emptyEvidence?
+   |                                      |-- attaches output.metadata warnings
+   |<-------------------------------------|
+   |                                      |
+   |-- shell.env() ---------------------->|
+   |                                      |-- returns VF_EVIDENCE_DIR, VF_VERSION, VF_ENFORCEMENT
+   |<-------------------------------------|
+```
+
+- `permission.ask` -- Mirrors `block-test-files.js`. Calls `isBlockedTestFile()` from `patterns.ts`. Sets `output.status = "deny"` if matched.
+- `tool.execute.after` -- Mirrors all 5 PostToolUse CC hooks. Checks bash output for build success and completion claims, checks write content for mock patterns, checks evidence files for empty content. Attaches `vf_reminder`, `vf_warning`, or `vf_note` to `output.metadata`.
+- `shell.env` -- Injects `VF_EVIDENCE_DIR=e2e-evidence`, `VF_VERSION=1.0.0`, `VF_ENFORCEMENT=standard` into the shell environment.
+
+### Custom Tools
+
+- `vf_validate` -- Proxy to `/validate` command with optional `--platform` and `--scope` flags.
+- `vf_check_evidence` -- Checks `e2e-evidence/` directory status and lists evidence files per journey.
+
+---
+
+## Pattern Sharing Architecture
+
+A single source of truth for all regex patterns used across both platforms.
+
+```
+.opencode/plugins/validationforge/patterns.ts    <-- Source of truth
+  |
+  |-- Exports 6 pattern arrays:
+  |     TEST_PATTERNS        (15 regexes: .test.*, .spec.*, __tests__/, etc.)
+  |     ALLOWLIST             (4 regexes: e2e-evidence, .claude/, etc.)
+  |     MOCK_PATTERNS         (20 regexes: jest.mock, sinon.stub, etc.)
+  |     BUILD_PATTERNS        (10 regexes: build succeeded, compiled, etc.)
+  |     COMPLETION_PATTERNS   (4 regexes: all pass, tests pass, etc.)
+  |     VALIDATION_COMMAND_PATTERNS (8 regexes: playwright, simctl, etc.)
+  |
+  |-- Exports 5 helper functions:
+  |     isBlockedTestFile(path)    -> string | null
+  |     detectMockPatterns(text)   -> boolean
+  |     isBuildSuccess(text)       -> boolean
+  |     isCompletionClaim(text)    -> boolean
+  |     isValidationCommand(cmd)   -> boolean
+  |
+  +-- OC plugin (index.ts)
+  |     imports directly via TypeScript: import { isBlockedTestFile, ... } from "./patterns"
+  |
+  +-- CC hooks (hooks/patterns.js)
+        CommonJS bridge using vm.runInNewContext():
+        1. Reads patterns.ts from disk
+        2. Strips TypeScript syntax (export, type annotations, function defs)
+        3. Evaluates in vm sandbox to extract const arrays
+        4. Falls back to inline copy if patterns.ts is unavailable
+        CC hooks: require('./patterns') -> { TEST_PATTERNS, ALLOWLIST, ... }
+```
+
+Hooks that consume patterns.js:
+- `block-test-files.js` -- TEST_PATTERNS, ALLOWLIST
+- `completion-claim-validator.js` -- COMPLETION_PATTERNS
+- `mock-detection.js` -- MOCK_PATTERNS
+- `validation-not-compilation.js` -- BUILD_PATTERNS
+- `validation-state-tracker.js` -- VALIDATION_COMMAND_PATTERNS
+
+---
+
+## Validation Pipeline
+
+### Data Flow
+
+```
+User invokes /validate
+  |
+  v
+RESEARCH: Scan codebase, identify platform, load applicable standards
+  |
+  v
+PLAN: Map user journeys, define PASS criteria per journey
+  |
+  v
+PREFLIGHT: Check prerequisites
+  |  - Server running?      (health-check.sh or condition-based-waiting)
+  |  - Build compiles?      (build-quality-gates skill)
+  |  - Evidence dir exists? (evidence-collector.sh)
+  |  - MCP servers up?      (platform-specific check)
+  |
+  v
+EXECUTE: For each journey:
+  |  - Interact with real system (simulator, browser, curl, binary)
+  |  - Capture evidence to e2e-evidence/{journey-slug}/
+  |  - Name files: step-{NN}-{description}.{ext}
+  |
+  v
+ANALYZE: For FAIL journeys:
+  |  - sequential-analysis skill for root cause investigation
+  |  - error-recovery skill for 3-strike fix attempts
+  |
+  v
+VERDICT: verdict-writer agent synthesizes all evidence
+  |  - Per-journey PASS/FAIL with cited evidence
+  |  - Unified report at e2e-evidence/report.md
+  |
+  v
+SHIP (optional): production-readiness-audit skill
+```
+
+### Skill Dependency Graph
 
 Skills are layered. Higher skills depend on lower ones:
 
 ```
-                    ┌─────────────────┐
-         Layer 4:   │   e2e-validate   │  (Orchestrator: routes everything)
-                    └────────┬────────┘
-                             │ uses
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-    ┌──────────────┐  ┌────────────┐  ┌──────────────┐
-L3: │create-        │  │full-       │  │baseline-     │  (Planners)
-    │validation-plan│  │functional- │  │quality-      │
-    └──────┬───────┘  │audit       │  │assessment    │
-           │          └─────┬──────┘  └──────┬───────┘
-           │                │                │
-              ┌─────────────┼────────────┐
-              ▼             ▼            ▼
-    ┌──────────────┐  ┌──────────┐  ┌──────────────┐
-L2: │functional-   │  │preflight │  │condition-    │  (Protocols)
-    │validation    │  │          │  │based-waiting │
-    └──────┬───────┘  └──────────┘  └──────┬───────┘
-           │                               │
-           ▼                               ▼
-    ┌──────────────────┐  ┌──────────────────────┐
-L1: │no-mocking-       │  │gate-validation-      │  (Guardrails)
-    │validation-gates  │  │discipline            │
-    └──────────────────┘  └──────────────────────┘
-           │                        │
-           ▼                        ▼
-    ┌──────────────────────────────────────────┐
-L0: │verification-before-completion            │  (Foundation)
-    │error-recovery                            │
-    └──────────────────────────────────────────┘
+                    +-------------------+
+         Layer 4:   |   e2e-validate    |  (Orchestrator: routes everything)
+                    +--------+----------+
+                             |
+              +--------------+--------------+
+              v              v              v
+    +----------------+  +------------+  +----------------+
+L3: |create-         |  |full-       |  |baseline-       |  (Planners)
+    |validation-plan |  |functional- |  |quality-        |
+    +-------+--------+  |audit       |  |assessment      |
+            |           +-----+------+  +-------+--------+
+            |                 |                 |
+              +---------------+-------------+
+              v               v             v
+    +----------------+  +----------+  +----------------+
+L2: |functional-     |  |preflight |  |condition-      |  (Protocols)
+    |validation      |  |          |  |based-waiting   |
+    +-------+--------+  +----------+  +-------+--------+
+            |                                 |
+            v                                 v
+    +--------------------+  +------------------------+
+L1: |no-mocking-         |  |gate-validation-        |  (Guardrails)
+    |validation-gates    |  |discipline              |
+    +--------------------+  +------------------------+
+            |                        |
+            v                        v
+    +----------------------------------------------+
+L0: |verification-before-completion                |  (Foundation)
+    |error-recovery                                |
+    +----------------------------------------------+
 ```
 
-### Dependency Rules
+### Platform Routing
 
-1. **Every skill** references `no-mocking-validation-gates` and `gate-validation-discipline`
-2. **Orchestrator** (`e2e-validate`) never runs alone — it routes to platform validators
-3. **Platform routing** skills load ONLY for their detected platform (saves context)
-4. **Error recovery** is available to ALL skills that might encounter failures
-5. **Condition-based-waiting** is used by any skill that starts services
+The `e2e-validate` orchestrator skill (L4) routes to platform-specific skills based on detection:
+
+```
+e2e-validate
+  |-- detect platform (detect-platform.sh or platform-detector agent)
+  |
+  +-- ios?       -> ios-validation, ios-validation-gate, ios-validation-runner, ios-simulator-control
+  +-- web?       -> web-validation, web-testing, playwright-validation, chrome-devtools
+  +-- api?       -> api-validation
+  +-- cli?       -> cli-validation
+  +-- fullstack? -> fullstack-validation (chains api-validation + web-validation)
+  +-- design?    -> design-validation, design-token-audit, stitch-integration, visual-inspection
+```
 
 ---
 
-## Benchmarking Framework
+## Shell Scripts
 
-### What We Benchmark
+### Core Scripts (4)
 
-ValidationForge vs three alternatives:
-1. **Unit Testing** (jest, pytest, XCTest) — Traditional approach
-2. **ClaudeKit** (v2.11.3) — Competitor CC extension
-3. **Manual QA** — Human tester approach
+| Script | Purpose |
+|--------|---------|
+| `scripts/detect-platform.sh` | Scans codebase for platform indicators, outputs detected platform type |
+| `scripts/health-check.sh` | Polls a service endpoint until healthy or timeout |
+| `scripts/evidence-collector.sh` | Creates and validates `e2e-evidence/` directory structure |
+| `scripts/sync-opencode.sh` | Symlinks skills and commands into `.opencode/` for OC compatibility |
 
-### Benchmark Dimensions
+### Benchmark Scripts (4)
 
-| Dimension | How Measured | Unit |
-|-----------|-------------|------|
-| **Bug Detection Rate** | # real bugs caught / # total real bugs | Percentage |
-| **False Confidence Rate** | # bugs missed that tests "passed" | Count |
-| **Time to First Evidence** | Clock time from "start validation" to first captured proof | Minutes |
-| **Total Validation Time** | Clock time for complete validation pipeline | Minutes |
-| **Integration Bug Coverage** | # cross-layer bugs caught (API↔Frontend, DB↔API) | Count |
-| **Evidence Quality** | Specificity score (1-5) of captured evidence | Score |
-| **Maintenance Burden** | Lines of validation code per 1000 lines of app code | Ratio |
-| **Mock Drift Detection** | # scenarios where mocks diverged from real behavior | Count |
-| **Regression Detection** | # regressions caught on re-validation | Count |
-| **CI Integration Cost** | Setup time + per-run cost | Minutes + $ |
+| Script | Purpose |
+|--------|---------|
+| `scripts/benchmark/test-hooks.sh` | Tests all 7 CC hooks with real JSON stdin payloads |
+| `scripts/benchmark/validate-skills.sh` | Validates structural integrity of all 41 skill SKILL.md files |
+| `scripts/benchmark/validate-cmds.sh` | Validates structural integrity of all 15 command .md files |
+| `scripts/benchmark/aggregate-results.sh` | Aggregates benchmark scores into a unified report |
 
-### Benchmark Scenarios
+---
 
-#### Scenario 1: The Field Rename (API Breaking Change)
-```
-Setup: REST API returns { users: [...] }, frontend reads response.users
-Change: Rename field to { data: [...] }
-Expected: Frontend breaks with TypeError
+## Agents
 
-| Approach | Catches Bug? | How? | Time |
-|----------|:----------:|------|------|
-| Unit Tests (jest) | ❌ | Tests mock the API response, mock still returns old field | — |
-| ClaudeKit review | ⚠️ | Might flag if reviewer reads both files | 2-3 min |
-| ValidationForge | ✅ | curl API → see "data" field → Playwright → see TypeError | 30 sec |
-| Manual QA | ✅ | Open browser, see crash | 2 min |
-```
-
-#### Scenario 2: The Auth Token Expiry (Session Management)
-```
-Setup: JWT expires after 1 hour, refresh token rotates
-Change: Reduce expiry to 15 minutes
-Expected: Users logged out mid-session if refresh fails
-
-| Approach | Catches Bug? | How? | Time |
-|----------|:----------:|------|------|
-| Unit Tests | ❌ | Tests mock time, never wait 15 real minutes | — |
-| ClaudeKit review | ❌ | Code review can't simulate time-based behavior | — |
-| ValidationForge | ✅ | Condition-based wait → verify token refresh → capture response | 2 min |
-| Manual QA | ⚠️ | Would need to wait or manipulate clock | 15+ min |
-```
-
-#### Scenario 3: The iOS Deep Link (Navigation)
-```
-Setup: App handles myapp://profile/123 deep link
-Change: Refactor navigation stack
-Expected: Deep link lands on wrong screen or crashes
-
-| Approach | Catches Bug? | How? | Time |
-|----------|:----------:|------|------|
-| Unit Tests (XCTest) | ❌ | Tests mock URL handler, never launch real app | — |
-| ClaudeKit review | ❌ | No iOS simulator integration | — |
-| ValidationForge | ✅ | simctl openurl → idb screenshot → verify screen content | 45 sec |
-| Manual QA | ✅ | Tap link on device, see result | 1 min |
-```
-
-#### Scenario 4: The Database Migration (Data Integrity)
-```
-Setup: User table has email column, migration adds unique constraint
-Change: Run migration on DB with duplicate emails
-Expected: Migration fails, app can't start
-
-| Approach | Catches Bug? | How? | Time |
-|----------|:----------:|------|------|
-| Unit Tests | ❌ | Tests use clean in-memory DB, no duplicates | — |
-| ClaudeKit review | ⚠️ | Might flag missing pre-migration check | 2 min |
-| ValidationForge | ✅ | Bottom-up: run migration → health check → verify app starts | 1 min |
-| Manual QA | ✅ | Run migration, see error | 3 min |
-```
-
-#### Scenario 5: The CSS Regression (Visual)
-```
-Setup: Dashboard grid layout works on 1920x1080
-Change: Add sidebar component
-Expected: Grid overflows on smaller screens
-
-| Approach | Catches Bug? | How? | Time |
-|----------|:----------:|------|------|
-| Unit Tests | ❌ | No visual rendering in test harness | — |
-| ClaudeKit review | ❌ | Code review can't render CSS | — |
-| ValidationForge | ✅ | Playwright resize → screenshot → describe what you SEE | 30 sec |
-| Manual QA | ✅ | Resize browser, see overflow | 1 min |
-```
-
-### Aggregate Scorecard
-
-```
-| Metric                    | Unit Tests | ClaudeKit | ValidationForge | Manual QA |
-|---------------------------|:----------:|:---------:|:---------------:|:---------:|
-| Bugs caught (of 5)        | 0/5        | 1/5       | 5/5             | 4/5       |
-| Avg time to detect        | —          | 2.5 min   | 53 sec          | 4.4 min   |
-| False confidence events   | 5          | 3         | 0               | 0         |
-| Integration bugs caught   | 0/3        | 0/3       | 3/3             | 2/3       |
-| Maintenance lines/1K app  | 200-400    | 0         | 0               | 0         |
-| Mock drift risk           | HIGH       | N/A       | ZERO            | ZERO      |
-| CI automatable            | ✅         | ❌        | ✅ (--ci)       | ❌        |
-| Evidence artifact         | ❌ (logs)  | ❌        | ✅ (screenshots)| ❌        |
-```
-
-### Running the Benchmark
-
-```bash
-# 1. Clone benchmark scenarios repo
-git clone https://github.com/krzemienski/validationforge-benchmarks
-
-# 2. Each scenario has:
-#    - app/          → The application code
-#    - change.patch  → The breaking change to apply
-#    - tests/        → Unit tests that PASS despite the bug
-#    - expected/     → What ValidationForge should catch
-
-# 3. Run ValidationForge benchmark
-cd scenario-01-field-rename
-git apply change.patch
-validationforge validate --ci --verbose
-
-# 4. Run unit test benchmark
-cd scenario-01-field-rename
-git apply change.patch
-npm test  # Watch it pass despite bug
-
-# 5. Compare: ValidationForge catches it, unit tests don't
-```
+| Agent | File | Purpose |
+|-------|------|---------|
+| `platform-detector` | `agents/platform-detector.md` | Scans codebase to classify platform type with confidence scoring |
+| `evidence-capturer` | `agents/evidence-capturer.md` | Captures screenshots, logs, API responses to `e2e-evidence/` |
+| `verdict-writer` | `agents/verdict-writer.md` | Synthesizes evidence into PASS/FAIL verdicts with citations |
+| `validation-lead` | `agents/validation-lead.md` | Orchestrates multi-agent validation teams across platforms |
+| `sweep-controller` | `agents/sweep-controller.md` | Controls autonomous fix-and-revalidate loops (3-strike limit) |
 
 ---
 
 ## Configuration Schema
 
+Stored at `~/.claude/.vf-config.json` after installation:
+
 ```json
 {
-  "strictness": {
-    "type": "enum",
-    "values": ["strict", "standard", "permissive"],
-    "default": "standard",
-    "description": "Controls enforcement level of validation hooks"
-  },
-  "evidence_dir": {
-    "type": "string",
-    "default": "e2e-evidence",
-    "description": "Directory for evidence artifacts"
-  },
-  "platform_override": {
-    "type": "enum",
-    "values": ["auto", "ios", "web", "api", "cli", "fullstack"],
-    "default": "auto",
-    "description": "Override platform auto-detection"
-  },
-  "ci_mode": {
-    "type": "boolean",
-    "default": false,
-    "description": "Non-interactive mode for CI/CD pipelines"
-  },
-  "max_recovery_attempts": {
-    "type": "integer",
-    "default": 3,
-    "min": 1,
-    "max": 10,
-    "description": "Maximum fix attempts per failure before escalating"
-  },
-  "require_baseline": {
-    "type": "boolean",
-    "default": true,
-    "description": "Require baseline capture before validation"
-  },
-  "parallel_journeys": {
-    "type": "boolean",
-    "default": false,
-    "description": "Run independent journey validations in parallel"
-  },
-  "evidence_retention_days": {
-    "type": "integer",
-    "default": 30,
-    "description": "Auto-prune evidence older than N days"
-  }
+  "strictness": "strict | standard | permissive",
+  "evidence_dir": "e2e-evidence",
+  "platform_override": "auto | ios | web | api | cli | fullstack",
+  "ci_mode": false,
+  "max_recovery_attempts": 3,
+  "require_baseline": true,
+  "parallel_journeys": false,
+  "evidence_retention_days": 30
 }
 ```
 
----
+Three enforcement profiles in `config/`:
+
+| Profile | File | Test Files | Mock Detection | Evidence |
+|---------|------|:---------:|:--------------:|:--------:|
+| strict | `config/strict.json` | Blocked | Blocked | Mandatory |
+| standard | `config/standard.json` | Blocked | Blocked | Recommended |
+| permissive | `config/permissive.json` | Warned | Warned | Optional |
 
 ---
 
-## Dual-Platform Architecture
+## Rules
 
-ValidationForge ships as both a Claude Code plugin and an OpenCode plugin. The enforcement logic is equivalent across platforms.
+8 enforcement rules installed to `~/.claude/rules/vf-*.md` by `install.sh` or `/forge-install-rules`:
 
-### Claude Code Plugin (CC)
-
-Hooks are Node.js scripts that receive JSON on stdin and communicate via exit codes:
-
-```
-Claude Code Harness
-  │
-  ├─ PreToolUse hooks (exit 0 + stdout JSON)
-  │   ├─ block-test-files.js      → permissionDecision: "deny"
-  │   └─ evidence-gate-reminder.js → additionalContext (checklist)
-  │
-  └─ PostToolUse hooks (stderr + exit 2 for feedback)
-      ├─ validation-not-compilation.js
-      ├─ completion-claim-validator.js
-      ├─ validation-state-tracker.js
-      ├─ mock-detection.js
-      └─ evidence-quality-check.js
-
-Hook registration: hooks/hooks.json
-Path interpolation: ${CLAUDE_PLUGIN_ROOT}/hooks/<name>.js
-```
-
-### OpenCode Plugin (OC)
-
-TypeScript plugin using `@opencode-ai/plugin` SDK:
-
-```
-OpenCode Harness
-  │
-  ├─ permission.ask hook         → blocks test file writes
-  ├─ tool.execute.after hook     → mirrors all 5 PostToolUse hooks
-  ├─ shell.env hook              → injects VF_EVIDENCE_DIR, VF_VERSION
-  └─ Custom tools
-      ├─ vf_validate             → proxy to /validate command
-      └─ vf_check_evidence       → check evidence directory status
-
-Entry: .opencode/plugins/validationforge/index.ts
-```
-
-### Pattern Sharing Architecture
-
-```
-.opencode/plugins/validationforge/patterns.ts   ← Single source of truth
-  │
-  ├── Exports: TEST_PATTERNS, ALLOWLIST, MOCK_PATTERNS,
-  │            BUILD_PATTERNS, COMPLETION_PATTERNS,
-  │            VALIDATION_COMMAND_PATTERNS
-  │
-  ├── OC plugin (index.ts) imports directly via TypeScript
-  │
-  └── CC hooks import via hooks/patterns.js (CommonJS re-export)
-      ├── block-test-files.js     → require('./patterns')
-      ├── completion-claim-validator.js
-      ├── mock-detection.js
-      ├── validation-not-compilation.js
-      └── validation-state-tracker.js
-```
-
----
-
-## Current State (April 2026)
-
-- 40 skills across 5 layers (L0 Foundation → L4 Orchestrator)
-- 15 commands (9 validate + 6 forge)
-- 7 hooks (2 PreToolUse blocking, 5 PostToolUse advisory)
-- 5 agents, 8 rules, 3 config profiles
-- Dual-platform: Claude Code plugin + OpenCode plugin
-- Shared pattern library: patterns.ts (single source of truth)
-- See [SKILLS.md](./SKILLS.md) and [COMMANDS.md](./COMMANDS.md) for full indexes
+| Rule | File | Purpose |
+|------|------|---------|
+| validation-discipline | `rules/validation-discipline.md` | No-mock mandate, evidence standards, gate protocol |
+| execution-workflow | `rules/execution-workflow.md` | 7-phase pipeline details |
+| evidence-management | `rules/evidence-management.md` | Directory structure, naming, quality, retention |
+| platform-detection | `rules/platform-detection.md` | Detection priority, platform-specific validation |
+| team-validation | `rules/team-validation.md` | Multi-agent roles, file ownership, coordination |
+| benchmarking | `rules/benchmarking.md` | Metric collection, integrity, comparative analysis |
+| forge-execution | `rules/forge-execution.md` | Phase gates, fix loop discipline, state persistence |
+| forge-team-orchestration | `rules/forge-team-orchestration.md` | Validator assignment, evidence ownership, verdict synthesis |

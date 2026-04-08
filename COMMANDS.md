@@ -4,39 +4,46 @@
 
 ## Validation Commands (9)
 
-| # | Command | Description | Pipeline Stages |
-|---|---------|-------------|-----------------|
-| 1 | `/validate` | Full pipeline: detect → plan → execute → verdict | Research, Plan, Preflight, Execute, Analyze, Verdict |
-| 2 | `/validate-plan` | Plan only — map journeys, define PASS criteria, no execution | Research, Plan, Preflight |
-| 3 | `/validate-audit` | Read-only audit — capture evidence, classify severity, no code changes | Research, Preflight, Execute (read-only), Analyze, Verdict |
-| 4 | `/validate-fix` | Fix FAIL verdicts and re-validate (3-strike limit per journey) | Execute, Analyze, Verdict, Fix Loop |
-| 5 | `/validate-ci` | Non-interactive CI/CD mode — auto-approve plan, exit code 0/1 | Research, Plan, Preflight, Execute, Analyze, Verdict |
-| 6 | `/validate-team` | Multi-agent parallel validation — one validator per platform | Research, Plan, Preflight, Execute (parallel), Analyze, Verdict (unified) |
-| 7 | `/validate-sweep` | Autonomous fix-and-revalidate loop until all PASS or max attempts | Execute (loop), Analyze (loop), Verdict (loop) |
-| 8 | `/validate-benchmark` | Score validation posture: coverage, evidence, enforcement, speed | Analyze (score), Verdict (report) |
-| 9 | `/vf-setup` | Interactive setup wizard — detect platform, select enforcement, scaffold evidence dir | — (setup) |
+| # | Command | Description |
+|---|---------|-------------|
+| 1 | `/validate` | Run full end-to-end validation -- detect platform, map journeys, capture evidence, write verdicts. |
+| 2 | `/validate-plan` | Analyze codebase and generate a validation plan with PASS criteria -- no execution. |
+| 3 | `/validate-audit` | Read-only validation audit -- captures evidence and classifies findings without modifying code. |
+| 4 | `/validate-fix` | Fix validation failures and re-validate until all journeys pass (3-strike limit). |
+| 5 | `/validate-ci` | Non-interactive CI/CD mode -- auto-execute full validation pipeline with exit codes. |
+| 6 | `/validate-team` | Spawn coordinated validation agents across platforms with evidence handoff. |
+| 7 | `/validate-sweep` | Autonomous validation loop -- detect, validate, fix, re-validate until PASS or max attempts. |
+| 8 | `/validate-benchmark` | Benchmark validation coverage, speed, and evidence quality against baseline metrics. |
+| 9 | `/vf-setup` | Setup and configure ValidationForge for a project or globally. |
 
 ## Forge Commands (6)
 
 | # | Command | Description | Allowed Tools |
 |---|---------|-------------|---------------|
-| 10 | `/forge-setup` | Initialize ValidationForge for current project | Read, Write, Edit, Bash, Glob, Grep, Agent |
-| 11 | `/forge-plan` | Generate validation plan with journey discovery | Read, Write, Bash, Glob, Grep, Agent |
-| 12 | `/forge-execute` | Run validation journeys with autonomous fix loop | Read, Write, Edit, Bash, Glob, Grep, Agent |
-| 13 | `/forge-team` | Spawn platform-specific validators for parallel validation | Read, Write, Bash, Glob, Grep, Agent |
-| 14 | `/forge-benchmark` | Measure validation posture with trend tracking | Read, Write, Bash, Glob, Grep |
-| 15 | `/forge-install-rules` | Install rules to `.claude/rules/` for cross-session enforcement | Read, Write, Bash, Glob |
+| 10 | `/forge-setup` | Initialize ValidationForge for this project | Read, Write, Edit, Bash, Glob, Grep, Agent |
+| 11 | `/forge-plan` | Generate a validation plan with journey discovery and PASS criteria | Read, Write, Bash, Glob, Grep, Agent |
+| 12 | `/forge-execute` | Run validation journeys against the real system with autonomous fix loop | Read, Write, Edit, Bash, Glob, Grep, Agent |
+| 13 | `/forge-team` | Multi-agent parallel validation across platforms | Read, Write, Bash, Glob, Grep, Agent |
+| 14 | `/forge-benchmark` | Measure validation posture across 5 dimensions with trend tracking | Read, Write, Bash, Glob, Grep |
+| 15 | `/forge-install-rules` | Install ValidationForge rules to .claude/rules/ for cross-session enforcement | Read, Write, Bash, Glob |
 
 ## Command Pipeline Matrix
 
 | Command | Research | Plan | Preflight | Execute | Analyze | Verdict | Ship |
 |---------|:--------:|:----:|:---------:|:-------:|:-------:|:-------:|:----:|
 | `/validate` | yes | yes | yes | yes | yes | yes | no |
-| `/validate-plan` | yes | yes | yes | — | — | — | — |
-| `/validate-audit` | yes | — | yes | read-only | yes | yes | — |
-| `/validate-fix` | — | — | — | yes | yes | yes | — |
-| `/validate-ci` | yes | yes | yes | yes | yes | yes | — |
-| `/validate-team` | yes | yes | yes | parallel | yes | unified | — |
-| `/validate-sweep` | — | — | — | loop | loop | loop | — |
-| `/validate-benchmark` | — | — | — | — | score | report | — |
-| `/vf-setup` | — | — | — | — | — | — | — |
+| `/validate-plan` | yes | yes | yes | -- | -- | -- | -- |
+| `/validate-audit` | yes | -- | yes | read-only | yes | yes | -- |
+| `/validate-fix` | -- | -- | -- | yes | yes | yes | -- |
+| `/validate-ci` | yes | yes | yes | yes | yes | yes | -- |
+| `/validate-team` | yes | yes | yes | parallel | yes | unified | -- |
+| `/validate-sweep` | -- | -- | -- | loop | loop | loop | -- |
+| `/validate-benchmark` | -- | -- | -- | -- | score | report | -- |
+| `/vf-setup` | -- | -- | -- | -- | -- | -- | -- |
+
+## Validation vs Forge Commands
+
+Both families access the same pipeline. The difference:
+
+- **Validation commands** (`/validate*`, `/vf-setup`) are the user-facing interface. No `allowed-tools` restriction -- they use whatever Claude Code makes available.
+- **Forge commands** (`/forge-*`) are the orchestration layer. Each specifies `allowed-tools` in frontmatter to constrain which Claude Code tools the command may invoke. Forge commands are typically called by skills or agents rather than directly by users.
