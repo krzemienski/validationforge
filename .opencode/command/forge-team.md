@@ -1,0 +1,1 @@
+../../commands/forge-team.md

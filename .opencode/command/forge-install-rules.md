@@ -1,0 +1,1 @@
+../../commands/forge-install-rules.md

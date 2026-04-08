@@ -1,0 +1,15 @@
+{
+  "name": "validationforge-opencode",
+  "version": "1.0.0",
+  "description": "ValidationForge OpenCode plugin — no-mock validation enforcement",
+  "type": "module",
+  "main": "index.ts",
+  "dependencies": {
+    "@opencode-ai/plugin": "latest",
+    "@opencode-ai/sdk": "latest",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

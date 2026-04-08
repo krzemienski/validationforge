@@ -1,0 +1,1 @@
+../../commands/validate-fix.md
