@@ -29,15 +29,12 @@ process.stdin.on('end', () => {
         fs.readdirSync(EVIDENCE_DIR).length > 0;
 
       if (!hasEvidence) {
-        process.stdout.write(JSON.stringify({
-          hookSpecificOutput: {
-            hookEventName: "PostToolUse",
-            additionalContext:
-              'Completion claimed but no validation evidence found in e2e-evidence/.\n' +
-              'ValidationForge requires real evidence before any completion claim.\n' +
-              'Run /validate to capture proper evidence through real system interaction.'
-          }
-        }));
+        process.stderr.write(
+          '[ValidationForge] completion-claim-validator: Completion claimed but no validation evidence found in e2e-evidence/.\n' +
+          'ValidationForge requires real evidence before any completion claim.\n' +
+          'Run /validate to capture proper evidence through real system interaction.\n'
+        );
+        process.exit(2);
       }
     }
   } catch (e) {

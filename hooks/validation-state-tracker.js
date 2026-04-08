@@ -25,14 +25,11 @@ process.stdin.on('end', () => {
     const isValidationRelated = validationPatterns.some(p => p.test(command));
 
     if (isValidationRelated) {
-      process.stdout.write(JSON.stringify({
-        hookSpecificOutput: {
-          hookEventName: "PostToolUse",
-          additionalContext:
-            'ValidationForge: Validation activity detected. Remember to capture evidence\n' +
-            '(screenshots, logs, responses) to e2e-evidence/ directory.'
-        }
-      }));
+      process.stderr.write(
+        '[ValidationForge] validation-state-tracker: Validation activity detected. Remember to capture evidence\n' +
+        '(screenshots, logs, responses) to e2e-evidence/ directory.\n'
+      );
+      process.exit(2);
     }
   } catch (e) {
     process.stderr.write(`[ValidationForge] validation-state-tracker hook error: ${e.message}\n`);

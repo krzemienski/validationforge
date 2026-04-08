@@ -20,14 +20,11 @@ process.stdin.on('end', () => {
     const content = toolInput.content || toolInput.new_string || '';
 
     if (content.length === 0) {
-      process.stdout.write(JSON.stringify({
-        hookSpecificOutput: {
-          hookEventName: "PostToolUse",
-          additionalContext:
-            'ValidationForge WARNING: Empty evidence file detected.\n' +
-            '0-byte files are INVALID evidence. Capture real content (screenshots, logs, API responses).'
-        }
-      }));
+      process.stderr.write(
+        '[ValidationForge] evidence-quality-check: Empty evidence file detected.\n' +
+        '0-byte files are INVALID evidence. Capture real content (screenshots, logs, API responses).\n'
+      );
+      process.exit(2);
     }
     // Successful evidence writes: exit silently (no noise)
   } catch (e) {

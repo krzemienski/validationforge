@@ -27,15 +27,12 @@ process.stdin.on('end', () => {
     const isBuildSuccess = BUILD_PATTERNS.some(p => p.test(output));
 
     if (isBuildSuccess) {
-      process.stdout.write(JSON.stringify({
-        hookSpecificOutput: {
-          hookEventName: "PostToolUse",
-          additionalContext:
-            'Build succeeded, but compilation is NOT validation.\n' +
-            'ValidationForge reminder: Run /validate to verify through real user interfaces.\n' +
-            'A successful build only proves syntax is correct, not that features work.'
-        }
-      }));
+      process.stderr.write(
+        '[ValidationForge] validation-not-compilation: Build succeeded, but compilation is NOT validation.\n' +
+        'Run /validate to verify through real user interfaces.\n' +
+        'A successful build only proves syntax is correct, not that features work.\n'
+      );
+      process.exit(2);
     }
   } catch (e) {
     process.stderr.write(`[ValidationForge] validation-not-compilation hook error: ${e.message}\n`);

@@ -41,15 +41,12 @@ process.stdin.on('end', () => {
     const detectedPatterns = MOCK_PATTERNS.filter(p => p.test(content));
 
     if (detectedPatterns.length > 0) {
-      process.stdout.write(JSON.stringify({
-        hookSpecificOutput: {
-          hookEventName: "PostToolUse",
-          additionalContext:
-            `Mock/test pattern detected in code being written.\n` +
-            `ValidationForge Iron Rule: Never create mocks, stubs, or test harnesses.\n` +
-            `Fix the real system instead. Run /validate for proper validation.`
-        }
-      }));
+      process.stderr.write(
+        '[ValidationForge] mock-detection: Mock/test pattern detected in code being written.\n' +
+        'ValidationForge Iron Rule: Never create mocks, stubs, or test harnesses.\n' +
+        'Fix the real system instead. Run /validate for proper validation.\n'
+      );
+      process.exit(2);
     }
   } catch (e) {
     process.stderr.write(`[ValidationForge] mock-detection hook error: ${e.message}\n`);
