@@ -1,5 +1,0 @@
-{"t":0,"agent":"a4cd84f","agent_type":"unknown","event":"agent_stop","success":true}
-{"t":0,"agent":"ab135f4","agent_type":"unknown","event":"agent_stop","success":true}
-{"t":0,"agent":"a334cbb","agent_type":"Explore","event":"agent_start","parent_mode":"none"}
-{"t":0,"agent":"a334cbb","agent_type":"Explore","event":"agent_stop","success":true,"duration_ms":61832}
-{"t":0,"agent":"system","event":"skill_invoked","skill_name":"functional-validation"}

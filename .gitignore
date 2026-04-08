@@ -2,8 +2,7 @@ node_modules/
 dist/
 .env
 *.local
-.omc/state/
-.omc/sessions/
+.omc/
 .remember/
 audit-artifacts/
 e2e-evidence/*.png

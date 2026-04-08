@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"echo \\\"=== 1. ALL SKILLS HAVE FRONTMATTER ===\\\" && failed=0 && for d in skills/*/; do name=$(basename \\\"$d\\\"); if ! head -1 \\\"$d/SKILL.md\\\" 2>/dev/null | grep -q \\\"^---\\\"; then echo \\\"FAIL...",
-  "error": "Exit code 1\n=== 1. ALL SKILLS HAVE FRONTMATTER ===\nFAIL: forge-setup missing frontmatter\nFAIL: forge-team missing frontmatter\nSkills without frontmatter: 2/40\n\n=== 2. ALL HOOKS NO || true ===\n0",
-  "timestamp": "2026-04-08T17:51:06.701Z",
-  "retry_count": 2
-}
