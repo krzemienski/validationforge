@@ -1,3 +1,8 @@
+---
+name: forge-execute
+description: Autonomous validation execution loop. Runs validation journeys against the real system, captures evidence, and fixes failures with re-validation.
+---
+
 # forge-execute
 
 Autonomous validation execution loop. Runs validation journeys against the real system, captures evidence, and fixes failures with re-validation.

@@ -5,5 +5,16 @@
   "author": {
     "name": "Nick Krzemienski",
     "url": "https://github.com/krzemienski"
-  }
+  },
+  "homepage": "https://validationforge.dev",
+  "repository": "https://github.com/krzemienski/validationforge",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "validation",
+    "no-mock",
+    "functional-testing",
+    "evidence-based",
+    "quality-assurance"
+  ]
 }

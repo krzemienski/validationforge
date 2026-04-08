@@ -41,6 +41,7 @@ process.stdin.on('end', () => {
       }
     }
   } catch (e) {
+    process.stderr.write(`[ValidationForge] completion-claim-validator hook error: ${e.message}\n`);
     process.exit(0);
   }
 });

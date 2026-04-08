@@ -35,6 +35,7 @@ process.stdin.on('end', () => {
       }));
     }
   } catch (e) {
+    process.stderr.write(`[ValidationForge] validation-state-tracker hook error: ${e.message}\n`);
     process.exit(0);
   }
 });

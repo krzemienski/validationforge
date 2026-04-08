@@ -1,4 +1,5 @@
 {
+  "description": "ValidationForge hooks — enforce no-mock validation discipline and evidence quality",
   "hooks": {
     "PreToolUse": [
       {
@@ -6,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-test-files.js || true"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-test-files.js"
           }
         ]
       },
@@ -15,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/evidence-gate-reminder.js || true"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/evidence-gate-reminder.js"
           }
         ]
       }
@@ -26,15 +27,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validation-not-compilation.js || true"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validation-not-compilation.js"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/completion-claim-validator.js || true"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/completion-claim-validator.js"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validation-state-tracker.js || true"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validation-state-tracker.js"
           }
         ]
       },
@@ -43,11 +44,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/mock-detection.js || true"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/mock-detection.js"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/evidence-quality-check.js || true"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/evidence-quality-check.js"
           }
         ]
       }

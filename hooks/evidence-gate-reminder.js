@@ -31,6 +31,7 @@ process.stdin.on('end', () => {
       }
     }));
   } catch (e) {
+    process.stderr.write(`[ValidationForge] evidence-gate-reminder hook error: ${e.message}\n`);
     process.exit(0);
   }
 });

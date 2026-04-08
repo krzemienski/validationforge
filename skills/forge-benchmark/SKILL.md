@@ -1,3 +1,8 @@
+---
+name: forge-benchmark
+description: Measure validation posture across five dimensions. Track trends over time and compare against baseline targets.
+---
+
 # forge-benchmark
 
 Measure validation posture across five dimensions. Track trends over time and compare against baseline targets.

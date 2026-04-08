@@ -52,6 +52,7 @@ process.stdin.on('end', () => {
       }));
     }
   } catch (e) {
+    process.stderr.write(`[ValidationForge] mock-detection hook error: ${e.message}\n`);
     process.exit(0);
   }
 });

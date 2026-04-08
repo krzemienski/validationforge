@@ -38,6 +38,7 @@ process.stdin.on('end', () => {
       }));
     }
   } catch (e) {
+    process.stderr.write(`[ValidationForge] validation-not-compilation hook error: ${e.message}\n`);
     process.exit(0);
   }
 });
