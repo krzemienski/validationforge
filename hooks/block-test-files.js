@@ -7,30 +7,7 @@
 //
 // Protocol: hookSpecificOutput.permissionDecision = "deny" (current CC spec)
 
-const TEST_PATTERNS = [
-  /\.test\.[jt]sx?$/,
-  /\.spec\.[jt]sx?$/,
-  /_test\.go$/,
-  /test_[^/]+\.py$/,
-  /Tests?\.swift$/,
-  /\.test\.py$/,
-  /\/__tests__\//,
-  /\/test\/.*\.(ts|js|tsx|jsx|py|go|swift)$/,
-  /\.mock\.[jt]sx?$/,
-  /\.stub\.[jt]sx?$/,
-  /\/mocks\//,
-  /\/stubs\//,
-  /\/fixtures\//,
-  /\/test-utils\//,
-  /\.stories\.[jt]sx?$/,
-];
-
-const ALLOWLIST = [
-  /e2e-evidence/,
-  /validation-evidence/,
-  /\.claude\//,
-  /validationforge\//,
-];
+const { TEST_PATTERNS, ALLOWLIST } = require('./patterns');
 
 let input = '';
 process.stdin.setEncoding('utf8');

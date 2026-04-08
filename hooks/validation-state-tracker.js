@@ -3,6 +3,8 @@
 // Fires after Bash commands to detect validation-related operations
 // and remind about evidence capture.
 
+const { VALIDATION_COMMAND_PATTERNS } = require('./patterns');
+
 let input = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
@@ -11,18 +13,7 @@ process.stdin.on('end', () => {
     const data = JSON.parse(input);
     const command = data.tool_input?.command || '';
 
-    const validationPatterns = [
-      /playwright/i,
-      /lighthouse/i,
-      /simctl/i,
-      /xcrun/i,
-      /curl.*localhost/i,
-      /npm run (dev|start|build)/i,
-      /xcodebuild/i,
-      /idb /i,
-    ];
-
-    const isValidationRelated = validationPatterns.some(p => p.test(command));
+    const isValidationRelated = VALIDATION_COMMAND_PATTERNS.some(p => p.test(command));
 
     if (isValidationRelated) {
       process.stderr.write(

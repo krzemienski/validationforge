@@ -2,28 +2,7 @@
 // PostToolUse hook: Detect mock/stub patterns in written code.
 // Matches: Edit, Write, MultiEdit
 
-const MOCK_PATTERNS = [
-  /jest\.mock\(/,
-  /sinon\.stub\(/,
-  /unittest\.mock/,
-  /from unittest\.mock import/,
-  /mockImplementation/,
-  /\.mockReturnValue/,
-  /\.mockResolvedValue/,
-  /vi\.mock\(/,
-  /cy\.intercept\(/,
-  /nock\(/,
-  /httptest\.NewRecorder/,
-  /gomock\.NewController/,
-  /XCTestCase/,
-  /@testable import/,
-  /class.*Tests.*XCTestCase/,
-  /func test.*\(\)/,
-  /describe\(['"].*['"],\s*\(\)\s*=>/,
-  /it\(['"].*['"],\s*\(\)\s*=>/,
-  /expect\(.*\)\.(to|not)/,
-  /assert\.\w+\(/,
-];
+const { MOCK_PATTERNS } = require('./patterns');
 
 let input = '';
 process.stdin.setEncoding('utf8');

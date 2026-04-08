@@ -2,18 +2,7 @@
 // PostToolUse hook: Remind that compilation success is NOT validation.
 // Matches: Bash (after build/compile commands)
 
-const BUILD_PATTERNS = [
-  /build succeeded/i,
-  /compiled successfully/i,
-  /compilation succeeded/i,
-  /webpack.*compiled/i,
-  /next.*build/i,
-  /tsc.*--noEmit/i,
-  /cargo build/i,
-  /go build/i,
-  /xcodebuild.*succeeded/i,
-  /BUILD SUCCEEDED/,
-];
+const { BUILD_PATTERNS } = require('./patterns');
 
 let input = '';
 process.stdin.setEncoding('utf8');

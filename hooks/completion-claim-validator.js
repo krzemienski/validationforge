@@ -2,12 +2,7 @@
 // PostToolUse hook: Catch completion claims that lack validation evidence.
 // Matches: Bash (after commands that might indicate "done")
 
-const COMPLETION_PATTERNS = [
-  /all.*pass/i,
-  /tests.*pass/i,
-  /successfully deployed/i,
-  /implementation complete/i,
-];
+const { COMPLETION_PATTERNS } = require('./patterns');
 
 const EVIDENCE_DIR = 'e2e-evidence';
 
