@@ -4,6 +4,7 @@ description: >
   iOS/macOS platform validation through Xcode build, simulator launch, and
   real device interaction via simctl and idb. Captures screenshots, video,
   and accessibility tree as validation evidence.
+context_priority: reference
 ---
 
 # iOS Validation
