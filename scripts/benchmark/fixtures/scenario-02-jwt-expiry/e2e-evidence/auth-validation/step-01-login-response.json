@@ -1,0 +1,32 @@
+{
+  "journey": "jwt-expiry",
+  "step": 1,
+  "description": "POST /api/auth/login — capture token and observe expiry field",
+  "timestamp": "2026-04-02T09:15:00Z",
+  "request": {
+    "method": "POST",
+    "url": "http://localhost:3000/api/auth/login",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "testuser@example.com",
+      "password": "[REDACTED]"
+    }
+  },
+  "response": {
+    "status": 200,
+    "status_text": "OK",
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-request-id": "req_jwt002"
+    },
+    "body": {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQyLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzQzNTg0MDAwLCJleHAiOjE3NDM1ODc2MDB9.example",
+      "expires_in": 3600,
+      "token_type": "Bearer"
+    }
+  },
+  "observation": "HTTP 200 returned. Token issued with expires_in=3600 seconds. JWT payload decoded: exp=1743587600 (1 hour from iat=1743584000). Expiry field present in response.",
+  "note": "No verdict written — no VF report template available. No hooks were triggered during this capture. Evidence saved manually."
+}
