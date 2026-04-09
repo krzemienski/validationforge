@@ -4,7 +4,7 @@ status: planned
 created: 2026-04-08
 branch: audit/plugin-improvements
 mode: hard
-blockedBy: []
+blockedBy: [260409-0432-merge-campaign-continuation]
 blocks: []
 ---
 

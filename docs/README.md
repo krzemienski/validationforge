@@ -7,6 +7,25 @@ No-mock validation platform for Claude Code. ValidationForge replaces unit tests
 **Author:** [Nick Krzemienski](https://github.com/krzemienski)
 **Repository:** [github.com/krzemienski/validationforge](https://github.com/krzemienski/validationforge)
 
+> For quick start and installation, see the [main README](../README.md).
+
+### Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Architecture](ARCHITECTURE.md) | Plugin lifecycle, hook flow, pipeline, agent architecture |
+| [Hook API Reference](HOOK-API-REFERENCE.md) | Per-hook I/O contracts, patterns, configuration |
+| [ADRs](adr/) | Architecture Decision Records — the *why* behind design choices |
+| [Iron Rules](domain/iron-rules.md) | The 8 non-negotiable rules with rationale |
+| [Evidence Standards](domain/evidence-standards.md) | What makes evidence valid or invalid |
+| [Hook Protocol](patterns/hook-protocol.md) | Complete stdin/stdout/exit code protocol |
+| [Config Cascade](patterns/config-cascade.md) | How enforcement config flows to hooks |
+| [Agent Dispatch](patterns/agent-dispatch.md) | Agent chain, file ownership, handoff protocol |
+| [CC Plugin API](interfaces/claude-code-plugin-api.md) | How VF integrates with Claude Code |
+| [OC Plugin API](interfaces/opencode-plugin-api.md) | How VF adapts for OpenCode |
+| [Portability](PORTABILITY.md) | Dual-platform shared patterns architecture |
+| [Benchmarks](BENCHMARKS.md) | Scoring rubric for hooks, skills, commands, agents |
+
 ## Quick Start
 
 ### Install via Marketplace

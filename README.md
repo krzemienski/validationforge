@@ -2,7 +2,7 @@
 
 **No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
 
-> **41 skills | 15 commands | 7 hooks | 5 agents | 8 rules | 8 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
+> **45 skills | 15 commands | 7 hooks | 5 agents | 8 rules | 17 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
 
 ## The Iron Rule
 
@@ -133,7 +133,7 @@ The uninstaller removes `~/.claude/plugins/validationforge`, deletes all copied 
 
 ### Skills
 
-Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 41 skills across 7 categories.
+Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 45 skills across 7 categories.
 
 ### Hooks
 
@@ -247,15 +247,15 @@ Designed grade thresholds (pending empirical calibration): A (90+), B (80–89),
 
 | Primitive | Count | Location |
 |-----------|------:|----------|
-| Skills | 41 | `skills/*/SKILL.md` |
+| Skills | 45 | `skills/*/SKILL.md` |
 | Commands | 15 | `commands/*.md` |
-| CC Hooks | 8 | `hooks/*.js` + `hooks/hooks.json` |
+| CC Hooks | 7 + 4 support | `hooks/*.js` + `hooks/hooks.json` |
 | Agents | 5 | `agents/*.md` |
 | Rules | 8 | `rules/*.md` |
-| Shell Scripts | 8 | `scripts/*.sh` + `scripts/benchmark/*.sh` |
+| Shell Scripts | 17 | `scripts/*.sh` + `scripts/benchmark/*.sh` |
 | OC Plugin Files | 2 | `.opencode/plugins/validationforge/{index.ts,patterns.ts}` |
 | Config Profiles | 3 | `config/*.json` |
-| Report Templates | 4 | `templates/*.md` |
+| Report Templates | 5 | `templates/*.md` |
 | Installer | 1 | `install.sh` |
 
 Full indexes: [SKILLS.md](./SKILLS.md) | [COMMANDS.md](./COMMANDS.md) | [ARCHITECTURE.md](./ARCHITECTURE.md)
@@ -270,7 +270,7 @@ validationforge/
 |   +-- patterns.ts                   Shared regex patterns (source of truth)
 |   +-- package.json                  Package manifest
 |   +-- tsconfig.json                 TypeScript config
-+-- skills/                           41 skills (SKILL.md frontmatter)
++-- skills/                           45 skills (SKILL.md frontmatter)
 +-- commands/                         15 slash commands
 +-- hooks/                            7 enforcement hooks + 1 patterns bridge
 |   +-- hooks.json                    Hook registration manifest
@@ -278,8 +278,8 @@ validationforge/
 +-- agents/                           5 specialist agents
 +-- rules/                            8 enforcement rules
 +-- config/                           3 enforcement profiles
-+-- templates/                        4 report templates
-+-- scripts/                          4 core + 4 benchmark shell scripts
++-- templates/                        5 report templates
++-- scripts/                          11 core + 6 benchmark shell scripts
 +-- install.sh                        Global installer (curl-pipe safe)
 +-- CLAUDE.md                         Master reference document
 +-- README.md                         This file
@@ -294,7 +294,7 @@ What has actually been verified about ValidationForge, and what has not:
 
 | Area | Status |
 |------|--------|
-| File inventory (40 skills, 15 commands, 7 hooks, 5 agents, 8 rules) | Verified on disk |
+| File inventory (45 skills, 15 commands, 7 hooks, 5 agents, 8 rules) | Verified on disk |
 | Hook syntax and functional behavior (all 7) | Verified — syntax PASS, functional tests PASS |
 | Cross-references (commands → skills, agents, rules) | Verified — zero broken references |
 | Plugin manifest format | Verified — matches ECC 1.8.0 and OMC patterns |
@@ -304,7 +304,7 @@ What has actually been verified about ValidationForge, and what has not:
 | `/validate` command as automated pipeline | **Not verified** — manual execution only |
 | `${CLAUDE_PLUGIN_ROOT}` resolution | **Not verified** — standard pattern, untested end-to-end |
 | Benchmark scoring | **Not verified** — algorithm implemented, never executed |
-| Skill content quality (all 40) | **Partially verified** — 5 deep-reviewed, remainder spot-checked |
+| Skill content quality (all 45) | **Partially verified** — 5 deep-reviewed, remainder spot-checked |
 
 ## Known Limitations
 
@@ -318,7 +318,7 @@ These are honest disclosures about what ValidationForge has **not** been verifie
 
 4. **Benchmark scoring not empirically tested** — The scoring algorithm in `scripts/benchmark/` and the `/validate-benchmark` command have never been executed against a real project. Dimension weights (Coverage 35%, Evidence Quality 30%, Enforcement 25%, Speed 10%) and grade thresholds (A/B/C/D/F) are design targets derived from the specification, not calibrated from observed outputs.
 
-5. **Skill content quality partially verified** — Of the 40 skill directories, 5 were deep-reviewed (frontmatter, content accuracy, cross-reference validity) and the remaining 35 were spot-checked for file presence and frontmatter structure. Content correctness and trigger accuracy for the unreviewed skills is assumed, not confirmed.
+5. **Skill content quality partially verified** — Of the 45 skill directories, 5 were deep-reviewed (frontmatter, content accuracy, cross-reference validity) and the remaining 40 were spot-checked for file presence and frontmatter structure. Content correctness and trigger accuracy for the unreviewed skills is assumed, not confirmed.
 
 6. **OpenCode plugin not verified in live OpenCode session** — The OpenCode plugin (`index.ts`) compiles without errors and follows the documented plugin interface, but has never been loaded into a running OpenCode session. Hook registration (`permission.ask`, `tool.execute.after`, `shell.env`) and custom tool availability (`vf_validate`, `vf_check_evidence`) are unconfirmed at runtime.
 
