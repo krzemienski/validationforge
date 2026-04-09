@@ -1,0 +1,378 @@
+{
+  "feature": "First-Run Setup Experience (/vf-setup)",
+  "description": "# First-Run Setup Experience (/vf-setup)\n\nImplement and verify the /vf-setup command that initializes ValidationForge for a project — creates config files, selects enforcement level (strict/standard/permissive), configures evidence directory, and detects the project platform.\n\n## Rationale\nFirst impressions determine adoption. If the setup experience fails, users abandon immediately. This is the #3 launch blocker and the first thing every new user will run.\n\n## User Stories\n- As a new user, I want to run /vf-setup and have ValidationForge configured for my project in under 30 seconds so that I can start validating immediately\n- As an engineering lead, I want to set strict enforcement mode during setup so that my team cannot bypass validation discipline\n\n## Acceptance Criteria\n- [ ] /vf-setup creates ~/.claude/.vf-config.json with valid configuration\n- [ ] User can select between strict, standard, and permissive enforcement levels\n- [ ] Platform auto-detection runs and reports detected platform type\n- [ ] Subsequent /validate commands read and respect the config\n- [ ] Setup completes in under 30 seconds\n",
+  "created_at": "2026-04-08T22:58:50.102Z",
+  "updated_at": "2026-04-09T02:06:29.242Z",
+  "status": "in_progress",
+  "planStatus": "in_progress",
+  "xstateState": "planning",
+  "executionPhase": "coding",
+  "workflow_type": "simple",
+  "workflow_rationale": "Single-service Claude Code plugin. All changes are within Markdown instruction files and shell scripts. No complex service dependencies. The work is to complete/fix the vf-setup command definition and add config-integration to validate commands.",
+  "phases": [
+    {
+      "id": "phase-1-audit-and-fix-vf-setup",
+      "name": "Audit & Fix vf-setup Command",
+      "type": "implementation",
+      "description": "Review commands/vf-setup.md for completeness against the spec acceptance criteria. Fix any gaps: state file directory creation, rules source path clarity, config JSON schema validation, and enforcement-level-specific behavior. Ensure the 10-step workflow produces a valid ~/.claude/.vf-config.json and installs rules correctly.",
+      "depends_on": [],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-1-1",
+          "description": "Audit vf-setup.md Step 0 (resume detection) and add explicit .vf/state/ directory creation. Step 0 references '.vf/state/setup-state.json' but the directory is never explicitly created. Add a mkdir step before the jq read to ensure no file-not-found errors.",
+          "service": "commands",
+          "files_to_modify": [
+            "commands/vf-setup.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "install.sh"
+          ],
+          "verification": {
+            "type": "manual",
+            "instructions": "Read commands/vf-setup.md Step 0 — verify the .vf/state/ directory is created with mkdir -p before jq reads the state file. Confirm the step handles non-existent state gracefully."
+          },
+          "status": "completed",
+          "notes": "Added `mkdir -p .vf/state` before the jq read in Step 0. Also fixed `.timestamp` jq path to use `\".timestamp // empty\"` with double-quotes for consistency. The directory is now explicitly created before any file-existence check or read, preventing file-not-found errors on first run.",
+          "updated_at": "2026-04-09T01:25:09.683251+00:00"
+        },
+        {
+          "id": "subtask-1-2",
+          "description": "Fix vf-setup.md Step 4 (Install Rules) to clearly specify the source path for rules. The current step says 'install these files' but doesn't specify WHERE to copy FROM. The source should be the ValidationForge plugin installation directory (from ~/.claude/.vf-config.json 'installDir' or from the plugin's own location via ${CLAUDE_PLUGIN_ROOT}). Add explicit cp commands with source paths.",
+          "service": "commands",
+          "files_to_modify": [
+            "commands/vf-setup.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "install.sh",
+            "skills/forge-setup/SKILL.md"
+          ],
+          "verification": {
+            "type": "manual",
+            "instructions": "Read commands/vf-setup.md Step 4 — verify it shows explicit source and destination paths for rules installation. Local: cp from plugin rules/ to .claude/rules/{name}.md. Global: cp to ~/.claude/rules/vf-{name}.md. Both paths should be unambiguous."
+          },
+          "status": "completed",
+          "notes": "Fixed Step 4 to resolve source from ~/.claude/.vf-config.json 'installDir' with CLAUDE_PLUGIN_ROOT and default-path fallbacks. Added explicit cp loops for local (.claude/rules/{name}.md) and global (~/.claude/rules/vf-{name}.md) installs. Added error guard if rules source dir is missing.",
+          "updated_at": "2026-04-09T01:26:57.321632+00:00"
+        },
+        {
+          "id": "subtask-1-3",
+          "description": "Validate the ~/.claude/.vf-config.json schema in vf-setup.md Step 9. The current schema is missing 'enforcement' validation — it sets enforcement from the user's choice but should also include 'hooks_installed' and 'rules_dir' fields so that validate commands can discover where rules are installed. Update the JSON template in Step 9.",
+          "service": "commands",
+          "files_to_modify": [
+            "commands/vf-setup.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "skills/forge-setup/SKILL.md",
+            "config/standard.json"
+          ],
+          "verification": {
+            "type": "manual",
+            "instructions": "Read commands/vf-setup.md Step 9 config JSON — verify it includes: setupCompleted, setupVersion, scope, enforcement, platform, projectPath, rulesDir, pluginDir fields. Validate the jq or heredoc is syntactically correct."
+          },
+          "status": "completed",
+          "notes": "Updated Step 9 heredoc in vf-setup.md. Added: rulesDir (conditional on CONFIG_TYPE: global/both → ~/.claude/rules, local → $(pwd)/.claude/rules), pluginDir (from INSTALL_DIR resolved in Step 4), hooksInstalled: true. All 9 required fields now present: setupCompleted, setupVersion, scope, enforcement, platform, projectPath, rulesDir, pluginDir, hooksInstalled. Heredoc is syntactically correct. Committed as 740addd.",
+          "updated_at": "2026-04-09T01:29:42.071941+00:00"
+        },
+        {
+          "id": "subtask-1-4",
+          "description": "Add enforcement-level-specific behavior to vf-setup.md. When the user selects 'strict', the setup should activate all hooks; 'standard' activates core hooks; 'permissive' only activates advisory hooks. This should reference the corresponding config file (config/strict.json, etc.) so that validate commands can later read the active hooks list. Add a Step 4b: Apply Enforcement Config that copies the selected config/enforcement.json to .vf/active-config.json.",
+          "service": "commands",
+          "files_to_modify": [
+            "commands/vf-setup.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "config/strict.json",
+            "config/standard.json",
+            "config/permissive.json"
+          ],
+          "verification": {
+            "type": "manual",
+            "instructions": "Read commands/vf-setup.md — verify there is a step that copies config/{enforcement}.json to .vf/active-config.json after the user selects enforcement level. The file should be created with mkdir -p .vf first."
+          },
+          "status": "completed",
+          "notes": "Added enforcement-level-specific hook/rule details to Step 3 (with config file references) and added Step 4b that runs `mkdir -p .vf` then copies config/{enforcement}.json to .vf/active-config.json using a case statement, with post-copy jq validation. Committed as 0ba75eb.",
+          "updated_at": "2026-04-09T01:37:06.748587+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-2-config-integration-validate",
+      "name": "Config Integration in Validate Commands",
+      "type": "implementation",
+      "description": "Update commands/validate.md to read ~/.claude/.vf-config.json at startup. The file should be read to get the enforcement level, platform (if pre-configured), and evidence directory. This is the core gap for acceptance criterion #4: 'Subsequent /validate commands read and respect the config'.",
+      "depends_on": [
+        "phase-1-audit-and-fix-vf-setup"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-2-1",
+          "description": "Add a 'Config Check' pre-step to commands/validate.md. Before the Pipeline Stages section, add a new section 'Pre-Pipeline: Read Config' that: (1) checks if ~/.claude/.vf-config.json exists, (2) reads enforcement level and evidence_dir from it, (3) reads platform from config if --platform flag not provided, (4) prints a one-line summary of active config if VF_VERBOSE is set. Also add a note that if config is missing, defaults are used (enforcement: standard, evidence_dir: e2e-evidence/).",
+          "service": "commands",
+          "files_to_modify": [
+            "commands/validate.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "commands/vf-setup.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -n 'vf-config\\|enforcement\\|Read Config\\|Pre-Pipeline' commands/validate.md | head -20",
+            "expected": "Lines showing config-reading section in validate.md"
+          },
+          "status": "completed",
+          "notes": "Added 'Pre-Pipeline: Read Config' section to commands/validate.md before Pipeline Stages. Reads ~/.claude/.vf-config.json for enforcement, evidence_dir, and platform. Falls back to defaults (enforcement: standard, evidence_dir: e2e-evidence/) when config is missing. Prints one-line summary when VF_VERBOSE is set. Verification passed.",
+          "updated_at": "2026-04-09T01:38:54.172058+00:00"
+        },
+        {
+          "id": "subtask-2-2",
+          "description": "Add enforcement-level behavior descriptions to commands/validate.md. After the config reading section, add a table or description showing how enforcement level affects validate behavior: strict (require plan approval, fail on missing evidence, require preflight), standard (require plan approval, warn on missing evidence), permissive (optional plan approval, continue on missing evidence). This makes it clear to Claude how the config gates the workflow.",
+          "service": "commands",
+          "files_to_modify": [
+            "commands/validate.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "config/strict.json",
+            "config/standard.json",
+            "config/permissive.json"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -n 'strict\\|permissive\\|Enforcement' commands/validate.md | head -20",
+            "expected": "Lines showing enforcement level behavior table in validate.md"
+          },
+          "status": "completed",
+          "notes": "Added enforcement-level behavior table and prose descriptions to commands/validate.md after the config reading section. Table covers all three levels (strict/standard/permissive) across 8 behavior dimensions. Verification passes with grep showing lines 70-92 containing enforcement content.",
+          "updated_at": "2026-04-09T01:40:20.079792+00:00"
+        },
+        {
+          "id": "subtask-2-3",
+          "description": "Add config reading to commands/validate-plan.md. Add the same 'Pre-Pipeline: Read Config' pattern as validate.md so that the plan command also reads ~/.claude/.vf-config.json for enforcement level and platform.",
+          "service": "commands",
+          "files_to_modify": [
+            "commands/validate-plan.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "commands/validate.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -n 'vf-config\\|Read Config' commands/validate-plan.md | head -10",
+            "expected": "Lines showing config reading in validate-plan.md"
+          },
+          "status": "completed",
+          "notes": "Added 'Pre-Pipeline: Read Config' section to commands/validate-plan.md following the exact pattern from validate.md. Section placed between Supported Flags and What It Does. Reads ~/.claude/.vf-config.json for enforcement, evidence_dir, and platform with identical bash script and note. Verification passes: grep finds vf-config and Read Config references on expected lines.",
+          "updated_at": "2026-04-09T01:41:41.076242+00:00"
+        },
+        {
+          "id": "subtask-2-4",
+          "description": "Add config reading to commands/validate-ci.md. CI mode should also read the config file, and in CI mode, if no config exists, the command should explicitly warn that /vf-setup should be run first (but continue with defaults rather than failing).",
+          "service": "commands",
+          "files_to_modify": [
+            "commands/validate-ci.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "commands/validate.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -n 'vf-config\\|Read Config' commands/validate-ci.md | head -10",
+            "expected": "Lines showing config reading in validate-ci.md"
+          },
+          "status": "completed",
+          "notes": "Added Pre-Pipeline: Read Config section to commands/validate-ci.md. CI mode reads $HOME/.claude/.vf-config.json for enforcement, evidence_dir, and platform settings. When config is missing, emits a WARNING telling the user to run /vf-setup first, then continues with standard defaults rather than failing. Verification passes: grep -n 'vf-config\\|Read Config' commands/validate-ci.md shows 3 matching lines.",
+          "updated_at": "2026-04-09T01:43:56.366197+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-3-verify-scripts",
+      "name": "Verification Scripts",
+      "type": "implementation",
+      "description": "Create or update verification scripts that test the setup flow. Create scripts/verify-setup.sh that validates a setup is correct by checking: config file exists and has required fields, rules directory is populated, evidence directory exists, enforcement level is valid. This script is used in the vf-setup.md Step 8 (Verification) as the actual check command.",
+      "depends_on": [
+        "phase-1-audit-and-fix-vf-setup"
+      ],
+      "parallel_safe": true,
+      "subtasks": [
+        {
+          "id": "subtask-3-1",
+          "description": "Create scripts/verify-setup.sh — a lightweight script that verifies a VF setup is correctly configured. It should check: (1) ~/.claude/.vf-config.json exists and has required fields (setupCompleted, enforcement, platform, projectPath), (2) rules are installed (.claude/rules/ or ~/.claude/rules/vf-*.md), (3) e2e-evidence/ directory exists. Outputs '[OK]' or '[MISSING]' lines like the verify block in vf-setup.md Step 8.",
+          "service": "scripts",
+          "files_to_modify": [],
+          "files_to_create": [
+            "scripts/verify-setup.sh"
+          ],
+          "patterns_from": [
+            "install.sh",
+            "scripts/health-check.sh"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "bash scripts/verify-setup.sh 2>&1 | head -5",
+            "expected": "=== ValidationForge Setup Verification ==="
+          },
+          "status": "completed",
+          "notes": "Created scripts/verify-setup.sh. Script outputs '=== ValidationForge Setup Verification ===' header, checks ~/.claude/.vf-config.json for required fields (setupCompleted, enforcement, platform, projectPath), checks rules in both .claude/rules/ and ~/.claude/rules/vf-*.md, checks e2e-evidence/ exists. Outputs [OK]/[MISSING] per check. Exits 0 on full pass, 1 on any failures. Follows patterns from install.sh and health-check.sh (set -euo pipefail, helper functions, etc.).",
+          "updated_at": "2026-04-09T01:46:46.173555+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-4-end-to-end-verification",
+      "name": "End-to-End Verification",
+      "type": "integration",
+      "description": "Verify the complete setup flow works end-to-end. Simulate running /vf-setup, verify the config is created correctly, verify that the validate command would read it, and verify all acceptance criteria are met.",
+      "depends_on": [
+        "phase-2-config-integration-validate",
+        "phase-3-verify-scripts"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-4-1",
+          "description": "Manual verification of the complete /vf-setup acceptance criteria. Walk through the vf-setup.md workflow manually and verify each acceptance criterion: (1) Config file creation with valid JSON, (2) Enforcement level selection documented, (3) Platform detection documented, (4) Validate commands reference config, (5) Setup is estimated to complete in <30 seconds. Document findings.",
+          "service": "commands",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "manual",
+            "instructions": "Review all changed files. Verify each acceptance criterion: [AC1] vf-setup.md Step 9 produces valid ~/.claude/.vf-config.json JSON — check schema. [AC2] Step 3 shows enforcement level selection with 3 options (strict/standard/permissive). [AC3] Step 2 uses platform-detector agent and reports confidence+platform. [AC4] validate.md has config-reading section that uses ~/.claude/.vf-config.json. [AC5] Count steps in vf-setup.md — all 10 steps are concise bash/text ops that can execute in under 30 seconds."
+          },
+          "status": "completed",
+          "notes": "All 5 acceptance criteria verified:\n\n[AC1] PASS — vf-setup.md Step 9 heredoc produces valid JSON with all required fields: setupCompleted, setupVersion, scope, enforcement, platform, projectPath, rulesDir, pluginDir, hooksInstalled.\n\n[AC2] PASS — Step 3 uses AskUserQuestion with exactly 3 options (Strict/Standard/Permissive), each referencing its config file (config/strict.json, config/standard.json, config/permissive.json) with explicit hook and rule descriptions.\n\n[AC3] PASS — Step 2 launches platform-detector agent returning {platform, confidence, indicators_found} and presents result via AskUserQuestion showing \"{platform} ({confidence} confidence)\".\n\n[AC4] PASS — All three validate commands (validate.md, validate-plan.md, validate-ci.md) have a 'Pre-Pipeline: Read Config' section that reads ~/.claude/.vf-config.json for enforcement, evidence_dir, and platform. Falls back to defaults when config is missing. validate.md additionally includes an Enforcement Level Behavior table gating pipeline behavior per level.\n\n[AC5] PASS — 10 steps total, all are concise bash ops or AskUserQuestion prompts. No long-running processes, no network downloads, no compilation. Estimated 15-25 seconds including user decision time.\n\nNote: verify-setup.sh ran successfully (correct header output) and correctly flagged that the existing ~/.claude/.vf-config.json (written by a previous dry-run install) uses the old schema (missing enforcement/platform/projectPath). This is expected — the new vf-setup.md Step 9 will write the correct schema on next run. Rules all installed globally (5/5 OK), evidence directory exists.",
+          "updated_at": "2026-04-09T02:08:21.082114+00:00"
+        },
+        {
+          "id": "subtask-4-2",
+          "description": "Run scripts/verify-setup.sh to confirm it produces expected output. After the script is created, run it to verify it works correctly without errors. The script should gracefully handle the case where setup hasn't been run (the VF project itself may not have run /vf-setup against itself).",
+          "service": "scripts",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "bash scripts/verify-setup.sh 2>&1",
+            "expected": "=== ValidationForge Setup Verification ==="
+          },
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_phases": 4,
+    "total_subtasks": 10,
+    "services_involved": [
+      "commands",
+      "scripts"
+    ],
+    "parallelism": {
+      "max_parallel_phases": 1,
+      "parallel_groups": [
+        {
+          "phases": [
+            "phase-2-config-integration-validate",
+            "phase-3-verify-scripts"
+          ],
+          "reason": "Both depend only on phase-1 completing, and they modify different files (commands/ vs scripts/)"
+        }
+      ],
+      "recommended_workers": 1,
+      "speedup_estimate": "1.0x (simple sequential task, low complexity)"
+    },
+    "startup_command": "source auto-claude/.venv/bin/activate && python auto-claude/run.py --spec 003 --parallel 1"
+  },
+  "verification_strategy": {
+    "risk_level": "low",
+    "skip_validation": false,
+    "test_creation_phase": "post_implementation",
+    "test_types_required": [
+      "manual"
+    ],
+    "security_scanning_required": false,
+    "staging_deployment_required": false,
+    "acceptance_criteria": [
+      "/vf-setup creates ~/.claude/.vf-config.json with valid configuration",
+      "User can select between strict, standard, and permissive enforcement levels",
+      "Platform auto-detection runs and reports detected platform type",
+      "Subsequent /validate commands read and respect the config",
+      "Setup completes in under 30 seconds"
+    ],
+    "verification_steps": [
+      {
+        "name": "Verify vf-setup.sh script runs",
+        "command": "bash scripts/verify-setup.sh 2>&1",
+        "expected_outcome": "Script runs and outputs structured verification results",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Verify validate.md config reading",
+        "command": "grep -n 'vf-config\\|enforcement\\|Read Config' commands/validate.md",
+        "expected_outcome": "Lines found showing config reading logic",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Verify vf-setup.md config JSON template",
+        "command": "grep -A20 'Step 9' commands/vf-setup.md | head -25",
+        "expected_outcome": "JSON config template with all required fields including enforcement, platform, rulesDir",
+        "type": "command",
+        "required": true,
+        "blocking": false
+      }
+    ],
+    "reasoning": "Low-risk documentation/command-spec task. The main risk is incomplete specifications that leave Claude without enough instruction to execute the setup correctly. Manual review and grep-based verification are appropriate for Markdown instruction files."
+  },
+  "qa_acceptance": {
+    "unit_tests": {
+      "required": false,
+      "commands": [],
+      "minimum_coverage": null
+    },
+    "integration_tests": {
+      "required": false,
+      "commands": [],
+      "services_to_test": []
+    },
+    "e2e_tests": {
+      "required": false,
+      "commands": [],
+      "flows": []
+    },
+    "browser_verification": {
+      "required": false,
+      "pages": []
+    },
+    "database_verification": {
+      "required": false,
+      "checks": []
+    },
+    "manual_verification": {
+      "required": true,
+      "checks": [
+        "commands/vf-setup.md has complete 10-step workflow with all acceptance criteria covered",
+        "commands/validate.md reads ~/.claude/.vf-config.json",
+        "commands/validate-plan.md reads ~/.claude/.vf-config.json",
+        "commands/validate-ci.md reads ~/.claude/.vf-config.json",
+        "scripts/verify-setup.sh runs without error",
+        "Config JSON template in vf-setup.md has all required fields"
+      ]
+    }
+  },
+  "qa_signoff": null,
+  "last_updated": "2026-04-09T02:08:21.082121+00:00"
+}
