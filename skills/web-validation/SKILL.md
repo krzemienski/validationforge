@@ -102,20 +102,18 @@ browser_network_requests  includeStatic=false  filename="e2e-evidence/web-networ
 
 Test with valid data:
 ```
-browser_fill_form  fields=[
-  {"name": "Email", "type": "textbox", "ref": "EMAIL_REF", "value": "user@example.com"},
-  {"name": "Password", "type": "textbox", "ref": "PASS_REF", "value": "SecurePass123!"}
-]
+browser_snapshot                                    # Get refs for form fields
+browser_fill  ref="EMAIL_REF"  value="user@example.com"
+browser_fill  ref="PASS_REF"  value="SecurePass123!"
 browser_click  ref="SUBMIT_REF"
 browser_take_screenshot  filename="e2e-evidence/web-form-valid-submit.png"
 ```
 
 Test with invalid data:
 ```
-browser_fill_form  fields=[
-  {"name": "Email", "type": "textbox", "ref": "EMAIL_REF", "value": "not-an-email"},
-  {"name": "Password", "type": "textbox", "ref": "PASS_REF", "value": ""}
-]
+browser_snapshot                                    # Get refs for form fields
+browser_fill  ref="EMAIL_REF"  value="not-an-email"
+browser_fill  ref="PASS_REF"  value=""
 browser_click  ref="SUBMIT_REF"
 browser_take_screenshot  filename="e2e-evidence/web-form-invalid-submit.png"
 ```
