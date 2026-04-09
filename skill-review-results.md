@@ -11,7 +11,7 @@ All issues found were fixed immediately. Final verdict for each skill is PASS.
 
 | Skill | Initial Verdict | Issues Found | Fix Applied | Final Verdict |
 |-------|----------------|--------------|-------------|---------------|
-| e2e-validate | PASS | None — all 8 workflow refs, 6 reference refs, 10 related skills valid; no TODO/FIXME/HACK | Minor: reformatted Scope section to match gate-validation-discipline pattern | PASS |
+| e2e-validate | PASS | **QA-2 finding**: `browser_fill_form` in `references/web-validation.md` (lines 45, 124–128) — not a real Playwright MCP tool; original review verified reference files *exist* but did not scan content for valid tool names | Replaced both occurrences with `browser_snapshot` + individual `browser_fill` calls per field | PASS |
 | create-validation-plan | PASS | None — both reference files exist, all 8 PASS criteria rules present, no broken refs | Minor: reformatted Scope section to match preflight and e2e-validate pattern | PASS |
 | preflight | PASS | Rule 6 missing trailing period: `Check bottom-up for fullstack: Database -> API -> Frontend` | Added period: `...Frontend.` | PASS |
 | functional-validation | PASS | `team-adoption-guide.md` exists in `references/` but not mentioned anywhere in SKILL.md — orphaned file | Added Resources section at bottom of SKILL.md citing team-adoption-guide.md | PASS |
@@ -29,6 +29,7 @@ All issues found were fixed immediately. Final verdict for each skill is PASS.
 ### HIGH — FAIL: Causes Claude to call non-existent tools
 - **web-validation** — `browser_fill_form` not a standard Playwright MCP tool. Two occurrences in Step 6 (valid data + invalid data scenarios). Fixed: replaced with `browser_fill` per field.
 - **fullstack-validation** — `browser_fill_form` not a standard Playwright MCP tool. One occurrence in Layer 4 frontend-to-database write path. Fixed: replaced with `browser_snapshot` + `browser_fill` per field.
+- **e2e-validate (`references/web-validation.md`)** — `browser_fill_form` not a real Playwright MCP tool. Two occurrences: line 45 in Playwright MCP tools block and lines 124–128 in Form Validation section. Found in QA Session 2 (original review verified files exist but not tool-name validity). Fixed: replaced with `browser_snapshot` + individual `browser_fill` calls per field. Without this fix, Claude using e2e-validate on any web project fails at form validation steps.
 
 ### MEDIUM — FAIL: Produces incorrect behavior at runtime
 - **api-validation** — Step 4 error tests missing `Authorization` header; protected endpoints return 401 instead of expected 400/404/422, making error handling appear broken. Also missing RESOURCE_ID guard causes silent empty-string CRUD cycle.
@@ -42,7 +43,7 @@ All issues found were fixed immediately. Final verdict for each skill is PASS.
 - **preflight** — Rule 6 missing trailing period — minor formatting inconsistency.
 
 ### NONE — PASS: No issues found
-- **e2e-validate** — All 8 workflow files, 6 reference files, 10 related skills verified. No TODO/FIXME/HACK.
+- **e2e-validate** — All 8 workflow files, 6 reference files, 10 related skills verified. No TODO/FIXME/HACK. *(Note: QA Session 2 found `browser_fill_form` in `references/web-validation.md` — moved to HIGH above.)*
 - **create-validation-plan** — Both reference files exist, all 8 PASS criteria rules complete. No TODO/FIXME/HACK.
 
 ---
@@ -117,7 +118,7 @@ All Related Skills sections in the 10 reviewed skills reference only existing sk
 - **Final PASS**: 10 / 10
 - **Initial FAIL (required fixes)**: 4 (web-validation, api-validation, fullstack-validation, production-readiness-audit)
 - **Initial PASS (optional fixes)**: 6 (e2e-validate, create-validation-plan, preflight, functional-validation, ios-validation, cli-validation)
-- **Critical fixes applied**: 2 (web-validation browser_fill_form → browser_fill; fullstack-validation browser_fill_form → browser_snapshot + browser_fill)
+- **Critical fixes applied**: 3 (web-validation browser_fill_form → browser_fill; fullstack-validation browser_fill_form → browser_snapshot + browser_fill; e2e-validate references/web-validation.md browser_fill_form → browser_snapshot + browser_fill [found QA Session 2])
 - **Medium fixes applied**: 5 (api-validation ×3, fullstack-validation ×2, production-readiness-audit ×1)
 - **Low/cosmetic fixes applied**: 4 (functional-validation, ios-validation, cli-validation, preflight)
 - **Total individual fixes**: 12

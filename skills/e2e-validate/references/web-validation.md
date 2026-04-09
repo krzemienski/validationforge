@@ -42,7 +42,8 @@ browser_click ref="button-submit"             # Click element by ref
 browser_type ref="input-email" text="user@example.com"
 browser_console_messages level="error"        # Check for JS errors
 browser_network_requests includeStatic=false  # Check API calls
-browser_fill_form fields=[...]                # Fill multiple fields
+browser_snapshot                              # Get refs for form fields
+browser_fill  ref="FIELD_REF"  value="value" # Fill each field individually
 ```
 
 ### Chrome DevTools MCP
@@ -121,11 +122,10 @@ For each breakpoint:
 
 ```
 # Fill form fields (Playwright)
-browser_fill_form fields=[
-  {"name": "Email", "type": "textbox", "ref": "input-email", "value": "user@test.com"},
-  {"name": "Password", "type": "textbox", "ref": "input-password", "value": "SecurePass123"},
-  {"name": "Remember Me", "type": "checkbox", "ref": "checkbox-remember", "value": "true"}
-]
+browser_snapshot                                                         # Get accessibility tree refs
+browser_fill  ref="input-email"       value="user@test.com"
+browser_fill  ref="input-password"    value="SecurePass123"
+browser_fill  ref="checkbox-remember" value="true"
 
 # Submit
 browser_click ref="button-submit" element="Submit button"
