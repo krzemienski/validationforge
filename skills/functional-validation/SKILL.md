@@ -94,3 +94,7 @@ same security boundaries real users encounter.
 - `create-validation-plan` — Structured validation plan generation
 - `preflight` — Prerequisites check before starting validation
 - `ios-validation`, `web-validation`, `api-validation`, `cli-validation`, `fullstack-validation` — Platform-specific validation
+
+## Resources
+
+- `team-adoption-guide.md` — Onboarding guide for teams adopting the functional validation protocol; covers tooling setup, workflow integration, and cultural practices for evidence-based validation
