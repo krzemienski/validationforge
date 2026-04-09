@@ -248,6 +248,24 @@ validationforge/
 +-- COMMANDS.md                       Complete commands index
 ```
 
+## Verification Status
+
+What has actually been verified about ValidationForge, and what has not:
+
+| Area | Status |
+|------|--------|
+| File inventory (40 skills, 15 commands, 7 hooks, 5 agents, 8 rules) | Verified on disk |
+| Hook syntax and functional behavior (all 7) | Verified — syntax PASS, functional tests PASS |
+| Cross-references (commands → skills, agents, rules) | Verified — zero broken references |
+| Plugin manifest format | Verified — matches ECC 1.8.0 and OMC patterns |
+| VF methodology against real project (2/18 posts) | Verified — PASS on all 6 criteria |
+| VF methodology expanded (18/18 posts + responsive + errors) | Verified — PASS on 7/7 criteria |
+| Plugin loaded in live Claude Code session | **Not verified** — requires session restart after install |
+| `/validate` command as automated pipeline | **Not verified** — manual execution only |
+| `${CLAUDE_PLUGIN_ROOT}` resolution | **Not verified** — standard pattern, untested end-to-end |
+| Benchmark scoring | **Not verified** — algorithm implemented, never executed |
+| Skill content quality (all 40) | **Partially verified** — 5 deep-reviewed, remainder spot-checked |
+
 ## Troubleshooting
 
 ### Hooks not firing
