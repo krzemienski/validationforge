@@ -15,6 +15,8 @@ ALWAYS capture evidence. ALWAYS review evidence. ALWAYS write verdicts.
 
 ValidationForge enforces this through hooks that block test file creation, skills that guide real-system validation, and agents that capture and review evidence through actual user interfaces.
 
+<!-- demo GIF pending: see demo/DEMO-SCENARIO.md -->
+
 ## Why Not Unit Tests?
 
 Unit tests verify code in isolation with mocks. Mocks drift from reality. ValidationForge verifies **systems in production** through the same interfaces your users experience.
