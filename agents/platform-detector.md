@@ -32,7 +32,42 @@ Scan in this order. First confident match wins, unless multiple platforms are de
 
 **Validation reference:** `skills/e2e-validate/references/ios-validation.md`
 
-### 2. CLI
+### 2. React Native
+
+**Detect before CLI** — React Native projects share iOS/Android indicators but are cross-platform mobile apps, not native iOS or CLI tools.
+
+**Primary indicators (any one = HIGH confidence):**
+- `package.json` with `react-native` in dependencies
+- `react-native.config.js` or `react-native.config.ts`
+- `metro.config.js` or `metro.config.ts` (Metro bundler config)
+- `android/` directory AND `ios/` directory both present alongside `package.json`
+
+**Secondary indicators (2+ = MEDIUM confidence):**
+- `App.tsx` or `App.js` with `import { ... } from 'react-native'`
+- `index.js` calling `AppRegistry.registerComponent`
+- `Podfile` in `ios/` subdirectory (not project root)
+- `android/app/build.gradle` present
+- `@react-navigation` or `@react-native-community` in dependencies
+
+**Validation reference:** `skills/e2e-validate/references/react-native-validation.md`
+
+### 3. Flutter
+
+**Primary indicators (any one = HIGH confidence):**
+- `pubspec.yaml` with `flutter:` key (not just `sdk: flutter` dependency)
+- `lib/main.dart` with `runApp(` call
+- `.flutter-plugins` or `.flutter-plugins-dependencies` file
+
+**Secondary indicators (2+ = MEDIUM confidence):**
+- `pubspec.yaml` present with `flutter` in dependencies
+- `lib/` directory containing `*.dart` files
+- `android/` and `ios/` directories alongside `pubspec.yaml`
+- `flutter_test` in `dev_dependencies`
+- `analysis_options.yaml` with Flutter lints
+
+**Validation reference:** `skills/e2e-validate/references/flutter-validation.md`
+
+### 4. CLI
 
 **Primary indicators (any one = HIGH confidence):**
 - `Cargo.toml` with `[[bin]]` section
@@ -48,22 +83,33 @@ Scan in this order. First confident match wins, unless multiple platforms are de
 
 **Validation reference:** `skills/e2e-validate/references/cli-validation.md`
 
-### 3. API-only
+### 5. API-only
 
 **Primary indicators (look for backend route handlers WITHOUT frontend files):**
 - Express: `app.get(`, `app.post(`, `router.get(`
 - FastAPI: `@app.get(`, `@app.post(`, `@router.get(`
-- Flask: `@app.route(`
-- Django: `urlpatterns`, `path(`, `re_path(`
+- Flask-specific: `@app.route(`, `Blueprint(`, `flask` in `requirements.txt` or `pyproject.toml`
+- Django-specific: `manage.py` present, `settings.py` with `INSTALLED_APPS`, `urlpatterns`, `path(`, `re_path(`
 - Gin: `r.GET(`, `r.POST(`
 - Actix: `web::resource(`, `.route(`
 - Rails: `config/routes.rb`
+
+**Flask indicator set (2+ = HIGH confidence for Flask API):**
+- `app.py` or `wsgi.py` with `Flask(__name__)`
+- `@app.route(` or `@blueprint.route(` decorators
+- `flask` in `requirements.txt`, `Pipfile`, or `pyproject.toml`
+
+**Django indicator set (2+ = HIGH confidence for Django API):**
+- `manage.py` in project root
+- `settings.py` with `INSTALLED_APPS` list
+- `urls.py` with `urlpatterns`
+- `django` in `requirements.txt`, `Pipfile`, or `pyproject.toml`
 
 **Confirming absence of frontend:** No `react`, `vue`, `svelte`, `angular`, `next`, `nuxt` in dependencies. No `index.html` with `<script>` tags.
 
 **Validation reference:** `skills/e2e-validate/references/api-validation.md`
 
-### 4. Web-only
+### 6. Web-only
 
 **Primary indicators (look for frontend framework WITHOUT backend route handlers):**
 - `package.json` with `react`, `vue`, `svelte`, `angular`, `next`, `nuxt`, `astro`, `solid`
@@ -73,13 +119,13 @@ Scan in this order. First confident match wins, unless multiple platforms are de
 
 **Validation reference:** `skills/e2e-validate/references/web-validation.md`
 
-### 5. Fullstack
+### 7. Fullstack
 
 **Trigger:** BOTH frontend AND backend indicators are present.
 
 **Validation reference:** `skills/e2e-validate/references/fullstack-validation.md`
 
-### 6. Generic (fallback)
+### 8. Generic (fallback)
 
 No recognizable platform indicators found. Report LOW confidence and suggest manual `--platform` override.
 
@@ -95,7 +141,7 @@ No recognizable platform indicators found. Report LOW confidence and suggest man
 
 ```json
 {
-  "platform": "ios | cli | api | web | fullstack | generic",
+  "platform": "ios | react-native | flutter | cli | api | web | fullstack | generic",
   "confidence": "HIGH | MEDIUM | LOW | OVERRIDE",
   "indicators_found": ["..."],
   "secondary_platforms": [],
