@@ -73,7 +73,7 @@ fi
 mkdir -p "$(dirname "$CONFIG_FILE")"
 cat > "$CONFIG_FILE" << EOF
 {
-  "setupCompleted": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",  # POSIX-compatible: -u=UTC, format is portable
+  "setupCompleted": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "setupVersion": "1.0.0",
   "installDir": "$INSTALL_DIR",
   "scope": "global"
