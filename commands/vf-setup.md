@@ -309,10 +309,41 @@ fi
 
 ```bash
 mkdir -p e2e-evidence
-echo "*.png" >> e2e-evidence/.gitignore
-echo "*.json" >> e2e-evidence/.gitignore
-echo "!evidence-inventory.txt" >> e2e-evidence/.gitignore
-echo "!report.md" >> e2e-evidence/.gitignore
+
+# Write e2e-evidence/.gitignore with fine-grained exclusion patterns
+cat > e2e-evidence/.gitignore << 'GITIGNORE'
+# Evidence screenshots and images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.bmp
+
+# Videos and recordings
+*.mp4
+*.mov
+*.webm
+
+# JSON payloads and data
+*.json
+
+# Logs (including cleanup audit log)
+*.log
+cleanup.log
+
+# HAR files and archives
+*.har
+*.zip
+
+# Binaries
+*.bin
+
+# Keep human-readable summaries
+!evidence-inventory.txt
+!report.md
+GITIGNORE
+
 echo "# Evidence directory — screenshots and logs from validation runs" > e2e-evidence/README.md
 ```
 
@@ -321,11 +352,11 @@ echo "# Evidence directory — screenshots and logs from validation runs" > e2e-
 Append to project `.gitignore` (if not already present):
 
 ```
-# ValidationForge
-e2e-evidence/**/*.png
-e2e-evidence/**/*.json
-!e2e-evidence/report.md
-!e2e-evidence/evidence-inventory.txt
+# ValidationForge — exclude all binary/data evidence files, keep summaries
+e2e-evidence/**
+!e2e-evidence/**/report.md
+!e2e-evidence/**/evidence-inventory.txt
+!e2e-evidence/.gitignore
 .vf/
 ```
 
@@ -399,7 +430,8 @@ cat > "$HOME/.claude/.vf-config.json" << EOF
   "projectPath": "$(pwd)",
   "rulesDir": "${RULES_DIR}",
   "pluginDir": "${INSTALL_DIR}",
-  "hooksInstalled": true
+  "hooksInstalled": true,
+  "evidence_retention_days": 30
 }
 EOF
 ```
