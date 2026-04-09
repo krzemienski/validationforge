@@ -4,6 +4,7 @@ description: >
   Enforces end-user perspective validation through real system execution. Never
   write mocks or test files. Validate via simulator, browser, CLI, or cURL.
   Covers iOS, Web, API, CLI, and Full-Stack with evidence-based PASS/FAIL.
+context_priority: critical
 ---
 
 # Functional Validation Protocol

@@ -4,6 +4,7 @@ description: >
   Enforces the Iron Rule: never create mocks, stubs, test doubles, or test files.
   Detects mock-creation intent and redirects to real system validation. Works with
   pre-tool-use hooks to block test file creation at the enforcement layer.
+context_priority: critical
 ---
 
 # No-Mocking Validation Gates
