@@ -201,3 +201,10 @@ Save to `e2e-evidence/prod-audit/report.md`.
 - The `verdict-writer` agent reads phase reports for overall verdict
 - This audit complements but does NOT replace feature-level validation
 - Run this AFTER all feature-level validations have passed
+
+## Related Skills
+
+- **full-functional-audit** — Read-only comprehensive audit; run this first to establish baseline before production readiness review
+- **functional-validation** — Active feature validation; all features should pass before running production readiness audit
+- **baseline-quality-assessment** — Lighter initial assessment; use for early-cycle checks before full production audit
+- **verification-before-completion** — Gate protocol that uses production readiness audit findings as completion evidence
