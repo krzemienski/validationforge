@@ -27,9 +27,10 @@ for skill_dir in "$SKILLS_DIR"/*/; do
     continue
   fi
 
-  # Extract frontmatter name
+  # Extract frontmatter fields
   fm_name=$(grep -m1 '^name:' "$skill_file" 2>/dev/null | sed 's/^name:\s*//' | tr -d '"' | tr -d "'" | xargs)
   fm_desc=$(grep -m1 '^description:' "$skill_file" 2>/dev/null | sed 's/^description:\s*//' | tr -d '"' | tr -d "'")
+  fm_priority=$(grep -m1 '^context_priority:' "$skill_file" 2>/dev/null | sed 's/^context_priority:\s*//' | tr -d '"' | tr -d "'" | xargs)
 
   issues=""
 
@@ -49,6 +50,13 @@ for skill_dir in "$SKILLS_DIR"/*/; do
   desc_len=${#fm_desc}
   if [ "$desc_len" -gt 1024 ]; then
     issues="${issues}description too long ($desc_len chars); "
+  fi
+
+  # Check context_priority exists and is valid
+  if [ -z "$fm_priority" ]; then
+    issues="${issues}missing context_priority; "
+  elif [ "$fm_priority" != "critical" ] && [ "$fm_priority" != "standard" ] && [ "$fm_priority" != "reference" ]; then
+    issues="${issues}invalid context_priority ($fm_priority); "
   fi
 
   # Check file is non-empty (beyond frontmatter)
