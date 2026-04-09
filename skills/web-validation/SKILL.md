@@ -3,6 +3,7 @@ name: web-validation
 description: >
   Web platform validation through browser automation (Playwright MCP or Chrome DevTools MCP).
   Captures screenshots, console logs, network responses, and DOM snapshots as evidence.
+context_priority: standard
 ---
 
 # Web Validation

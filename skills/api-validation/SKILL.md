@@ -4,6 +4,7 @@ description: >
   API platform validation through direct HTTP requests (curl). Captures full
   response bodies, headers, and status codes as evidence. Tests CRUD operations,
   authentication flows, error responses, pagination, and rate limiting.
+context_priority: standard
 ---
 
 # API Validation
