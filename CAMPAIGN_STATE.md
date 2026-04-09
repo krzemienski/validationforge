@@ -34,7 +34,7 @@
 | 021 | MERGED | Merge SHA `d1c4e00`; Forge Engine Autonomous Loop; cleanup=DEFERRED |
 | 022 | SKIPPED | No code produced |
 | 023 | MERGED | Merge SHA `1f84c99`; Additional Platform Support (React Native/Flutter); pinning fixed post-merge; cleanup=DEFERRED |
-| 024 | PENDING | Pending merge |
+| 024 | MERGED | Merge SHA `a1cf5de`; Self-Validation; cleanup=DEFERRED |
 | 025 | SKIPPED | No code produced |
 
 ## Wave Checkpoints
@@ -44,7 +44,7 @@
 | Wave 1 | COMPLETE | Specs 001, 002 merged |
 | Wave 2 | COMPLETE | Spec 007 SKIPPED; 009, 010 merged |
 | Wave 3 | COMPLETE | Specs 011, 012, 013, 014 merged |
-| Wave 4 |  |  |
+| Wave 4 | COMPLETE | Spec 015 QUARANTINED, 016 SKIPPED, 018/021/023/024 merged |
 
 ## Stash Disposition
 
