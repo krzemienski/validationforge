@@ -37,13 +37,24 @@ BINARY="node dist/index.js"
 
 # Python
 pip install -e . 2>&1 | tee e2e-evidence/cli-build.txt
-BINARY="TOOL_NAME"
+# Find the installed binary name from project config:
+#   pyproject.toml  → [project.scripts] section:          TOOL_NAME = "package.module:function"
+#   setup.py        → entry_points console_scripts list:  'TOOL_NAME=package.module:function'
+#   setup.cfg       → [options.entry_points]:              TOOL_NAME = package.module:function
+grep -A10 "\[project\.scripts\]" pyproject.toml 2>/dev/null \
+  || grep -A10 "console_scripts" setup.py setup.cfg 2>/dev/null \
+  | tee -a e2e-evidence/cli-build.txt
+BINARY="TOOL_NAME"   # replace with the name found in the config above
 # Or: BINARY="python -m PACKAGE_NAME"
 ```
 
 Verify the binary exists and is executable:
 ```bash
+# For file-path binaries (Rust, Go, Node.js compiled output):
 ls -la $BINARY | tee -a e2e-evidence/cli-build.txt
+
+# For PATH-installed binaries (Python console_scripts, npx wrappers):
+which $BINARY | tee -a e2e-evidence/cli-build.txt
 ```
 
 ## Step 2: Help Output
@@ -160,6 +171,14 @@ $BINARY COMMAND --format csv ARG 2>&1 | tee e2e-evidence/cli-csv-output.txt
 head -1 e2e-evidence/cli-csv-output.txt  # Check header
 wc -l e2e-evidence/cli-csv-output.txt    # Check row count
 ```
+
+## Evidence Standards
+
+**GOOD:** Full stdout/stderr saved to file, exit code captured, output describes what the command actually produced.
+
+**BAD:** "Command ran successfully" or "Output looked correct" without saving the actual output.
+
+Every evidence file must contain the FULL command output — exit code alone is not evidence.
 
 ## Common Failures
 

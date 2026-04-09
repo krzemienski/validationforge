@@ -10,9 +10,8 @@ description: >
 
 ## Scope
 
-Primary entry point for the entire ValidationForge pipeline. Routes to specialized
-workflows based on parsed intent. Applies to any project type — auto-detects platform
-and selects appropriate validation strategy.
+This skill handles: platform detection, journey mapping, PASS criteria definition, evidence capture and review, PASS/FAIL verdict writing, fix loops, and CI/CD report generation.
+Does NOT handle: individual gate evidence examination (use `gate-validation-discipline`), mock pattern detection (use `no-mocking-validation-gates`), isolated plan generation (use `create-validation-plan`).
 
 ## Iron Rule
 

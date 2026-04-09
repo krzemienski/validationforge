@@ -72,7 +72,7 @@ Status: CLEAR | BLOCKED
 3. **NEVER auto-fix** by installing major tools (Xcode, Docker) — report BLOCKED
 4. **ALWAYS re-check** after auto-fix to confirm resolution
 5. **ALWAYS save** the preflight report to `e2e-evidence/preflight-report.md`
-6. **Check bottom-up** for fullstack: Database -> API -> Frontend
+6. **Check bottom-up** for fullstack: Database -> API -> Frontend.
 
 ## Security Policy
 

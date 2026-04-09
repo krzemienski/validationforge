@@ -113,7 +113,7 @@ Key check: The data visible in the frontend MUST match what the API returned. If
 ### Interactive flows
 Navigate through all user-facing journeys using Playwright MCP or Chrome DevTools MCP. Capture screenshots at each step.
 
-**PASS gate:** Do not proceed to integration testing until the frontend correctly renders API data.
+**PASS gate:** Do not proceed to Layer 4 until the frontend correctly renders API data and all displayed values match the API responses captured in evidence.
 
 ## Layer 4: Integration Testing
 
@@ -123,7 +123,8 @@ After all three layers pass independently, validate data flows across the entire
 ```
 # 1. Create via frontend
 browser_navigate  url="http://localhost:FE_PORT/items/new"
-browser_fill_form  fields=[{"name":"Item Name","type":"textbox","ref":"NAME_REF","value":"Integration Test Item"}]
+browser_snapshot                                        # Get refs for form fields
+browser_fill  ref="NAME_REF"  value="Integration Test Item"
 browser_click  ref="SAVE_REF"
 browser_take_screenshot  filename="e2e-evidence/integration-create-frontend.png"
 
@@ -181,6 +182,16 @@ curl -s -w "\nHTTP_STATUS:%{http_code}" http://localhost:API_PORT/api/items/DELE
 psql $DATABASE_URL -c "SELECT count(*) FROM items WHERE id = 'DELETED_ID'" \
   | tee e2e-evidence/integration-db-after-delete.txt
 ```
+
+**PASS gate:** Do not proceed to the final verdict until all cross-layer data flows (frontend→API→DB and DB→API→frontend) have been verified with evidence captured at each layer.
+
+## Evidence Standards
+
+**GOOD:** Screenshot shows specific data values from the API response rendered in the UI; curl output saved to file with full JSON body; database query output shows exact rows with IDs; cross-layer comparisons cite actual counts or values.
+
+**BAD:** "Frontend loaded successfully" without a screenshot showing the actual data; "API returned 200" without saving the response body; "Database has data" without a query output file; claiming layers are integrated without verifying the same record appears at each layer.
+
+Every evidence file must contain the FULL content — not just a status code or a note that something "worked". Cross-layer evidence must trace the same data item (by ID or unique value) across all three layers.
 
 ## Common Failures
 

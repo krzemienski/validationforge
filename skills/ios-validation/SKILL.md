@@ -135,31 +135,49 @@ for i in "${!DEEP_LINKS[@]}"; do
 done
 ```
 
-## Step 8: UI Automation (idb)
+## Step 8: UI Automation
 
-If idb is available, use it for precise interactions:
+Choose one of two approaches based on your environment.
+
+### Option A: CLI idb
+
+Use when `idb` is installed and you are running commands in a terminal:
+
 ```bash
 # Get accessibility tree (find tap targets)
 idb ui describe-all --udid booted 2>&1 | tee e2e-evidence/ios-accessibility-tree.txt
 
 # Tap at coordinates
-idb ui tap --x 200 --y 400 --udid booted
+idb ui tap --udid booted --x 200 --y 400
 
 # Swipe (scroll down)
-idb ui swipe --x 200 --y 600 --delta-x 0 --delta-y -300 --udid booted
+idb ui swipe --udid booted --x 200 --y 600 --delta-x 0 --delta-y -300
 
 # Type text into focused field
-idb ui text "hello world" --udid booted
+idb ui text --udid booted "hello world"
 
 # Press hardware button
-idb ui button HOME --udid booted
+idb ui button --udid booted HOME
 ```
 
-If using Xcode MCP tools instead:
+### Option B: Xcode MCP tools
+
+Use when the Xcode MCP server is connected in your Claude Code session:
+
 ```
+# Get accessibility tree (find tap targets)
+idb_describe_all
+
+# Tap at coordinates
 idb_tap x=200 y=400
+
+# Type text into focused field
 idb_input text="search query"
+
+# Swipe (scroll)
 idb_gesture gesture_type=swipe start_x=200 start_y=600 end_x=200 end_y=300
+
+# Find element by accessibility label
 idb_find_element query="Submit"
 ```
 
