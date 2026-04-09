@@ -128,3 +128,15 @@ info "    /vf-setup          Project-level setup wizard"
 info ""
 info "  Start with: /vf-setup in your project directory"
 info ""
+
+# Prominent restart prompt
+BOLD='\033[1m'
+YELLOW='\033[1;33m'
+GREEN='\033[1;32m'
+RESET='\033[0m'
+printf "\n"
+printf "${YELLOW}************************************************************${RESET}\n"
+printf "${BOLD}${GREEN}  ACTION REQUIRED: Restart Claude Code to activate the plugin${RESET}\n"
+printf "${YELLOW}************************************************************${RESET}\n"
+printf "${BOLD}  Please restart Claude Code now for ValidationForge to take effect.${RESET}\n"
+printf "\n"
