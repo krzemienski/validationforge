@@ -7,6 +7,7 @@ triggers:
   - "historical validation"
   - "did our approach work"
   - "post-mortem analysis"
+context_priority: reference
 ---
 
 # Retrospective Validation

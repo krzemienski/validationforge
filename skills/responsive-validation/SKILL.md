@@ -7,6 +7,7 @@ triggers:
   - "viewport testing"
   - "mobile responsive"
   - "breakpoint validation"
+context_priority: reference
 ---
 
 # Responsive Validation
