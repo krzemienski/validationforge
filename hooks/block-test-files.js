@@ -5,15 +5,29 @@
 // Matches: Write, Edit, MultiEdit
 // Blocks if file_path matches test/mock/stub patterns.
 //
+// Config-driven enforcement via config-loader.js:
+//   enabled  → deny (hard block, permissionDecision: "deny")
+//   warn     → log warning to stderr, let the write proceed
+//   disabled → exit immediately, no action
+//
 // Protocol: hookSpecificOutput.permissionDecision = "deny" (current CC spec)
 
 const { TEST_PATTERNS, ALLOWLIST } = require('./patterns');
+const { loadConfig } = require('./config-loader');
 
 let input = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   try {
+    const config = loadConfig();
+    const hookMode = config.getHookConfig('block-test-files');
+
+    // disabled → pass through immediately, no enforcement
+    if (hookMode === 'disabled') {
+      process.exit(0);
+    }
+
     const data = JSON.parse(input);
     const toolInput = data.tool_input || {};
     const filePath = toolInput.file_path || toolInput.filePath || '';
@@ -30,7 +44,18 @@ process.stdin.on('end', () => {
 
     for (const pattern of TEST_PATTERNS) {
       if (pattern.test(filePath)) {
-        // Use current CC spec: hookSpecificOutput with permissionDecision "deny"
+        if (hookMode === 'warn') {
+          // warn → surface advisory to stderr, let the write proceed
+          process.stderr.write(
+            `[ValidationForge] WARNING: "${filePath}" matches a test/mock/stub file pattern.\n` +
+            `ValidationForge Iron Rule: Never create test files, mock files, or stub files.\n` +
+            `Instead: Build and run the real system. Validate through actual user interfaces.\n` +
+            `Run /validate to start the correct validation workflow.\n`
+          );
+          process.exit(0);
+        }
+
+        // enabled → hard block via permissionDecision "deny"
         const output = {
           hookSpecificOutput: {
             hookEventName: "PreToolUse",
