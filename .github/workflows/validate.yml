@@ -1,0 +1,194 @@
+# ValidationForge CI Workflow
+#
+# Runs /validate-ci on every pull request and push to main.
+# Produces PASS/FAIL check results with evidence artifacts for review.
+#
+# For a heavily-commented copy-paste template, see:
+#   templates/github-actions-validate.yml
+#
+# Full integration guide:
+#   docs/github-actions-integration.md
+
+name: ValidationForge
+
+on:
+  pull_request:
+    branches: ["main", "master"]
+  push:
+    branches: ["main", "master"]
+
+# Cancel in-progress runs for the same ref to save CI minutes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # ── Customization points ─────────────────────────────────────────────────
+  # Platform to validate (auto-detect if unset, or: web | api | cli | ios)
+  VF_PLATFORM: ""
+  # Scope validation to a subdirectory (leave empty for entire project)
+  VF_SCOPE: ""
+  # Dev server start command (leave empty if no server needed, e.g. CLI tools)
+  SERVER_CMD: ""
+  # URL to poll until healthy (leave empty if SERVER_CMD is empty)
+  HEALTH_URL: ""
+  # Max seconds to wait for the server to become healthy
+  HEALTH_TIMEOUT: "60"
+  # ─────────────────────────────────────────────────────────────────────────
+
+jobs:
+  validate:
+    name: ValidationForge (${{ matrix.platform }})
+    # Use ubuntu-latest for web / api / cli projects.
+    # Change to macos-latest for iOS projects (Xcode + Simulator required).
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Keep single-element matrix so the job name shows the platform;
+        # expand to [web, api] etc. if you need parallel platform runs.
+        platform: [default]
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history enables better diff-scoped journeys
+
+      # ── 2. Node.js with dependency caching ───────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          # If your project uses npm, change to: cache: 'npm'
+          # If no package.json exists, remove the cache line entirely.
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      # ── 3. Cache the Claude Code CLI binary ──────────────────────────────
+      #    Claude CLI is installed globally; cache it so subsequent runs skip
+      #    the npm install step (saves ~30 s per run).
+      - name: Cache Claude Code CLI
+        id: cache-claude
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm-global
+          key: claude-code-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            claude-code-${{ runner.os }}-
+
+      # ── 4. Install Claude Code CLI ────────────────────────────────────────
+      - name: Install Claude Code CLI
+        run: |
+          mkdir -p ~/.npm-global
+          npm config set prefix ~/.npm-global
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+
+      # ── 5. Install ValidationForge ────────────────────────────────────────
+      #    Uses install.sh from main branch. The script clones the repo and
+      #    installs rules/config into ~/.claude/. Idempotent (safe to re-run).
+      - name: Install ValidationForge
+        run: |
+          curl -fsSL \
+            https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh \
+            | bash
+
+      # ── 6. Install project dependencies ──────────────────────────────────
+      #    Customize this step for your package manager:
+      #      npm ci          — npm
+      #      pnpm install    — pnpm  (add: uses: pnpm/action-setup@v4 above)
+      #      yarn install    — yarn
+      #    Remove entirely if your project has no Node.js dependencies.
+      - name: Install project dependencies
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          elif [ -f "yarn.lock" ]; then
+            yarn install --frozen-lockfile
+          elif [ -f "pnpm-lock.yaml" ]; then
+            pnpm install --frozen-lockfile
+          else
+            echo "[VF] No lock file found — skipping dependency install"
+          fi
+
+      # ── 7. Start dev server (optional) ───────────────────────────────────
+      #    If SERVER_CMD is set, launch it in the background and wait for
+      #    HEALTH_URL to respond 200 OK before proceeding.
+      #    Leave both empty for projects that don't require a running server
+      #    (CLI tools, static analysis, API-only validation).
+      - name: Start dev server
+        if: env.SERVER_CMD != ''
+        run: |
+          echo "[VF] Starting server: $SERVER_CMD"
+          eval "$SERVER_CMD" &
+          echo "SERVER_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for server to be healthy
+        if: env.SERVER_CMD != '' && env.HEALTH_URL != ''
+        run: |
+          echo "[VF] Waiting for $HEALTH_URL to respond 200 OK..."
+          attempt=0
+          max=${{ env.HEALTH_TIMEOUT }}
+          while [ "$attempt" -lt "$max" ]; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" 2>/dev/null || echo "000")
+            if [ "$status" = "200" ]; then
+              echo "[VF] Server healthy after ${attempt}s (status: $status)"
+              exit 0
+            fi
+            sleep 1
+            attempt=$((attempt + 1))
+          done
+          echo "[VF] ERROR: Server did not respond 200 after ${max}s at $HEALTH_URL" >&2
+          echo "[VF] Check your SERVER_CMD and HEALTH_URL environment variables." >&2
+          exit 1
+
+      # ── 8. Run ValidationForge (/validate-ci) ────────────────────────────
+      #    claude --print runs the slash command non-interactively and exits
+      #    with code 0 (PASS) or 1 (FAIL). The ANTHROPIC_API_KEY secret is
+      #    required — add it under Settings → Secrets and variables → Actions.
+      - name: Run ValidationForge
+        id: vf_run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          # Build the validate-ci command with optional flags
+          VF_CMD="/validate-ci"
+          if [ -n "$VF_PLATFORM" ]; then
+            VF_CMD="$VF_CMD --platform $VF_PLATFORM"
+          fi
+          if [ -n "$VF_SCOPE" ]; then
+            VF_CMD="$VF_CMD --scope $VF_SCOPE"
+          fi
+
+          echo "[VF] Running: claude --print \"$VF_CMD\""
+          claude --print "$VF_CMD"
+        # Continue to upload artifacts even when validation fails
+        continue-on-error: true
+
+      # ── 9. Upload evidence artifacts ──────────────────────────────────────
+      #    Always upload — even on failure — so engineers can review what
+      #    ValidationForge found. Download from the Actions run summary page.
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-evidence-${{ github.run_number }}
+          path: e2e-evidence/
+          retention-days: 30
+          # Don't fail the upload step if evidence directory is empty
+          if-no-files-found: warn
+
+      # ── 10. Annotate failure ─────────────────────────────────────────────
+      #    Write a clear error message when /validate-ci exits 1 so engineers
+      #    see it directly in the PR check summary without opening logs.
+      - name: Annotate failure
+        if: steps.vf_run.outcome == 'failure'
+        run: |
+          echo "::error title=ValidationForge FAIL::One or more validation journeys failed. "\
+               "Download the 'validation-evidence-${{ github.run_number }}' artifact from the "\
+               "Actions run summary and review e2e-evidence/report.md for full diagnosis."
+          exit 1
