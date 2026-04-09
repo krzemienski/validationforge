@@ -1,0 +1,28 @@
+{
+  "hooks": [
+    {
+      "name": "block-test-files",
+      "trigger": "PreToolUse",
+      "matcher": "Write|Edit",
+      "command": "echo '[hook] No test/mock/stub files allowed — ValidationForge no-mock mandate'"
+    },
+    {
+      "name": "evidence-gate-reminder",
+      "trigger": "PreToolUse",
+      "matcher": "TodoWrite",
+      "command": "echo '[hook] Capture evidence before marking any journey complete'"
+    },
+    {
+      "name": "validation-not-compilation",
+      "trigger": "PostToolUse",
+      "matcher": "Bash",
+      "command": "echo '[hook] Migration success is NOT validation — verify schema state against the real database'"
+    },
+    {
+      "name": "db-rollback-reminder",
+      "trigger": "PostToolUse",
+      "matcher": "Bash",
+      "command": "echo '[hook] DB validation requires rollback testing — never assume forward-only migrations are safe'"
+    }
+  ]
+}

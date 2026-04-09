@@ -1,0 +1,17 @@
+Evidence Inventory — db-validation journey
+==========================================
+Captured: 2026-04-05T09:15:10Z
+Validator: ValidationForge api-validation protocol
+
+Files:
+  step-01-migration-output.md   — Migration run output, exit code 0, batch 7 (1 file)
+  step-02-schema-verify.json    — Schema introspection: last_login_at column + users_email_unique index confirmed
+  step-03-duplicate-check.md    — Unique constraint enforcement: ERROR 23505 duplicate key observed
+  evidence-inventory.txt        — This file
+  VERDICT.md                    — Journey-level verdict
+
+Journey: db-validation
+Steps executed: 3 of 3 planned
+Evidence files: 5
+Non-empty files: 5
+Verdict: PASS
