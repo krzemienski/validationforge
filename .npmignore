@@ -1,0 +1,39 @@
+# Auto Claude data directory
+.auto-claude/
+
+# Version control
+.git/
+
+# System files
+.DS_Store
+*.log
+
+# Development artifacts
+audit-artifacts/
+e2e-evidence/
+plans/
+demo/
+docs/
+
+# Auto Claude generated files
+.auto-claude-security.json
+.auto-claude-status
+.claude_settings.json
+.worktrees/
+.security-key
+logs/security/
+
+# Project-specific markdown files
+findings.md
+progress.md
+task_plan.md
+whats-next.md
+
+# Dependencies (not needed in published package)
+node_modules/
+
+# Environment files
+.env
+*.local
+.omc/
+.remember/
