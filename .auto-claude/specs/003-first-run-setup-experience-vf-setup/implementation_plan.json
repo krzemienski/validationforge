@@ -2,11 +2,11 @@
   "feature": "First-Run Setup Experience (/vf-setup)",
   "description": "# First-Run Setup Experience (/vf-setup)\n\nImplement and verify the /vf-setup command that initializes ValidationForge for a project — creates config files, selects enforcement level (strict/standard/permissive), configures evidence directory, and detects the project platform.\n\n## Rationale\nFirst impressions determine adoption. If the setup experience fails, users abandon immediately. This is the #3 launch blocker and the first thing every new user will run.\n\n## User Stories\n- As a new user, I want to run /vf-setup and have ValidationForge configured for my project in under 30 seconds so that I can start validating immediately\n- As an engineering lead, I want to set strict enforcement mode during setup so that my team cannot bypass validation discipline\n\n## Acceptance Criteria\n- [ ] /vf-setup creates ~/.claude/.vf-config.json with valid configuration\n- [ ] User can select between strict, standard, and permissive enforcement levels\n- [ ] Platform auto-detection runs and reports detected platform type\n- [ ] Subsequent /validate commands read and respect the config\n- [ ] Setup completes in under 30 seconds\n",
   "created_at": "2026-04-08T22:58:50.102Z",
-  "updated_at": "2026-04-09T02:06:29.242Z",
-  "status": "in_progress",
-  "planStatus": "in_progress",
-  "xstateState": "planning",
-  "executionPhase": "coding",
+  "updated_at": "2026-04-09T02:08:58.284Z",
+  "status": "human_review",
+  "planStatus": "review",
+  "xstateState": "human_review",
+  "executionPhase": "complete",
   "workflow_type": "simple",
   "workflow_rationale": "Single-service Claude Code plugin. All changes are within Markdown instruction files and shell scripts. No complex service dependencies. The work is to complete/fix the vf-setup command definition and add config-integration to validate commands.",
   "phases": [
@@ -265,7 +265,9 @@
             "command": "bash scripts/verify-setup.sh 2>&1",
             "expected": "=== ValidationForge Setup Verification ==="
           },
-          "status": "pending"
+          "status": "completed",
+          "notes": "scripts/verify-setup.sh runs without errors and produces expected header '=== ValidationForge Setup Verification ==='. Script correctly handles incomplete config (old-format ~/.claude/.vf-config.json from a previous dry-run install missing enforcement/platform/projectPath fields). Reports [OK]/[MISSING] per check. All 5 required rules found globally (vf-*.md). Evidence directory found. Exits 1 with actionable guidance when checks fail — graceful handling confirmed. Exit 0 path verified by script logic (exit 0 when FAIL=0). Subtask criteria met: script runs, produces expected output, handles the case where /vf-setup hasn't been run against itself.",
+          "updated_at": "2026-04-09T02:08:57.969185+00:00"
         }
       ]
     }
@@ -374,5 +376,6 @@
     }
   },
   "qa_signoff": null,
-  "last_updated": "2026-04-09T02:08:21.082121+00:00"
+  "last_updated": "2026-04-09T02:08:57.969190+00:00",
+  "reviewReason": "completed"
 }
