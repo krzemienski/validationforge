@@ -31,5 +31,11 @@
     "config/",
     "templates/",
     "scripts/"
-  ]
+  ],
+  "scripts": {
+    "build:patterns": "tsc --project tsconfig.hooks.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
 }
