@@ -82,6 +82,34 @@ EOF
 
 ok "Config saved to $CONFIG_FILE"
 
+# Register in installed_plugins.json so Claude Code plugin loader discovers the plugin
+INSTALLED_PLUGINS_FILE="${HOME}/.claude/installed_plugins.json"
+info "Registering plugin in ${INSTALLED_PLUGINS_FILE}..."
+mkdir -p "$(dirname "$INSTALLED_PLUGINS_FILE")"
+python3 - "$INSTALLED_PLUGINS_FILE" "$INSTALL_DIR" << 'PYEOF'
+import sys, json, os
+
+plugins_file = sys.argv[1]
+install_dir  = sys.argv[2]
+plugin_key   = "validationforge@validationforge"
+
+if os.path.isfile(plugins_file):
+    with open(plugins_file, "r") as fh:
+        try:
+            registry = json.load(fh)
+        except (json.JSONDecodeError, ValueError):
+            registry = {}
+else:
+    registry = {}
+
+registry[plugin_key] = {"path": install_dir, "scope": "user"}
+
+with open(plugins_file, "w") as fh:
+    json.dump(registry, fh, indent=2)
+    fh.write("\n")
+PYEOF
+ok "Plugin registered in ${INSTALLED_PLUGINS_FILE}"
+
 # Verify installation
 info ""
 info "=== ValidationForge Installed ==="
