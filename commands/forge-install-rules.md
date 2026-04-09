@@ -1,4 +1,5 @@
 ---
+name: forge-install-rules
 description: "Install ValidationForge rules to .claude/rules/ for cross-session enforcement"
 allowed-tools: "Read, Write, Bash, Glob"
 ---

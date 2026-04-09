@@ -1,4 +1,5 @@
 ---
+name: forge-plan
 description: "Generate a validation plan with journey discovery and PASS criteria"
 allowed-tools: "Read, Write, Bash, Glob, Grep, Agent"
 ---

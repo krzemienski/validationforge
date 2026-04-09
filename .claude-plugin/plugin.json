@@ -16,5 +16,10 @@
     "functional-testing",
     "evidence-based",
     "quality-assurance"
-  ]
+  ],
+  "commands": "./commands/",
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "rules": "./rules/",
+  "hooks": "./hooks/"
 }
