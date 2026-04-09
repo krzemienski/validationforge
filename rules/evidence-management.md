@@ -78,7 +78,7 @@ starting a new validation run:
 Cleanup rules:
 - Evidence from **in-progress** validations is **never** deleted
 - FAIL evidence is flagged but still subject to the retention policy unless pinned
-- Cleanup writes a removal log to `e2e-evidence/.cleanup-log.txt` for audit
+- Cleanup writes a removal log to `e2e-evidence/cleanup.log` for audit
 
 ### Source Control
 
@@ -97,7 +97,7 @@ Active validation sessions write a lock file to prevent cleanup from interfering
 in-progress runs:
 
 ```
-e2e-evidence/validation-in-progress.lock
+.vf/state/validation-in-progress.lock
 ```
 
 **Lock file lifecycle:**
@@ -107,28 +107,26 @@ e2e-evidence/validation-in-progress.lock
 | Validation starts | Write `validation-in-progress.lock` with PID and start timestamp |
 | Validation ends (PASS or FAIL) | Remove `validation-in-progress.lock` |
 | Cleanup triggered | Check for lock file; abort if present |
-| Stale lock detected | Lock older than 24 hours is treated as orphaned and ignored |
+| Stale lock detected | Lock older than 1 hour is treated as orphaned and ignored |
 
 **Lock file contents:**
 
-```json
-{
-  "pid": 12345,
-  "started_at": "2024-01-15T10:30:00Z",
-  "run_id": "run-20240115-103000"
-}
+```
+pid=<PID>
+started=<ISO-8601 timestamp>
+platform=<platform or "auto-detect">
 ```
 
 **Cleanup behavior when lock is present:**
 
 ```
-⚠️  Validation in progress (PID 12345, started 2024-01-15T10:30:00Z).
+⚠️  Validation in progress — lock file present at .vf/state/validation-in-progress.lock.
     Cleanup aborted. Re-run after validation completes.
 ```
 
 Cleanup never removes `validation-in-progress.lock` itself — only the validation
 process that created it may remove it. If a lock is stale (process no longer running),
-cleanup logs a warning and proceeds after the 24-hour grace period.
+cleanup logs a warning and proceeds after the 1-hour grace period.
 
 ### Archive Before Purge
 
