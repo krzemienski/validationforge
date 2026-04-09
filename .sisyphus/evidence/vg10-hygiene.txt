@@ -1,0 +1,14 @@
+=== VG-10: Repository Hygiene ===
+Worktrees:
+/Users/nick/Desktop/validationforge                                                                               c25e940 [audit/plugin-improvements]
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/015-persistent-validation-history-trend-tracking 7f9c430 [auto-claude/015-persistent-validation-history-trend-tracking]
+Local branches:
+* audit/plugin-improvements
++ auto-claude/015-persistent-validation-history-trend-tracking
+  master
+Auto-claude branches (local only):
++ auto-claude/015-persistent-validation-history-trend-tracking
+Stash:
+stash@{0}: On audit/plugin-improvements: temp-before-spec-002-merge
+stash@{1}: On audit/plugin-improvements: pre-merge-campaign-stash
+Stash documented in MERGE_REPORT.md: YES

@@ -1,0 +1,16 @@
+[VF]     /validate-fix      Fix and re-validate
+[VF]     /validate-ci       CI/CD mode
+[VF]     /vf-setup          Project-level setup wizard
+[VF] 
+[VF]   Start with: /vf-setup in your project directory
+[VF] 
+
+added 1 package, and audited 2 packages in 334ms
+
+found 0 vulnerabilities
+EXIT:0
+npm notice shasum:        726a2c48eff721ac1caa4e7741bf82d02d80210f
+npm notice integrity:     sha512-0z6aGVAo3MRfm[...]pU3owDgENfreg==
+npm notice total files:   208                                     
+npm notice 
+validationforge-1.0.0.tgz

@@ -1,0 +1,7 @@
+hooks/block-test-files.js: OK
+hooks/evidence-gate-reminder.js: OK
+hooks/validation-not-compilation.js: OK
+hooks/completion-claim-validator.js: OK
+hooks/validation-state-tracker.js: OK
+hooks/mock-detection.js: OK
+hooks/evidence-quality-check.js: OK

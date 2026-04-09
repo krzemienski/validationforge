@@ -1,0 +1,12 @@
+bin/: OK
+.claude-plugin/: OK
+CLAUDE.md: OK
+README.md: OK
+skills/: OK
+hooks/: OK
+agents/: OK
+commands/: OK
+rules/: OK
+config/: OK
+templates/: OK
+scripts/: OK
