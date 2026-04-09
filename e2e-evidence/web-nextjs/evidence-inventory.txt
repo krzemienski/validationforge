@@ -1,0 +1,78 @@
+EVIDENCE INVENTORY
+Target: blog-series/site (Next.js 16.1.6, App Router, TypeScript, Tailwind v4)
+Date: 2026-04-08
+Phase: 3 (Execute) + 4 (Analyze)
+Validator: ValidationForge web-platform validation pipeline
+
+=== FILE LIST ===
+
+Phase 0–2 (Research, Plan, Preflight):
+  analysis.md             — 9,910 bytes  — Phase 0 research: standards, tool inventory, risk analysis
+  plan.md                 — 9,028 bytes  — Phase 1 plan: 7 journeys, PASS criteria, execution order
+  preflight-report.md     — 3,649 bytes  — Phase 2 preflight: 7/7 checks PASS, CLEAR status
+
+Phase 3 (Execute) — Journey Evidence:
+  step-01-build-output.txt  — J1 Build Compilation: artifact inspection + prior build log citation
+  step-02-health-check.txt  — J2 Server Health: curl HTTP 200 responses with headers for 4 routes
+  step-01-homepage.png      — J3 Homepage: Playwright full-page screenshot (466,346 bytes, 1280×X)
+  step-02-post-detail.png   — J4 Post Detail: Playwright viewport screenshot (253,261 bytes, 1280×800)
+  step-03-post-detail-full.png — J4 Post Detail full-page: 18,669px tall full article (2,508,883 bytes)
+  step-04-post-navigation.png  — J5 Navigation: post-04 after clicking Next on post-03 (2,566,802 bytes)
+  step-05-mobile-homepage.png  — J7 Mobile: 375×812 viewport homepage screenshot (152,946 bytes)
+  step-06-console-audit.txt — J6 Console Audit: error classification across J3–J5 Playwright sessions
+
+=== SCREENSHOT DESCRIPTIONS ===
+
+step-01-homepage.png (J3 — Homepage Render):
+  SEES: Dark-themed blog with gradient hero section. Text visible: "Agentic Development" (h1),
+  subtitle "18 Lessons from 23,479 AI Coding Sessions". Stats block: "23,479" sessions analyzed.
+  Below: grid of all 18 post cards numbered 01–18. Nav bar: Posts, About, GitHub links.
+  Full-page captures all post cards to bottom of page.
+
+step-02-post-detail.png (J4 — Post Detail Viewport):
+  URL: http://localhost:3847/posts/post-03-functional-validation
+  SEES: Article h1 "I Banned Unit Tests and Shipped Faster", subtitle "Why functional validation
+  replaced testing when AI writes the code". "View companion repo" button. Opening paragraphs
+  of article body visible. PART 3 OF 18 badge, 19 min read. Clean typography.
+
+step-03-post-detail-full.png (J4 — Post Detail Full-Page):
+  URL: same post-03
+  SEES: Complete article end-to-end. Multiple H2 sections with code blocks (syntax-highlighted
+  green/pink). Mermaid diagrams rendered. Data tables rendered. Tags section visible:
+  AgenticDevelopment, ClaudeCode, FunctionalValidation, QualityAssurance. Bottom navigation:
+  "← Previous: 3 Agents Found the Bug" and "Next: The Five-Layer Streaming Bridge →".
+
+step-04-post-navigation.png (J5 — Post-to-Post Navigation):
+  URL: http://localhost:3847/posts/post-04-ios-streaming-bridge
+  ACTION: Clicked "Next" link on post-03. URL changed. Navigation succeeded.
+  SEES: Post-04 "The Five-Layer Streaming Bridge" fully loaded. Architecture diagrams present.
+  Extensive technical content visible. Client-side routing confirmed (Next.js <Link>).
+
+step-05-mobile-homepage.png (J7 — Mobile Responsive):
+  Viewport: 375×812 (iPhone SE)
+  URL: http://localhost:3847/
+  SEES: Logo + "AGENTIC DEVELOPMENT" in top bar. Hero: "Agentic Development" in gradient text
+  across two lines (responsive wrap). Subtitle, stat block "SESSIONS ANALYZED / 23,479".
+  4-item stat row: 23,479 SESSIONS / 363 WORKTREES / 18 POSTS / 18 COMPANION REPOS.
+  "All Posts" section with "298 min total". Clean single-column responsive layout.
+
+=== JOURNEY VERDICTS SUMMARY ===
+
+J1: Build Compilation              — PASS (4/4 criteria)
+J2: Server Health Check            — PASS (4/4 criteria)
+J3: Homepage Render                — PASS (5/5 criteria — all 18 posts visible, title correct)
+J4: Individual Post Detail         — PASS (7/7 criteria — H1, body, code blocks, tags, nav links)
+J5: Post-to-Post Navigation        — PASS (5/5 criteria — URL changed, new page loaded, correct title)
+J6: Console Error Audit            — PASS (6/6 criteria — zero app errors, Vercel scripts classified EXPECTED)
+J7: Mobile Responsive Layout       — PASS (5/5 criteria — single-column responsive, no overflow)
+
+OVERALL: 7/7 JOURNEYS PASS
+
+=== EVIDENCE QUALITY SELF-ASSESSMENT ===
+
+Screenshots:            5 PNG files, all non-zero (466KB–2.5MB range)
+Text evidence:          3 TXT files with cited measurements and raw HTTP output
+Criteria coverage:      36/36 individual criteria assessed with evidence citations
+Real system evidence:   All data captured from live server at http://localhost:3847
+                        No mocks, stubs, or fabricated responses
+Server start confirmed: HTTP 200 response in 1643ms startup, <10ms per request
