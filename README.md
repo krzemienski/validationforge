@@ -15,6 +15,8 @@ ALWAYS capture evidence. ALWAYS review evidence. ALWAYS write verdicts.
 
 ValidationForge enforces this through hooks that block test file creation, skills that guide real-system validation, and agents that capture and review evidence through actual user interfaces.
 
+<!-- demo GIF pending: see demo/DEMO-SCENARIO.md -->
+
 ## Why Not Unit Tests?
 
 Unit tests verify code in isolation with mocks. Mocks drift from reality. ValidationForge verifies **systems in production** through the same interfaces your users experience.
@@ -31,24 +33,35 @@ These are design scenarios where mock-based testing is structurally blind. Valid
 
 ## Installation
 
+> **Note:** The GitHub repository (`https://github.com/krzemienski/validationforge`) may not be publicly published yet. If the curl/clone methods below fail with a 404, use the local symlink method instead.
+
+> **Important:** After installation, **restart Claude Code** before using ValidationForge. Plugins are loaded at session startup — hooks, skills, and commands will not be active in the session where you ran the installer.
+
 ### Claude Code (install.sh)
 
 ```bash
-# Quick install via curl
+# Quick install via curl (requires published GitHub repo)
 curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
 
-# Or manual: clone + symlink
+# Or manual clone from GitHub (requires published GitHub repo)
 git clone --depth 1 https://github.com/krzemienski/validationforge ~/.claude/plugins/validationforge
+
+# Or local symlink (works without GitHub — use if repo is not yet published)
+ln -s /path/to/your/local/validationforge ~/.claude/plugins/validationforge
 ```
 
 The installer clones the repo to `~/.claude/plugins/validationforge`, copies 8 rules to `~/.claude/rules/vf-*.md`, creates the `e2e-evidence/` directory (if inside a git repo), and saves config to `~/.claude/.vf-config.json`.
 
 Environment variables: `VF_SOURCE` (override repo URL), `VF_INSTALL_DIR` (override install path, must be under `$HOME` or temp).
 
+After running any install method, restart Claude Code for the plugin to take effect.
+
 ### OpenCode (opencode.json)
 
+> **Note:** The OpenCode plugin has not been verified in a live OpenCode session. See [Known Limitations](#known-limitations).
+
 ```bash
-# Clone into your project's .opencode/plugins/ directory
+# Clone into your project's .opencode/plugins/ directory (requires published GitHub repo)
 mkdir -p .opencode/plugins
 git clone --depth 1 https://github.com/krzemienski/validationforge .opencode/plugins/validationforge
 # Or symlink shared skills/commands
@@ -192,16 +205,18 @@ Evidence is captured to `e2e-evidence/` and **must be reviewed, not just capture
 
 ## Benchmarking
 
-`/validate-benchmark` scores your project across four dimensions:
+> **Design intent — not yet empirically verified.** The scoring algorithm is implemented in `scripts/benchmark/` and `/validate-benchmark` wires it together, but the command has never been executed against a real project. The dimension weights, grade thresholds, and metric formulas below are design targets, not measured or validated values. See [Verification Status](#verification-status).
 
-| Dimension | Weight | What It Measures |
-|-----------|--------|-----------------|
+`/validate-benchmark` is designed to score your project across four dimensions:
+
+| Dimension | Weight (design target) | What It Measures |
+|-----------|------------------------|-----------------|
 | Coverage | 35% | Validated journeys / Total discoverable features |
 | Evidence Quality | 30% | Evidence citations, observation quality, verdict rigor |
 | Enforcement | 25% | Hooks installed, no mocks, no test files, rules active |
 | Speed | 10% | Validation time relative to project size |
 
-Grades: A (90+), B (80-89), C (70-79), D (60-69), F (<60).
+Designed grade thresholds (pending empirical calibration): A (90+), B (80–89), C (70–79), D (60–69), F (<60).
 
 ## Inventory
 
@@ -247,6 +262,40 @@ validationforge/
 +-- SKILLS.md                         Complete skills index
 +-- COMMANDS.md                       Complete commands index
 ```
+
+## Verification Status
+
+What has actually been verified about ValidationForge, and what has not:
+
+| Area | Status |
+|------|--------|
+| File inventory (40 skills, 15 commands, 7 hooks, 5 agents, 8 rules) | Verified on disk |
+| Hook syntax and functional behavior (all 7) | Verified — syntax PASS, functional tests PASS |
+| Cross-references (commands → skills, agents, rules) | Verified — zero broken references |
+| Plugin manifest format | Verified — matches ECC 1.8.0 and OMC patterns |
+| VF methodology against real project (2/18 posts) | Verified — PASS on all 6 criteria |
+| VF methodology expanded (18/18 posts + responsive + errors) | Verified — PASS on 7/7 criteria |
+| Plugin loaded in live Claude Code session | **Not verified** — requires session restart after install |
+| `/validate` command as automated pipeline | **Not verified** — manual execution only |
+| `${CLAUDE_PLUGIN_ROOT}` resolution | **Not verified** — standard pattern, untested end-to-end |
+| Benchmark scoring | **Not verified** — algorithm implemented, never executed |
+| Skill content quality (all 40) | **Partially verified** — 5 deep-reviewed, remainder spot-checked |
+
+## Known Limitations
+
+These are honest disclosures about what ValidationForge has **not** been verified to do, based on direct testing:
+
+1. **Plugin requires session restart to load** — After installation, Claude Code must be fully restarted before the plugin is recognized. Installation in a live session does not activate hooks, skills, or commands. This behavior is architectural (plugins load at session startup), not a bug, but it means the "install and immediately use" experience shown in the Quick Start has not been verified end-to-end in a single session.
+
+2. **`/validate` is a skill/guide, not an automated pipeline** — The `/validate` command is a markdown skill file that instructs Claude to follow the 7-phase pipeline. It does not programmatically orchestrate tools, spawn subprocesses, or enforce phase gates. Each phase requires Claude to interpret and execute the guidance. The command has never been run via the plugin in a live Claude Code session; all VF methodology testing was performed by manually following the pipeline.
+
+3. **`${CLAUDE_PLUGIN_ROOT}` hook variable resolution not verified** — Hook commands in `hooks.json` reference `${CLAUDE_PLUGIN_ROOT}` to locate hook scripts at runtime. This is the documented Claude Code pattern (ECC 1.8.0), but end-to-end resolution — from installed plugin to hook execution with the correct path — has not been observed in a live session.
+
+4. **Benchmark scoring not empirically tested** — The scoring algorithm in `scripts/benchmark/` and the `/validate-benchmark` command have never been executed against a real project. Dimension weights (Coverage 35%, Evidence Quality 30%, Enforcement 25%, Speed 10%) and grade thresholds (A/B/C/D/F) are design targets derived from the specification, not calibrated from observed outputs.
+
+5. **Skill content quality partially verified** — Of the 40 skill directories, 5 were deep-reviewed (frontmatter, content accuracy, cross-reference validity) and the remaining 35 were spot-checked for file presence and frontmatter structure. Content correctness and trigger accuracy for the unreviewed skills is assumed, not confirmed.
+
+6. **OpenCode plugin not verified in live OpenCode session** — The OpenCode plugin (`index.ts`) compiles without errors and follows the documented plugin interface, but has never been loaded into a running OpenCode session. Hook registration (`permission.ask`, `tool.execute.after`, `shell.env`) and custom tool availability (`vf_validate`, `vf_check_evidence`) are unconfirmed at runtime.
 
 ## Troubleshooting
 
