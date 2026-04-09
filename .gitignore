@@ -5,11 +5,10 @@ dist/
 .omc/
 .remember/
 audit-artifacts/
-e2e-evidence/*.png
-e2e-evidence/*.jpg
-e2e-evidence/*.json
-!e2e-evidence/evidence-inventory.txt
+# e2e-evidence - exclude all evidence files but preserve inventory and reports
+e2e-evidence/**
 !e2e-evidence/report.md
+!e2e-evidence/**/evidence-inventory.txt
 .DS_Store
 *.log
 
