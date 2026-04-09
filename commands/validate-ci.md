@@ -106,7 +106,7 @@ e2e-evidence/
 
 For a production-ready GitHub Actions setup, use the provided starter template. It handles dependency installation, service startup, server readiness, validation execution, and evidence upload in a single file.
 
-**Template:** [`.github/workflows/github-actions-validate.yml`](.github/workflows/github-actions-validate.yml)  
+**Template:** [`templates/github-actions-validate.yml`](templates/github-actions-validate.yml)  
 **Integration guide:** [`docs/github-actions-integration.md`](docs/github-actions-integration.md)
 
 ### What the Template Does
@@ -125,7 +125,7 @@ Copy the template to `.github/workflows/github-actions-validate.yml` in your pro
 
 ## GitHub Actions Example
 
-> **Recommended:** Use the [starter template](.github/workflows/github-actions-validate.yml) instead of writing from scratch. The snippet below is a minimal reference only.
+> **Recommended:** Use the [starter template](templates/github-actions-validate.yml) instead of writing from scratch. The snippet below is a minimal reference only.
 
 ```yaml
 name: Validation
