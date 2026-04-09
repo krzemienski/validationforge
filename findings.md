@@ -144,3 +144,94 @@ The validate.md inverts the PREFLIGHT/PLAN order: it runs PREFLIGHT (Phase 2) *b
 | `${CLAUDE_PLUGIN_ROOT}` resolution | Not verified |
 | Benchmark scoring | Not verified |
 | Skill content quality (all 40) | Partially verified (5 deep, rest spot-checked) |
+
+---
+
+## 2026-04-08 — Subtask-1-2: Skills Workflow Directory Audit (skills/e2e-validate/)
+
+### Audit: skills/e2e-validate/workflows/ vs 7-Phase Spec
+
+**Existing workflow files (8 total):**
+
+| File | Present | Phase Mapped |
+|------|---------|-------------|
+| `analyze.md` | ✅ | Discovery (maps to Phase 1 Analyze in full-run.md) |
+| `plan.md` | ✅ | Planning (Phase 2 in full-run.md) |
+| `execute.md` | ✅ | Execution (Phase 4 in full-run.md) |
+| `fix-and-revalidate.md` | ✅ | Repair (Phase 5 fix loop) |
+| `audit.md` | ✅ | Read-only assessment |
+| `report.md` | ✅ | Reporting (Phase 6 in full-run.md) |
+| `full-run.md` | ✅ | Full pipeline orchestrator |
+| `ci-mode.md` | ✅ | CI/CD non-interactive |
+
+**Missing workflow files (confirmed absent):**
+
+| File | Status | Required For |
+|------|--------|-------------|
+| `research.md` | ❌ **MISSING** | Phase 0 — RESEARCH (gather standards before planning) |
+| `ship.md` | ❌ **MISSING** | Phase 6 — SHIP (production readiness audit, deploy gate) |
+
+Verification: `ls skills/e2e-validate/workflows/ | grep -E 'research|ship'` → empty (confirmed gap).
+
+### Audit: SKILL.md Cross-Reference Gaps
+
+**Command Routing table** (`## Command Routing` in SKILL.md):
+- Lists 8 flags: `(none)`, `--analyze`, `--plan`, `--execute`, `--fix`, `--audit`, `--report`, `--ci`
+- **Missing**: No `--research` flag routing to `workflows/research.md`
+- **Missing**: No `--ship` flag routing to `workflows/ship.md`
+
+**Workflow Files table** (`## Workflow Files` in SKILL.md):
+- Lists 8 existing workflow files; correctly matched to disk
+- **Missing row**: `workflows/research.md` — Phase 0 Research not listed
+- **Missing row**: `workflows/ship.md` — Phase 6 Ship not listed
+
+**Default full-run description** (SKILL.md `(none)` flag row):
+- Documents: `"Full pipeline: analyze → plan → approve → execute → report"`
+- Should document: `"research → plan → preflight → execute → analyze → verdict → ship"`
+- **Incorrect**: neither Research nor Ship appear in the default run description
+
+**Related Skills table** (SKILL.md `## Related Skills`):
+- Lists `research-validation` skill as referenced in all workflows — but no workflow actually invokes it
+- Lists no reference to `production-readiness-audit` skill — required for Phase 6 Ship
+
+### Audit: full-run.md Phase Coverage
+
+`workflows/full-run.md` defines **6 phases** (numbered locally as 1–6):
+
+| full-run.md Phase | Label | Canonical Phase |
+|-------------------|-------|----------------|
+| Phase 1 | Analyze | Phase 1 (misnamed; analyze ≠ research) |
+| Phase 2 | Plan | Phase 1 (PLAN) |
+| Phase 3 | Approve | Gate within Plan; not canonical |
+| Phase 4 | Execute | Phase 3 (EXECUTE) |
+| Phase 5 | Fix Loop | Repair branch; conditional |
+| Phase 6 | Report | Phase 5 (VERDICT/REPORT) |
+
+**Missing from full-run.md:**
+- Phase 0 — RESEARCH: no step, no workflow reference to `research.md`
+- Phase 4 — ANALYZE: Execute goes directly to Fix/Report with no intermediate analysis step
+- Phase 6 — SHIP: Report is the terminal phase; no production readiness gate
+
+**Diagram gap**: The ASCII flow diagram shows `ANALYZE → PLAN → APPROVE → EXECUTE → REPORT` — a 5-stage pipeline. The canonical 7-phase pipeline (RESEARCH → PLAN → PREFLIGHT → EXECUTE → ANALYZE → VERDICT → SHIP) is not represented.
+
+**PREFLIGHT gap**: `full-run.md` has no Preflight phase. Preflight (environment checks via `skills/preflight`) is present in `commands/validate.md` but absent from the skill-level `full-run.md` orchestrator.
+
+### Summary of Gaps
+
+| Gap | Location | Impact |
+|-----|----------|--------|
+| `research.md` file does not exist | `workflows/` directory | Phase 0 RESEARCH cannot execute |
+| `ship.md` file does not exist | `workflows/` directory | Phase 6 SHIP cannot execute |
+| `research.md` not listed in Workflow Files table | SKILL.md | Routing broken |
+| `ship.md` not listed in Workflow Files table | SKILL.md | Routing broken |
+| No `--research` flag routing | SKILL.md Command Routing | No direct invocation path |
+| No `--ship` flag routing | SKILL.md Command Routing | No direct invocation path |
+| Default run omits research + ship in description | SKILL.md | Misleading pipeline description |
+| RESEARCH phase absent from full-run.md | `workflows/full-run.md` | Phase 0 skipped in full run |
+| ANALYZE phase absent from full-run.md | `workflows/full-run.md` | No failure root-cause step |
+| SHIP phase absent from full-run.md | `workflows/full-run.md` | No production readiness gate |
+| PREFLIGHT phase absent from full-run.md | `workflows/full-run.md` | Environment not verified at skill level |
+
+### Conclusion
+
+The `skills/e2e-validate/` skill is missing **2 workflow files** (`research.md`, `ship.md`) and has **9 cross-reference gaps** across SKILL.md and full-run.md. Combined with the `commands/validate.md` gaps from Subtask-1-1, the pipeline is missing Phase 0 (Research), has no Analyze phase, and lacks the Ship production readiness gate at both the command and skill orchestration layers.
