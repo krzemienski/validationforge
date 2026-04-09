@@ -23,6 +23,7 @@
     "vf": "bin/vf.js"
   },
   "scripts": {
+    "build:patterns": "tsc --project tsconfig.hooks.json",
     "postinstall": "node scripts/postinstall.js"
   },
   "engines": {
@@ -42,10 +43,7 @@
     "templates/",
     "scripts/"
   ],
-  "scripts": {
-    "build:patterns": "tsc --project tsconfig.hooks.json"
-  },
   "devDependencies": {
-    "typescript": "^5.5.0"
+    "typescript": "5.5.0"
   }
 }
