@@ -110,8 +110,24 @@ Use AskUserQuestion:
 
 **Options:**
 1. **Strict** — All hooks active, blocks test files + mocks + false claims. Recommended for production projects.
+   Config: `config/strict.json`
+   Hooks: `block-test-files` (block), `evidence-gate-reminder` (enabled), `validation-not-compilation` (enabled), `completion-claim-validator` (enabled), `mock-detection` (enabled)
+   Rules: requires validation plan, preflight, baseline, screenshot review; fails on missing evidence
 2. **Standard** (Recommended) — Core hooks active, warnings for best practices.
-3. **Permissive** — Minimal enforcement, only blocks test file creation.
+   Config: `config/standard.json`
+   Hooks: `block-test-files` (block), `evidence-gate-reminder` (enabled), `validation-not-compilation` (enabled), `completion-claim-validator` (enabled), `mock-detection` (enabled)
+   Rules: blocks test files and mocks; evidence reminders active; no strict preflight or baseline requirement
+3. **Permissive** — Advisory hooks only, warns but does not block. For teams transitioning from unit tests.
+   Config: `config/permissive.json`
+   Hooks: `block-test-files` (warn), `evidence-gate-reminder` (enabled), `validation-not-compilation` (enabled), `completion-claim-validator` (warn), `mock-detection` (warn)
+   Rules: no blocking rules active; all gates are advisory only
+
+Store the selected level for use in subsequent steps:
+
+```bash
+# ENFORCEMENT_LEVEL is set to: "strict" | "standard" | "permissive"
+ENFORCEMENT_LEVEL="standard"   # replace with actual user selection
+```
 
 ### Step 4: Install Rules
 
@@ -222,6 +238,71 @@ No-mock validation platform. Ship verified code, not "it compiled" code.
 IF the real system doesn't work, FIX THE REAL SYSTEM.
 NEVER create mocks, stubs, test doubles, or test files.
 NEVER mark a journey PASS without specific evidence.
+```
+
+### Step 4b: Apply Enforcement Config
+
+Copy the selected enforcement config from the plugin's `config/` directory to `.vf/active-config.json`.
+This file is the authoritative source of active hooks and rules for all subsequent `validate` commands.
+
+```bash
+# Ensure the .vf directory exists
+mkdir -p .vf
+
+# Map the user's enforcement selection to its config file
+case "${ENFORCEMENT_LEVEL}" in
+  strict)     CONFIG_SRC="${INSTALL_DIR}/config/strict.json" ;;
+  permissive) CONFIG_SRC="${INSTALL_DIR}/config/permissive.json" ;;
+  *)          CONFIG_SRC="${INSTALL_DIR}/config/standard.json" ;;
+esac
+
+if [ -f "${CONFIG_SRC}" ]; then
+  cp "${CONFIG_SRC}" .vf/active-config.json
+  echo "  [OK] Enforcement config applied: .vf/active-config.json (${ENFORCEMENT_LEVEL})"
+else
+  echo "  [WARN] Config source not found: ${CONFIG_SRC}"
+  echo "         Verify plugin installation directory: ${INSTALL_DIR}"
+  echo "         Re-run the installer: curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash"
+fi
+```
+
+Expected result:
+```
+.vf/
+  active-config.json    ← Active enforcement config (strict | standard | permissive)
+```
+
+The `active-config.json` structure matches the source config (e.g., for `standard`):
+
+```json
+{
+  "name": "standard",
+  "strictness": "standard",
+  "hooks": {
+    "block-test-files": "enabled",
+    "evidence-gate-reminder": "enabled",
+    "validation-not-compilation": "enabled",
+    "completion-claim-validator": "enabled",
+    "mock-detection": "enabled"
+  },
+  "rules": {
+    "block_test_files": true,
+    "block_mock_patterns": true,
+    "require_evidence_on_completion": true,
+    "fail_on_missing_evidence": false
+  }
+}
+```
+
+Validate the config was written:
+
+```bash
+if [ -f ".vf/active-config.json" ]; then
+  ACTIVE_NAME=$(jq -r '.name // empty' .vf/active-config.json 2>/dev/null)
+  echo "  [OK] Active config: ${ACTIVE_NAME}"
+else
+  echo "  [FAIL] .vf/active-config.json was not created"
+fi
 ```
 
 ### Step 5: Create Evidence Directory
