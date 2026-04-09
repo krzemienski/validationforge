@@ -1,4 +1,5 @@
 ---
+name: forge-setup
 description: "Initialize ValidationForge for this project"
 allowed-tools: "Read, Write, Edit, Bash, Glob, Grep, Agent"
 ---

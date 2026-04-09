@@ -1,4 +1,5 @@
 ---
+name: forge-execute
 description: "Run validation journeys against the real system with autonomous fix loop"
 allowed-tools: "Read, Write, Edit, Bash, Glob, Grep, Agent"
 ---

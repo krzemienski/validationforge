@@ -1,4 +1,5 @@
 ---
+name: forge-team
 description: "Multi-agent parallel validation across platforms"
 allowed-tools: "Read, Write, Bash, Glob, Grep, Agent"
 ---

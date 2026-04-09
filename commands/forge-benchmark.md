@@ -1,4 +1,5 @@
 ---
+name: forge-benchmark
 description: "Measure validation posture across 5 dimensions with trend tracking"
 allowed-tools: "Read, Write, Bash, Glob, Grep"
 ---
