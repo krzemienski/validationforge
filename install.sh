@@ -32,6 +32,16 @@ else
   git clone --depth 1 "$REPO" "$INSTALL_DIR"
 fi
 
+# Create plugin cache symlink so Claude Code plugin loader can find it
+PLUGIN_CACHE_DIR="${HOME}/.claude/plugins/cache/validationforge/validationforge/1.0.0"
+info "Registering plugin cache at ${PLUGIN_CACHE_DIR}..."
+mkdir -p "$(dirname "$PLUGIN_CACHE_DIR")"
+if [ -L "$PLUGIN_CACHE_DIR" ]; then
+  rm "$PLUGIN_CACHE_DIR"
+fi
+ln -s "$INSTALL_DIR" "$PLUGIN_CACHE_DIR"
+ok "Plugin cache symlink created: ${PLUGIN_CACHE_DIR} -> ${INSTALL_DIR}"
+
 # Install global rules with vf- prefix
 info "Installing rules to ${RULES_DIR}..."
 mkdir -p "$RULES_DIR"
@@ -42,7 +52,7 @@ for rule_file in "$INSTALL_DIR"/rules/*.md; do
   cp "$rule_file" "$target"
 done
 
-ok "$(ls "$INSTALL_DIR"/rules/*.md | wc -l | tr -d ' ') rules installed"
+ok "$(ls "$INSTALL_DIR"/rules/*.md | wc -l | tr -d ' ') rules installed"  # tr -d ' ' strips leading spaces from macOS wc; harmless on Linux
 
 # Create evidence directory in current project (if in a git repo)
 if git rev-parse --git-dir >/dev/null 2>&1; then
@@ -72,6 +82,34 @@ EOF
 
 ok "Config saved to $CONFIG_FILE"
 
+# Register in installed_plugins.json so Claude Code plugin loader discovers the plugin
+INSTALLED_PLUGINS_FILE="${HOME}/.claude/installed_plugins.json"
+info "Registering plugin in ${INSTALLED_PLUGINS_FILE}..."
+mkdir -p "$(dirname "$INSTALLED_PLUGINS_FILE")"
+python3 - "$INSTALLED_PLUGINS_FILE" "$INSTALL_DIR" << 'PYEOF'
+import sys, json, os
+
+plugins_file = sys.argv[1]
+install_dir  = sys.argv[2]
+plugin_key   = "validationforge@validationforge"
+
+if os.path.isfile(plugins_file):
+    with open(plugins_file, "r") as fh:
+        try:
+            registry = json.load(fh)
+        except (json.JSONDecodeError, ValueError):
+            registry = {}
+else:
+    registry = {}
+
+registry[plugin_key] = {"path": install_dir, "scope": "user"}
+
+with open(plugins_file, "w") as fh:
+    json.dump(registry, fh, indent=2)
+    fh.write("\n")
+PYEOF
+ok "Plugin registered in ${INSTALLED_PLUGINS_FILE}"
+
 # Verify installation
 info ""
 info "=== ValidationForge Installed ==="
@@ -90,3 +128,15 @@ info "    /vf-setup          Project-level setup wizard"
 info ""
 info "  Start with: /vf-setup in your project directory"
 info ""
+
+# Prominent restart prompt
+BOLD='\033[1m'
+YELLOW='\033[1;33m'
+GREEN='\033[1;32m'
+RESET='\033[0m'
+printf "\n"
+printf "${YELLOW}************************************************************${RESET}\n"
+printf "${BOLD}${GREEN}  ACTION REQUIRED: Restart Claude Code to activate the plugin${RESET}\n"
+printf "${YELLOW}************************************************************${RESET}\n"
+printf "${BOLD}  Please restart Claude Code now for ValidationForge to take effect.${RESET}\n"
+printf "\n"

@@ -52,6 +52,8 @@ ln -s /path/to/your/local/validationforge ~/.claude/plugins/validationforge
 
 The installer clones the repo to `~/.claude/plugins/validationforge`, copies 8 rules to `~/.claude/rules/vf-*.md`, creates the `e2e-evidence/` directory (if inside a git repo), and saves config to `~/.claude/.vf-config.json`.
 
+> **Note:** Restart Claude Code after installation to activate the plugin and load all skills, hooks, and commands.
+
 Environment variables: `VF_SOURCE` (override repo URL), `VF_INSTALL_DIR` (override install path, must be under `$HOME` or temp).
 
 After running any install method, restart Claude Code for the plugin to take effect.
@@ -79,6 +81,14 @@ The OpenCode plugin (`index.ts`) registers `permission.ask`, `tool.execute.after
 ```
 
 Setup detects your platform, selects enforcement level, scaffolds `e2e-evidence/`, installs rules to `.claude/rules/vf-*`, and verifies MCP server availability.
+
+### Uninstall
+
+```bash
+bash uninstall.sh
+```
+
+The uninstaller removes `~/.claude/plugins/validationforge`, deletes all copied rules (`~/.claude/rules/vf-*.md`), and removes the config file (`~/.claude/.vf-config.json`). Your project's `e2e-evidence/` directory is preserved.
 
 ## Quick Start
 
