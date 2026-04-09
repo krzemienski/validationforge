@@ -72,7 +72,7 @@ starting a new validation run:
 
 ```bash
 /validate --clean          # Purge evidence older than configured retention period
-/validate --clean --days 7 # Override: purge evidence older than 7 days
+                           # (uses evidence_retention_days from .vf-config.json)
 ```
 
 Cleanup rules:

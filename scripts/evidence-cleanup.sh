@@ -122,17 +122,19 @@ log_audit() {
 # ── Discovery ──────────────────────────────────────────────────────────────────
 # Find immediate subdirectories of EVIDENCE_DIR older than RETENTION_DAYS.
 # We only clean journey-level subdirectories, not top-level files.
-mapfile -t OLD_DIRS < <(
-  find "$EVIDENCE_DIR" -mindepth 1 -maxdepth 1 -type d -mtime +"$RETENTION_DAYS" \
-    | sort
-) 2>/dev/null || OLD_DIRS=()
+OLD_DIRS=()
+while IFS= read -r _dir; do
+  [ -n "$_dir" ] && OLD_DIRS+=("$_dir")
+done <<FIND_EOF
+$(find "$EVIDENCE_DIR" -mindepth 1 -maxdepth 1 -type d -mtime +"$RETENTION_DAYS" 2>/dev/null | sort)
+FIND_EOF
 
 # ── Cleanup loop ───────────────────────────────────────────────────────────────
 removed_count=0
 freed_bytes=0
 
 for dir in "${OLD_DIRS[@]:-}"; do
-  # Skip empty entry (mapfile can produce one if find yields nothing)
+  # Skip empty entries from find output
   [ -z "$dir" ] && continue
 
   # Safety: ensure the path is within EVIDENCE_DIR (no traversal escape)
@@ -145,7 +147,7 @@ for dir in "${OLD_DIRS[@]:-}"; do
   esac
 
   # Compute directory size before removal
-  dir_bytes=$(du -sb "$dir" 2>/dev/null | awk '{print $1}' || echo "0")
+  dir_bytes=$(du -sk "$dir" 2>/dev/null | awk '{print $1 * 1024}' || echo "0")
 
   if [ "$DRY_RUN" = "1" ]; then
     echo "[VF] DRY_RUN: would remove $dir (${dir_bytes} bytes)"
