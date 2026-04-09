@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "journey": "J1",
+    "title": "Health Check — Server Liveness",
+    "priority": "P0",
+    "endpoint": "GET /health",
+    "url": "http://localhost:5001/health",
+    "timestamp": "2026-04-08T22:55:54Z",
+    "phase": "Execute (Phase 3)"
+  },
+  "_request": {
+    "method": "GET",
+    "url": "http://localhost:5001/health",
+    "headers": {}
+  },
+  "_response": {
+    "http_status": 200,
+    "headers": {
+      "Server": "Werkzeug/3.1.3 Python/3.13.9",
+      "Content-Type": "application/json",
+      "Content-Length": "32",
+      "Connection": "close"
+    }
+  },
+  "_observed": "Response body is valid JSON. Contains 'status' key with value 'ok' (string). Contains 'items_count' key with value 3 (integer ≥ 0). Content-Type is application/json. HTTP 200 confirms server is live and responsive.",
+  "items_count": 3,
+  "status": "ok"
+}

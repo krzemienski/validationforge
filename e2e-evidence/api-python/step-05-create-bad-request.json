@@ -1,0 +1,33 @@
+{
+  "_meta": {
+    "journey": "J5",
+    "title": "Create Item — Validation Error (Missing Name)",
+    "priority": "P0",
+    "endpoint": "POST /api/items",
+    "url": "http://localhost:5001/api/items",
+    "timestamp": "2026-04-08T22:55:55Z",
+    "phase": "Execute (Phase 3)"
+  },
+  "_request": {
+    "method": "POST",
+    "url": "http://localhost:5001/api/items",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {}
+  },
+  "_response": {
+    "http_status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "_observed": "HTTP 400 Bad Request returned (not 200, not 500). Response body is valid JSON — not an HTML error page. Contains 'error' key with value 'Request body must be valid JSON' (human-readable, non-null, non-empty). Content-Type is application/json. ANALYSIS: The error message does not reference the 'name' field by name — this is because the Flask code checks `if not body` which treats the empty dict {} as falsy (Python truthiness issue). When body is {} (empty dict), `not {}` is True, so the code takes the 'invalid JSON' branch instead of the 'missing name' branch. This is a latent bug: `{}` IS valid JSON, so the error message is technically incorrect. Tested separately with {\"description\":\"no name here\"} → correctly returns 400 with \"Field name is required and must be non-empty\". The P0 status code check PASSES; the 'name field reference' criterion is a PARTIAL.",
+  "_bug_found": {
+    "severity": "LOW",
+    "description": "Empty dict {} is falsy in Python. `if not body` branch treats {} as invalid JSON instead of reaching name validation. Fix: change `if not body` to `if body is None`.",
+    "source_line": "demo/python-api/app.py line 62: `if not body:`",
+    "suggested_fix": "if body is None:"
+  },
+  "error": "Request body must be valid JSON"
+}

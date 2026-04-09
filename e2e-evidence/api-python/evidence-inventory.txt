@@ -1,0 +1,79 @@
+EVIDENCE INVENTORY — Python Flask API Platform Validation
+Phase: Execute (Phase 3) + Analyze (Phase 4)
+Generated: 2026-04-08T22:56:00Z
+Server: http://localhost:5001 (Flask 3.1.2 / Werkzeug 3.1.3 / Python 3.13.9)
+
+═══════════════════════════════════════════════════════════════
+EVIDENCE FILES
+═══════════════════════════════════════════════════════════════
+
+[PRIOR PHASES]
+  analysis.md               Phase 0 Research — platform analysis, route inventory
+  plan.md                   Phase 1 Plan     — 7 journeys, PASS criteria, evidence requirements
+  preflight-report.md       Phase 2 Preflight — all checks PASS, server live on port 5001
+
+[EXECUTE PHASE — Journey Evidence]
+  step-01-health.json           J1 P0  GET /health          → HTTP 200 {"status":"ok","items_count":3}
+  step-02-items-list.json       J2 P0  GET /api/items        → HTTP 200 3 items, total=3
+  step-03-item-create.json      J3 P0  POST /api/items       → HTTP 201 item id=4 created
+  step-04-list-after-create.json J4 P0  GET /api/items        → HTTP 200 4 items, total=4 (delta+1)
+  step-05-create-bad-request.json J5 P0  POST /api/items {}   → HTTP 400 error json (not html)
+  step-06-get-item-1.json       J6 P1  GET /api/items/1      → HTTP 200 Widget A
+  step-07-get-item-404.json     J7 P1  GET /api/items/9999   → HTTP 404 error references id 9999
+
+[THIS FILE]
+  evidence-inventory.txt        This index (evidence manifest)
+
+[TO BE CREATED]
+  VERDICT.md                    Phase 5 Verdict + Phase 6 Ship decision
+
+═══════════════════════════════════════════════════════════════
+JOURNEY RESULTS SUMMARY
+═══════════════════════════════════════════════════════════════
+
+Journey  | Priority | Status | HTTP | Notes
+---------|----------|--------|------|----------------------------------------------
+J1 Health Check              | P0 | PASS | 200  | status=ok, items_count=3, Content-Type=json
+J2 List Items                | P0 | PASS | 200  | 3 items, total matches array length
+J3 Create Item (happy)       | P0 | PASS | 201  | id=4, all fields match submitted values
+J4 Create Persistence        | P0 | PASS | 200  | total=4, item id=4 visible in list
+J5 Create Bad Request        | P0 | PARTIAL | 400 | status+error key PASS; msg bug: {} treated as non-JSON (see below)
+J6 Get by ID                 | P1 | PASS | 200  | id=1, all fields present, name=Widget A
+J7 Get 404                   | P1 | PASS | 404  | error references id 9999, JSON not HTML
+
+Totals: 7 journeys | 6 PASS | 1 PARTIAL | 0 FAIL | 0 BLOCKED
+
+═══════════════════════════════════════════════════════════════
+ANALYSIS (Phase 4) — FINDINGS
+═══════════════════════════════════════════════════════════════
+
+FINDING-1: Bug in empty-body validation (LOW severity)
+  File:    demo/python-api/app.py line 62
+  Code:    if not body:
+  Problem: Python empty dict {} is falsy. When client sends {} (valid JSON),
+           `if not body` evaluates True and returns "Request body must be valid JSON"
+           instead of reaching the name validation check.
+  Impact:  J5 PASS criterion "Error message references the missing 'name' field" FAILS.
+           The error message is misleading — {} IS valid JSON.
+  Fix:     Change `if not body:` to `if body is None:` to distinguish between
+           "no JSON body" and "empty JSON object".
+  Verified: POST {} → "Request body must be valid JSON" (BUG)
+            POST {"description":"x"} → "Field 'name' is required and must be non-empty" (CORRECT)
+
+FINDING-2: All P0 criteria met — server is production-ready for liveness/read paths
+  Evidence: J1+J2+J3+J4 all PASS with correct HTTP status codes and JSON payloads.
+
+FINDING-3: Error handling uses JSON throughout (no HTML error pages)
+  Evidence: J5 and J7 both return Content-Type: application/json.
+            Flask's custom errorhandler(404) and errorhandler(405) are active.
+
+═══════════════════════════════════════════════════════════════
+INTEGRITY CHECKS
+═══════════════════════════════════════════════════════════════
+
+  No test files created              ✓ (validation against real running server)
+  No mocks or stubs used             ✓ (real Flask in-memory state)
+  Evidence files non-empty           ✓ (all JSON files contain body + _meta)
+  Sequential state across journeys   ✓ (J4 shows J3's item — same server process)
+  Port used                          5001 (5000 blocked by macOS AirPlay Receiver)
+  Server PID during validation       69671
