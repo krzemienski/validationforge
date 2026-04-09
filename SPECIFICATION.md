@@ -1,7 +1,7 @@
 # ValidationForge: Complete Product Specification
 
 > **DEPRECATED:** This document has been superseded by [PRD.md](./PRD.md) (v2.0.0, March 10, 2026).
-> PRD.md contains accurate inventory numbers (40 skills, 15 commands, 7 hooks, 5 agents, 8 rules),
+> PRD.md contains accurate inventory numbers (41 skills, 15 commands, 7 hooks, 5 agents, 8 rules),
 > updated competitive analysis, marketing integration, and go-to-market strategy.
 > This file is retained for historical reference only.
 

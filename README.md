@@ -2,7 +2,7 @@
 
 **No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
 
-> **41 skills | 15 commands | 8 hooks | 5 agents | 8 rules | 8 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
+> **41 skills | 15 commands | 7 hooks | 5 agents | 8 rules | 8 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
 
 ## The Iron Rule
 

@@ -79,9 +79,9 @@
 
 **Estimated effort:** 1-2 hours
 
-### 1.4 SPECIFICATION.md Inventory Mismatch
+### 1.4 SPECIFICATION.md Inventory Mismatch **[RESOLVED]**
 
-**Status:** SPECIFICATION.md v1.0.0 says 16 skills, 5 commands, 5 hooks, 3 agents. Reality: 40 skills, 15 commands, 7 hooks, 5 agents, 8 rules.
+**Status:** SPECIFICATION.md v1.0.0 says 16 skills, 5 commands, 5 hooks, 3 agents. Reality: 41 skills, 15 commands, 7 hooks, 5 agents, 8 rules.
 
 **Risk:** Users read the spec, find different numbers on disk → credibility loss.
 
@@ -91,6 +91,8 @@
 - Or: deprecate SPECIFICATION.md in favor of PRD.md as source of truth
 
 **Estimated effort:** 2-4 hours (if updating spec) or 15 minutes (if deprecating)
+
+**Resolution:** SPECIFICATION.md has been deprecated with a notice pointing to PRD.md as single source of truth. All authoritative docs (CLAUDE.md, README.md, PRD.md, SPECIFICATION.md) now use consistent 41-skill count.
 
 ### 1.5 Demo GIF — DOESN'T EXIST
 
