@@ -2,9 +2,13 @@
 // returns a config object that hooks use to decide whether to block, warn, or skip.
 //
 // Resolution order:
-//   1. Read ~/.claude/.vf-config.json → get 'enforcement' field
+//   1. Read VF_CONFIG_PATH env var (or ~/.claude/.vf-config.json) → get 'enforcement' field
 //   2. Load config/{enforcement}.json from the plugin root
 //   3. On any error → fall back to 'standard' profile (fail-open, not fail-closed)
+//
+// Env vars:
+//   CLAUDE_PLUGIN_ROOT  — override plugin root for locating config/ directory
+//   VF_CONFIG_PATH      — override the user config file path (useful in CI/CD)
 //
 // Follows the same synchronous pattern as hooks/patterns.js.
 
@@ -17,7 +21,8 @@ const PLUGIN_ROOT = process.env.CLAUDE_PLUGIN_ROOT || path.resolve(__dirname, '.
 const CONFIG_DIR = path.join(PLUGIN_ROOT, 'config');
 
 // Path to the user-level active config file written by /vf-setup.
-const VF_CONFIG_PATH = path.join(os.homedir(), '.claude', '.vf-config.json');
+// Can be overridden via VF_CONFIG_PATH env var (useful in CI/CD environments).
+const VF_CONFIG_PATH = process.env.VF_CONFIG_PATH || path.join(os.homedir(), '.claude', '.vf-config.json');
 
 const VALID_LEVELS = ['strict', 'standard', 'permissive'];
 
