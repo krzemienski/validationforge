@@ -34,10 +34,20 @@ process.stdin.on('end', () => {
     const isCompletionClaim = COMPLETION_PATTERNS.some(p => p.test(output));
 
     if (isCompletionClaim) {
-      const hasEvidence = fs.existsSync(EVIDENCE_DIR) &&
-        fs.readdirSync(EVIDENCE_DIR).length > 0;
+      // Check evidence exists AND is recent (within last 24 hours)
+      let hasFreshEvidence = false;
+      if (fs.existsSync(EVIDENCE_DIR)) {
+        const entries = fs.readdirSync(EVIDENCE_DIR);
+        const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+        hasFreshEvidence = entries.some(entry => {
+          try {
+            const stat = fs.statSync(`${EVIDENCE_DIR}/${entry}`);
+            return stat.mtimeMs > cutoff;
+          } catch { return false; }
+        });
+      }
 
-      if (!hasEvidence) {
+      if (!hasFreshEvidence) {
         process.stderr.write(
           '[ValidationForge] completion-claim-validator: Completion claimed but no validation evidence found in e2e-evidence/.\n' +
           'ValidationForge requires real evidence before any completion claim.\n' +
