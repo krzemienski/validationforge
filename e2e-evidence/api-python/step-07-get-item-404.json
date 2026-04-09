@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "journey": "J7",
+    "title": "Get Item by ID — 404 Not Found",
+    "priority": "P1",
+    "endpoint": "GET /api/items/9999",
+    "url": "http://localhost:5001/api/items/9999",
+    "timestamp": "2026-04-08T22:55:55Z",
+    "phase": "Execute (Phase 3)"
+  },
+  "_request": {
+    "method": "GET",
+    "url": "http://localhost:5001/api/items/9999",
+    "headers": {}
+  },
+  "_response": {
+    "http_status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "_observed": "HTTP 404 Not Found (not 200, not 500). Response body is valid JSON — not an HTML error page. Contains 'error' key with value 'Item with id 9999 not found'. The error message explicitly references the unknown ID (9999) — exactly as required. Content-Type is application/json (Flask's custom 404 handler is active, not the default HTML page). Response parseable by jq.",
+  "error": "Item with id 9999 not found"
+}

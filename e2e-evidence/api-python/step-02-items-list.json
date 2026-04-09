@@ -1,0 +1,45 @@
+{
+  "_meta": {
+    "journey": "J2",
+    "title": "List Items — Read Collection",
+    "priority": "P0",
+    "endpoint": "GET /api/items",
+    "url": "http://localhost:5001/api/items",
+    "timestamp": "2026-04-08T22:55:54Z",
+    "phase": "Execute (Phase 3)"
+  },
+  "_request": {
+    "method": "GET",
+    "url": "http://localhost:5001/api/items",
+    "headers": {}
+  },
+  "_response": {
+    "http_status": 200,
+    "time_ms": 0.7960,
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "_observed": "Response body contains 'items' array with 3 seed items (Widget A id=1, Widget B id=2, Gadget X id=3). 'total' field equals 3 which matches items.length — consistent. All items have required fields: id (integer), name (string), description (string), in_stock (boolean). HTTP 200. Content-Type is application/json.",
+  "items": [
+    {
+      "description": "First demo item",
+      "id": 1,
+      "in_stock": true,
+      "name": "Widget A"
+    },
+    {
+      "description": "Second demo item",
+      "id": 2,
+      "in_stock": false,
+      "name": "Widget B"
+    },
+    {
+      "description": "Third demo item",
+      "id": 3,
+      "in_stock": true,
+      "name": "Gadget X"
+    }
+  ],
+  "total": 3
+}

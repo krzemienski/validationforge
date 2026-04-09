@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "journey": "J4",
+    "title": "Create Item Persistence — State Consistency",
+    "priority": "P0",
+    "endpoint": "GET /api/items",
+    "url": "http://localhost:5001/api/items",
+    "timestamp": "2026-04-08T22:55:55Z",
+    "phase": "Execute (Phase 3)",
+    "dependency": "J3 must PASS — new item id=4 used for verification"
+  },
+  "_request": {
+    "method": "GET",
+    "url": "http://localhost:5001/api/items",
+    "headers": {}
+  },
+  "_response": {
+    "http_status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "_observed": "HTTP 200. Response now shows total=4, up from total=3 captured in J2 (delta = +1, exactly as expected). The newly created item (id=4, name='Validation Widget', description='Created by pipeline', in_stock=true) appears as the 4th entry in the items array. All four fields match exactly what was submitted in J3. State persistence across requests confirmed — in-memory store retained the create.",
+  "items": [
+    {
+      "description": "First demo item",
+      "id": 1,
+      "in_stock": true,
+      "name": "Widget A"
+    },
+    {
+      "description": "Second demo item",
+      "id": 2,
+      "in_stock": false,
+      "name": "Widget B"
+    },
+    {
+      "description": "Third demo item",
+      "id": 3,
+      "in_stock": true,
+      "name": "Gadget X"
+    },
+    {
+      "description": "Created by pipeline",
+      "id": 4,
+      "in_stock": true,
+      "name": "Validation Widget"
+    }
+  ],
+  "total": 4
+}

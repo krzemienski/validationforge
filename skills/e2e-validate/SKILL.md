@@ -75,6 +75,7 @@ Higher layers depend on lower layers. Start at the data layer to find causes, no
 
 | Workflow | Phase | Purpose |
 |----------|-------|---------|
+| `workflows/research.md` | Research (Phase 0) | Standards gathering, validation criteria |
 | `workflows/analyze.md` | Discovery | Platform detection, journey mapping |
 | `workflows/plan.md` | Planning | PASS criteria, approval gate |
 | `workflows/execute.md` | Execution | Evidence capture, review, verdicts |
@@ -83,6 +84,7 @@ Higher layers depend on lower layers. Start at the data layer to find causes, no
 | `workflows/report.md` | Reporting | Report generation, export |
 | `workflows/full-run.md` | Full Pipeline | End-to-end with approval gate |
 | `workflows/ci-mode.md` | CI/CD | Non-interactive, exit codes |
+| `workflows/ship.md` | Ship (Phase 6) | Production readiness audit, deploy decision |
 
 ## Success Criteria
 

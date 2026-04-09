@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "journey": "J6",
+    "title": "Get Item by ID — Single Resource Fetch",
+    "priority": "P1",
+    "endpoint": "GET /api/items/1",
+    "url": "http://localhost:5001/api/items/1",
+    "timestamp": "2026-04-08T22:55:55Z",
+    "phase": "Execute (Phase 3)"
+  },
+  "_request": {
+    "method": "GET",
+    "url": "http://localhost:5001/api/items/1",
+    "headers": {}
+  },
+  "_response": {
+    "http_status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "_observed": "HTTP 200. Response body contains 'item' object. item.id = 1, which exactly matches the requested path parameter. item.name = 'Widget A' (string, non-null). item.description = 'First demo item' (string, non-null). item.in_stock = true (boolean, non-null). All four required fields present and non-null. Content-Type is application/json.",
+  "item": {
+    "description": "First demo item",
+    "id": 1,
+    "in_stock": true,
+    "name": "Widget A"
+  }
+}

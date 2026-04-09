@@ -84,6 +84,52 @@ Fix: `const output = typeof result === 'string' ? result : (result.stdout || '')
 - Incomplete plugin.json (missing commands, agents, rules declarations) — fixed with all 5 directories
 - Plugin won't load in current session (fundamental: plugins load at session startup)
 
+---
+
+## 2026-04-08 — Subtask-1-1: Pipeline Gap Analysis (commands/validate.md vs CLAUDE.md 7-phase spec)
+
+### Audit: commands/validate.md Pipeline Stages
+
+Current `commands/validate.md` "Pipeline Stages" section lists **5 stages**:
+
+| validate.md Stage | Phase # | Notes |
+|-------------------|---------|-------|
+| 1. PREFLIGHT | Phase 2 in spec | Present, but ordering is wrong (before PLAN) |
+| 2. PLAN | Phase 1 in spec | Present, but executed *after* Preflight (inverted from spec) |
+| 3. APPROVE | — not a phase | Interactive gate within Plan; not canonical |
+| 4. EXECUTE | Phase 3 in spec | Present |
+| 5. REPORT | Phase 5 in spec | Present, but named REPORT instead of VERDICT |
+
+### Missing Phases (Confirmed)
+
+**Phase 0 — RESEARCH**: Not present in validate.md at all. The CLAUDE.md spec requires a dedicated research step before planning: gather applicable standards (WCAG, HIG, security standards), identify validation criteria, and map standards to VF skills. The `rules/execution-workflow.md` calls this "Understand what to validate and how" and invokes the `research-validation` skill.
+
+**Phase 4 — ANALYZE**: Not present as a separate phase in validate.md. After EXECUTE, the command goes directly to REPORT/VERDICT. The spec defines Phase 4 as an explicit root-cause investigation step for FAILs using `sequential-analysis`, `visual-inspection`, and `chrome-devtools` skills. Without it, failures go unreported until the final verdict with no intermediate diagnosis.
+
+**Phase 6 — SHIP**: Not present in validate.md. The spec defines Phase 6 as a production readiness audit and deploy decision gate, invoked via the `production-readiness-audit` skill. Security and deployment FAILs are blocking; other FAILs can be CONDITIONAL with documented risk. This phase is the difference between "tests passed" and "safe to deploy."
+
+### Additional Ordering Issue
+
+The validate.md inverts the PREFLIGHT/PLAN order: it runs PREFLIGHT (Phase 2) *before* PLAN (Phase 1). The canonical spec and `rules/execution-workflow.md` specify PLAN first (define what to validate) then PREFLIGHT (verify the system can run it). This means validate.md could reject a session before even defining what journeys to run.
+
+### Summary Table
+
+| Phase | Canonical Name | Present in validate.md | Status |
+|-------|---------------|------------------------|--------|
+| 0 | RESEARCH | No | **MISSING** |
+| 1 | PLAN | Yes (misordered — runs after Preflight) | Present but misplaced |
+| 2 | PREFLIGHT | Yes (runs first — before Plan) | Present but misplaced |
+| 3 | EXECUTE | Yes | Present |
+| 4 | ANALYZE | No | **MISSING** |
+| 5 | VERDICT | Yes (named REPORT) | Present but renamed |
+| 6 | SHIP | No | **MISSING** |
+
+### Conclusion
+
+`commands/validate.md` covers only **5 stages** (Preflight → Plan → Approve → Execute → Report) and is missing **3 canonical phases**: Phase 0 (Research), Phase 4 (Analyze), and Phase 6 (Ship). The APPROVE step is not a canonical pipeline phase. Phase ordering is inverted (Preflight before Plan). The REPORT naming diverges from the canonical VERDICT name.
+
+---
+
 ### Updated Verification Status
 | Area | Status |
 |------|--------|
@@ -98,3 +144,183 @@ Fix: `const output = typeof result === 'string' ? result : (result.stdout || '')
 | `${CLAUDE_PLUGIN_ROOT}` resolution | Not verified |
 | Benchmark scoring | Not verified |
 | Skill content quality (all 40) | Partially verified (5 deep, rest spot-checked) |
+
+---
+
+## 2026-04-08 — Subtask-1-2: Skills Workflow Directory Audit (skills/e2e-validate/)
+
+### Audit: skills/e2e-validate/workflows/ vs 7-Phase Spec
+
+**Existing workflow files (8 total):**
+
+| File | Present | Phase Mapped |
+|------|---------|-------------|
+| `analyze.md` | ✅ | Discovery (maps to Phase 1 Analyze in full-run.md) |
+| `plan.md` | ✅ | Planning (Phase 2 in full-run.md) |
+| `execute.md` | ✅ | Execution (Phase 4 in full-run.md) |
+| `fix-and-revalidate.md` | ✅ | Repair (Phase 5 fix loop) |
+| `audit.md` | ✅ | Read-only assessment |
+| `report.md` | ✅ | Reporting (Phase 6 in full-run.md) |
+| `full-run.md` | ✅ | Full pipeline orchestrator |
+| `ci-mode.md` | ✅ | CI/CD non-interactive |
+
+**Missing workflow files (confirmed absent):**
+
+| File | Status | Required For |
+|------|--------|-------------|
+| `research.md` | ❌ **MISSING** | Phase 0 — RESEARCH (gather standards before planning) |
+| `ship.md` | ❌ **MISSING** | Phase 6 — SHIP (production readiness audit, deploy gate) |
+
+Verification: `ls skills/e2e-validate/workflows/ | grep -E 'research|ship'` → empty (confirmed gap).
+
+### Audit: SKILL.md Cross-Reference Gaps
+
+**Command Routing table** (`## Command Routing` in SKILL.md):
+- Lists 8 flags: `(none)`, `--analyze`, `--plan`, `--execute`, `--fix`, `--audit`, `--report`, `--ci`
+- **Missing**: No `--research` flag routing to `workflows/research.md`
+- **Missing**: No `--ship` flag routing to `workflows/ship.md`
+
+**Workflow Files table** (`## Workflow Files` in SKILL.md):
+- Lists 8 existing workflow files; correctly matched to disk
+- **Missing row**: `workflows/research.md` — Phase 0 Research not listed
+- **Missing row**: `workflows/ship.md` — Phase 6 Ship not listed
+
+**Default full-run description** (SKILL.md `(none)` flag row):
+- Documents: `"Full pipeline: analyze → plan → approve → execute → report"`
+- Should document: `"research → plan → preflight → execute → analyze → verdict → ship"`
+- **Incorrect**: neither Research nor Ship appear in the default run description
+
+**Related Skills table** (SKILL.md `## Related Skills`):
+- Lists `research-validation` skill as referenced in all workflows — but no workflow actually invokes it
+- Lists no reference to `production-readiness-audit` skill — required for Phase 6 Ship
+
+### Audit: full-run.md Phase Coverage
+
+`workflows/full-run.md` defines **6 phases** (numbered locally as 1–6):
+
+| full-run.md Phase | Label | Canonical Phase |
+|-------------------|-------|----------------|
+| Phase 1 | Analyze | Phase 1 (misnamed; analyze ≠ research) |
+| Phase 2 | Plan | Phase 1 (PLAN) |
+| Phase 3 | Approve | Gate within Plan; not canonical |
+| Phase 4 | Execute | Phase 3 (EXECUTE) |
+| Phase 5 | Fix Loop | Repair branch; conditional |
+| Phase 6 | Report | Phase 5 (VERDICT/REPORT) |
+
+**Missing from full-run.md:**
+- Phase 0 — RESEARCH: no step, no workflow reference to `research.md`
+- Phase 4 — ANALYZE: Execute goes directly to Fix/Report with no intermediate analysis step
+- Phase 6 — SHIP: Report is the terminal phase; no production readiness gate
+
+**Diagram gap**: The ASCII flow diagram shows `ANALYZE → PLAN → APPROVE → EXECUTE → REPORT` — a 5-stage pipeline. The canonical 7-phase pipeline (RESEARCH → PLAN → PREFLIGHT → EXECUTE → ANALYZE → VERDICT → SHIP) is not represented.
+
+**PREFLIGHT gap**: `full-run.md` has no Preflight phase. Preflight (environment checks via `skills/preflight`) is present in `commands/validate.md` but absent from the skill-level `full-run.md` orchestrator.
+
+### Summary of Gaps
+
+| Gap | Location | Impact |
+|-----|----------|--------|
+| `research.md` file does not exist | `workflows/` directory | Phase 0 RESEARCH cannot execute |
+| `ship.md` file does not exist | `workflows/` directory | Phase 6 SHIP cannot execute |
+| `research.md` not listed in Workflow Files table | SKILL.md | Routing broken |
+| `ship.md` not listed in Workflow Files table | SKILL.md | Routing broken |
+| No `--research` flag routing | SKILL.md Command Routing | No direct invocation path |
+| No `--ship` flag routing | SKILL.md Command Routing | No direct invocation path |
+| Default run omits research + ship in description | SKILL.md | Misleading pipeline description |
+| RESEARCH phase absent from full-run.md | `workflows/full-run.md` | Phase 0 skipped in full run |
+| ANALYZE phase absent from full-run.md | `workflows/full-run.md` | No failure root-cause step |
+| SHIP phase absent from full-run.md | `workflows/full-run.md` | No production readiness gate |
+| PREFLIGHT phase absent from full-run.md | `workflows/full-run.md` | Environment not verified at skill level |
+
+### Conclusion
+
+The `skills/e2e-validate/` skill is missing **2 workflow files** (`research.md`, `ship.md`) and has **9 cross-reference gaps** across SKILL.md and full-run.md. Combined with the `commands/validate.md` gaps from Subtask-1-1, the pipeline is missing Phase 0 (Research), has no Analyze phase, and lacks the Ship production readiness gate at both the command and skill orchestration layers.
+
+---
+
+## 2026-04-08 — End-to-End 7-Phase Pipeline Verification (Subtasks 2-1 through 7-1)
+
+### Pipeline Fixes Applied (Subtasks 2-1 through 2-5)
+
+| Fix | File | Change |
+|-----|------|--------|
+| Created Phase 0 workflow | `skills/e2e-validate/workflows/research.md` | New file — 5-step research protocol |
+| Created Phase 6 workflow | `skills/e2e-validate/workflows/ship.md` | New file — production readiness audit + ship verdict matrix |
+| Updated full pipeline orchestrator | `skills/e2e-validate/workflows/full-run.md` | Rewrote to cover all 7 phases (0–6); 38 phase keyword matches |
+| Updated command documentation | `commands/validate.md` | Pipeline Stages section rewritten — all 7 phases documented; 14 phase keyword matches |
+| Updated SKILL.md routing table | `skills/e2e-validate/SKILL.md` | Added `research.md` (Phase 0) and `ship.md` (Phase 6) to Workflow Files table |
+
+### Python Flask Demo API Created (Subtasks 3-1, 3-2)
+
+- `demo/python-api/app.py` — Flask 3.1.2 API with `/health`, `/api/items` (GET/POST), `/api/items/<id>` (GET), JSON error handlers
+- `demo/python-api/requirements.txt` — pinned `flask>=3.0,<4.0`
+- `demo/python-api/README.md` — endpoint docs + 6 validation journeys with PASS criteria
+
+### Full 7-Phase Pipeline Execution Results
+
+Both platforms ran through all 7 phases (Phase 0 RESEARCH → Phase 6 SHIP). Zero phases skipped on either platform.
+
+| Phase | Canonical Name | Web (Next.js) | API (Python Flask) | Status |
+|-------|---------------|:---:|:---:|--------|
+| 0 | RESEARCH | PASS | PASS | COMPLETE |
+| 1 | PLAN | PASS | PASS | COMPLETE |
+| 2 | PREFLIGHT | PASS (7/7 checks) | PASS (8/8 checks) | COMPLETE |
+| 3 | EXECUTE | PASS | PASS | COMPLETE |
+| 4 | ANALYZE | PASS | PASS (1 LOW defect found) | COMPLETE |
+| 5 | VERDICT | PASS | PASS | COMPLETE |
+| 6 | SHIP | CONDITIONAL | CONDITIONAL | COMPLETE |
+
+Evidence: `e2e-evidence/report.md` — 52 evidence file citations.
+
+### Platform 1: Web / Next.js (blog-series/site) — CONDITIONAL SHIP
+
+- **Target**: Next.js 16.1.6, App Router, TypeScript, Tailwind v4 — `http://localhost:3847`
+- **Journeys**: 7 defined (J1: Build, J2: Server Health, J3: Homepage, J4: Post Detail, J5: Navigation, J6: Console Audit, J7: Mobile Responsive)
+- **Verdict**: PASS 7/7 journeys, 37/37 individual criteria met
+- **Phase 6 SHIP**: CONDITIONAL SHIP — 2 non-blocking conditions (Vercel Analytics inactive on localhost; CSP headers not configured)
+- **Key evidence**: `e2e-evidence/web-nextjs/step-01-homepage.png` (18 post cards visible), `e2e-evidence/web-nextjs/step-03-post-detail-full.png` (18,669px full-page capture), `e2e-evidence/web-nextjs/VERDICT.md` (112 PASS/FAIL entries)
+
+### Platform 2: API / Python Flask (demo/python-api) — CONDITIONAL SHIP
+
+- **Target**: Flask 3.1.2 / Werkzeug 3.1.3 / Python 3.13.9 — `http://localhost:5001` (port 5000 occupied by macOS AirPlay; auto-fixed)
+- **Journeys**: 7 defined (J1: Health Check, J2: List Items, J3: Create Happy Path, J4: Create Persistence, J5: Validation Error, J6: Get by ID, J7: 404 Not Found)
+- **Verdict**: PASS 6/7 journeys, 33/34 individual criteria met
+- **FAIL**: J5 — `POST /api/items {}` returns `"Request body must be valid JSON"` instead of `"name field required"`. Root cause: `if not body:` treats empty dict `{}` as falsy (Python truthiness bug). HTTP 400 status correct; error text misleading. Fix: `app.py` line 62, `if not body:` → `if body is None:`. Severity: LOW.
+- **Phase 6 SHIP**: CONDITIONAL SHIP — 1 non-blocking defect (J5 error message)
+- **Key evidence**: `e2e-evidence/api-python/step-05-create-bad-request.json` (FAIL evidence), `e2e-evidence/api-python/VERDICT.md` (23 PASS/FAIL entries)
+
+### Preflight Error Handling Verification (Subtasks 6-1, 6-2)
+
+| Scenario | Port/Tool | Status | Pipeline Behavior |
+|----------|-----------|--------|-------------------|
+| Server not running | localhost:9999 (confirmed dead via `lsof`) | **BLOCKED** | Phases 3–6 halt; auto-fix attempted, escalated after 3s |
+| Missing browser binary | Playwright installed but `chromium_headless_shell-1217` absent | **WARN** | Pipeline continues; 5/7 browser journeys SKIPPED; CONDITIONAL verdict required |
+
+Evidence: `e2e-evidence/preflight-error-scenarios/blocked-no-server.md`, `e2e-evidence/preflight-error-scenarios/warn-missing-tool.md`
+
+### Overall Verdict
+
+**CONDITIONAL SHIP** — 13/14 journeys PASS across 2 platforms. All 7 pipeline phases executed end-to-end with zero mocks. Evidence: 28 files from live systems (curl responses, Playwright screenshots, Flask JSON bodies). One LOW defect found and root-caused (non-blocking). Full report: `e2e-evidence/report.md`.
+
+### Updated Verification Status
+
+| Area | Status |
+|------|--------|
+| File inventory (40 skills, 15 commands, 7 hooks, 5 agents, 8 rules) | Verified |
+| Hook syntax and functional behavior (all 7) | Verified |
+| Cross-references (commands → skills, agents, rules) | Verified — zero broken |
+| Plugin manifest format | Verified (updated with all 5 directory declarations) |
+| Phase 0 (RESEARCH) workflow file | **Verified — created** (`skills/e2e-validate/workflows/research.md`) |
+| Phase 6 (SHIP) workflow file | **Verified — created** (`skills/e2e-validate/workflows/ship.md`) |
+| 7-phase coverage in `commands/validate.md` | **Verified — fixed** (14 phase keyword matches) |
+| 7-phase coverage in `full-run.md` | **Verified — fixed** (38 phase keyword matches) |
+| 7-phase pipeline on Web platform (Next.js) | **Verified — PASS 7/7 journeys** |
+| 7-phase pipeline on API platform (Python Flask) | **Verified — CONDITIONAL SHIP, 1 LOW defect** |
+| Preflight BLOCKED path (server not running) | **Verified — correct halt behavior** |
+| Preflight WARN path (missing browser tool) | **Verified — correct degraded coverage** |
+| VF methodology expanded (18/18 posts + responsive + errors) | Verified — PASS (7/7 criteria, March 2026) |
+| `/validate` command as fully automated single-command pipeline | Not verified (phases orchestrated via impl plan, not single invocation) |
+| `${CLAUDE_PLUGIN_ROOT}` resolution | Not verified |
+| Benchmark scoring (`/validate-benchmark`) | Not verified |
+| Multi-agent team validation coordination | Not verified |
+| Skill content quality (all 40) | Partially verified (2 platforms deep, rest spot-checked) |

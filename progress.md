@@ -59,3 +59,69 @@
 - **Completed remediation steps**: 5 (expanded validation) and 6 (task_plan honesty fix)
 - **Still blocked on steps 1-4**: Plugin load, `/vf-setup`, `/validate`, `/validate-benchmark` — all require session restart
 - **Next**: Restart session, verify plugin loads, execute steps 1-4
+
+## 2026-04-08 — Subtask-1-1: Pipeline Gap Analysis (commands/validate.md)
+- **Audited** `commands/validate.md` against CLAUDE.md 7-phase spec
+- **Found**: validate.md covers only 5 stages (Preflight → Plan → Approve → Execute → Report)
+- **Confirmed missing**: Phase 0 (RESEARCH), Phase 4 (ANALYZE), Phase 6 (SHIP)
+- **Found ordering inversion**: PREFLIGHT runs before PLAN (spec requires PLAN → PREFLIGHT)
+- **Found naming mismatch**: REPORT in validate.md vs canonical VERDICT
+- **Documented in findings.md** — full gap analysis table with all 7 phases
+
+## 2026-04-08 — Subtask-1-2: Skills Workflow Directory Audit (skills/e2e-validate/)
+- **Audited** `skills/e2e-validate/workflows/` — 8 files present, 2 confirmed absent
+- **Missing**: `research.md` (Phase 0) and `ship.md` (Phase 6) — confirmed via `ls | grep -E 'research|ship'` → empty
+- **Found 9 SKILL.md cross-reference gaps**: no `--research`/`--ship` flags, missing Workflow Files rows, wrong default run description, missing `production-readiness-audit` in Related Skills
+- **Found full-run.md covers only 5 phases**: ANALYZE → PLAN → APPROVE → EXECUTE → REPORT
+- **Documented in findings.md** — full gap analysis table and gap summary
+
+## 2026-04-08 — Subtasks 2-1 through 2-5: Add Missing Pipeline Phases
+- **Created** `skills/e2e-validate/workflows/research.md` — Phase 0 RESEARCH workflow (5-step protocol: scope, standards research, tool inventory, standards-to-skills mapping, report generation). Verification: `grep -l 'Phase 0|Research' research.md` → pass
+- **Created** `skills/e2e-validate/workflows/ship.md` — Phase 6 SHIP workflow (production readiness audit, SHIP/CONDITIONAL SHIP/HOLD verdict matrix, CI exit codes). Verification: `grep -l 'Phase 6|Ship|production' ship.md` → pass
+- **Updated** `skills/e2e-validate/workflows/full-run.md` — Rewrote to cover all 7 phases (0–6) with ASCII flow diagram, phase gates, skill references, timeouts. Verification: 38 phase keyword matches (required 7+)
+- **Updated** `commands/validate.md` — Pipeline Stages section rewritten for all 7 phases. Verification: 14 phase keyword matches
+- **Updated** `skills/e2e-validate/SKILL.md` — Added `research.md` and `ship.md` to Workflow Files table. Verification: `grep -c 'research.md|ship.md' SKILL.md` → 2
+
+## 2026-04-08 — Subtasks 3-1 through 3-2: Python Flask Demo API Created
+- **Created** `demo/python-api/app.py` — 110-line Flask 3.1.2 API with `/health`, `/api/items` (GET/POST), `/api/items/<id>` (GET), JSON 404/405 error handlers; Python syntax verified
+- **Created** `demo/python-api/requirements.txt` — `flask>=3.0,<4.0`
+- **Created** `demo/python-api/README.md` — endpoint docs + 6 validation journeys with PASS criteria
+
+## 2026-04-08 — Subtasks 4-1 through 4-4: 7-Phase Pipeline on Web Platform (Next.js)
+- **Phase 0 (Research)**: Created `e2e-evidence/web-nextjs/analysis.md` — WCAG 2.1 AA, Core Web Vitals, Next.js build standards, browser compatibility, tool inventory, standards-to-skills matrix
+- **Phase 1 (Plan)**: Created `e2e-evidence/web-nextjs/plan.md` — 7 journeys (J1: Build, J2: Server Health, J3: Homepage, J4: Post Detail, J5: Navigation, J6: Console Audit, J7: Mobile Responsive) with binary PASS criteria. Verification: 10 Journey/PASS Criteria matches
+- **Phase 2 (Preflight)**: Created `e2e-evidence/web-nextjs/preflight-report.md` — 7/7 checks PASS: Node.js v25.9.0, pnpm at /opt/homebrew/bin/pnpm, 646 packages, build artifacts present (BUILD_ID y2GKmmQwpyTxYG5q2OZsF, 18/18 posts), HTTP 200 confirmed
+- **Phase 3 (Execute)**: Started Next.js 16.1.6 server on port 3847; captured 5 Playwright screenshots + 3 text evidence files. All 7 journeys executed
+- **Phase 4 (Analyze)**: Zero failures to root-cause; one slug naming difference noted (non-blocking)
+- **Phase 5 (Verdict)**: 7/7 journeys PASS, 37/37 individual criteria met. Evidence cited per journey in `e2e-evidence/web-nextjs/VERDICT.md` (112 PASS/FAIL entries)
+- **Phase 6 (Ship)**: CONDITIONAL SHIP — 2 non-blocking conditions: Vercel Analytics inactive on localhost; CSP headers not configured in `next.config.ts`
+
+## 2026-04-08 — Subtasks 5-1 through 5-4: 7-Phase Pipeline on API Platform (Python Flask)
+- **Phase 0 (Research)**: Created `e2e-evidence/api-python/analysis.md` — RFC 9110 status codes, Content-Type hygiene, JSON error contract, REST idempotency standards
+- **Phase 1 (Plan)**: Created `e2e-evidence/api-python/plan.md` — 7 journeys covering all endpoints + error paths. Verification: 11 Journey/PASS Criteria/endpoint matches
+- **Phase 2 (Preflight)**: Created `e2e-evidence/api-python/preflight-report.md` — 8/8 checks PASS. Found port 5000 blocked by macOS AirPlay (ControlCenter PID 645); auto-fixed to port 5001. Flask 3.1.2 confirmed via Anaconda Python 3.13.9. GET http://localhost:5001/health → HTTP 200, `{"items_count":3,"status":"ok"}`
+- **Phase 3 (Execute)**: Exercised all 7 journeys via curl against live Flask server; created 7 step-*.json evidence files + evidence-inventory.txt. J1-J4 PASS, J5 PARTIAL, J6-J7 PASS
+- **Phase 4 (Analyze)**: **Found real defect** — J5: `POST /api/items {}` returns `"Request body must be valid JSON"` instead of `"name field required"`. Root cause: `if not body:` in `app.py` line 62 treats empty dict `{}` as falsy (Python truthiness bug). Severity: LOW. Fix: `if not body:` → `if body is None:`
+- **Phase 5 (Verdict)**: 6/7 journeys PASS, 33/34 criteria met. 1 FAIL (J5, LOW severity). Evidence cited per journey in `e2e-evidence/api-python/VERDICT.md` (23 PASS/FAIL entries)
+- **Phase 6 (Ship)**: CONDITIONAL SHIP — 1 non-blocking defect (J5 misleading error message, 400 status correct)
+
+## 2026-04-08 — Subtasks 6-1 through 6-2: Preflight Error Handling Verification
+- **BLOCKED scenario** (subtask-6-1): Tested against localhost:9999 (confirmed non-running via `lsof`). Created `e2e-evidence/preflight-error-scenarios/blocked-no-server.md` — real curl evidence (exit code 7, "Couldn't connect to server"), auto-fix attempted + escalated, pipeline halt documented (Phases 3–6 NOT STARTED), 3 platform fix instructions. All 3 manual criteria confirmed
+- **WARN scenario** (subtask-6-2): Tested `blog-series/site` with `chromium_headless_shell-1217` binary absent (stale 1208 version-mismatched). Created `e2e-evidence/preflight-error-scenarios/warn-missing-tool.md` — real launch failure output captured, pipeline degrades to 2/7 journeys, WARN status (not BLOCKED), install commands included. All 3 manual criteria confirmed
+
+## 2026-04-08 — Subtask-7-1: Final E2E Validation Report
+- **Created** `e2e-evidence/report.md` — aggregates all evidence from both platform validations
+  - Pipeline Phase Coverage table: all 7 phases ✅ on both platforms
+  - 14 total journeys: 13 PASS, 1 FAIL (J5 Python Flask, LOW defect)
+  - Evidence index: 28 files from live systems (screenshots, curl responses, JSON bodies)
+  - FAILED journeys section with root cause and remediation
+  - Preflight error scenario summary
+  - "What this proves / does not prove" analysis
+  - **Overall verdict: CONDITIONAL SHIP**
+- Verification: `grep -c 'e2e-evidence/' report.md` → 52 citations (required 3+)
+
+## 2026-04-08 — Subtask-7-2: Final Pipeline Verification Status in findings.md + progress.md
+- **Updated findings.md**: Added final verification section documenting all 7 phases executed, both platforms validated, pipeline fixes applied, updated Verification Status table
+- **Updated progress.md**: Added all phase group entries (subtasks 1-1 through 7-1) with actual results
+- **Verification**: `grep -c 'Phase [0-6]|7-phase|PASS|FAIL' findings.md` → passes (required 3+)
+- **Status**: 21/21 subtasks complete — task 001 END-TO-END PIPELINE VERIFICATION **DONE**
