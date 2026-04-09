@@ -42,6 +42,7 @@ curl -s -X POST http://localhost:PORT/api/RESOURCE \
 # Extract the created ID for subsequent operations
 RESOURCE_ID=$(jq -r '.id // .data.id' e2e-evidence/api-create-RESOURCE.json)
 echo "Created ID: $RESOURCE_ID"
+[ -z "$RESOURCE_ID" ] || [ "$RESOURCE_ID" = "null" ] && { echo "ERROR: Create failed, cannot continue CRUD cycle" >&2; exit 1; }
 ```
 
 ### Read (single)
@@ -83,8 +84,9 @@ curl -s -X DELETE http://localhost:PORT/api/RESOURCE/$RESOURCE_ID \
 
 ### Verify delete
 ```bash
-curl -s -w "\nHTTP_STATUS:%{http_code}" http://localhost:PORT/api/RESOURCE/$RESOURCE_ID \
+curl -s -w "\nHTTP_STATUS:%{http_code}" \
   -H "Authorization: Bearer $TOKEN" \
+  http://localhost:PORT/api/RESOURCE/$RESOURCE_ID \
   | tee e2e-evidence/api-read-after-delete-RESOURCE.txt
 ```
 
@@ -143,16 +145,20 @@ Test that error responses include proper status codes AND meaningful bodies:
 # 400 — Bad request (missing required field)
 curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST http://localhost:PORT/api/RESOURCE \
   -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{}' \
   | tee e2e-evidence/api-error-400.txt
 
 # 404 — Not found
-curl -s -w "\nHTTP_STATUS:%{http_code}" http://localhost:PORT/api/RESOURCE/nonexistent-id \
+curl -s -w "\nHTTP_STATUS:%{http_code}" \
+  -H "Authorization: Bearer $TOKEN" \
+  http://localhost:PORT/api/RESOURCE/nonexistent-id \
   | tee e2e-evidence/api-error-404.txt
 
 # 422 — Validation error (invalid data)
 curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST http://localhost:PORT/api/RESOURCE \
   -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{"email": "not-an-email"}' \
   | tee e2e-evidence/api-error-422.txt
 ```
