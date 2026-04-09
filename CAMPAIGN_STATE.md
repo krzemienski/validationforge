@@ -18,7 +18,7 @@
 | 005 | PRE_EXISTING | Already merged before campaign |
 | 006 | PRE_EXISTING | Already merged before campaign |
 | 007 | SKIPPED | Assessment failed: empty file added (`demo/projects/api-flask/routes/__init__.py`) and out-of-scope additions under `demo/projects/` + `e2e-evidence/`; evidence=`.sisyphus/evidence/merge-007-assessment.txt` |
-| 008 | PENDING | Pending merge |
+| 008 | MERGED | Merge SHA `33c795a`; Deep Skill Quality Review (12 skill files improved); cleanup=DEFERRED |
 | 009 | MERGED | Merge SHA `2a61768b7841f435e4622619ead5d72253195c12`; cleanup=DEFERRED |
 | 010 | MERGED | Merge SHA `d172a585628736c8f6108e8ef4d2d7652c9a0990`; cleanup=DEFERRED |
 | 011 | MERGED | Merge SHA `16d5b7a15a866d60c3b16ec9368dbe22ab001357`; cleanup=DEFERRED |
