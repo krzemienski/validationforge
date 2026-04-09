@@ -41,6 +41,60 @@ Files: `step-{NN}-{action}-{result}.{ext}`
 
 ## Retention
 
-- Keep ALL evidence for FAIL journeys
-- Keep key evidence for PASS journeys (entry + final state)
-- Archive after validation: `tar -czf e2e-evidence-$(date +%Y%m%d).tar.gz e2e-evidence/`
+### Lifecycle Policy
+
+Evidence follows a structured lifecycle tied to validation runs and configurable retention:
+
+| Phase | Action |
+|-------|--------|
+| During validation | All evidence preserved; no cleanup permitted |
+| After PASS | Keep entry + final state screenshots; prune intermediates |
+| After FAIL | Keep ALL evidence indefinitely until explicit cleanup |
+| Beyond retention period | Eligible for automatic or manual cleanup |
+
+### Configuration
+
+Retention period is configured via `.vf-config.json` (default: 30 days):
+
+```json
+{
+  "evidence_retention_days": 30
+}
+```
+
+`evidence_retention_days` controls how long evidence directories are kept before becoming
+eligible for cleanup. Set to `0` to disable automatic expiry (keep forever).
+
+### Automatic Cleanup
+
+The `/validate --clean` flag removes evidence older than `evidence_retention_days` before
+starting a new validation run:
+
+```bash
+/validate --clean          # Purge evidence older than configured retention period
+/validate --clean --days 7 # Override: purge evidence older than 7 days
+```
+
+Cleanup rules:
+- Evidence from **in-progress** validations is **never** deleted
+- FAIL evidence is flagged but still subject to the retention policy unless pinned
+- Cleanup writes a removal log to `e2e-evidence/.cleanup-log.txt` for audit
+
+### Source Control
+
+Add `e2e-evidence/` to `.gitignore` to prevent committing evidence to source control:
+
+```
+# Evidence directories — managed by ValidationForge retention policy
+e2e-evidence/
+```
+
+Exception: commit `e2e-evidence/report.md` if the team requires verdicts in source control.
+
+### Archive Before Purge
+
+Before any cleanup, create a compressed archive for offline retention:
+
+```bash
+tar -czf e2e-evidence-$(date +%Y%m%d).tar.gz e2e-evidence/
+```
