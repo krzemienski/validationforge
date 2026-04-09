@@ -1,12 +1,27 @@
 #!/usr/bin/env node
 // PreToolUse hook: Inject evidence checklist when marking tasks complete.
 // Matches: TaskUpdate (when status = "completed")
+//
+// Config-driven enforcement via config-loader.js:
+//   enabled  → inject evidence checklist (advisory)
+//   warn     → inject evidence checklist (advisory, same as enabled)
+//   disabled → exit immediately, no action
+
+const { loadConfig } = require('./config-loader');
 
 let input = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   try {
+    const config = loadConfig();
+    const hookMode = config.getHookConfig('evidence-gate-reminder');
+
+    // disabled → pass through immediately, no enforcement
+    if (hookMode === 'disabled') {
+      process.exit(0);
+    }
+
     const data = JSON.parse(input);
     const toolInput = data.tool_input || {};
     const status = toolInput.status || '';
