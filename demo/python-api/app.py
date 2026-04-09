@@ -13,6 +13,8 @@ Error handling:
   405 — method not allowed (with JSON body)
 """
 
+import os
+
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -106,4 +108,5 @@ def method_not_allowed(exc):
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
