@@ -20,6 +20,8 @@
     "evidence-gate-reminder": "enabled",
     "validation-not-compilation": "enabled",
     "completion-claim-validator": "enabled",
-    "mock-detection": "enabled"
+    "mock-detection": "enabled",
+    "validation-state-tracker": "enabled",
+    "evidence-quality-check": "enabled"
   }
 }
