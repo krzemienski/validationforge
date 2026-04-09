@@ -300,6 +300,14 @@ echo "=== Setup Complete ==="
 
 ```bash
 mkdir -p "$HOME/.claude"
+
+# Determine where rules were installed based on scope
+if [ "${CONFIG_TYPE}" = "global" ] || [ "${CONFIG_TYPE}" = "both" ]; then
+  RULES_DIR="${HOME}/.claude/rules"
+else
+  RULES_DIR="$(pwd)/.claude/rules"
+fi
+
 cat > "$HOME/.claude/.vf-config.json" << EOF
 {
   "setupCompleted": "$(date -Iseconds)",
@@ -307,7 +315,10 @@ cat > "$HOME/.claude/.vf-config.json" << EOF
   "scope": "${CONFIG_TYPE}",
   "enforcement": "${ENFORCEMENT_LEVEL}",
   "platform": "${DETECTED_PLATFORM}",
-  "projectPath": "$(pwd)"
+  "projectPath": "$(pwd)",
+  "rulesDir": "${RULES_DIR}",
+  "pluginDir": "${INSTALL_DIR}",
+  "hooksInstalled": true
 }
 EOF
 ```
