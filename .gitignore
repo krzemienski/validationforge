@@ -12,3 +12,6 @@ e2e-evidence/*.json
 !e2e-evidence/report.md
 .DS_Store
 *.log
+
+# Auto Claude data directory
+.auto-claude/
