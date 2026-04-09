@@ -4,6 +4,7 @@ description: >
   Full end-to-end validation orchestrator. Detects platform, maps user journeys,
   defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks.
   Supports iOS, React Native, Flutter, web, API, CLI, Django/Flask, and fullstack projects.
+context_priority: critical
 ---
 
 # ValidationForge: End-to-End Validation Orchestrator
@@ -118,17 +119,32 @@ Evidence directories may contain screenshots of authenticated screens or API res
 with tokens. Store in `e2e-evidence/` (gitignored). Never commit evidence containing
 credentials or PII to public repositories.
 
+## Context Budget
+
+All 41 ValidationForge skills total ~6,726 lines. Loading every skill simultaneously crowds
+out the user's codebase in the context window. Skills are tiered by `context_priority` to
+stay within a 2,000-line initial budget.
+
+| Tier | context_priority | Load Policy | Line Budget |
+|------|-----------------|-------------|-------------|
+| Critical | `critical` | Always loaded — every validation run requires these | ~754 lines |
+| Standard | `standard` | Load when matching platform detected or workflow phase entered | On demand |
+| Reference | `reference` | Load only when explicitly invoked or required by a dependency | On demand |
+
+**Do not eagerly load standard or reference skills.** Reference each skill by name in
+instructions; load it only when the workflow actually reaches the phase that needs it.
+
 ## Related Skills
 
-| Skill | Role in Pipeline |
-|-------|-----------------|
-| `functional-validation` | Core protocol, referenced in all workflows |
-| `gate-validation-discipline` | Evidence verification during verdict writing |
-| `no-mocking-validation-gates` | Mock detection during analysis |
-| `create-validation-plan` | Plan generation for `--plan` workflow |
-| `verification-before-completion` | Pre-completion checklist |
-| `full-functional-audit` | Audit protocol for `--audit` workflow |
-| `preflight` | Environment checks before execution |
-| `baseline-quality-assessment` | Quality baseline during analysis |
-| `condition-based-waiting` | Smart waits during evidence capture |
-| `error-recovery` | Error handling during fix loop |
+| Skill | Role in Pipeline | Priority | Load When |
+|-------|-----------------|----------|-----------|
+| `functional-validation` | Core protocol, referenced in all workflows | critical | Always |
+| `gate-validation-discipline` | Evidence verification during verdict writing | critical | Always |
+| `no-mocking-validation-gates` | Mock detection during analysis | critical | Always |
+| `create-validation-plan` | Plan generation for `--plan` workflow | critical | Always |
+| `verification-before-completion` | Pre-completion checklist | critical | Always |
+| `preflight` | Environment checks before execution | critical | Always |
+| `error-recovery` | Error handling during fix loop | critical | Always |
+| `full-functional-audit` | Audit protocol for `--audit` workflow | standard | `--audit` flag |
+| `baseline-quality-assessment` | Quality baseline during analysis | standard | Analysis phase |
+| `condition-based-waiting` | Smart waits during evidence capture | standard | Execution phase |

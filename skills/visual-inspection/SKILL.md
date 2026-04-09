@@ -8,6 +8,7 @@ triggers:
   - "visual review"
   - "UI inspection"
   - "screenshot review"
+context_priority: reference
 ---
 
 # Visual Inspection

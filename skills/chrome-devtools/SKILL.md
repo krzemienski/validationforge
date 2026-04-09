@@ -7,6 +7,7 @@ triggers:
   - "browser devtools"
   - "inspect element"
   - "network inspector"
+context_priority: reference
 ---
 
 # Chrome DevTools

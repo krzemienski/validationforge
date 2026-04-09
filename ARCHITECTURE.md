@@ -97,6 +97,7 @@ Skills are directories under `skills/` containing a `SKILL.md` with YAML frontma
 ---
 name: skill-name
 description: What the skill does
+context_priority: critical | standard | reference
 triggers:
   - "keyword phrase"
   - "another trigger"
@@ -104,6 +105,20 @@ triggers:
 ```
 
 Claude Code discovers skills by scanning `SKILL.md` files in the plugin directory. When a user message or agent prompt matches a trigger phrase, the skill's content is loaded into context. Skills reference other skills by name (e.g., "invoke `preflight` skill first").
+
+#### Context Budget Management
+
+The `context_priority` field controls when each skill is loaded into the context window, preventing the 41-skill library (~6,600 lines) from crowding out the user's codebase:
+
+| Priority | Skills | Load Policy | Line Budget |
+|----------|-------:|-------------|-------------|
+| `critical` | 8 | Always loaded — needed for every validation run | ~754 lines |
+| `standard` | 11 | Loaded when matching platform is detected or workflow phase requires it | ~2,200 lines |
+| `reference` | 22 | Loaded only when explicitly invoked or a dependency demands it | on demand |
+
+- **`context_priority: critical`** — Core pipeline skills that are always in context: orchestrator (`e2e-validate`), protocol (`functional-validation`, `preflight`), enforcement (`gate-validation-discipline`, `no-mocking-validation-gates`), planning (`create-validation-plan`), and recovery (`verification-before-completion`, `error-recovery`). Total: ~754 lines, well under the 2,000-line critical budget target.
+- **`context_priority: standard`** — Platform skills for the three most common project types (web, api, cli, fullstack) plus operational helpers (build gates, condition-based waiting, sequential analysis). Load when the matching platform is detected at runtime.
+- **`context_priority: reference`** — Specialized skills for iOS, browser automation, design tooling, deep audits, and forge orchestration. Load only when explicitly invoked by name or when a dependency chain requires them.
 
 ### Command Lifecycle
 

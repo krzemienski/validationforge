@@ -4,6 +4,7 @@ description: >
   Fullstack validation using strict bottom-up approach: Database -> API -> Frontend.
   Validates each layer independently, then tests integration across the entire stack.
   References api-validation and web-validation skills for layer-specific procedures.
+context_priority: standard
 ---
 
 # Fullstack Validation

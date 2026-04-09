@@ -7,6 +7,7 @@ triggers:
   - "is this ready for production"
   - "production checklist"
   - "readiness review"
+context_priority: reference
 ---
 
 # Production Readiness Audit

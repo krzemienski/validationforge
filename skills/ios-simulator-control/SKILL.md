@@ -7,6 +7,7 @@ triggers:
   - "simulator screenshot"
   - "manage simulator"
   - "simulator lifecycle"
+context_priority: reference
 ---
 
 # iOS Simulator Control

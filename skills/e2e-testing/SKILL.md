@@ -7,6 +7,7 @@ triggers:
   - "journey design"
   - "flaky flow"
   - "e2e strategy"
+context_priority: standard
 ---
 
 # E2E Testing Patterns

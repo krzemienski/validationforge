@@ -4,6 +4,7 @@ description: >
   CLI platform validation through direct binary execution. Captures stdout,
   stderr, exit codes, and pipe behavior as evidence. Validates happy paths,
   error handling, and output format correctness.
+context_priority: standard
 ---
 
 # CLI Validation

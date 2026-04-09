@@ -7,6 +7,7 @@ triggers:
   - "wcag compliance"
   - "accessibility check"
   - "screen reader validation"
+context_priority: reference
 ---
 
 # Accessibility Audit

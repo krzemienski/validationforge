@@ -6,6 +6,7 @@ triggers:
   - "run ios validation"
   - "ios test run"
   - "validate ios feature"
+context_priority: reference
 ---
 
 # iOS Validation Runner

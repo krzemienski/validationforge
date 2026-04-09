@@ -1,6 +1,7 @@
 ---
 name: forge-team
 description: Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership.
+context_priority: reference
 ---
 
 # forge-team

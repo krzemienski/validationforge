@@ -4,6 +4,7 @@ description: >
   Prevents premature completion claims by requiring personally examined evidence,
   specific citations, and criteria matching before marking any task complete.
   Use whenever completing tasks, closing gates, reporting to leads, or merging code.
+context_priority: critical
 ---
 
 # Verification Before Completion

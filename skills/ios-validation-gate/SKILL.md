@@ -6,6 +6,7 @@ triggers:
   - "ios gate"
   - "validate ios app"
   - "ios quality gate"
+context_priority: reference
 ---
 
 # iOS Validation Gate

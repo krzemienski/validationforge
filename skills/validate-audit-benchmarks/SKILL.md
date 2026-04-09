@@ -1,6 +1,7 @@
 ---
 name: validate-audit-benchmarks
 description: Run automated benchmark suite to score hook correctness, skill/command structural integrity, and aggregate quality metrics.
+context_priority: reference
 ---
 
 # Validate Audit Benchmarks

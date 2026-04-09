@@ -7,6 +7,7 @@ triggers:
   - "why did validation fail"
   - "trace the failure"
   - "debug validation"
+context_priority: standard
 ---
 
 # Sequential Analysis

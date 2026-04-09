@@ -1,6 +1,7 @@
 ---
 name: forge-execute
 description: Autonomous validation execution loop. Runs journeys against the real system, captures per-attempt evidence in isolated directories, fixes failures with rebuild-then-revalidate, and persists state to forge-state.json after every phase transition and strike.
+context_priority: reference
 ---
 
 # forge-execute

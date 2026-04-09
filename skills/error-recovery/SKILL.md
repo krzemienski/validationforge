@@ -4,6 +4,7 @@ description: >
   Structured 3-strike error recovery during validation. When validation fails,
   diagnoses root cause, applies fix, and re-validates. Use when any validation
   step fails, builds break, runtime crashes, or network/auth/database errors occur.
+context_priority: critical
 ---
 
 # Error Recovery Protocol

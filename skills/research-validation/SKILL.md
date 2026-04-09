@@ -7,6 +7,7 @@ triggers:
   - "what standards apply"
   - "how should we validate"
   - "research before validation"
+context_priority: reference
 ---
 
 # Research Validation

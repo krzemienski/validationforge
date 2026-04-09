@@ -3,6 +3,7 @@ name: full-functional-audit
 description: >
   Read-only validation audit that captures evidence and writes findings
   without making any code changes. Produces a severity-classified audit report.
+context_priority: standard
 ---
 
 # Full Functional Audit

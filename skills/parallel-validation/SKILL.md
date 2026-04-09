@@ -7,6 +7,7 @@ triggers:
   - "concurrent validation"
   - "multi-platform validation"
   - "fan out validation"
+context_priority: standard
 ---
 
 # Parallel Validation

@@ -4,6 +4,7 @@ description: >
   Enforces evidence-based validation before marking any gate, task, or checkpoint
   complete. Requires personal examination of evidence, specific proof citations,
   and evidence-to-criteria matching. Prevents premature completion claims.
+context_priority: critical
 ---
 
 # Gate Validation Discipline

@@ -1,6 +1,7 @@
 ---
 name: forge-plan
 description: Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes.
+context_priority: reference
 ---
 
 # forge-plan
