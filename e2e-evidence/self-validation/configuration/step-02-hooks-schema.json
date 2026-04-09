@@ -1,0 +1,57 @@
+{
+  "file": "hooks/hooks.json",
+  "parseStatus": "VALID",
+  "schemaVerification": "HOOKS_SCHEMA_VALID",
+  "content": {
+    "description": "ValidationForge hooks — enforce no-mock validation discipline and evidence quality",
+    "hooks": {
+      "PreToolUse": [
+        {
+          "matcher": "Write|Edit|MultiEdit",
+          "hooks": [
+            { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-test-files.js" }
+          ]
+        },
+        {
+          "matcher": "TaskUpdate",
+          "hooks": [
+            { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/evidence-gate-reminder.js" }
+          ]
+        }
+      ],
+      "PostToolUse": [
+        {
+          "matcher": "Bash",
+          "hooks": [
+            { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validation-not-compilation.js" },
+            { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/completion-claim-validator.js" },
+            { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validation-state-tracker.js" }
+          ]
+        },
+        {
+          "matcher": "Edit|Write|MultiEdit",
+          "hooks": [
+            { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/mock-detection.js" },
+            { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/evidence-quality-check.js" }
+          ]
+        }
+      ]
+    }
+  },
+  "analysis": {
+    "PreToolUse_matchers": ["Write|Edit|MultiEdit", "TaskUpdate"],
+    "PostToolUse_matchers": ["Bash", "Edit|Write|MultiEdit"],
+    "total_hooks_registered": 7,
+    "hooks_by_name": [
+      "block-test-files.js",
+      "evidence-gate-reminder.js",
+      "validation-not-compilation.js",
+      "completion-claim-validator.js",
+      "validation-state-tracker.js",
+      "mock-detection.js",
+      "evidence-quality-check.js"
+    ],
+    "all_reference_CLAUDE_PLUGIN_ROOT": true
+  },
+  "verdict": "PASS — hooks.PreToolUse and hooks.PostToolUse both present with correct structure"
+}
