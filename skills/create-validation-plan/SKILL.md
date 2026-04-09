@@ -9,10 +9,8 @@ description: >
 
 ## Scope
 
-Applies to any project requiring functional validation. Generates a plan file at
-`e2e-evidence/validation-plan.md` with journey inventory, PASS criteria, evidence
-requirements, and execution order. The plan is the contract — without it, validation
-is just browsing the app and hoping things look right.
+This skill handles: journey discovery, PASS criteria definition, plan document creation at `e2e-evidence/validation-plan.md`.
+Does NOT handle: prerequisite verification (use `preflight`), evidence capture and execution (use `e2e-validate`), verdict evaluation (use `gate-validation-discipline`).
 
 ## Quick Start
 
