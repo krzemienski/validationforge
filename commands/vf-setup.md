@@ -115,24 +115,83 @@ Use AskUserQuestion:
 
 ### Step 4: Install Rules
 
-Based on scope (local or global), install these files:
+Based on scope (local or global), copy rules from the ValidationForge plugin directory.
+
+First, resolve the plugin installation directory:
+
+```bash
+# Resolve plugin install directory from config written by install.sh
+CONFIG_FILE="$HOME/.claude/.vf-config.json"
+INSTALL_DIR=""
+
+if [ -f "$CONFIG_FILE" ]; then
+  INSTALL_DIR=$(jq -r '.installDir // empty' "$CONFIG_FILE" 2>/dev/null)
+fi
+
+# Fall back to CLAUDE_PLUGIN_ROOT (set by Claude Code when loading plugins),
+# then to the default install path used by install.sh
+INSTALL_DIR="${INSTALL_DIR:-${CLAUDE_PLUGIN_ROOT:-${HOME}/.claude/plugins/validationforge}}"
+RULES_SOURCE="${INSTALL_DIR}/rules"
+
+if [ ! -d "$RULES_SOURCE" ]; then
+  echo "ERROR: Rules source directory not found: $RULES_SOURCE"
+  echo "       Re-run the installer: curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash"
+  exit 1
+fi
+```
 
 #### Local Install (`.claude/` in project root)
 
+```bash
+# Local install — copy from plugin rules/ to .claude/rules/ (no prefix)
+mkdir -p .claude/rules
+
+for rule_file in "${RULES_SOURCE}"/*.md; do
+  rule_name=$(basename "$rule_file" .md)
+  cp "$rule_file" ".claude/rules/${rule_name}.md"
+  echo "  [OK] .claude/rules/${rule_name}.md"
+done
+
+echo "  Rules installed from: ${RULES_SOURCE}"
+echo "  Rules installed to:   $(pwd)/.claude/rules/"
+```
+
+Expected result:
 ```
 .claude/
-  CLAUDE.md              ← Validation mandate + quick reference
   rules/
     validation-discipline.md    ← No-mock mandate
     evidence-management.md      ← Evidence directory + naming
     platform-detection.md       ← Platform routing rules
     execution-workflow.md       ← 7-phase pipeline
     team-validation.md          ← Multi-agent validation teams
+    forge-execution.md          ← Fix loop discipline
+    forge-team-orchestration.md ← Validator assignment + verdict synthesis
+    benchmarking.md             ← Metric collection + benchmarks
+```
+
+Also install CLAUDE.md:
+```bash
+# Copy CLAUDE.md template from plugin (skip if project already has one)
+cp "${INSTALL_DIR}/CLAUDE.md" .claude/CLAUDE.md 2>/dev/null || true
 ```
 
 #### Global Install (`~/.claude/`)
 
-Same files installed to `~/.claude/rules/vf-*.md` with `vf-` prefix to avoid conflicts with other plugins.
+```bash
+# Global install — copy from plugin rules/ to ~/.claude/rules/ with vf- prefix
+# The vf- prefix avoids conflicts with rules from other Claude Code plugins
+mkdir -p "$HOME/.claude/rules"
+
+for rule_file in "${RULES_SOURCE}"/*.md; do
+  rule_name=$(basename "$rule_file" .md)
+  cp "$rule_file" "$HOME/.claude/rules/vf-${rule_name}.md"
+  echo "  [OK] ~/.claude/rules/vf-${rule_name}.md"
+done
+
+echo "  Rules installed from: ${RULES_SOURCE}"
+echo "  Rules installed to:   ${HOME}/.claude/rules/vf-*.md"
+```
 
 #### CLAUDE.md Content
 
