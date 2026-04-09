@@ -102,7 +102,30 @@ e2e-evidence/
   *.txt                    # CLI output, logs
 ```
 
+## GitHub Actions Starter
+
+For a production-ready GitHub Actions setup, use the provided starter template. It handles dependency installation, service startup, server readiness, validation execution, and evidence upload in a single file.
+
+**Template:** [`.github/workflows/github-actions-validate.yml`](.github/workflows/github-actions-validate.yml)  
+**Integration guide:** [`docs/github-actions-integration.md`](docs/github-actions-integration.md)
+
+### What the Template Does
+
+| Step | Action | Purpose |
+|------|--------|---------|
+| `checkout` | `actions/checkout@v4` | Check out repository at the triggering commit |
+| `setup-node` | `actions/setup-node@v4` | Install Node.js and enable pnpm caching |
+| `install` | `pnpm install --frozen-lockfile` | Install exact dependencies from lockfile |
+| `dev-server` | `pnpm dev &` | Start the dev server in the background |
+| `wait-for-server` | `curl` health-check loop | Block until the server is accepting connections |
+| `validate` | `claude --print "/validate-ci"` | Run the full ValidationForge pipeline, exit 1 on fail |
+| `upload-evidence` | `actions/upload-artifact@v4` | Archive `e2e-evidence/` as a build artifact (always) |
+
+Copy the template to `.github/workflows/github-actions-validate.yml` in your project, then customise the `PLATFORM` and `SERVER_URL` environment variables for your stack. See [`docs/github-actions-integration.md`](docs/github-actions-integration.md) for full configuration options.
+
 ## GitHub Actions Example
+
+> **Recommended:** Use the [starter template](.github/workflows/github-actions-validate.yml) instead of writing from scratch. The snippet below is a minimal reference only.
 
 ```yaml
 name: Validation
@@ -110,7 +133,7 @@ on: [push, pull_request]
 
 jobs:
   validate:
-    runs-on: macos-latest   # Use macos for iOS, ubuntu for web/api/cli
+    runs-on: ubuntu-latest   # Use macos-latest for iOS
     steps:
       - uses: actions/checkout@v4
 
