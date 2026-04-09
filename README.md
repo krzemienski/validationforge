@@ -268,6 +268,22 @@ What has actually been verified about ValidationForge, and what has not:
 | Benchmark scoring | **Not verified** — algorithm implemented, never executed |
 | Skill content quality (all 40) | **Partially verified** — 5 deep-reviewed, remainder spot-checked |
 
+## Known Limitations
+
+These are honest disclosures about what ValidationForge has **not** been verified to do, based on direct testing:
+
+1. **Plugin requires session restart to load** — After installation, Claude Code must be fully restarted before the plugin is recognized. Installation in a live session does not activate hooks, skills, or commands. This behavior is architectural (plugins load at session startup), not a bug, but it means the "install and immediately use" experience shown in the Quick Start has not been verified end-to-end in a single session.
+
+2. **`/validate` is a skill/guide, not an automated pipeline** — The `/validate` command is a markdown skill file that instructs Claude to follow the 7-phase pipeline. It does not programmatically orchestrate tools, spawn subprocesses, or enforce phase gates. Each phase requires Claude to interpret and execute the guidance. The command has never been run via the plugin in a live Claude Code session; all VF methodology testing was performed by manually following the pipeline.
+
+3. **`${CLAUDE_PLUGIN_ROOT}` hook variable resolution not verified** — Hook commands in `hooks.json` reference `${CLAUDE_PLUGIN_ROOT}` to locate hook scripts at runtime. This is the documented Claude Code pattern (ECC 1.8.0), but end-to-end resolution — from installed plugin to hook execution with the correct path — has not been observed in a live session.
+
+4. **Benchmark scoring not empirically tested** — The scoring algorithm in `scripts/benchmark/` and the `/validate-benchmark` command have never been executed against a real project. Dimension weights (Coverage 35%, Evidence Quality 30%, Enforcement 25%, Speed 10%) and grade thresholds (A/B/C/D/F) are design targets derived from the specification, not calibrated from observed outputs.
+
+5. **Skill content quality partially verified** — Of the 40 skill directories, 5 were deep-reviewed (frontmatter, content accuracy, cross-reference validity) and the remaining 35 were spot-checked for file presence and frontmatter structure. Content correctness and trigger accuracy for the unreviewed skills is assumed, not confirmed.
+
+6. **OpenCode plugin not verified in live OpenCode session** — The OpenCode plugin (`index.ts`) compiles without errors and follows the documented plugin interface, but has never been loaded into a running OpenCode session. Hook registration (`permission.ask`, `tool.execute.after`, `shell.env`) and custom tool availability (`vf_validate`, `vf_check_evidence`) are unconfirmed at runtime.
+
 ## Troubleshooting
 
 ### Hooks not firing
