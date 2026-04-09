@@ -4,6 +4,7 @@ description: >
   Pre-execution checklist before starting any validation. Ensures prerequisites
   are met: servers running, databases seeded, tools available. Auto-fixes common
   failures. Saves preflight report to e2e-evidence/.
+context_priority: critical
 ---
 
 # Preflight Checklist

@@ -3,6 +3,7 @@ name: create-validation-plan
 description: >
   Generates a structured validation plan with PASS criteria for every user journey
   before any evidence is captured. Plans define what success looks like upfront.
+context_priority: critical
 ---
 
 # Create Validation Plan
