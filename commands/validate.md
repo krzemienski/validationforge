@@ -19,6 +19,7 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 /validate --parallel               # Use parallel sub-agents for independent journeys
 /validate --verbose                # Include debug-level detail in report
 /validate --fix                    # Alias for /validate-fix (fix failures + re-validate)
+/validate --report                 # After validation, open a visual HTML dashboard in the browser
 ```
 
 ## Supported Flags
@@ -30,6 +31,7 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 | `--parallel` | off | Run independent journey validations in parallel sub-agents |
 | `--verbose` | off | Include raw evidence content inline in the report |
 | `--fix` | off | After validation, automatically fix FAILs and re-validate (3-strike limit) |
+| `--report` | off | After validation, generate and open a visual HTML dashboard in the default browser |
 
 ## Pipeline Stages
 
@@ -65,6 +67,45 @@ When invoked as bare `/validate`:
 3. Generate plan and ask for approval
 4. Execute all journeys sequentially
 5. Write report to `e2e-evidence/report.md`
+
+## Report Mode
+
+When `--report` is passed, ValidationForge generates a self-contained HTML dashboard after the REPORT stage completes and opens it in your default browser.
+
+### What the dashboard shows
+
+| Section | Details |
+|---------|---------|
+| **Summary bar** | Overall PASS/FAIL verdict, total journeys, pass rate |
+| **Journey cards** | Per-journey PASS/FAIL badge, evidence count, expandable evidence panel |
+| **Screenshots** | Inline at full resolution with click-to-zoom |
+| **API responses** | Formatted JSON/XML with syntax highlighting |
+| **Build logs** | Raw log output with color-coded severity levels |
+| **Trend chart** | Validation history over the last 30 days (reads `.vf/benchmarks/`) |
+
+### How it works
+
+1. After the REPORT stage writes `e2e-evidence/report.md`, ValidationForge reads all evidence files in `e2e-evidence/`
+2. A single self-contained `e2e-evidence/dashboard.html` file is generated — no server required
+3. The file embeds all screenshots as base64, all JSON as inline code blocks, and all chart data as inline JavaScript
+4. Your default browser opens `e2e-evidence/dashboard.html` automatically
+
+### Offline support
+
+The dashboard has **no external dependencies**. All CSS, JavaScript, and assets are inlined. It can be shared as a single `.html` file and viewed anywhere without network access.
+
+### Example usage
+
+```bash
+# Run validation and open visual dashboard when done
+/validate --report
+
+# Platform-specific validation with dashboard
+/validate --platform web --report
+
+# Validate, auto-fix failures, then open dashboard
+/validate --fix --report
+```
 
 ## The Iron Rule
 
