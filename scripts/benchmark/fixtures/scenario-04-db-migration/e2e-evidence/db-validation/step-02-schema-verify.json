@@ -1,0 +1,77 @@
+{
+  "journey": "db-validation",
+  "step": 2,
+  "description": "Schema introspection — verify column and index were created",
+  "timestamp": "2026-04-05T09:14:35Z",
+  "command": "psql $DATABASE_URL -c \"\\d users\"",
+  "column_checks": [
+    {
+      "column": "id",
+      "type": "integer",
+      "nullable": false,
+      "default": "nextval('users_id_seq'::regclass)",
+      "present_before_migration": true,
+      "present_after_migration": true,
+      "verdict": "PASS"
+    },
+    {
+      "column": "email",
+      "type": "character varying(255)",
+      "nullable": false,
+      "default": null,
+      "present_before_migration": true,
+      "present_after_migration": true,
+      "verdict": "PASS"
+    },
+    {
+      "column": "name",
+      "type": "character varying(255)",
+      "nullable": true,
+      "default": null,
+      "present_before_migration": true,
+      "present_after_migration": true,
+      "verdict": "PASS"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "nullable": true,
+      "default": "now()",
+      "present_before_migration": true,
+      "present_after_migration": true,
+      "verdict": "PASS"
+    },
+    {
+      "column": "last_login_at",
+      "type": "timestamp with time zone",
+      "nullable": true,
+      "default": null,
+      "present_before_migration": false,
+      "present_after_migration": true,
+      "verdict": "PASS",
+      "note": "NEW column added by migration — confirmed present"
+    }
+  ],
+  "index_checks": [
+    {
+      "index_name": "users_pkey",
+      "columns": ["id"],
+      "type": "PRIMARY KEY",
+      "present_before_migration": true,
+      "present_after_migration": true,
+      "verdict": "PASS"
+    },
+    {
+      "index_name": "users_email_unique",
+      "columns": ["email"],
+      "type": "UNIQUE INDEX",
+      "present_before_migration": false,
+      "present_after_migration": true,
+      "verdict": "PASS",
+      "note": "NEW unique index added by migration — confirmed present"
+    }
+  ],
+  "raw_psql_output": "Table \"public.users\"\n    Column     |            Type             | Nullable |           Default\n---------------+-----------------------------+----------+------------------------------\n id            | integer                     | not null | nextval('users_id_seq'::regclass)\n email         | character varying(255)      | not null |\n name          | character varying(255)      |          |\n created_at    | timestamp with time zone    |          | now()\n last_login_at | timestamp with time zone    |          |\nIndexes:\n    \"users_pkey\" PRIMARY KEY, btree (id)\n    \"users_email_unique\" UNIQUE, btree (email)",
+  "observation": "Schema introspection confirms: (1) last_login_at column exists with type 'timestamp with time zone' and nullable=true; (2) users_email_unique UNIQUE index exists on the email column. Both additions are present in the live schema.",
+  "overall": "PASS"
+}

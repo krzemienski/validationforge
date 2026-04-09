@@ -1,0 +1,32 @@
+{
+  "journey": "api-rename",
+  "step": 1,
+  "description": "GET /api/v2/users — renamed endpoint (was /api/v1/users)",
+  "timestamp": "2026-04-01T10:00:00Z",
+  "request": {
+    "method": "GET",
+    "url": "http://localhost:3000/api/v2/users",
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.test"
+    }
+  },
+  "response": {
+    "status": 200,
+    "status_text": "OK",
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-request-id": "req_abc123"
+    },
+    "body": {
+      "users": [
+        {"id": 1, "name": "Alice", "email": "alice@example.com"},
+        {"id": 2, "name": "Bob", "email": "bob@example.com"}
+      ],
+      "total": 2,
+      "page": 1
+    }
+  },
+  "observation": "HTTP 200 returned. Response body contains 'users' array with 2 entries. New endpoint /api/v2/users is live and responding correctly.",
+  "verdict": "PASS"
+}

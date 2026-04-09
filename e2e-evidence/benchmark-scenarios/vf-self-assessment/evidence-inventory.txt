@@ -1,0 +1,11 @@
+Scenario: ValidationForge Self-Assessment
+Project: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system
+Grade: B
+Aggregate: 81 / 100
+Coverage: 60
+Enforcement: 90
+Evidence Quality: 100
+Files:
+  step-01-score-output.md - Full scorer output
+  benchmark-result.json   - Compact JSON result
+  evidence-inventory.txt  - This file

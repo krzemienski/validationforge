@@ -1,0 +1,14 @@
+Journey: auth-validation (JWT expiry scenario)
+Captured: 2026-04-02T09:15:00Z
+
+Files:
+  step-01-login-response.json — POST /api/auth/login response with JWT token and expiry
+
+Status: INCOMPLETE
+  - No expiry validation step captured (token not tested after 1 hour)
+  - No refresh token flow captured
+  - No 401 response on expired token captured
+  - No verdict report written
+
+Note: Evidence captured manually without ValidationForge infrastructure.
+      No hooks active. No rules enforced. No VF config present.

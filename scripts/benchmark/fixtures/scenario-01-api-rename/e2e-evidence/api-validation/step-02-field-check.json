@@ -1,0 +1,51 @@
+{
+  "journey": "api-rename",
+  "step": 2,
+  "description": "Schema validation — verify response fields match v2 contract",
+  "timestamp": "2026-04-01T10:00:15Z",
+  "schema_checks": [
+    {
+      "field": "users",
+      "expected_type": "array",
+      "present": true,
+      "actual_length": 2,
+      "verdict": "PASS"
+    },
+    {
+      "field": "users[0].id",
+      "expected_type": "integer",
+      "present": true,
+      "actual_value": 1,
+      "verdict": "PASS"
+    },
+    {
+      "field": "users[0].name",
+      "expected_type": "string",
+      "present": true,
+      "actual_value": "Alice",
+      "verdict": "PASS"
+    },
+    {
+      "field": "users[0].email",
+      "expected_type": "string",
+      "present": true,
+      "actual_value": "alice@example.com",
+      "verdict": "PASS"
+    },
+    {
+      "field": "total",
+      "expected_type": "integer",
+      "present": true,
+      "actual_value": 2,
+      "verdict": "PASS"
+    },
+    {
+      "field": "/api/v1/users (old endpoint)",
+      "check": "returns 404 after rename",
+      "status_received": 404,
+      "verdict": "PASS"
+    }
+  ],
+  "observation": "All 6 schema checks passed. New v2 schema is correct. Old v1 endpoint correctly returns 404.",
+  "overall": "PASS"
+}

@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "enforcement_level": "standard",
+  "evidence_dir": "e2e-evidence",
+  "plans_dir": "plans",
+  "hooks_enabled": true,
+  "rules_enabled": true,
+  "no_mock_mandate": true,
+  "grade_boundaries": {
+    "A": 90,
+    "B": 80,
+    "C": 70,
+    "D": 60,
+    "F": 0
+  }
+}
