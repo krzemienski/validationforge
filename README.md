@@ -33,24 +33,35 @@ These are design scenarios where mock-based testing is structurally blind. Valid
 
 ## Installation
 
+> **Note:** The GitHub repository (`https://github.com/krzemienski/validationforge`) may not be publicly published yet. If the curl/clone methods below fail with a 404, use the local symlink method instead.
+
+> **Important:** After installation, **restart Claude Code** before using ValidationForge. Plugins are loaded at session startup — hooks, skills, and commands will not be active in the session where you ran the installer.
+
 ### Claude Code (install.sh)
 
 ```bash
-# Quick install via curl
+# Quick install via curl (requires published GitHub repo)
 curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
 
-# Or manual: clone + symlink
+# Or manual clone from GitHub (requires published GitHub repo)
 git clone --depth 1 https://github.com/krzemienski/validationforge ~/.claude/plugins/validationforge
+
+# Or local symlink (works without GitHub — use if repo is not yet published)
+ln -s /path/to/your/local/validationforge ~/.claude/plugins/validationforge
 ```
 
 The installer clones the repo to `~/.claude/plugins/validationforge`, copies 8 rules to `~/.claude/rules/vf-*.md`, creates the `e2e-evidence/` directory (if inside a git repo), and saves config to `~/.claude/.vf-config.json`.
 
 Environment variables: `VF_SOURCE` (override repo URL), `VF_INSTALL_DIR` (override install path, must be under `$HOME` or temp).
 
+After running any install method, restart Claude Code for the plugin to take effect.
+
 ### OpenCode (opencode.json)
 
+> **Note:** The OpenCode plugin has not been verified in a live OpenCode session. See [Known Limitations](#known-limitations).
+
 ```bash
-# Clone into your project's .opencode/plugins/ directory
+# Clone into your project's .opencode/plugins/ directory (requires published GitHub repo)
 mkdir -p .opencode/plugins
 git clone --depth 1 https://github.com/krzemienski/validationforge .opencode/plugins/validationforge
 # Or symlink shared skills/commands
