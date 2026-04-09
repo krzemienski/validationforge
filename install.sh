@@ -32,6 +32,16 @@ else
   git clone --depth 1 "$REPO" "$INSTALL_DIR"
 fi
 
+# Create plugin cache symlink so Claude Code plugin loader can find it
+PLUGIN_CACHE_DIR="${HOME}/.claude/plugins/cache/validationforge/validationforge/1.0.0"
+info "Registering plugin cache at ${PLUGIN_CACHE_DIR}..."
+mkdir -p "$(dirname "$PLUGIN_CACHE_DIR")"
+if [ -L "$PLUGIN_CACHE_DIR" ]; then
+  rm "$PLUGIN_CACHE_DIR"
+fi
+ln -s "$INSTALL_DIR" "$PLUGIN_CACHE_DIR"
+ok "Plugin cache symlink created: ${PLUGIN_CACHE_DIR} -> ${INSTALL_DIR}"
+
 # Install global rules with vf- prefix
 info "Installing rules to ${RULES_DIR}..."
 mkdir -p "$RULES_DIR"
