@@ -1,0 +1,413 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ValidationForge — GitHub Actions Starter Workflow Template
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# HOW TO USE THIS TEMPLATE
+# ────────────────────────
+# 1. Copy this file to  .github/workflows/validate.yml  in your repository.
+# 2. Work through every "TODO:" comment below and customise the value.
+# 3. Add your ANTHROPIC_API_KEY to GitHub Secrets:
+#      Repository → Settings → Secrets and variables → Actions → New secret
+# 4. Push a branch and open a PR — the check will appear automatically.
+#
+# FULL GUIDE: https://github.com/krzemienski/validationforge/blob/main/docs/github-actions-integration.md
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: ValidationForge
+
+# ── Trigger events ────────────────────────────────────────────────────────────
+# Runs on every PR targeting main/master, and on direct pushes to those branches.
+# TODO: Add or remove branch names to match your branching strategy.
+#       Example: add "develop" if you use a git-flow style workflow.
+on:
+  pull_request:
+    branches:
+      - "main"
+      - "master"
+      # - "develop"        # TODO: uncomment to also validate develop PRs
+  push:
+    branches:
+      - "main"
+      - "master"
+
+# ── Concurrency guard ─────────────────────────────────────────────────────────
+# Cancels any in-progress run for the same ref so you don't burn CI minutes on
+# stale commits while a developer is pushing a stack of fixes.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# ── Environment variables — CUSTOMISE THESE ──────────────────────────────────
+env:
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ TODO: Set VF_PLATFORM to your project type.                             │
+  # │                                                                         │
+  # │  web  — React, Vue, Next.js, Nuxt, SvelteKit, static sites, etc.       │
+  # │  api  — REST / GraphQL / gRPC services, Express, FastAPI, Rails, etc.   │
+  # │  cli  — Command-line tools and scripts (no browser, no HTTP server)     │
+  # │  ios  — iOS / macOS apps (requires macos-latest runner, see below)      │
+  # │  ""   — Leave empty to let ValidationForge auto-detect the platform     │
+  # │                                                                         │
+  # │ Examples:                                                               │
+  # │   VF_PLATFORM: "web"                                                    │
+  # │   VF_PLATFORM: "api"                                                    │
+  # │   VF_PLATFORM: "cli"                                                    │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  # TODO: Replace "" with your platform, or leave empty for auto-detection.
+  VF_PLATFORM: ""
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ TODO: Set VF_SCOPE to limit validation to a subdirectory.               │
+  # │ Leave empty ("") to validate the entire repository.                     │
+  # │                                                                         │
+  # │ Examples:                                                               │
+  # │   VF_SCOPE: "src/api/"      — only validate files under src/api/       │
+  # │   VF_SCOPE: "apps/web/"     — only validate the web app in a monorepo  │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  # TODO: Set scope or leave empty to validate everything.
+  VF_SCOPE: ""
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ TODO: Set SERVER_CMD to the shell command that starts your dev server.  │
+  # │ The command is run in the background before validation begins.          │
+  # │ Leave empty ("") if your project does NOT need a running server         │
+  # │ (e.g., CLI tools, pure static analysis, API services tested in-process).│
+  # │                                                                         │
+  # │ Platform variant examples:                                              │
+  # │                                                                         │
+  # │  web (npm / Next.js):                                                   │
+  # │    SERVER_CMD: "npm run dev"                                            │
+  # │                                                                         │
+  # │  web (pnpm / Vite):                                                     │
+  # │    SERVER_CMD: "pnpm dev"                                               │
+  # │                                                                         │
+  # │  web (yarn / Create-React-App):                                         │
+  # │    SERVER_CMD: "yarn start"                                             │
+  # │                                                                         │
+  # │  api (Node.js / Express):                                               │
+  # │    SERVER_CMD: "node src/server.js"                                     │
+  # │                                                                         │
+  # │  api (Python / FastAPI):                                                │
+  # │    SERVER_CMD: "uvicorn app.main:app --host 0.0.0.0 --port 8000"       │
+  # │                                                                         │
+  # │  api (Ruby on Rails):                                                   │
+  # │    SERVER_CMD: "bundle exec rails server -p 3000"                       │
+  # │                                                                         │
+  # │  cli: leave empty — no server needed                                   │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  # TODO: Replace "" with your server start command, or leave empty.
+  SERVER_CMD: ""
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ TODO: Set HEALTH_URL to the URL ValidationForge will poll until it      │
+  # │ receives HTTP 200, confirming the server is ready for validation.       │
+  # │ Leave empty ("") when SERVER_CMD is also empty.                         │
+  # │                                                                         │
+  # │ Platform variant examples:                                              │
+  # │                                                                         │
+  # │  web (default Next.js / CRA / Vite port):                               │
+  # │    HEALTH_URL: "http://localhost:3000"                                  │
+  # │                                                                         │
+  # │  web (Vite custom port 5173):                                           │
+  # │    HEALTH_URL: "http://localhost:5173"                                  │
+  # │                                                                         │
+  # │  api (Express / Fastify / FastAPI):                                     │
+  # │    HEALTH_URL: "http://localhost:8000/health"                           │
+  # │                                                                         │
+  # │  api (Rails):                                                           │
+  # │    HEALTH_URL: "http://localhost:3000/up"                               │
+  # │                                                                         │
+  # │  cli: leave empty — no server to check                                  │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  # TODO: Replace "" with your health check URL, or leave empty.
+  HEALTH_URL: ""
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ TODO: Set HEALTH_TIMEOUT to the maximum number of seconds to wait for   │
+  # │ the server to become healthy before declaring a timeout failure.        │
+  # │                                                                         │
+  # │ Recommended values:                                                     │
+  # │   Fast (Vite HMR, simple Node):   30                                   │
+  # │   Medium (Next.js, Express):      60  ← default                        │
+  # │   Slow (Rails, Java, Python build): 120                                 │
+  # │   Very slow (Docker compose):     180                                   │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  # TODO: Adjust the timeout (seconds) to match your server's startup time.
+  HEALTH_TIMEOUT: "60"
+
+jobs:
+  validate:
+    name: ValidationForge (${{ matrix.platform }})
+
+    # ── Runner OS ─────────────────────────────────────────────────────────────
+    # TODO: Choose the correct runner for your platform:
+    #
+    #   ubuntu-latest  — web, api, cli projects (fastest, cheapest)
+    #   macos-latest   — iOS / macOS projects (Xcode + Simulator required)
+    #
+    # Web variant:   runs-on: ubuntu-latest
+    # API variant:   runs-on: ubuntu-latest
+    # CLI variant:   runs-on: ubuntu-latest
+    # iOS variant:   runs-on: macos-latest
+    #
+    # TODO: Change to macos-latest if validating an iOS / macOS project.
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # TODO: This single-element matrix surfaces the platform name in the
+        # GitHub Checks UI (e.g. "ValidationForge (default)").
+        # Replace "default" with your platform label, or expand the list to run
+        # parallel jobs: [web, api]
+        #
+        # Single-platform examples:
+        #   platform: [web]
+        #   platform: [api]
+        #   platform: [cli]
+        #
+        # Multi-platform (parallel jobs) example:
+        #   platform: [web, api]
+        #   (You would also set VF_PLATFORM per-job using matrix.platform)
+        platform: [default]
+
+    steps:
+      # ── Step 1: Checkout ───────────────────────────────────────────────────
+      # Full history (fetch-depth: 0) lets ValidationForge scope validation
+      # to only the files changed in this PR, making runs faster.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ── Step 2: Set up Node.js ─────────────────────────────────────────────
+      # TODO: Adjust the Node.js version to match your project's .nvmrc or
+      # engines field in package.json. Supported values: "18", "20", "22".
+      #
+      # TODO: Change cache to match your package manager:
+      #   npm   → cache: "npm",  cache-dependency-path: "**/package-lock.json"
+      #   yarn  → cache: "yarn", cache-dependency-path: "**/yarn.lock"
+      #   pnpm  → cache: "pnpm", cache-dependency-path: "**/pnpm-lock.yaml"
+      #           (also add: uses: pnpm/action-setup@v4 BEFORE this step)
+      #
+      # TODO: Remove cache lines entirely if your project has no package.json.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          # TODO: Set to your project's Node.js version.
+          node-version: "20"
+          # TODO: Change "npm" to "yarn" or "pnpm" if needed.
+          cache: "npm"
+          # TODO: Update glob if your lock file is in a subdirectory.
+          cache-dependency-path: "**/package-lock.json"
+
+      # ── Step 3: Cache Claude Code CLI ──────────────────────────────────────
+      # Caches the Claude CLI binary between runs to save ~30 s per run.
+      # No customisation needed.
+      - name: Cache Claude Code CLI
+        id: cache-claude
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm-global
+          key: claude-code-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            claude-code-${{ runner.os }}-
+
+      # ── Step 4: Install Claude Code CLI ───────────────────────────────────
+      # No customisation needed. Installs the Claude CLI globally.
+      - name: Install Claude Code CLI
+        run: |
+          mkdir -p ~/.npm-global
+          npm config set prefix ~/.npm-global
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+
+      # ── Step 5: Install ValidationForge ───────────────────────────────────
+      # Pulls the latest install.sh from the ValidationForge repository and
+      # runs it. The script is idempotent — safe to run on every CI invocation.
+      # No customisation needed.
+      - name: Install ValidationForge
+        run: |
+          curl -fsSL \
+            https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh \
+            | bash
+
+      # ── Step 6: Install project dependencies ──────────────────────────────
+      # TODO: Customise for your package manager and project structure.
+      #
+      # The default script auto-detects the lock file and runs the appropriate
+      # frozen install command. Adjust if you need additional steps:
+      #
+      #  web (npm):      npm ci
+      #  web (pnpm):     pnpm install --frozen-lockfile
+      #  web (yarn):     yarn install --frozen-lockfile
+      #  api (Python):   pip install -r requirements.txt
+      #  api (Ruby):     bundle install
+      #  cli:            npm ci  (or remove if no JS dependencies)
+      #
+      # TODO: Replace the auto-detect block below with a single explicit
+      #       install command if you know which package manager you use.
+      - name: Install project dependencies
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          elif [ -f "yarn.lock" ]; then
+            yarn install --frozen-lockfile
+          elif [ -f "pnpm-lock.yaml" ]; then
+            pnpm install --frozen-lockfile
+          else
+            echo "[VF] No Node.js lock file found — skipping JS dependency install"
+          fi
+          # TODO: Add additional install commands here if needed, e.g.:
+          # pip install -r requirements.txt
+          # bundle install
+
+      # ── Step 7: Start dev server (conditional) ────────────────────────────
+      # Skipped automatically when SERVER_CMD is empty (e.g. CLI projects).
+      # No customisation needed here — set SERVER_CMD in the env block above.
+      - name: Start dev server
+        if: env.SERVER_CMD != ''
+        run: |
+          echo "[VF] Starting server: $SERVER_CMD"
+          eval "$SERVER_CMD" &
+          echo "SERVER_PID=$!" >> "$GITHUB_ENV"
+
+      # ── Step 8: Wait for server to be healthy ─────────────────────────────
+      # Polls HEALTH_URL once per second until it returns HTTP 200, or times
+      # out after HEALTH_TIMEOUT seconds and exits with a clear error message.
+      # Skipped automatically when SERVER_CMD or HEALTH_URL is empty.
+      # No customisation needed — set HEALTH_URL and HEALTH_TIMEOUT above.
+      - name: Wait for server to be healthy
+        if: env.SERVER_CMD != '' && env.HEALTH_URL != ''
+        run: |
+          echo "[VF] Waiting for $HEALTH_URL to respond 200 OK (timeout: ${{ env.HEALTH_TIMEOUT }}s)..."
+          attempt=0
+          max=${{ env.HEALTH_TIMEOUT }}
+          while [ "$attempt" -lt "$max" ]; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" 2>/dev/null || echo "000")
+            if [ "$status" = "200" ]; then
+              echo "[VF] Server healthy after ${attempt}s (HTTP $status)"
+              exit 0
+            fi
+            sleep 1
+            attempt=$((attempt + 1))
+          done
+          echo "::error title=Server Health Check Failed::Server at $HEALTH_URL did not return 200 after ${max}s."
+          echo "[VF] Check that SERVER_CMD starts the right process and HEALTH_URL is correct." >&2
+          exit 1
+
+      # ── Step 9: Run ValidationForge (/validate-ci) ────────────────────────
+      # Runs the /validate-ci command non-interactively via `claude --print`.
+      # Exits 0 = all journeys PASS, exits 1 = one or more journeys FAIL.
+      #
+      # REQUIRED SECRET: Add ANTHROPIC_API_KEY under:
+      #   Repository → Settings → Secrets and variables → Actions → New secret
+      #
+      # TODO: No changes needed here if you configured the env block above.
+      #       Flags are built automatically from VF_PLATFORM and VF_SCOPE.
+      - name: Run ValidationForge
+        id: vf_run
+        env:
+          # TODO: Make sure ANTHROPIC_API_KEY is added as a GitHub Secret.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          # Build the /validate-ci command with optional flags
+          VF_CMD="/validate-ci"
+          if [ -n "$VF_PLATFORM" ]; then
+            VF_CMD="$VF_CMD --platform $VF_PLATFORM"
+          fi
+          if [ -n "$VF_SCOPE" ]; then
+            VF_CMD="$VF_CMD --scope $VF_SCOPE"
+          fi
+
+          echo "[VF] Running: claude --print \"$VF_CMD\""
+          claude --print "$VF_CMD"
+        # continue-on-error: true lets the next steps (artifact upload) run
+        # even when validation fails. The annotate-failure step re-exits 1.
+        continue-on-error: true
+
+      # ── Step 10: Upload evidence artifacts ────────────────────────────────
+      # Uploads everything in e2e-evidence/ as a downloadable artifact, even
+      # when the validation step failed — so engineers can always review what
+      # ValidationForge found.
+      #
+      # TODO: Increase retention-days if your team needs evidence longer than
+      #       30 days (max: 400 days on GitHub Enterprise, 90 on free plans).
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          # TODO: Rename the artifact if you run multiple validation jobs.
+          name: validation-evidence-${{ github.run_number }}
+          path: e2e-evidence/
+          # TODO: Adjust retention days to match your project's review cycle.
+          retention-days: 30
+          # Warn but don't fail if the evidence directory is missing (e.g. on
+          # a very early preflight failure before evidence capture starts).
+          if-no-files-found: warn
+
+      # ── Step 11: Annotate failure ──────────────────────────────────────────
+      # Adds a visible error annotation to the PR / commit status that links
+      # engineers directly to the evidence artifact, then exits 1 to mark the
+      # GitHub Check as failed.
+      # No customisation needed.
+      - name: Annotate failure
+        if: steps.vf_run.outcome == 'failure'
+        run: |
+          echo "::error title=ValidationForge FAIL::One or more validation journeys failed. "\
+               "Download the 'validation-evidence-${{ github.run_number }}' artifact from the "\
+               "Actions run summary and review e2e-evidence/report.md for full diagnosis."
+          exit 1
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PLATFORM VARIANT QUICK-REFERENCE
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# ── WEB (React / Next.js / Vite / SvelteKit / Nuxt) ──────────────────────────
+#
+#   runs-on: ubuntu-latest
+#   env:
+#     VF_PLATFORM: "web"
+#     SERVER_CMD:  "npm run dev"            # or: pnpm dev / yarn start
+#     HEALTH_URL:  "http://localhost:3000"  # or :5173 for Vite
+#     HEALTH_TIMEOUT: "60"
+#
+#   # For pnpm, add before the Node.js step:
+#   # - uses: pnpm/action-setup@v4
+#   #   with: { version: 9 }
+#
+# ── API (Express / FastAPI / Rails / Fastify / Gin) ──────────────────────────
+#
+#   runs-on: ubuntu-latest
+#   env:
+#     VF_PLATFORM: "api"
+#     SERVER_CMD:  "node src/server.js"     # or: uvicorn app.main:app / bundle exec rails server
+#     HEALTH_URL:  "http://localhost:8000/health"
+#     HEALTH_TIMEOUT: "60"
+#
+#   # Python API — add after "Install project dependencies":
+#   # - name: Set up Python
+#   #   uses: actions/setup-python@v5
+#   #   with: { python-version: "3.12" }
+#   # - run: pip install -r requirements.txt
+#
+# ── CLI (Node.js / Python / Go / Bash scripts) ───────────────────────────────
+#
+#   runs-on: ubuntu-latest
+#   env:
+#     VF_PLATFORM: "cli"
+#     SERVER_CMD:  ""   # no server needed
+#     HEALTH_URL:  ""   # no health check needed
+#     HEALTH_TIMEOUT: "30"
+#
+# ── iOS / macOS (Xcode + Simulator) ──────────────────────────────────────────
+#
+#   runs-on: macos-latest   # ← REQUIRED for Xcode / Simulator
+#   env:
+#     VF_PLATFORM: "ios"
+#     SERVER_CMD:  ""   # no HTTP server; VF drives the Simulator directly
+#     HEALTH_URL:  ""
+#
+# ═══════════════════════════════════════════════════════════════════════════════
