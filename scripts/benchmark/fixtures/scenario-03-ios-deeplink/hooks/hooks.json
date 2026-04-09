@@ -1,0 +1,28 @@
+{
+  "hooks": [
+    {
+      "name": "block-test-files",
+      "trigger": "PreToolUse",
+      "matcher": "Write|Edit",
+      "command": "echo '[hook] No test/mock/stub files allowed — ValidationForge no-mock mandate'"
+    },
+    {
+      "name": "evidence-gate-reminder",
+      "trigger": "PreToolUse",
+      "matcher": "TodoWrite",
+      "command": "echo '[hook] Capture evidence before marking any journey complete'"
+    },
+    {
+      "name": "validation-not-compilation",
+      "trigger": "PostToolUse",
+      "matcher": "Bash",
+      "command": "echo '[hook] Build success is NOT validation — run journeys against the real simulator'"
+    },
+    {
+      "name": "ios-simulator-reminder",
+      "trigger": "PostToolUse",
+      "matcher": "Bash",
+      "command": "echo '[hook] iOS validation requires a running simulator — never assume deeplinks work without evidence'"
+    }
+  ]
+}

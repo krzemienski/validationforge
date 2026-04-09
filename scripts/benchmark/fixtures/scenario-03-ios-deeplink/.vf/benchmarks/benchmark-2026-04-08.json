@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-04-09T03:13:55Z",
+  "project_dir": "/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system/scripts/benchmark/fixtures/scenario-03-ios-deeplink",
+  "dimensions": {
+    "coverage": {
+      "score": 0,
+      "weight": 35,
+      "journey_count": 0,
+      "plans_found": 0
+    },
+    "evidence_quality": {
+      "score": 0,
+      "weight": 30
+    },
+    "enforcement": {
+      "score": 90,
+      "weight": 25
+    },
+    "speed": {
+      "score": 80,
+      "weight": 10
+    }
+  },
+  "aggregate": 30,
+  "grade": "F"
+}
