@@ -18,10 +18,10 @@
   "hooks": {
     "block-test-files": "warn",
     "evidence-gate-reminder": "enabled",
-    "validation-not-compilation": "enabled",
+    "validation-not-compilation": "warn",
     "completion-claim-validator": "warn",
     "mock-detection": "warn",
-    "validation-state-tracker": "enabled",
+    "validation-state-tracker": "warn",
     "evidence-quality-check": "disabled"
   }
 }
