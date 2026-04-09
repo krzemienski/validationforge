@@ -61,9 +61,12 @@ Use AskUserQuestion:
 ```bash
 STATE_FILE=".vf/state/setup-state.json"
 
+# Ensure the state directory exists before attempting to read state
+mkdir -p .vf/state
+
 if [ -f "$STATE_FILE" ]; then
   LAST_STEP=$(jq -r ".lastCompletedStep // 0" "$STATE_FILE" 2>/dev/null)
-  TIMESTAMP=$(jq -r .timestamp "$STATE_FILE" 2>/dev/null)
+  TIMESTAMP=$(jq -r ".timestamp // empty" "$STATE_FILE" 2>/dev/null)
   echo "Found previous setup session (Step $LAST_STEP at $TIMESTAMP)"
 fi
 ```
