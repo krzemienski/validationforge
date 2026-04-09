@@ -19,7 +19,17 @@
     "quality-assurance",
     "e2e-validation"
   ],
+  "bin": {
+    "vf": "bin/vf.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
   "files": [
+    "bin/",
     ".claude-plugin/",
     "CLAUDE.md",
     "README.md",
