@@ -19,6 +19,7 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 /validate --parallel               # Use parallel sub-agents for independent journeys
 /validate --verbose                # Include debug-level detail in report
 /validate --fix                    # Alias for /validate-fix (fix failures + re-validate)
+/validate --clean                  # Remove old evidence before validating
 ```
 
 ## Supported Flags
@@ -30,6 +31,7 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 | `--parallel` | off | Run independent journey validations in parallel sub-agents |
 | `--verbose` | off | Include raw evidence content inline in the report |
 | `--fix` | off | After validation, automatically fix FAILs and re-validate (3-strike limit) |
+| `--clean` | off | Remove evidence older than configured retention period before running validation |
 
 ## Pre-Pipeline: Read Config
 
@@ -66,6 +68,30 @@ fi
 
 > **Note:** If `~/.claude/.vf-config.json` is missing, defaults apply automatically:
 > `enforcement: standard`, `evidence_dir: e2e-evidence/`. Run `/vf-setup` to create a config.
+
+## Pre-Pipeline: Evidence Cleanup (--clean)
+
+When the `--clean` flag is passed, run the evidence cleanup script **before** the validation pipeline starts. Cleanup respects the in-progress lock — if another validation is actively running, cleanup aborts safely.
+
+```bash
+if [ -n "${FLAG_CLEAN:-}" ]; then
+  # Read retention period from config (default: 30 days)
+  RETENTION_DAYS=$(jq -r '.evidence_retention_days // 30' "$CONFIG_FILE" 2>/dev/null || echo "30")
+
+  echo "[vf] --clean flag detected — removing evidence older than ${RETENTION_DAYS} days from ${EVIDENCE_DIR}/"
+
+  if [ -f "scripts/evidence-cleanup.sh" ]; then
+    bash scripts/evidence-cleanup.sh "$EVIDENCE_DIR" "$RETENTION_DAYS"
+  else
+    echo "[vf] WARNING: scripts/evidence-cleanup.sh not found — skipping cleanup." >&2
+  fi
+fi
+```
+
+> **Note:** Cleanup runs before the pipeline enters PREFLIGHT. It will not remove evidence from a
+> currently active validation session — the in-progress lock (`.vf/state/validation-in-progress.lock`)
+> prevents accidental deletion. Use `EVIDENCE_CLEANUP_DRY_RUN=1` to preview what would be removed
+> without actually deleting anything.
 
 ## Enforcement Level Behavior
 
@@ -145,6 +171,9 @@ NEVER mark a journey PASS without specific evidence.
 
 # Full validation with auto-fix for failures
 /validate --fix
+
+# Remove old evidence before validating (uses configured retention period)
+/validate --clean
 
 # Parallel validation for large projects
 /validate --parallel --verbose
