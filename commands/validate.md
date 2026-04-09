@@ -31,6 +31,42 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 | `--verbose` | off | Include raw evidence content inline in the report |
 | `--fix` | off | After validation, automatically fix FAILs and re-validate (3-strike limit) |
 
+## Pre-Pipeline: Read Config
+
+Before entering the pipeline, read the ValidationForge config written by `/vf-setup`.
+
+```bash
+CONFIG_FILE="$HOME/.claude/.vf-config.json"
+
+# Defaults used when config is missing (enforcement: standard, evidence_dir: e2e-evidence/)
+ENFORCEMENT="standard"
+EVIDENCE_DIR="e2e-evidence"
+CONFIG_PLATFORM=""
+
+if [ -f "$CONFIG_FILE" ]; then
+  ENFORCEMENT=$(jq -r '.enforcement // "standard"' "$CONFIG_FILE" 2>/dev/null)
+  EVIDENCE_DIR=$(jq -r '.evidence_dir // "e2e-evidence"' "$CONFIG_FILE" 2>/dev/null)
+  CONFIG_PLATFORM=$(jq -r '.platform // empty' "$CONFIG_FILE" 2>/dev/null)
+else
+  echo "[vf] No config found at $CONFIG_FILE — using defaults (enforcement: standard, evidence_dir: e2e-evidence/)"
+fi
+
+# Apply platform from config only if --platform flag was not provided
+if [ -z "${FLAG_PLATFORM:-}" ] && [ -n "$CONFIG_PLATFORM" ] && [ "$CONFIG_PLATFORM" != "null" ]; then
+  PLATFORM="$CONFIG_PLATFORM"
+else
+  PLATFORM="${FLAG_PLATFORM:-}"
+fi
+
+# Print active config summary when VF_VERBOSE is set
+if [ -n "${VF_VERBOSE:-}" ]; then
+  echo "[vf] Config: enforcement=${ENFORCEMENT} | evidence_dir=${EVIDENCE_DIR} | platform=${PLATFORM:-auto-detect}"
+fi
+```
+
+> **Note:** If `~/.claude/.vf-config.json` is missing, defaults apply automatically:
+> `enforcement: standard`, `evidence_dir: e2e-evidence/`. Run `/vf-setup` to create a config.
+
 ## Pipeline Stages
 
 ### 1. PREFLIGHT
