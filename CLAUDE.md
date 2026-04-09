@@ -47,6 +47,10 @@ No-mock validation platform for Claude Code. Ship verified code, not "it compile
 | CLI | argument parsers, bin entries | cli-validation |
 | Fullstack | multiple layers detected | fullstack-validation |
 | Design | DESIGN.md, Stitch project | design-validation, stitch-integration, design-token-audit |
+| React Native | package.json + react-native dep | react-native-validation |
+| Flutter | pubspec.yaml, .dart files | flutter-validation |
+| Django/Flask | requirements.txt, wsgi.py, manage.py | django-validation |
+| Rust CLI | Cargo.toml, src/main.rs | rust-cli-validation |
 
 ## Evidence Rules
 
@@ -129,10 +133,10 @@ vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, va
 **Forge Commands**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, forge-install-rules
 
-### Skills (40)
+### Skills (44)
 
-**Platform Validation (11)**
-ios-validation, ios-validation-gate, ios-validation-runner, ios-simulator-control, playwright-validation, web-validation, web-testing, chrome-devtools, api-validation, cli-validation, fullstack-validation
+**Platform Validation (15)**
+ios-validation, ios-validation-gate, ios-validation-runner, ios-simulator-control, playwright-validation, web-validation, web-testing, chrome-devtools, api-validation, cli-validation, fullstack-validation, react-native-validation, flutter-validation, django-validation, rust-cli-validation
 
 **Quality Gates (6)**
 functional-validation, gate-validation-discipline, no-mocking-validation-gates, build-quality-gates, verification-before-completion, preflight
