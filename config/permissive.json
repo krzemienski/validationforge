@@ -4,6 +4,7 @@
   "strictness": "permissive",
   "evidence_dir": "e2e-evidence",
   "ci_mode": false,
+  "evidence_retention_days": 30,
   "rules": {
     "block_test_files": false,
     "block_mock_patterns": false,

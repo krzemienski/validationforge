@@ -20,6 +20,7 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 /validate --verbose                # Include debug-level detail in report
 /validate --fix                    # Alias for /validate-fix (fix failures + re-validate)
 /validate --report                 # After validation, open a visual HTML dashboard in the browser
+/validate --clean                  # Remove old evidence before validating
 ```
 
 ## Supported Flags
@@ -32,6 +33,9 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 | `--verbose` | off | Include raw evidence content inline in the report |
 | `--fix` | off | After validation, automatically fix FAILs and re-validate (3-strike limit) |
 | `--report` | off | After validation, generate and open a visual HTML dashboard in the default browser |
+| `--clean` | off | Remove evidence older than configured retention period before running validation |
+| `--report` | off | After validation, generate and open a visual HTML dashboard in the default browser |
+| `--clean` | off | Remove evidence older than configured retention period before running validation |
 
 ## Pre-Pipeline: Read Config
 
@@ -69,6 +73,63 @@ fi
 > **Note:** If `~/.claude/.vf-config.json` is missing, defaults apply automatically:
 > `enforcement: standard`, `evidence_dir: e2e-evidence/`. Run `/vf-setup` to create a config.
 
+## Pre-Pipeline: Evidence Cleanup (--clean)
+
+When the `--clean` flag is passed, run the evidence cleanup script **before** the validation pipeline starts. Cleanup respects the in-progress lock — if another validation is actively running, cleanup aborts safely.
+
+```bash
+if [ -n "${FLAG_CLEAN:-}" ]; then
+  # Read retention period from config (default: 30 days)
+  RETENTION_DAYS=$(jq -r '.evidence_retention_days // 30' "$CONFIG_FILE" 2>/dev/null || echo "30")
+
+  echo "[vf] --clean flag detected — removing evidence older than ${RETENTION_DAYS} days from ${EVIDENCE_DIR}/"
+
+  if [ -f "scripts/evidence-cleanup.sh" ]; then
+    bash scripts/evidence-cleanup.sh "$EVIDENCE_DIR" "$RETENTION_DAYS"
+  else
+    echo "[vf] WARNING: scripts/evidence-cleanup.sh not found — skipping cleanup." >&2
+  fi
+fi
+```
+
+> **Note:** Cleanup runs before the pipeline enters PREFLIGHT. It will not remove evidence from a
+> currently active validation session — the in-progress lock (`.vf/state/validation-in-progress.lock`)
+> prevents accidental deletion. Use `EVIDENCE_CLEANUP_DRY_RUN=1` to preview what would be removed
+> without actually deleting anything.
+
+## Pre-Pipeline: Active Validation Lock
+
+Before entering PREFLIGHT, create a lock file to signal that a validation session is actively running. This prevents concurrent validations from colliding and prevents evidence cleanup from deleting files mid-run.
+
+```bash
+LOCK_FILE=".vf/state/validation-in-progress.lock"
+
+# Ensure the lock directory exists
+mkdir -p ".vf/state"
+
+# Check if another validation is already running
+if [ -f "$LOCK_FILE" ]; then
+  echo "[vf] ERROR: Another validation is already in progress." >&2
+  echo "[vf] Lock file: $LOCK_FILE" >&2
+  echo "[vf] If no validation is running, remove the lock file manually and retry." >&2
+  exit 1
+fi
+
+# Create the lock file with metadata
+echo "pid=$$" > "$LOCK_FILE"
+echo "started=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$LOCK_FILE"
+echo "platform=${PLATFORM:-auto-detect}" >> "$LOCK_FILE"
+echo "[vf] Lock acquired: $LOCK_FILE"
+
+# Register cleanup handler to remove lock on exit (success or failure)
+trap 'rm -f "$LOCK_FILE"; echo "[vf] Lock released: $LOCK_FILE"' EXIT
+```
+
+> **Lock behavior:** The lock is acquired before PREFLIGHT and released automatically when the pipeline
+> exits — whether it completes successfully, encounters an error, or is interrupted. The `trap EXIT`
+> handler guarantees cleanup even on unexpected termination. If a stale lock exists from a crashed
+> session, remove it manually with `rm .vf/state/validation-in-progress.lock`.
+
 ## Enforcement Level Behavior
 
 The `enforcement` value from config gates how strictly the pipeline runs. Use this table to understand what each level requires at each stage:
@@ -105,6 +166,10 @@ The `enforcement` value from config gates how strictly the pipeline runs. Use th
 6. SHIP      → Production readiness audit, deploy decision
 ```
 
+> **Lock lifecycle:** The `validation-in-progress.lock` file is created before stage 2 (PREFLIGHT)
+> and automatically removed after stage 5 (VERDICT) completes — or immediately if any stage fails.
+> All pipeline stages from PREFLIGHT onward run within the lock window.
+
 ### Phase 0: RESEARCH
 Use the `research-validation` skill to gather standards and best practices. Identify applicable validation criteria (WCAG, HIG, security standards). Map standards to ValidationForge skills. Understand what to validate and how before planning begins.
 
@@ -133,7 +198,10 @@ Invoke the `verdict-writer` agent to:
 4. Aggregate into a final report at `e2e-evidence/report.md`
 5. Print summary to stdout
 
+<<<<<<< HEAD
 Never produce a partial verdict — wait for ALL validators before writing the report.
+
+After VERDICT completes, the lock file (`.vf/state/validation-in-progress.lock`) is released via the `trap EXIT` handler registered during pipeline startup.
 
 ### Phase 6: SHIP
 Use `production-readiness-audit` skill to make the deploy decision. Security and deployment FAILs are blocking — do not ship. Other FAILs can be CONDITIONAL with documented risk acceptance. Produce a deploy recommendation based on the full verdict.
@@ -205,6 +273,9 @@ NEVER mark a journey PASS without specific evidence.
 
 # Full validation with auto-fix for failures
 /validate --fix
+
+# Remove old evidence before validating (uses configured retention period)
+/validate --clean
 
 # Parallel validation for large projects
 /validate --parallel --verbose

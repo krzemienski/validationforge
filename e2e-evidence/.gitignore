@@ -1,5 +1,39 @@
+# e2e-evidence/.gitignore
+# Fine-grained exclusion patterns for validation evidence files
+# Preserves inventory and report files for auditing
+
+# Screenshots and images
 *.png
 *.jpg
+*.jpeg
+*.gif
+*.webp
+*.bmp
+*.tiff
+*.svg
+
+# Video recordings
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
+# JSON evidence payloads (API responses, snapshots)
 *.json
-!evidence-inventory.txt
+
+# Log files
+*.log
+*.txt
+
+# HAR (HTTP Archive) files
+*.har
+
+# Binary/compressed artifacts
+*.zip
+*.tar
+*.gz
+
+# Preserve report and inventory files
 !report.md
+!**/evidence-inventory.txt
