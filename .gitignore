@@ -24,3 +24,5 @@ e2e-evidence/dashboard.html
 .worktrees/
 .security-key
 logs/security/
+.claude/
+.sisyphus/
