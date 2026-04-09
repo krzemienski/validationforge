@@ -1,16 +1,16 @@
 ---
 name: forge-execute
-description: Autonomous validation execution loop. Runs validation journeys against the real system, captures evidence, and fixes failures with re-validation.
+description: Autonomous validation execution loop. Runs journeys against the real system, captures per-attempt evidence in isolated directories, fixes failures with rebuild-then-revalidate, and persists state to forge-state.json after every phase transition and strike.
 ---
 
 # forge-execute
 
-Autonomous validation execution loop. Runs validation journeys against the real system, captures evidence, and fixes failures with re-validation.
+Autonomous validation execution loop. Runs journeys, captures fresh evidence per attempt, fixes failures, rebuilds, and re-validates until all pass or the 3-strike limit is reached.
 
 ## Trigger
 
 - "run validation", "execute validation", "validate now"
-- After a validation plan exists
+- After a validation plan exists (run forge-plan first if needed)
 
 ## Modes
 
@@ -24,106 +24,106 @@ Autonomous validation execution loop. Runs validation journeys against the real 
 ## The Forge Loop
 
 ```
-PLAN → PREFLIGHT → EXECUTE → ANALYZE → FIX → RE-EXECUTE
-                                          ↑        ↓
-                                          └────────┘ (max 3 attempts)
+PLAN → PREFLIGHT → EXECUTE → ANALYZE → FIX → REBUILD → RE-EXECUTE
+                                          ↑                   ↓
+                                          └───────────────────┘ (max 3 strikes)
 ```
 
 ### Phase 0: Load Plan
 
-Read validation plan from `e2e-evidence/validation-plan.md`. If none exists, run forge-plan first.
+Read `e2e-evidence/validation-plan.md`. If absent, run forge-plan first.
+Update forge-state.json: `status → running`, record `run_id`.
 
 ### Phase 1: Preflight
 
-Before any validation:
 - [ ] Project builds without errors
 - [ ] Required services are running (dev server, database, etc.)
 - [ ] MCP servers are available (Playwright, Xcode tools, etc.)
-- [ ] Evidence directory is clean (no stale evidence from previous runs)
+- [ ] Evidence directory initialized for attempt 1
 
 **If preflight fails: STOP. Fix the build/environment first.**
+Update forge-state.json: `phase → preflight_failed` on failure.
 
 ### Phase 2: Execute Journeys
 
-For each journey in the plan:
-1. Execute each step against the real system
-2. Capture evidence per step requirements
-3. Compare evidence against PASS criteria
-4. Record verdict: PASS or FAIL with cited evidence
+For each journey, at attempt N:
+1. Create evidence directory: `e2e-evidence/forge-attempt-{N}/{journey-slug}/`
+2. Execute each step against the real system
+3. Capture evidence (screenshots, API responses) into that directory
+4. Compare against PASS criteria → record verdict
 
-Evidence goes to `e2e-evidence/{journey-slug}/`:
+Update forge-state.json after each journey verdict. See `references/forge-state-schema.md` for schema.
+
 ```
 e2e-evidence/
-  {journey-slug}/
-    step-01-{description}.png
-    step-02-{description}.json
-    evidence-inventory.txt
+  forge-attempt-1/
+    {journey-slug}/
+      step-01-{description}.png
+      step-02-{description}.json
+      evidence-inventory.txt
+  forge-attempt-2/
+    {journey-slug}/
+      ...
 ```
 
 ### Phase 3: Analyze Failures
 
 For each FAIL verdict:
 1. Use sequential thinking to trace root cause
-2. Classify: code bug, config issue, environment problem, or flaky behavior
-3. Determine if auto-fixable
+2. Classify: code bug, config issue, environment, or flaky
+3. Determine if auto-fixable (if not, mark BLOCKED)
 
-### Phase 4: Fix Loop (max 3 attempts per journey)
+### Phase 4: Fix Loop (max 3 strikes per journey)
 
 ```
-attempt = 0
-while journey.verdict == FAIL and attempt < 3:
-    fix(root_cause)
-    rebuild()
-    re_execute(journey)
-    attempt++
+strike = 0
+while journey.verdict == FAIL and strike < 3:
+    fix(root_cause)             # modify real application code
+    rebuild()                   # MUST compile before re-validating
+    N++                         # increment attempt counter
+    re_execute(journey, N)      # fresh evidence in forge-attempt-{N}/
+    strike++
+    update_forge_state(strike)  # persist strike count and attempt result
 if journey.verdict == FAIL:
-    mark_as_unfixable(journey)
+    mark_as_persistent_fail(journey)
+    update_forge_state(status="aborted")
 ```
+
+**Rebuild rule:** Never re-validate after a fix without rebuilding first. A clean build is a prerequisite for re-execution.
 
 ### Phase 5: Verdict
 
 Generate unified report at `e2e-evidence/report.md`:
+
 ```markdown
-# Validation Report
+# Forge Validation Report
 
 ## Summary
 - Total Journeys: N
-- PASS: X
-- FAIL: Y
-- Fix Attempts: Z
+- PASS: X  FAIL: Y  Fix Attempts: Z
 
 ## Journey Results
-| Journey | Verdict | Evidence | Fix Attempts |
-|---------|---------|----------|-------------|
-| J1: Login Flow | PASS | 4 screenshots, 2 API responses | 0 |
-| J2: Settings | FAIL | 3 screenshots | 3 (max reached) |
+| Journey | Verdict | Strikes | Evidence Path |
+|---------|---------|---------|---------------|
+| login-flow | PASS | 1 | forge-attempt-2/login-flow/ |
+| settings | FAIL | 3 | forge-attempt-3/settings/ |
 
 ## Detailed Results
-### J1: Login Flow — PASS
-**Evidence:**
+### login-flow — PASS
 - step-01: Screenshot shows login form with email/password fields
-- step-02: API response 200 with valid JWT token in body
-...
+- step-02: API response 200 with valid JWT in body
 ```
+
+Update forge-state.json: `status → completed` (or `aborted` if any persistent failures).
 
 ## State Management
 
-Execution state persists to `.validationforge/forge-state.json`:
+State persists to `.validationforge/forge-state.json`. Update after:
+- Every phase transition (0 → 1 → 2 → 3 → 4 → 5)
+- Every strike increment
+- Every attempt conclusion
 
-```json
-{
-  "run_id": "uuid",
-  "started_at": "ISO-8601",
-  "phase": "execute",
-  "journeys": {
-    "login-flow": { "verdict": "PASS", "attempts": 0 },
-    "settings-page": { "verdict": "IN_PROGRESS", "attempts": 1 }
-  },
-  "evidence_count": 12
-}
-```
-
-If interrupted, resume from the last incomplete journey.
+See `references/forge-state-schema.md` for complete schema, field definitions, and lifecycle transitions.
 
 ## CI Exit Codes
 

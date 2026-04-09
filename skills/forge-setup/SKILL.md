@@ -47,11 +47,19 @@ Create the validation infrastructure:
 ```
 .validationforge/
   config.json          # Platform detection results + enforcement level
-  forge-state.json     # Execution state (empty initially)
+  forge-state.json     # Execution state (idle initially)
   benchmark-history.json  # Benchmark trend data
 e2e-evidence/
   .gitkeep
 ```
+
+Run `scripts/forge-init.sh` to initialize the forge state directory:
+
+```bash
+bash scripts/forge-init.sh
+```
+
+This creates `.validationforge/forge-state.json` with status `idle` if it does not already exist. Output confirms the file path and initial state.
 
 ### Phase 4: Rules Installation
 
@@ -71,6 +79,7 @@ Uses `vf-` prefix to avoid conflicts with other plugins.
 
 Confirm setup by checking:
 - [ ] `.validationforge/config.json` exists and is valid
+- [ ] `.validationforge/forge-state.json` exists and is valid JSON (run `cat .validationforge/forge-state.json | python3 -m json.tool` to verify)
 - [ ] `e2e-evidence/` directory exists
 - [ ] Rules installed to `.claude/rules/`
 - [ ] Hooks loaded (check hooks.json is referenced in plugin manifest)
