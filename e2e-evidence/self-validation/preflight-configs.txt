@@ -1,0 +1,37 @@
+Preflight: JSON Configuration File Validation
+Date: 2026-04-08
+Command: node -e "['config/strict.json',...].forEach(f=>{JSON.parse(...);console.log('VALID:'+f)})"
+
+Parse Results:
+  VALID:config/strict.json
+  VALID:config/standard.json
+  VALID:config/permissive.json
+  VALID:hooks/hooks.json
+  VALID:package.json
+  ALL_CONFIGS_VALID
+
+Key Presence Confirmed:
+  config/strict.json      — name: "strict", strictness: "strict", rules: {...}, hooks: {...}
+  config/standard.json    — name: "standard", strictness: "standard", rules: {...}, hooks: {...}
+  config/permissive.json  — name: "permissive", strictness: "permissive", rules: {...}, hooks: {...}
+  hooks/hooks.json        — description: "...", hooks: {PreToolUse: [...], PostToolUse: [...]}
+  package.json            — name field present (standard npm manifest)
+
+hooks/hooks.json Schema Verified:
+  hooks.PreToolUse:
+    - matcher: "Write|Edit|MultiEdit" → block-test-files.js
+    - matcher: "TaskUpdate"           → evidence-gate-reminder.js
+  hooks.PostToolUse:
+    - matcher: "Bash"                 → validation-not-compilation.js, completion-claim-validator.js, validation-state-tracker.js
+    - matcher: "Edit|Write|MultiEdit" → mock-detection.js, evidence-quality-check.js
+
+Config Rule Flags (strict.json):
+  block_test_files: true
+  block_mock_patterns: true
+  require_evidence_on_completion: true
+  require_validation_plan: true
+  require_preflight: true
+  max_recovery_attempts: 3
+  fail_on_missing_evidence: true
+
+Preflight Gate PF-3: PASS

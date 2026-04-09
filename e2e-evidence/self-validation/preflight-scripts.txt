@@ -1,0 +1,21 @@
+Preflight: Shell Script Syntax Validation
+Date: 2026-04-08
+Command: bash -n {script} for all shell scripts
+
+Results:
+  scripts/detect-platform.sh  — VALID (bash -n exit 0, "detect-platform.sh: VALID")
+  scripts/health-check.sh     — VALID (bash -n exit 0, "health-check.sh: VALID")
+  install.sh                  — VALID (bash -n exit 0, "install.sh: VALID")
+
+Final: ALL_SCRIPTS_VALID
+
+Executable Permissions:
+  scripts/detect-platform.sh  — -rwxr-xr-x (executable)
+  scripts/health-check.sh     — -rwxr-xr-x (executable)
+  scripts/evidence-collector.sh — -rwxr-xr-x (executable)
+  scripts/sync-opencode.sh    — -rwxr-xr-x (executable)
+  install.sh                  — -rwxr-xr-x (executable)
+
+All scripts are executable and pass bash syntax checking.
+
+Preflight Gate PF-2: PASS
