@@ -27,7 +27,7 @@
 | 014 | MERGED | Merge SHA `3342cdd`; NPM Package Distribution |
 | 015 | QUARANTINED | +2375/-17723 lines, 256 files changed; deletes protected hooks/skills; cleanup=PRESERVED |
 | 016 | SKIPPED | +1164/-9748 lines, 113 files changed; deletes uninstall.sh, hooks/config-loader.js, hooks/verify-e2e.js, 18+ scripts; too destructive |
-| 017 | PENDING | Pending merge |
+| 017 | MERGED | Merge SHA `4e75626`; Context Window Budget Management; cleanup=DEFERRED |
 | 018 | MERGED | Merge SHA `7cbf486`; Verified Benchmark Scoring System; cleanup=DEFERRED |
 | 019 | PRE_EXISTING | Already merged before campaign |
 | 020 | SKIPPED | No code produced |
@@ -45,6 +45,7 @@
 | Wave 2 | COMPLETE | Spec 007 SKIPPED; 009, 010 merged |
 | Wave 3 | COMPLETE | Specs 011, 012, 013, 014 merged |
 | Wave 4 | COMPLETE | Spec 015 QUARANTINED, 016 SKIPPED, 018/021/023/024 merged |
+| Wave 5 | COMPLETE | Specs 008, 017 merged (quality normalization) |
 
 ## Stash Disposition
 
