@@ -52,7 +52,7 @@ for rule_file in "$INSTALL_DIR"/rules/*.md; do
   cp "$rule_file" "$target"
 done
 
-ok "$(ls "$INSTALL_DIR"/rules/*.md | wc -l | tr -d ' ') rules installed"
+ok "$(ls "$INSTALL_DIR"/rules/*.md | wc -l | tr -d ' ') rules installed"  # tr -d ' ' strips leading spaces from macOS wc; harmless on Linux
 
 # Create evidence directory in current project (if in a git repo)
 if git rev-parse --git-dir >/dev/null 2>&1; then
@@ -73,7 +73,7 @@ fi
 mkdir -p "$(dirname "$CONFIG_FILE")"
 cat > "$CONFIG_FILE" << EOF
 {
-  "setupCompleted": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "setupCompleted": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",  # POSIX-compatible: -u=UTC, format is portable
   "setupVersion": "1.0.0",
   "installDir": "$INSTALL_DIR",
   "scope": "global"
