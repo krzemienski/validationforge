@@ -91,6 +91,45 @@ e2e-evidence/
 
 Exception: commit `e2e-evidence/report.md` if the team requires verdicts in source control.
 
+### Lock File Protocol
+
+Active validation sessions write a lock file to prevent cleanup from interfering with
+in-progress runs:
+
+```
+e2e-evidence/validation-in-progress.lock
+```
+
+**Lock file lifecycle:**
+
+| Event | Action |
+|-------|--------|
+| Validation starts | Write `validation-in-progress.lock` with PID and start timestamp |
+| Validation ends (PASS or FAIL) | Remove `validation-in-progress.lock` |
+| Cleanup triggered | Check for lock file; abort if present |
+| Stale lock detected | Lock older than 24 hours is treated as orphaned and ignored |
+
+**Lock file contents:**
+
+```json
+{
+  "pid": 12345,
+  "started_at": "2024-01-15T10:30:00Z",
+  "run_id": "run-20240115-103000"
+}
+```
+
+**Cleanup behavior when lock is present:**
+
+```
+⚠️  Validation in progress (PID 12345, started 2024-01-15T10:30:00Z).
+    Cleanup aborted. Re-run after validation completes.
+```
+
+Cleanup never removes `validation-in-progress.lock` itself — only the validation
+process that created it may remove it. If a lock is stale (process no longer running),
+cleanup logs a warning and proceeds after the 24-hour grace period.
+
 ### Archive Before Purge
 
 Before any cleanup, create a compressed archive for offline retention:
