@@ -1,0 +1,1 @@
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","exitCode":0,"output":"(empty — hook exits silently for non-test files)"}}

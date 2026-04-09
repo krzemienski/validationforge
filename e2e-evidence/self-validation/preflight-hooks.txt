@@ -1,0 +1,40 @@
+Preflight: Hook Syntax Validation
+Date: 2026-04-08
+Command: node --check ./hooks/{hook}.js for all 7 hooks
+
+Results:
+  block-test-files.js        — VALID (exit 0, no output)
+  completion-claim-validator.js — VALID (exit 0, no output)
+  evidence-gate-reminder.js  — VALID (exit 0, no output)
+  evidence-quality-check.js  — VALID (exit 0, no output)
+  mock-detection.js          — VALID (exit 0, no output)
+  validation-not-compilation.js — VALID (exit 0, no output)
+  validation-state-tracker.js — VALID (exit 0, no output)
+
+Final: ALL_HOOKS_VALID
+
+Hook Runtime Behavior Verified:
+
+1. block-test-files.js (PreToolUse) — JSON deny path:
+   Input:  {"tool_name":"Write","tool_input":{"file_path":"auth.test.js","content":"test"}}
+   Output: {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny",
+            "permissionDecisionReason":"BLOCKED: \"auth.test.js\" matches a test/mock/stub
+            file pattern.\nValidationForge Iron Rule: Never create test files, mock files,
+            or stub files.\nInstead: Build and run the real system. Validate through actual
+            user interfaces.\nRun /validate to start the correct validation workflow."}}
+   Verdict: PASS — deny decision returned with Iron Rule message
+
+2. block-test-files.js (PreToolUse) — silent allow path:
+   Input:  {"tool_name":"Write","tool_input":{"file_path":"src/auth.js","content":"module.exports = {}"}}
+   Output: (empty — exit 0)
+   Verdict: PASS — normal files pass through silently
+
+3. mock-detection.js (PostToolUse) — mock pattern detection:
+   Input:  {"tool_name":"Write","tool_input":{"file_path":"src/auth.js","content":"const mock = jest.mock(\"axios\");"}}
+   Stderr: [ValidationForge] mock-detection: Mock/test pattern detected in code being written.
+           ValidationForge Iron Rule: Never create mocks, stubs, or test harnesses.
+           Fix the real system instead. Run /validate for proper validation.
+   Exit:   2
+   Verdict: PASS — mock pattern detected, stderr warning emitted, non-zero exit
+
+Preflight Gate PF-1: PASS

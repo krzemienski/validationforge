@@ -17,6 +17,21 @@ ValidationForge enforces this through hooks that block test file creation, skill
 
 <!-- demo GIF pending: see demo/DEMO-SCENARIO.md -->
 
+## Self-Validation Case Study
+
+> ValidationForge ran its own 7-phase pipeline against itself. **Result: PASS — 6/6 journeys, 13/13 criteria, 0 fix attempts.**
+
+We applied VF's methodology to VF's own codebase: hooks invoked directly, scripts syntax-checked, configs parsed, cross-references verified, install script audited. Every verdict cites specific command output. No evidence was fabricated.
+
+Key findings:
+- `block-test-files.js` produces the exact deny JSON structure Claude Code reads to block test file creation
+- All 45 skills, 15 commands, 5 agents, and 8 rules exist on disk — cross-references resolve
+- `install.sh` passes `bash -n` and contains `git clone`, rules install loop, and config write
+- `detect-platform.sh` correctly classifies VF itself as `generic` (meta-tool, no framework)
+
+Full case study: `docs/case-studies/self-validation.md`
+Evidence: `e2e-evidence/self-validation/report.md`
+
 ## Why Not Unit Tests?
 
 Unit tests verify code in isolation with mocks. Mocks drift from reality. ValidationForge verifies **systems in production** through the same interfaces your users experience.

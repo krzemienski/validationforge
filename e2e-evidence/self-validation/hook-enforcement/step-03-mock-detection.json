@@ -1,0 +1,18 @@
+{
+  "hookName": "mock-detection.js",
+  "hookType": "PostToolUse",
+  "trigger": "Edit|Write|MultiEdit",
+  "input": {
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "src/auth.js",
+      "content": "const mock = jest.mock(\"axios\");"
+    }
+  },
+  "output": {
+    "stderr": "[ValidationForge] mock-detection: Mock/test pattern detected in code being written.\nValidationForge Iron Rule: Never create mocks, stubs, or test harnesses.\nFix the real system instead. Run /validate for proper validation.",
+    "exitCode": 2,
+    "behavior": "Non-zero exit with stderr warning — Claude Code will surface this to the user"
+  },
+  "verdict": "PASS — jest.mock() pattern detected, Iron Rule warning emitted, exit code 2"
+}

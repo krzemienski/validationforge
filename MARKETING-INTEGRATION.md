@@ -23,6 +23,34 @@ Conference talks      Comparison matrix                              Custom plat
 
 Each of the 18 blog posts maps to specific VF features, messaging angles, and calls-to-action.
 
+### Tier 0: Premier Case Study — VF Validates Itself (highest credibility)
+
+> **"We don't just preach evidence-based shipping — we practice it."**
+
+ValidationForge ran its own 7-phase validation pipeline against its own codebase.
+**Result: PASS — 6/6 journeys, 13/13 criteria, 0 fix attempts required.**
+
+| Asset | Details |
+|-------|---------|
+| **Case study** | [docs/case-studies/self-validation.md](docs/case-studies/self-validation.md) |
+| **Evidence** | [e2e-evidence/self-validation/report.md](e2e-evidence/self-validation/report.md) |
+| **Verdict** | Overall Verdict: PASS — hooks enforce, configs are valid, scripts are deployable |
+| **Marketing angle** | "A validation tool that can't validate itself has no credibility. Ours can." |
+
+**Key proof points for marketing use:**
+- `block-test-files.js` produces exact deny JSON Claude Code reads — not just documentation, actively enforced
+- Platform detection correctly classifies VF as `generic` (meta-tool) — the script works on its own project
+- 41 skills, 15 commands, 5 agents, 8 rules all verified to exist on disk — no phantom references
+- `install.sh` verified deployable: `bash -n` passes, git clone + rules install + config write all present
+
+**Recommended usage:**
+- Lead with this case study in all "why trust VF" conversations
+- Use the verdict quote in social media: *"We ran VF against itself. PASS — 0 fix attempts."*
+- Link from README (already done), product landing page, and conference talks
+- Pair with Post 03 (Functional Validation) as the strongest 1-2 credibility punch
+
+---
+
 ### Tier 1: Direct VF Posts (highest conversion)
 
 | Post | Title | VF Feature | Why It Matters | CTA |

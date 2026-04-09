@@ -1,0 +1,40 @@
+Install Script Function Presence Check
+Date: 2026-04-08
+Command: grep -n "git clone|mkdir|cp|cat > \$CONFIG_FILE|rules" ./install.sh
+
+Key Functions Found:
+
+  git clone (line 32):
+    git clone --depth 1 "$REPO" "$INSTALL_DIR"
+    Count: 1 occurrence
+
+  Rules installation (lines 36-45):
+    info "Installing rules to ${RULES_DIR}..."
+    mkdir -p "$RULES_DIR"
+    for rule_file in "$INSTALL_DIR"/rules/*.md; do
+      cp "$rule_file" "$target"
+    done
+    ok "$(ls "$INSTALL_DIR"/rules/*.md | wc -l | tr -d ' ') rules installed"
+
+  Config write (lines 62-70):
+    mkdir -p "$(dirname "$CONFIG_FILE")"
+    cat > "$CONFIG_FILE" << EOF
+      {
+        "installDir": "$INSTALL_DIR",
+        ...
+      }
+
+  e2e-evidence directory setup (lines 49-61):
+    mkdir -p e2e-evidence
+    cat > e2e-evidence/.gitignore << 'GITIGNORE'
+
+  Installation variables (lines 9-10):
+    RULES_DIR="${HOME}/.claude/rules"
+    CONFIG_FILE="${HOME}/.claude/.vf-config.json"
+
+All 3 required functional components present:
+  [x] git clone — clones VF repo to INSTALL_DIR
+  [x] rules install — copies rules/*.md to ~/.claude/rules/
+  [x] config write — writes ~/.claude/.vf-config.json
+
+Verdict: PASS

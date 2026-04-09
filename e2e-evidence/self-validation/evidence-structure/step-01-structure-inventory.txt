@@ -1,0 +1,53 @@
+Evidence Structure Inventory
+Date: 2026-04-08
+Command: find ./e2e-evidence/ -type f | sort
+
+All Evidence Files:
+  ./e2e-evidence/self-validation/configuration/step-01-config-parse-results.json
+  ./e2e-evidence/self-validation/configuration/step-02-hooks-schema.json
+  ./e2e-evidence/self-validation/cross-references/step-01-skills-inventory.txt
+  ./e2e-evidence/self-validation/cross-references/step-02-commands-inventory.txt
+  ./e2e-evidence/self-validation/cross-references/step-03-agents-inventory.txt
+  ./e2e-evidence/self-validation/cross-references/step-04-rules-inventory.txt
+  ./e2e-evidence/self-validation/evidence-inventory.txt
+  ./e2e-evidence/self-validation/hook-enforcement/step-01-block-test-file.json
+  ./e2e-evidence/self-validation/hook-enforcement/step-02-allow-normal-file.json
+  ./e2e-evidence/self-validation/hook-enforcement/step-03-mock-detection.json
+  ./e2e-evidence/self-validation/install-script/step-01-syntax-check.txt
+  ./e2e-evidence/self-validation/install-script/step-02-function-presence.txt
+  ./e2e-evidence/self-validation/platform-detection/step-01-detection-output.txt
+  ./e2e-evidence/self-validation/preflight-configs.txt
+  ./e2e-evidence/self-validation/preflight-hooks.txt
+  ./e2e-evidence/self-validation/preflight-scripts.txt
+  ./e2e-evidence/self-validation/validation-plan.md
+  ./e2e-evidence/web-validation/VERDICT.md
+  ./e2e-evidence/web-validation/evidence-inventory.txt
+  ./e2e-evidence/web-validation/expanded/VERDICT.md
+  ./e2e-evidence/web-validation/expanded/mobile-about.png
+  ./e2e-evidence/web-validation/expanded/mobile-homepage.png
+  ./e2e-evidence/web-validation/expanded/mobile-post07.png
+  ./e2e-evidence/web-validation/expanded/post01-full.png
+  ./e2e-evidence/web-validation/expanded/post09-full.png
+  ./e2e-evidence/web-validation/expanded/post18-full.png
+  ./e2e-evidence/web-validation/step-01-homepage-full.png
+  ./e2e-evidence/web-validation/step-02-post03-viewport.png
+  ./e2e-evidence/web-validation/step-03-post03-full.png
+  ./e2e-evidence/web-validation/step-04-post04-navigation.png
+
+Total files: 30
+
+Structure Validation:
+  [x] e2e-evidence/ directory exists at repo root
+  [x] Journey subdirectory exists: e2e-evidence/web-validation/
+  [x] Journey subdirectory exists: e2e-evidence/self-validation/
+  [x] e2e-evidence/web-validation/VERDICT.md — exists, non-empty (81 lines)
+  [x] e2e-evidence/web-validation/evidence-inventory.txt — exists, non-empty
+  [x] step-NN-{description} naming convention followed in both journeys
+  [x] evidence-inventory.txt present in self-validation/ journey
+
+VF Naming Convention Compliance:
+  Pattern: e2e-evidence/{journey-slug}/step-NN-{description}.{ext}
+  Compliance: FULL — all step files follow the pattern
+
+Verdict: PASS — e2e-evidence/ directory exists, journey subdirectories present,
+  VERDICT.md and evidence-inventory.txt present, naming convention followed

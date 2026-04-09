@@ -1,0 +1,17 @@
+Install Script Syntax Check
+Date: 2026-04-08
+Command: bash -n {script} && echo "syntax OK"
+
+Results:
+  bash -n ./install.sh               → install.sh: syntax OK (exit 0)
+  bash -n ./scripts/detect-platform.sh → detect-platform.sh: syntax OK (exit 0)
+  bash -n ./scripts/health-check.sh  → health-check.sh: syntax OK (exit 0)
+
+All scripts pass bash syntax validation with exit code 0.
+
+Permissions (from ls -la):
+  install.sh                 — -rwxr-xr-x (executable)
+  scripts/detect-platform.sh — -rwxr-xr-x (executable)
+  scripts/health-check.sh    — -rwxr-xr-x (executable)
+
+Verdict: PASS

@@ -1,0 +1,26 @@
+Agents Inventory: ./agents/
+Date: 2026-04-08
+Command: ls ./agents/*.md | sort
+
+Agents (5 total):
+  agents/evidence-capturer.md
+  agents/platform-detector.md
+  agents/sweep-controller.md
+  agents/validation-lead.md
+  agents/verdict-writer.md
+
+Count: 5
+CLAUDE.md claims: 5 agents
+Status: EXACT MATCH
+
+Key Cross-References Verified (from commands/validate.md):
+  "platform-detector" → agents/platform-detector.md EXISTS ✓
+  "evidence-capturer" → agents/evidence-capturer.md EXISTS ✓
+  "verdict-writer"    → agents/verdict-writer.md EXISTS ✓
+
+Quote from commands/validate.md:
+  "Invoke the `platform-detector` agent to identify the platform..."
+  "3. Capture evidence via the `evidence-capturer` agent"
+  "Invoke the `verdict-writer` agent to:"
+
+Cross-Reference Verdict: PASS — all 3 key agent references resolve to existing files

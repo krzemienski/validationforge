@@ -1,0 +1,51 @@
+Skills Inventory: ./skills/
+Date: 2026-04-08
+Command: ls ./skills/ | sort
+
+Skills (41 total):
+  accessibility-audit
+  api-validation
+  baseline-quality-assessment
+  build-quality-gates
+  chrome-devtools
+  cli-validation
+  condition-based-waiting
+  create-validation-plan
+  design-token-audit
+  design-validation
+  e2e-testing
+  e2e-validate
+  error-recovery
+  forge-benchmark
+  forge-execute
+  forge-plan
+  forge-setup
+  forge-team
+  full-functional-audit
+  fullstack-validation
+  functional-validation
+  gate-validation-discipline
+  ios-simulator-control
+  ios-validation
+  ios-validation-gate
+  ios-validation-runner
+  no-mocking-validation-gates
+  parallel-validation
+  playwright-validation
+  preflight
+  production-readiness-audit
+  research-validation
+  responsive-validation
+  retrospective-validation
+  sequential-analysis
+  stitch-integration
+  validate-audit-benchmarks
+  verification-before-completion
+  visual-inspection
+  web-testing
+  web-validation
+
+Count: 41
+CLAUDE.md claims: 40 skills
+Status: 41 on disk vs 40 documented — 1 extra skill (validate-audit-benchmarks not in CLAUDE.md inventory)
+Cross-Reference Verdict: PASS (all 40 documented skills present; 1 bonus undocumented skill found)

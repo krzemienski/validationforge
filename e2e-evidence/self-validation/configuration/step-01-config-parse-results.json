@@ -1,0 +1,106 @@
+{
+  "parseResults": [
+    {
+      "file": "config/strict.json",
+      "status": "VALID",
+      "keys": {
+        "name": "strict",
+        "strictness": "strict",
+        "evidence_dir": "e2e-evidence",
+        "ci_mode": false,
+        "rules": {
+          "block_test_files": true,
+          "block_mock_patterns": true,
+          "require_evidence_on_completion": true,
+          "require_validation_plan": true,
+          "require_preflight": true,
+          "require_baseline": true,
+          "max_recovery_attempts": 3,
+          "fail_on_missing_evidence": true,
+          "require_screenshot_review": true
+        },
+        "hooks": {
+          "block-test-files": "enabled",
+          "evidence-gate-reminder": "enabled",
+          "validation-not-compilation": "enabled",
+          "completion-claim-validator": "enabled",
+          "mock-detection": "enabled"
+        }
+      }
+    },
+    {
+      "file": "config/standard.json",
+      "status": "VALID",
+      "keys": {
+        "name": "standard",
+        "strictness": "standard",
+        "evidence_dir": "e2e-evidence",
+        "ci_mode": false,
+        "rules": {
+          "block_test_files": true,
+          "block_mock_patterns": true,
+          "require_evidence_on_completion": true,
+          "require_validation_plan": false,
+          "require_preflight": false,
+          "require_baseline": false,
+          "max_recovery_attempts": 3,
+          "fail_on_missing_evidence": false,
+          "require_screenshot_review": false
+        },
+        "hooks": {
+          "block-test-files": "enabled",
+          "evidence-gate-reminder": "enabled",
+          "validation-not-compilation": "enabled",
+          "completion-claim-validator": "enabled",
+          "mock-detection": "enabled"
+        }
+      }
+    },
+    {
+      "file": "config/permissive.json",
+      "status": "VALID",
+      "keys": {
+        "name": "permissive",
+        "strictness": "permissive",
+        "evidence_dir": "e2e-evidence",
+        "ci_mode": false,
+        "rules": {
+          "block_test_files": false,
+          "block_mock_patterns": false,
+          "require_evidence_on_completion": false,
+          "require_validation_plan": false,
+          "require_preflight": false,
+          "require_baseline": false,
+          "max_recovery_attempts": 5,
+          "fail_on_missing_evidence": false,
+          "require_screenshot_review": false
+        },
+        "hooks": {
+          "block-test-files": "warn",
+          "evidence-gate-reminder": "enabled",
+          "validation-not-compilation": "enabled",
+          "completion-claim-validator": "warn",
+          "mock-detection": "warn"
+        }
+      }
+    },
+    {
+      "file": "hooks/hooks.json",
+      "status": "VALID",
+      "keys": {
+        "description": "ValidationForge hooks — enforce no-mock validation discipline and evidence quality",
+        "hooks": {
+          "PreToolUse": 2,
+          "PostToolUse": 2
+        }
+      }
+    },
+    {
+      "file": "package.json",
+      "status": "VALID",
+      "note": "Standard npm manifest — name, version, description fields present"
+    }
+  ],
+  "summary": "5/5 files parse as valid JSON. All three enforcement configs have required keys: name, strictness, evidence_dir, rules, hooks. hooks.json has PreToolUse and PostToolUse sections.",
+  "verdict": "PASS"
+}

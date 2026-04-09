@@ -1,0 +1,59 @@
+Evidence Inventory: ValidationForge Self-Validation
+Date: 2026-04-08
+Target: ValidationForge codebase (Claude Code plugin — no running server)
+Validator: VF 7-phase pipeline applied to VF itself
+
+Files (planned — updated as evidence is captured):
+  validation-plan.md               — Validation plan with 6 journeys, PASS criteria, evidence requirements
+  evidence-inventory.txt           — This file
+
+Preflight Evidence (Phase 2 — pending):
+  preflight-hooks.txt              — Node.js syntax check results for all 7 hooks
+  preflight-scripts.txt            — bash -n syntax check results for shell scripts
+  preflight-configs.txt            — JSON.parse results for all config files
+
+Journey Evidence (Phase 3 — pending):
+  hook-enforcement/
+    step-01-block-test-file.json   — Hook output: DENY decision for auth.test.js
+    step-02-allow-normal-file.json — Hook output: ALLOW decision for src/auth.js
+    step-03-mock-detection.json    — Hook output: warning when jest.mock() detected
+  configuration/
+    step-01-config-parse-results.json — Parse success for strict/standard/permissive/hooks/package
+    step-02-hooks-schema.json      — hooks.json schema confirming PreToolUse/PostToolUse keys
+  platform-detection/
+    step-01-detection-output.txt   — detect-platform.sh output against VF root
+  cross-references/
+    step-01-skills-inventory.txt   — ls ./skills/ with count (expect 40+)
+    step-02-commands-inventory.txt — ls ./commands/*.md with count (expect 15)
+    step-03-agents-inventory.txt   — ls ./agents/*.md with count (expect 5)
+    step-04-rules-inventory.txt    — ls ./rules/ with count (or absence note)
+  install-script/
+    step-01-syntax-check.txt       — bash -n check on install.sh and scripts/
+    step-02-function-presence.txt  — grep evidence of git clone in install.sh
+  evidence-structure/
+    step-01-structure-inventory.txt — find ./e2e-evidence/ -type f output
+
+Verdict (Phase 5 — pending):
+  report.md                        — Final verdict report with per-journey PASS/FAIL
+
+Validation Steps Planned:
+  Phase 2 — Preflight:
+    1. node --check all 7 hooks/*.js files
+    2. bash -n scripts/detect-platform.sh and scripts/health-check.sh and install.sh
+    3. JSON.parse all config files + hooks/hooks.json + package.json
+  Phase 3 — Execute:
+    4. Journey J1: pipe test filename to block-test-files.js → verify deny decision
+    5. Journey J1: pipe normal filename to block-test-files.js → verify allow decision
+    6. Journey J1: pipe mock content to mock-detection.js → verify warning output
+    7. Journey J2: parse all JSON configs, record key presence
+    8. Journey J2: extract hooks.json schema, record PreToolUse/PostToolUse structure
+    9. Journey J3: run detect-platform.sh . → record platform string + exit code
+   10. Journey J4: ls ./skills/ → inventory count
+   11. Journey J4: ls ./commands/*.md → inventory count
+   12. Journey J4: ls ./agents/*.md → inventory count
+   13. Journey J4: ls ./rules/ → inventory or absence note
+   14. Journey J5: bash -n install.sh and scripts → record exit codes
+   15. Journey J5: grep install.sh for git clone → record matches
+   16. Journey J6: find ./e2e-evidence/ -type f → record full inventory
+
+Console Errors: N/A (CLI tool — no browser)
