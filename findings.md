@@ -84,6 +84,52 @@ Fix: `const output = typeof result === 'string' ? result : (result.stdout || '')
 - Incomplete plugin.json (missing commands, agents, rules declarations) — fixed with all 5 directories
 - Plugin won't load in current session (fundamental: plugins load at session startup)
 
+---
+
+## 2026-04-08 — Subtask-1-1: Pipeline Gap Analysis (commands/validate.md vs CLAUDE.md 7-phase spec)
+
+### Audit: commands/validate.md Pipeline Stages
+
+Current `commands/validate.md` "Pipeline Stages" section lists **5 stages**:
+
+| validate.md Stage | Phase # | Notes |
+|-------------------|---------|-------|
+| 1. PREFLIGHT | Phase 2 in spec | Present, but ordering is wrong (before PLAN) |
+| 2. PLAN | Phase 1 in spec | Present, but executed *after* Preflight (inverted from spec) |
+| 3. APPROVE | — not a phase | Interactive gate within Plan; not canonical |
+| 4. EXECUTE | Phase 3 in spec | Present |
+| 5. REPORT | Phase 5 in spec | Present, but named REPORT instead of VERDICT |
+
+### Missing Phases (Confirmed)
+
+**Phase 0 — RESEARCH**: Not present in validate.md at all. The CLAUDE.md spec requires a dedicated research step before planning: gather applicable standards (WCAG, HIG, security standards), identify validation criteria, and map standards to VF skills. The `rules/execution-workflow.md` calls this "Understand what to validate and how" and invokes the `research-validation` skill.
+
+**Phase 4 — ANALYZE**: Not present as a separate phase in validate.md. After EXECUTE, the command goes directly to REPORT/VERDICT. The spec defines Phase 4 as an explicit root-cause investigation step for FAILs using `sequential-analysis`, `visual-inspection`, and `chrome-devtools` skills. Without it, failures go unreported until the final verdict with no intermediate diagnosis.
+
+**Phase 6 — SHIP**: Not present in validate.md. The spec defines Phase 6 as a production readiness audit and deploy decision gate, invoked via the `production-readiness-audit` skill. Security and deployment FAILs are blocking; other FAILs can be CONDITIONAL with documented risk. This phase is the difference between "tests passed" and "safe to deploy."
+
+### Additional Ordering Issue
+
+The validate.md inverts the PREFLIGHT/PLAN order: it runs PREFLIGHT (Phase 2) *before* PLAN (Phase 1). The canonical spec and `rules/execution-workflow.md` specify PLAN first (define what to validate) then PREFLIGHT (verify the system can run it). This means validate.md could reject a session before even defining what journeys to run.
+
+### Summary Table
+
+| Phase | Canonical Name | Present in validate.md | Status |
+|-------|---------------|------------------------|--------|
+| 0 | RESEARCH | No | **MISSING** |
+| 1 | PLAN | Yes (misordered — runs after Preflight) | Present but misplaced |
+| 2 | PREFLIGHT | Yes (runs first — before Plan) | Present but misplaced |
+| 3 | EXECUTE | Yes | Present |
+| 4 | ANALYZE | No | **MISSING** |
+| 5 | VERDICT | Yes (named REPORT) | Present but renamed |
+| 6 | SHIP | No | **MISSING** |
+
+### Conclusion
+
+`commands/validate.md` covers only **5 stages** (Preflight → Plan → Approve → Execute → Report) and is missing **3 canonical phases**: Phase 0 (Research), Phase 4 (Analyze), and Phase 6 (Ship). The APPROVE step is not a canonical pipeline phase. Phase ordering is inverted (Preflight before Plan). The REPORT naming diverges from the canonical VERDICT name.
+
+---
+
 ### Updated Verification Status
 | Area | Status |
 |------|--------|
