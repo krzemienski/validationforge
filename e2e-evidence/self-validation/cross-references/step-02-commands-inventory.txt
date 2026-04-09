@@ -1,0 +1,25 @@
+Commands Inventory: ./commands/
+Date: 2026-04-08
+Command: ls ./commands/*.md | sort
+
+Commands (15 total):
+  commands/forge-benchmark.md
+  commands/forge-execute.md
+  commands/forge-install-rules.md
+  commands/forge-plan.md
+  commands/forge-setup.md
+  commands/forge-team.md
+  commands/validate-audit.md
+  commands/validate-benchmark.md
+  commands/validate-ci.md
+  commands/validate-fix.md
+  commands/validate-plan.md
+  commands/validate-sweep.md
+  commands/validate-team.md
+  commands/validate.md
+  commands/vf-setup.md
+
+Count: 15
+CLAUDE.md claims: 15 commands
+Status: EXACT MATCH
+Cross-Reference Verdict: PASS

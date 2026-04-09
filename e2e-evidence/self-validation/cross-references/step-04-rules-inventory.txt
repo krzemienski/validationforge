@@ -1,0 +1,28 @@
+Rules Inventory: ./rules/
+Date: 2026-04-08
+Command: ls ./rules/ | sort
+
+Rules (8 total):
+  rules/benchmarking.md
+  rules/evidence-management.md
+  rules/execution-workflow.md
+  rules/forge-execution.md
+  rules/forge-team-orchestration.md
+  rules/platform-detection.md
+  rules/team-validation.md
+  rules/validation-discipline.md
+
+Count: 8
+CLAUDE.md claims: 8 rules
+Status: EXACT MATCH
+Cross-Reference Verdict: PASS
+
+Summary — All Cross-Reference Counts:
+  Skills:   41 on disk, 40 documented (1 undocumented extra — validate-audit-benchmarks)
+  Commands: 15 on disk, 15 documented (exact match)
+  Agents:    5 on disk,  5 documented (exact match)
+  Rules:     8 on disk,  8 documented (exact match)
+
+Overall Cross-Reference Verdict: PASS
+  Minor finding: 1 skill (validate-audit-benchmarks) exists on disk but is not listed
+  in CLAUDE.md's inventory. Not a blocking defect — undocumented asset, not missing one.
