@@ -6,13 +6,13 @@
 
 | # | Skill | Priority | Description |
 |---|-------|----------|-------------|
-| 1 | `ios-validation` | standard | iOS/macOS platform validation through Xcode build, simulator launch, and real device interaction via simctl and idb. Captures screenshots, video, and accessibility tree as evidence. |
-| 2 | `ios-validation-gate` | standard | Three-gate iOS validation -- Simulator, Backend, Analysis -- all must PASS |
-| 3 | `ios-validation-runner` | standard | Five-phase iOS validation with video recording, log streaming, and evidence collection |
-| 4 | `ios-simulator-control` | standard | iOS Simulator lifecycle management -- boot, install, launch, screenshot, logs, reset |
-| 5 | `playwright-validation` | standard | Browser-based validation using Playwright MCP -- real browser interaction, evidence capture |
+| 1 | `ios-validation` | reference | iOS/macOS platform validation through Xcode build, simulator launch, and real device interaction via simctl and idb. Captures screenshots, video, and accessibility tree as evidence. |
+| 2 | `ios-validation-gate` | reference | Three-gate iOS validation -- Simulator, Backend, Analysis -- all must PASS |
+| 3 | `ios-validation-runner` | reference | Five-phase iOS validation with video recording, log streaming, and evidence collection |
+| 4 | `ios-simulator-control` | reference | iOS Simulator lifecycle management -- boot, install, launch, screenshot, logs, reset |
+| 5 | `playwright-validation` | reference | Browser-based validation using Playwright MCP -- real browser interaction, evidence capture |
 | 6 | `web-validation` | standard | Web platform validation through browser automation (Playwright MCP or Chrome DevTools MCP). Captures screenshots, console logs, network responses, and DOM snapshots as evidence. |
-| 7 | `web-testing` | standard | Comprehensive web validation strategy -- integration, E2E, accessibility, performance, security |
+| 7 | `web-testing` | reference | Comprehensive web validation strategy -- integration, E2E, accessibility, performance, security |
 | 8 | `chrome-devtools` | reference | Chrome DevTools MCP integration for deep browser inspection and evidence capture |
 | 9 | `api-validation` | standard | API platform validation through direct HTTP requests (curl). Captures full response bodies, headers, and status codes. Tests CRUD operations, authentication flows, error responses, pagination, and rate limiting. |
 | 10 | `cli-validation` | standard | CLI platform validation through direct binary execution. Captures stdout, stderr, exit codes, and pipe behavior as evidence. Validates happy paths, error handling, and output format correctness. |
@@ -33,17 +33,17 @@
 
 | # | Skill | Priority | Description |
 |---|-------|----------|-------------|
-| 18 | `design-validation` | standard | Validate implementation fidelity against design specifications and Stitch-generated references |
+| 18 | `design-validation` | reference | Validate implementation fidelity against design specifications and Stitch-generated references |
 | 19 | `design-token-audit` | reference | Verify CSS and Tailwind tokens match the project's design system specification |
 | 20 | `stitch-integration` | reference | Stitch MCP workflow for design generation, iteration, and design-to-code validation |
-| 21 | `visual-inspection` | standard | Evidence-based visual inspection of running UIs -- captures what IS, not what SHOULD BE |
+| 21 | `visual-inspection` | reference | Evidence-based visual inspection of running UIs -- captures what IS, not what SHOULD BE |
 
 ## Analysis & Research (3)
 
 | # | Skill | Priority | Description |
 |---|-------|----------|-------------|
 | 22 | `sequential-analysis` | standard | Systematic root cause analysis for validation failures using step-by-step reasoning |
-| 23 | `research-validation` | standard | Research standards, best practices, and tools before designing validation strategies |
+| 23 | `research-validation` | reference | Research standards, best practices, and tools before designing validation strategies |
 | 24 | `retrospective-validation` | reference | Validate methodologies and approaches using historical evidence and past results |
 
 ## Specialized (6)
@@ -55,7 +55,7 @@
 | 27 | `parallel-validation` | standard | Orchestrate multiple validation agents in parallel across independent journeys or platforms |
 | 28 | `e2e-testing` | standard | End-to-end validation patterns -- journey design, evidence management, flaky flow handling |
 | 29 | `e2e-validate` | critical | Full end-to-end validation orchestrator. Detects platform, maps user journeys, defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks. Supports iOS, web, API, CLI, and fullstack projects. |
-| 30 | `create-validation-plan` | standard | Generates a structured validation plan with PASS criteria for every user journey before any evidence is captured. Plans define what success looks like upfront. |
+| 30 | `create-validation-plan` | critical | Generates a structured validation plan with PASS criteria for every user journey before any evidence is captured. Plans define what success looks like upfront. |
 
 ## Operational (5)
 
@@ -63,18 +63,18 @@
 |---|-------|----------|-------------|
 | 31 | `baseline-quality-assessment` | standard | Establishes a quality baseline before making changes. Captures current state evidence so post-change validation can prove improvement without regression. |
 | 32 | `condition-based-waiting` | standard | Smart waiting strategies for async operations during validation. Waits for specific conditions rather than arbitrary sleep durations. Every wait has a timeout, a condition, and a failure path. |
-| 33 | `error-recovery` | standard | Structured 3-strike error recovery during validation. When validation fails, diagnoses root cause, applies fix, and re-validates. |
+| 33 | `error-recovery` | critical | Structured 3-strike error recovery during validation. When validation fails, diagnoses root cause, applies fix, and re-validates. |
 | 34 | `production-readiness-audit` | reference | Systematic audit of application readiness for production deployment |
-| 35 | `full-functional-audit` | reference | Read-only validation audit that captures evidence and writes findings without making any code changes. Produces a severity-classified audit report. |
+| 35 | `full-functional-audit` | standard | Read-only validation audit that captures evidence and writes findings without making any code changes. Produces a severity-classified audit report. |
 
 ## Forge Orchestration (6)
 
 | # | Skill | Priority | Description |
 |---|-------|----------|-------------|
-| 36 | `forge-setup` | critical | Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture. |
-| 37 | `forge-plan` | critical | Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes. |
-| 38 | `forge-execute` | critical | Autonomous validation execution loop. Runs validation journeys against the real system, captures evidence, and fixes failures with re-validation. |
-| 39 | `forge-team` | standard | Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership. |
+| 36 | `forge-setup` | reference | Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture. |
+| 37 | `forge-plan` | reference | Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes. |
+| 38 | `forge-execute` | reference | Autonomous validation execution loop. Runs validation journeys against the real system, captures evidence, and fixes failures with re-validation. |
+| 39 | `forge-team` | reference | Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership. |
 | 40 | `forge-benchmark` | reference | Measure validation posture across five dimensions. Track trends over time and compare against baseline targets. |
 | 41 | `validate-audit-benchmarks` | reference | Run automated benchmark suite to score hook correctness, skill/command structural integrity, and aggregate quality metrics. |
 
@@ -84,7 +84,7 @@
 
 Skills are tiered into three priority levels to manage Claude Code's context window budget. Loading all 41 skills simultaneously would consume ~6,600 lines, crowding out user codebase context. The tiered approach keeps initial load under 2,000 lines while still making every skill available on demand.
 
-### Critical — Always Loaded (~800 lines)
+### Critical — Always Loaded (~777 lines)
 
 These 8 skills form the invariant core. They enforce the platform's foundational rules and are always present regardless of project type:
 
@@ -96,46 +96,56 @@ These 8 skills form the invariant core. They enforce the platform's foundational
 | 16 | `verification-before-completion` | Premature-completion prevention |
 | 17 | `preflight` | Pre-validation prerequisite check |
 | 29 | `e2e-validate` | Main validation orchestrator |
-| 36 | `forge-setup` | Project initialization |
-| 37 | `forge-plan` | Validation planning |
-| 38 | `forge-execute` | Execution loop |
+| 30 | `create-validation-plan` | Journey plan + PASS criteria generation |
+| 33 | `error-recovery` | 3-strike fix-and-revalidate loop |
 
 **Load condition:** Loaded on every session start, regardless of project platform.
 
 ### Standard — Loaded on Platform Match (~1,100 lines)
 
-These 22 skills are loaded when the platform detector identifies a matching project type. Platform detection runs during preflight and sets `DETECTED_PLATFORMS` in the session context.
+These 11 skills are loaded when the platform detector identifies a matching project type. Platform detection runs during preflight and sets `DETECTED_PLATFORMS` in the session context.
 
 | Trigger | Skills Loaded |
 |---------|--------------|
-| iOS detected | `ios-validation`, `ios-validation-gate`, `ios-validation-runner`, `ios-simulator-control` |
-| Web detected | `playwright-validation`, `web-validation`, `web-testing` |
+| Web detected | `web-validation` |
 | API detected | `api-validation` |
 | CLI detected | `cli-validation` |
 | Fullstack detected | `fullstack-validation` |
 | Build step present | `build-quality-gates` |
-| Design spec present | `design-validation`, `visual-inspection` |
-| Analysis phase | `sequential-analysis`, `research-validation` |
-| Multi-agent run | `parallel-validation`, `forge-team` |
-| Validation run | `e2e-testing`, `create-validation-plan` |
-| Baseline requested | `baseline-quality-assessment`, `condition-based-waiting`, `error-recovery` |
+| Analysis phase | `sequential-analysis` |
+| Multi-agent run | `parallel-validation` |
+| Validation run | `e2e-testing` |
+| Audit requested | `full-functional-audit` |
+| Baseline requested | `baseline-quality-assessment`, `condition-based-waiting` |
 
 **Load condition:** Loaded when the corresponding platform or phase is detected. Unload after the phase completes to reclaim context budget.
 
-### Reference — Loaded on Explicit Invocation (~700 lines)
+### Reference — Loaded on Explicit Invocation (~3,400 lines)
 
-These 10 skills are highly specialized and only load when a command explicitly invokes them or a dependency chain requires them. They are never pre-loaded.
+These 22 skills are highly specialized and only load when a command explicitly invokes them or a dependency chain requires them. They are never pre-loaded.
 
 | # | Skill | Invoke Condition |
 |---|-------|-----------------|
+| 1 | `ios-validation` | iOS project detected or `/ios-validation` command |
+| 2 | `ios-validation-gate` | iOS project detected with gate validation required |
+| 3 | `ios-validation-runner` | iOS project detected with full run required |
+| 4 | `ios-simulator-control` | iOS project detected with simulator control needed |
+| 5 | `playwright-validation` | `/playwright-validation` command or Playwright MCP present |
 | 8 | `chrome-devtools` | `/chrome-devtools` command or deep browser inspection requested |
+| 7 | `web-testing` | Web project detected with comprehensive test strategy needed |
+| 18 | `design-validation` | Design spec present or `/design-validation` command |
 | 19 | `design-token-audit` | `/design-token-audit` command or token diff requested |
 | 20 | `stitch-integration` | Stitch MCP present and design generation requested |
-| 24 | `retrospective-validation` | `/retrospective` command or historical evidence review |
+| 21 | `visual-inspection` | `/visual-inspection` command or UI screenshot analysis |
 | 25 | `accessibility-audit` | `/accessibility-audit` command or WCAG review requested |
 | 26 | `responsive-validation` | `/responsive-validation` or viewport matrix requested |
+| 23 | `research-validation` | `/research-validation` or standards research needed |
+| 24 | `retrospective-validation` | `/retrospective` command or historical evidence review |
 | 34 | `production-readiness-audit` | `/validate-ci` with production gate or deploy decision |
-| 35 | `full-functional-audit` | `/validate-audit` command |
+| 36 | `forge-setup` | `/vf-setup` command or project initialization |
+| 37 | `forge-plan` | `/validate-plan` command or planning mode |
+| 38 | `forge-execute` | `/forge-execute` command or autonomous execution |
+| 39 | `forge-team` | `/validate-team` command or multi-agent run |
 | 40 | `forge-benchmark` | `/validate-benchmark` command |
 | 41 | `validate-audit-benchmarks` | `/validate-benchmark --audit` flag |
 
