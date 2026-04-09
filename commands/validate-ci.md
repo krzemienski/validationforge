@@ -23,6 +23,37 @@ Run the full validation pipeline without interactive prompts. Designed for CI/CD
 | `--platform PLATFORM` | auto-detect | Force platform detection |
 | `--scope PATH` | entire project | Limit journey discovery to PATH |
 
+## Pre-Pipeline: Read Config
+
+Before entering the pipeline, read the ValidationForge config written by `/vf-setup`.
+
+```bash
+CONFIG_FILE="$HOME/.claude/.vf-config.json"
+
+# Defaults used when config is missing (enforcement: standard, evidence_dir: e2e-evidence/)
+ENFORCEMENT="standard"
+EVIDENCE_DIR="e2e-evidence"
+CONFIG_PLATFORM=""
+
+if [ -f "$CONFIG_FILE" ]; then
+  ENFORCEMENT=$(jq -r '.enforcement // "standard"' "$CONFIG_FILE" 2>/dev/null)
+  EVIDENCE_DIR=$(jq -r '.evidence_dir // "e2e-evidence"' "$CONFIG_FILE" 2>/dev/null)
+  CONFIG_PLATFORM=$(jq -r '.platform // empty' "$CONFIG_FILE" 2>/dev/null)
+else
+  echo "[vf] WARNING: No config found at $CONFIG_FILE — run /vf-setup first to configure ValidationForge."
+  echo "[vf] Continuing with defaults (enforcement: standard, evidence_dir: e2e-evidence/)"
+fi
+
+# Apply platform from config only if --platform flag was not provided
+if [ -z "${FLAG_PLATFORM:-}" ] && [ -n "$CONFIG_PLATFORM" ] && [ "$CONFIG_PLATFORM" != "null" ]; then
+  PLATFORM="$CONFIG_PLATFORM"
+else
+  PLATFORM="${FLAG_PLATFORM:-}"
+fi
+```
+
+> **Note:** In CI mode, a missing `~/.claude/.vf-config.json` is a **warning, not a failure** — defaults apply and the pipeline continues. Run `/vf-setup` locally and commit the resulting config to avoid this warning in future runs.
+
 ## Differences from `/validate`
 
 | Behavior | `/validate` | `/validate-ci` |
