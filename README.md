@@ -192,16 +192,18 @@ Evidence is captured to `e2e-evidence/` and **must be reviewed, not just capture
 
 ## Benchmarking
 
-`/validate-benchmark` scores your project across four dimensions:
+> **Design intent — not yet empirically verified.** The scoring algorithm is implemented in `scripts/benchmark/` and `/validate-benchmark` wires it together, but the command has never been executed against a real project. The dimension weights, grade thresholds, and metric formulas below are design targets, not measured or validated values. See [Verification Status](#verification-status).
 
-| Dimension | Weight | What It Measures |
-|-----------|--------|-----------------|
+`/validate-benchmark` is designed to score your project across four dimensions:
+
+| Dimension | Weight (design target) | What It Measures |
+|-----------|------------------------|-----------------|
 | Coverage | 35% | Validated journeys / Total discoverable features |
 | Evidence Quality | 30% | Evidence citations, observation quality, verdict rigor |
 | Enforcement | 25% | Hooks installed, no mocks, no test files, rules active |
 | Speed | 10% | Validation time relative to project size |
 
-Grades: A (90+), B (80-89), C (70-79), D (60-69), F (<60).
+Designed grade thresholds (pending empirical calibration): A (90+), B (80–89), C (70–79), D (60–69), F (<60).
 
 ## Inventory
 
