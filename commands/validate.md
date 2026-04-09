@@ -93,6 +93,39 @@ fi
 > prevents accidental deletion. Use `EVIDENCE_CLEANUP_DRY_RUN=1` to preview what would be removed
 > without actually deleting anything.
 
+## Pre-Pipeline: Active Validation Lock
+
+Before entering PREFLIGHT, create a lock file to signal that a validation session is actively running. This prevents concurrent validations from colliding and prevents evidence cleanup from deleting files mid-run.
+
+```bash
+LOCK_FILE=".vf/state/validation-in-progress.lock"
+
+# Ensure the lock directory exists
+mkdir -p ".vf/state"
+
+# Check if another validation is already running
+if [ -f "$LOCK_FILE" ]; then
+  echo "[vf] ERROR: Another validation is already in progress." >&2
+  echo "[vf] Lock file: $LOCK_FILE" >&2
+  echo "[vf] If no validation is running, remove the lock file manually and retry." >&2
+  exit 1
+fi
+
+# Create the lock file with metadata
+echo "pid=$$" > "$LOCK_FILE"
+echo "started=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$LOCK_FILE"
+echo "platform=${PLATFORM:-auto-detect}" >> "$LOCK_FILE"
+echo "[vf] Lock acquired: $LOCK_FILE"
+
+# Register cleanup handler to remove lock on exit (success or failure)
+trap 'rm -f "$LOCK_FILE"; echo "[vf] Lock released: $LOCK_FILE"' EXIT
+```
+
+> **Lock behavior:** The lock is acquired before PREFLIGHT and released automatically when the pipeline
+> exits — whether it completes successfully, encounters an error, or is interrupted. The `trap EXIT`
+> handler guarantees cleanup even on unexpected termination. If a stale lock exists from a crashed
+> session, remove it manually with `rm .vf/state/validation-in-progress.lock`.
+
 ## Enforcement Level Behavior
 
 The `enforcement` value from config gates how strictly the pipeline runs. Use this table to understand what each level requires at each stage:
@@ -119,8 +152,12 @@ The `enforcement` value from config gates how strictly the pipeline runs. Use th
 
 ## Pipeline Stages
 
+> **Lock lifecycle:** The `validation-in-progress.lock` file is created before stage 1 (PREFLIGHT)
+> and automatically removed after stage 5 (REPORT) completes — or immediately if any stage fails.
+> All pipeline stages run within the lock window.
+
 ### 1. PREFLIGHT
-Check that the system is runnable. Verify prerequisites for the detected platform (server running, simulator booted, binary built). If preflight fails, report what is missing and stop.
+Check that the system is runnable. Verify prerequisites for the detected platform (server running, simulator booted, binary built). If preflight fails, report what is missing and stop. The lock file (`.vf/state/validation-in-progress.lock`) is held throughout this stage — evidence cleanup cannot run concurrently.
 
 ### 2. PLAN
 Invoke the `platform-detector` agent to identify the platform. Then map all user-facing journeys by scanning routes, screens, commands, or endpoints. For each journey, define specific PASS criteria and required evidence types. Output a validation plan to `e2e-evidence/validation-plan.md`.
@@ -142,6 +179,8 @@ Invoke the `verdict-writer` agent to:
 3. Write per-journey PASS/FAIL verdicts with cited evidence
 4. Aggregate into a final report at `e2e-evidence/report.md`
 5. Print summary to stdout
+
+After REPORT completes, the lock file (`.vf/state/validation-in-progress.lock`) is released via the `trap EXIT` handler registered during pipeline startup.
 
 ## Default Behavior (no flags)
 
