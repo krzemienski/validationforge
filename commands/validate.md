@@ -31,6 +31,66 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 | `--verbose` | off | Include raw evidence content inline in the report |
 | `--fix` | off | After validation, automatically fix FAILs and re-validate (3-strike limit) |
 
+## Pre-Pipeline: Read Config
+
+Before entering the pipeline, read the ValidationForge config written by `/vf-setup`.
+
+```bash
+CONFIG_FILE="$HOME/.claude/.vf-config.json"
+
+# Defaults used when config is missing (enforcement: standard, evidence_dir: e2e-evidence/)
+ENFORCEMENT="standard"
+EVIDENCE_DIR="e2e-evidence"
+CONFIG_PLATFORM=""
+
+if [ -f "$CONFIG_FILE" ]; then
+  ENFORCEMENT=$(jq -r '.enforcement // "standard"' "$CONFIG_FILE" 2>/dev/null)
+  EVIDENCE_DIR=$(jq -r '.evidence_dir // "e2e-evidence"' "$CONFIG_FILE" 2>/dev/null)
+  CONFIG_PLATFORM=$(jq -r '.platform // empty' "$CONFIG_FILE" 2>/dev/null)
+else
+  echo "[vf] No config found at $CONFIG_FILE — using defaults (enforcement: standard, evidence_dir: e2e-evidence/)"
+fi
+
+# Apply platform from config only if --platform flag was not provided
+if [ -z "${FLAG_PLATFORM:-}" ] && [ -n "$CONFIG_PLATFORM" ] && [ "$CONFIG_PLATFORM" != "null" ]; then
+  PLATFORM="$CONFIG_PLATFORM"
+else
+  PLATFORM="${FLAG_PLATFORM:-}"
+fi
+
+# Print active config summary when VF_VERBOSE is set
+if [ -n "${VF_VERBOSE:-}" ]; then
+  echo "[vf] Config: enforcement=${ENFORCEMENT} | evidence_dir=${EVIDENCE_DIR} | platform=${PLATFORM:-auto-detect}"
+fi
+```
+
+> **Note:** If `~/.claude/.vf-config.json` is missing, defaults apply automatically:
+> `enforcement: standard`, `evidence_dir: e2e-evidence/`. Run `/vf-setup` to create a config.
+
+## Enforcement Level Behavior
+
+The `enforcement` value from config gates how strictly the pipeline runs. Use this table to understand what each level requires at each stage:
+
+| Behavior | `strict` | `standard` | `permissive` |
+|----------|----------|------------|--------------|
+| Require preflight before execution | ✅ Required — stop if preflight fails | ⚠️ Recommended — warn if skipped | Optional — continue even if skipped |
+| Require plan approval before execute | ✅ Required — block until approved | ✅ Required — block until approved | Optional — proceed without approval |
+| Fail on missing evidence | ✅ Fail journey if evidence absent | ⚠️ Warn but continue | Continue silently |
+| Require baseline capture | ✅ Required before execute | Not required | Not required |
+| Block test files / mocks | ✅ Hard block — write rejected | ✅ Hard block — write rejected | ⚠️ Warn only |
+| Max fix attempts per journey | 3 | 3 | 5 |
+| Require screenshot review | ✅ Required | Not required | Not required |
+
+**How enforcement gates the pipeline:**
+
+- **`strict`** — Maximum enforcement. Preflight must pass or the pipeline stops. Plan approval is mandatory. Every journey must have captured evidence or it is marked FAIL. Baseline must be captured before execute. Test files and mocks are hard-blocked.
+
+- **`standard`** — Balanced enforcement (default). Plan approval is required before execute. Missing evidence produces a warning but does not auto-fail the journey. Preflight is recommended but does not stop the pipeline. Test files and mocks are hard-blocked.
+
+- **`permissive`** — Minimal enforcement for teams transitioning from unit tests. Plan approval is optional — the pipeline continues if skipped. Missing evidence is noted but does not affect the verdict. Test file and mock creation produces a warning instead of a block.
+
+> **Enforcement in code:** Check `ENFORCEMENT` variable after reading config. Branch on `strict` / `standard` / `permissive` at each gate point (preflight, approve, evidence check) to apply the correct behavior.
+
 ## Pipeline Stages
 
 ### 1. PREFLIGHT
