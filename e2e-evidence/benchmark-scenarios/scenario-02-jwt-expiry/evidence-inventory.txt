@@ -1,0 +1,11 @@
+Scenario: scenario-02-jwt-expiry
+Fixture: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system/scripts/benchmark/fixtures/scenario-02-jwt-expiry
+Grade: F
+Aggregate: 59 / 100
+Coverage: 50
+Enforcement: 50
+Evidence Quality: 70
+Files:
+  step-01-score-output.md - Full scorer output
+  benchmark-result.json   - Compact JSON result
+  evidence-inventory.txt  - This file

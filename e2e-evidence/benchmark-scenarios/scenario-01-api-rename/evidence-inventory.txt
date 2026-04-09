@@ -1,0 +1,11 @@
+Scenario: scenario-01-api-rename
+Fixture: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system/scripts/benchmark/fixtures/scenario-01-api-rename
+Grade: C
+Aggregate: 76 / 100
+Coverage: 60
+Enforcement: 90
+Evidence Quality: 82
+Files:
+  step-01-score-output.md - Full scorer output
+  benchmark-result.json   - Compact JSON result
+  evidence-inventory.txt  - This file
