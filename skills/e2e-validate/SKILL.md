@@ -4,6 +4,7 @@ description: >
   Full end-to-end validation orchestrator. Detects platform, maps user journeys,
   defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks.
   Supports iOS, web, API, CLI, and fullstack projects.
+context_priority: critical
 ---
 
 # ValidationForge: End-to-End Validation Orchestrator
