@@ -6,6 +6,7 @@ triggers:
   - "browser validation"
   - "web browser test"
   - "playwright verify"
+context_priority: reference
 ---
 
 # Playwright Validation

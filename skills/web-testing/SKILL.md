@@ -6,6 +6,7 @@ triggers:
   - "web validation strategy"
   - "how to validate web app"
   - "web quality strategy"
+context_priority: reference
 ---
 
 # Web Testing Strategy

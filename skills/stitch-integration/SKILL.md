@@ -7,6 +7,7 @@ triggers:
   - "generate design"
   - "design to code"
   - "stitch project"
+context_priority: reference
 ---
 
 # Stitch Integration

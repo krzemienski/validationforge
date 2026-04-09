@@ -7,6 +7,7 @@ triggers:
   - "design system drift"
   - "color audit"
   - "typography audit"
+context_priority: reference
 ---
 
 # Design Token Audit

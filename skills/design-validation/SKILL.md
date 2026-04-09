@@ -7,6 +7,7 @@ triggers:
   - "design fidelity"
   - "compare design to implementation"
   - "does it match the design"
+context_priority: reference
 ---
 
 # Design Validation
