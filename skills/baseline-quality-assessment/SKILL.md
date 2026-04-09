@@ -3,6 +3,7 @@ name: baseline-quality-assessment
 description: >
   Establishes a quality baseline before making changes. Captures current state
   evidence so post-change validation can prove improvement without regression.
+context_priority: standard
 ---
 
 # Baseline Quality Assessment

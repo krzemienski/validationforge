@@ -7,6 +7,7 @@ triggers:
   - "build pipeline"
   - "pre-deploy checks"
   - "build verification"
+context_priority: standard
 ---
 
 # Build Quality Gates
