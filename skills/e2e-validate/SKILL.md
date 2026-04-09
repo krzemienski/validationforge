@@ -3,7 +3,7 @@ name: e2e-validate
 description: >
   Full end-to-end validation orchestrator. Detects platform, maps user journeys,
   defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks.
-  Supports iOS, web, API, CLI, and fullstack projects.
+  Supports iOS, React Native, Flutter, web, API, CLI, Django/Flask, and fullstack projects.
 ---
 
 # ValidationForge: End-to-End Validation Orchestrator
@@ -31,11 +31,14 @@ Scan project root. First match wins.
 | Priority | Signals | Platform | Primary Tool |
 |----------|---------|----------|-------------|
 | 1 | `.xcodeproj`, `.xcworkspace`, `Package.swift` | **ios** | xcrun simctl, Xcode MCP |
-| 2 | `Cargo.toml [[bin]]`, `go.mod + main.go`, `package.json "bin"` | **cli** | Terminal, exit codes |
-| 3 | Backend routes WITHOUT frontend templates | **api** | curl, httpie |
-| 4 | Frontend framework WITHOUT backend routes | **web** | Playwright, Chrome DevTools |
-| 5 | Frontend AND backend in same project | **fullstack** | All tools, bottom-up |
-| 6 | None of the above | **generic** | Adaptive |
+| 2 | `package.json` with `react-native` dep, `metro.config.js`, `app.json` | **react-native** | Expo CLI, Metro bundler, device/simulator |
+| 3 | `pubspec.yaml`, `lib/main.dart`, `.dart` files | **flutter** | flutter run, flutter test, device/simulator |
+| 4 | `Cargo.toml [[bin]]`, `go.mod + main.go`, `package.json "bin"` | **cli** | Terminal, exit codes |
+| 5 | Backend routes WITHOUT frontend templates | **api** | curl, httpie |
+| 6 | Frontend framework WITHOUT backend routes | **web** | Playwright, Chrome DevTools |
+| 7 | `requirements.txt` + (`manage.py` OR `wsgi.py` OR `flask` import) | **django** | python manage.py, pytest, curl |
+| 8 | Frontend AND backend in same project | **fullstack** | All tools, bottom-up |
+| 9 | None of the above | **generic** | Adaptive |
 
 Auto-detection script available in `scripts/detect-platform.sh`.
 
@@ -65,9 +68,12 @@ Higher layers depend on lower layers. Start at the data layer to find causes, no
 | Platform | Reference | Key Commands |
 |----------|-----------|-------------|
 | ios | `references/ios-validation.md` | xcodebuild, simctl, idb, deep links |
+| react-native | `references/react-native-validation.md` | Expo CLI, Metro bundler, device/simulator |
+| flutter | `references/flutter-validation.md` | flutter run, flutter test, widget inspector |
 | web | `references/web-validation.md` | Playwright, Chrome DevTools, responsive |
 | api | `references/api-validation.md` | curl, auth flows, error cases |
 | cli | `references/cli-validation.md` | Build, execute, exit codes |
+| django | `references/django-validation.md` | python manage.py, pytest, curl |
 | fullstack | `references/fullstack-validation.md` | Bottom-up: DB → API → Frontend |
 | generic | `references/generic-validation.md` | Adaptive entry point discovery |
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Detect project platform type for ValidationForge routing
 # Usage: ./detect-platform.sh [project-dir]
-# Output: ios | cli | api | web | fullstack | generic
+# Output: ios | react-native | flutter | cli | api | web | fullstack | generic
 
 set -euo pipefail
 
@@ -9,6 +9,8 @@ PROJECT_DIR="${1:-.}"
 cd "$PROJECT_DIR"
 
 HAS_IOS=0
+HAS_RN=0
+HAS_FLUTTER=0
 HAS_CLI=0
 HAS_API=0
 HAS_WEB=0
@@ -16,6 +18,19 @@ HAS_WEB=0
 # iOS detection
 if [ -n "$(find . -maxdepth 3 -name '*.xcodeproj' -o -name '*.xcworkspace' -o -name 'Package.swift' 2>/dev/null | head -1)" ]; then
   HAS_IOS=1
+fi
+
+# React Native detection
+if [ -f package.json ] && grep -q '"react-native"' package.json 2>/dev/null; then
+  HAS_RN=1
+fi
+if [ -f app.json ] && grep -q '"expo"' app.json 2>/dev/null; then
+  HAS_RN=1
+fi
+
+# Flutter detection
+if [ -f pubspec.yaml ] && grep -q '^flutter:' pubspec.yaml 2>/dev/null; then
+  HAS_FLUTTER=1
 fi
 
 # CLI detection
@@ -47,6 +62,10 @@ fi
 # Priority-based output
 if [ "$HAS_IOS" -eq 1 ]; then
   echo "ios"
+elif [ "$HAS_RN" -eq 1 ]; then
+  echo "react-native"
+elif [ "$HAS_FLUTTER" -eq 1 ]; then
+  echo "flutter"
 elif [ "$HAS_CLI" -eq 1 ]; then
   echo "cli"
 elif [ "$HAS_WEB" -eq 1 ] && [ "$HAS_API" -eq 1 ]; then
