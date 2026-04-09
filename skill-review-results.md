@@ -19,7 +19,7 @@ All issues found were fixed immediately. Final verdict for each skill is PASS.
 | api-validation | FAIL | Three issues: (1) `verify-delete` curl used wrong flag order (`URL` before `-H`); (2) No null/empty check on `RESOURCE_ID` after extraction — CRUD cycle would silently proceed with empty ID; (3) Step 4 error test curl commands missing `Authorization` header — protected endpoints return 401 not 400/404/422 | Reordered `-H` before URL in verify-delete; added `RESOURCE_ID` null check with abort; added `Authorization` header to all Step 4 error test commands | PASS |
 | ios-validation | PASS | Step 8 mixed CLI `idb` (requires `--udid`) and Xcode MCP tool calls (`idb_tap`, `idb_input`) without clear separation — confusing which path to use | Restructured Step 8 with explicit **Option A: CLI idb** and **Option B: Xcode MCP Tools** subsections, each with full command examples and context descriptions | PASS |
 | cli-validation | PASS | Python Step 1 used `BINARY=TOOL_NAME` placeholder without explaining how to find the actual installed command name — developer could not know what to substitute | Added `grep` commands to discover binary name from `pyproject.toml [project.scripts]`, `setup.py console_scripts`, and `setup.cfg` entry_points; split binary verification into file-path vs PATH-installed variants | PASS |
-| fullstack-validation | FAIL | Two layer gates were incomplete or missing: Layer 3 PASS gate referenced "integration testing" instead of "Layer 4"; Layer 4 had no PASS gate at all. Also missing Evidence Standards section present in api-validation | Fixed Layer 3 PASS gate to reference "Layer 4"; added Layer 4 PASS gate with `Do not proceed to final verdict until...` format; added Evidence Standards section following api-validation pattern | PASS |
+| fullstack-validation | FAIL | Three issues: (1) Layer 3 PASS gate referenced "integration testing" instead of "Layer 4"; (2) Layer 4 had no PASS gate at all; (3) **`browser_fill_form` in Layer 4 frontend-to-database write path** — not a standard Playwright MCP tool (same defect as web-validation) | Fixed Layer 3/4 PASS gates; added Evidence Standards section; replaced `browser_fill_form` with `browser_snapshot` + `browser_fill` per field | PASS |
 | production-readiness-audit | FAIL | Missing Related Skills section — all other 9 reviewed skills have this section; creates inconsistency and makes it harder to discover related workflows | Added Related Skills section listing full-functional-audit, functional-validation, baseline-quality-assessment, and verification-before-completion with descriptions | PASS |
 
 ---
@@ -28,6 +28,7 @@ All issues found were fixed immediately. Final verdict for each skill is PASS.
 
 ### HIGH — FAIL: Causes Claude to call non-existent tools
 - **web-validation** — `browser_fill_form` not a standard Playwright MCP tool. Two occurrences in Step 6 (valid data + invalid data scenarios). Fixed: replaced with `browser_fill` per field.
+- **fullstack-validation** — `browser_fill_form` not a standard Playwright MCP tool. One occurrence in Layer 4 frontend-to-database write path. Fixed: replaced with `browser_snapshot` + `browser_fill` per field.
 
 ### MEDIUM — FAIL: Produces incorrect behavior at runtime
 - **api-validation** — Step 4 error tests missing `Authorization` header; protected endpoints return 401 instead of expected 400/404/422, making error handling appear broken. Also missing RESOURCE_ID guard causes silent empty-string CRUD cycle.
@@ -116,9 +117,9 @@ All Related Skills sections in the 10 reviewed skills reference only existing sk
 - **Final PASS**: 10 / 10
 - **Initial FAIL (required fixes)**: 4 (web-validation, api-validation, fullstack-validation, production-readiness-audit)
 - **Initial PASS (optional fixes)**: 6 (e2e-validate, create-validation-plan, preflight, functional-validation, ios-validation, cli-validation)
-- **Critical fixes applied**: 1 (browser_fill_form → browser_fill)
+- **Critical fixes applied**: 2 (web-validation browser_fill_form → browser_fill; fullstack-validation browser_fill_form → browser_snapshot + browser_fill)
 - **Medium fixes applied**: 5 (api-validation ×3, fullstack-validation ×2, production-readiness-audit ×1)
 - **Low/cosmetic fixes applied**: 4 (functional-validation, ios-validation, cli-validation, preflight)
-- **Total individual fixes**: 11
+- **Total individual fixes**: 12
 - **Broken cross-references found**: 0
 - **TODO/FIXME/HACK markers found**: 0
