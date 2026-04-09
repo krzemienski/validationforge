@@ -25,13 +25,13 @@
 | 012 | MERGED | Merge SHA `b3c9aa4`; spec pins OpenCode plugin dependencies and regenerated package-lock.json |
 | 013 | MERGED | Merge SHA `95721e0`; GitHub Actions Starter Workflow |
 | 014 | MERGED | Merge SHA `3342cdd`; NPM Package Distribution |
-| 015 | PENDING | Pending merge |
-| 016 | PENDING | Pending merge |
+| 015 | QUARANTINED | +2375/-17723 lines, 256 files changed; deletes protected hooks/skills; cleanup=PRESERVED |
+| 016 | SKIPPED | +1164/-9748 lines, 113 files changed; deletes uninstall.sh, hooks/config-loader.js, hooks/verify-e2e.js, 18+ scripts; too destructive |
 | 017 | PENDING | Pending merge |
-| 018 | PENDING | Pending merge |
+| 018 | MERGED | Merge SHA `7cbf486`; Verified Benchmark Scoring System; cleanup=DEFERRED |
 | 019 | PRE_EXISTING | Already merged before campaign |
 | 020 | SKIPPED | No code produced |
-| 021 | PENDING | Pending merge |
+| 021 | MERGED | Merge SHA `d1c4e00`; Forge Engine Autonomous Loop; cleanup=DEFERRED |
 | 022 | SKIPPED | No code produced |
 | 023 | PENDING | Pending merge |
 | 024 | PENDING | Pending merge |
