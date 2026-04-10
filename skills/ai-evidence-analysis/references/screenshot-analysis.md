@@ -418,11 +418,11 @@ Do not mark a journey FAIL solely because the screenshot was captured mid-load.
 Analysis results are saved as sidecar files alongside the original screenshot:
 
 ```
-e2e-evidence/journey-slug/step-03-dashboard.png           ← original screenshot
-e2e-evidence/journey-slug/step-03-dashboard.analysis.json ← this analysis result
+e2e-evidence/journey-slug/step-03-dashboard.png                ← original screenshot
+e2e-evidence/journey-slug/ai-analysis-step-03-dashboard.json   ← this analysis result
 ```
 
-The `verdict-writer` agent reads `.analysis.json` sidecar files when present to
+The `verdict-writer` agent reads `ai-analysis-*.json` sidecar files when present to
 incorporate AI findings into its PASS/FAIL verdict reasoning.
 
 ### Empty or Zero-Byte Screenshots

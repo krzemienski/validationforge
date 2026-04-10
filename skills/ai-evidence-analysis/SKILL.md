@@ -292,9 +292,9 @@ fi
 # 2. Check config flag in active config file
 config_file="config/standard.json"  # or strict.json / permissive.json
 if command -v jq >/dev/null 2>&1; then
-  ai_enabled=$(jq -r '.ai_evidence_analysis // true' "$config_file" 2>/dev/null)
+  ai_enabled=$(jq -r 'if .ai_analysis.enabled == false then "false" else "true" end' "$config_file" 2>/dev/null)
   if [ "$ai_enabled" = "false" ]; then
-    echo "AI evidence analysis is disabled (config: ai_evidence_analysis=false)."
+    echo "AI evidence analysis is disabled (config: ai_analysis.enabled=false)."
     echo "Skipping analysis. Evidence will be reviewed manually by verdict-writer."
     exit 0
   fi
@@ -306,7 +306,7 @@ fi
 | Method | Value | Effect |
 |--------|-------|--------|
 | `VF_AI_ANALYSIS=disabled` | Environment variable | Disables for the current shell session |
-| `"ai_evidence_analysis": false` | Config file flag | Disables for all runs using that config |
+| `"ai_analysis": { "enabled": false }` | Config file flag | Disables for all runs using that config |
 
 ### Offline / Air-Gapped Mode
 
@@ -318,7 +318,7 @@ export VF_AI_ANALYSIS=disabled
 
 In offline mode, the skill:
 1. Skips all model API calls
-2. Produces no `.analysis.json` files
+2. Produces no `ai-analysis-*.json` files
 3. Logs a single notice line: `[ai-evidence-analysis] offline — analysis skipped`
 4. Does NOT fail the pipeline — the `verdict-writer` proceeds with raw evidence only
 
@@ -332,10 +332,10 @@ This skill runs between Phase 4 (ANALYZE) and Phase 5 (VERDICT) of the 7-phase p
 3. EXECUTE    → Capture evidence to e2e-evidence/
 4. ANALYZE    → Root cause investigation for FAILs
   └─ ai-evidence-analysis  ← runs here
-5. VERDICT    → verdict-writer reads .analysis.json sidecar files
+5. VERDICT    → verdict-writer reads ai-analysis-*.json sidecar files
 ```
 
-The `verdict-writer` agent is AI-analysis-aware: when `.analysis.json` sidecar files are present, it reads the confidence scores and findings as additional input when writing its PASS/FAIL verdict.
+The `verdict-writer` agent is AI-analysis-aware: when `ai-analysis-*.json` sidecar files are present, it reads the confidence scores and findings as additional input when writing its PASS/FAIL verdict.
 
 ## Anti-Patterns
 

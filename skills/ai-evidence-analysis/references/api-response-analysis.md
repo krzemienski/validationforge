@@ -486,11 +486,11 @@ It is **not** a substitute for:
 Analysis results are saved as sidecar files alongside the original response:
 
 ```
-e2e-evidence/journey-slug/step-04-login-response.json           ← original evidence
-e2e-evidence/journey-slug/step-04-login-response.analysis.json  ← this analysis result
+e2e-evidence/journey-slug/step-04-login-response.json                ← original evidence
+e2e-evidence/journey-slug/ai-analysis-step-04-login-response.json   ← this analysis result
 ```
 
-The `verdict-writer` agent reads `.analysis.json` sidecar files when present to
+The `verdict-writer` agent reads `ai-analysis-*.json` sidecar files when present to
 incorporate AI findings into its PASS/FAIL verdict reasoning.
 
 ### Zero-Byte or Malformed Evidence Files

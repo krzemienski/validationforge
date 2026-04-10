@@ -491,11 +491,11 @@ dismissed, even when the exit code suggests success.
 Analysis results are saved as sidecar files alongside the original CLI output:
 
 ```
-e2e-evidence/journey-slug/step-03-build.txt           ← original evidence
-e2e-evidence/journey-slug/step-03-build.analysis.json ← this analysis result
+e2e-evidence/journey-slug/step-03-build.txt                    ← original evidence
+e2e-evidence/journey-slug/ai-analysis-step-03-build.json       ← this analysis result
 ```
 
-The `verdict-writer` agent reads `.analysis.json` sidecar files when present to
+The `verdict-writer` agent reads `ai-analysis-*.json` sidecar files when present to
 incorporate AI findings into its PASS/FAIL verdict reasoning.
 
 ### Zero-Byte or Truncated Evidence Files

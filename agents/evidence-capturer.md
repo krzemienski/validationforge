@@ -69,7 +69,7 @@ else
   # Check active config file (standard, strict, or permissive)
   config_file="config/standard.json"
   if command -v jq >/dev/null 2>&1 && [ -f "$config_file" ]; then
-    ai_enabled=$(jq -r '.ai_evidence_analysis // true' "$config_file" 2>/dev/null)
+    ai_enabled=$(jq -r 'if .ai_analysis.enabled == false then "false" else "true" end' "$config_file" 2>/dev/null)
     if [ "$ai_enabled" = "false" ]; then
       ai_analysis_enabled=false
     else
@@ -114,7 +114,7 @@ fi
 ### AI Analysis is Strictly Optional
 
 - If `VF_AI_ANALYSIS=disabled`, skip all model calls silently.
-- If `"ai_evidence_analysis": false` in the active config, skip all model calls silently.
+- If `ai_analysis.enabled: false` in the active config, skip all model calls silently.
 - In offline/air-gapped environments, set `VF_AI_ANALYSIS=disabled` before running.
 - **Never fail the capture pipeline** because AI analysis could not run.
 
