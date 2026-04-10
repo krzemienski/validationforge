@@ -36,18 +36,21 @@ Build a dependency graph from the validation plan, then assign each platform clu
 ```
 # 1. Build dependency graph
 dependency_graph = {
-  "api":    { depends_on: [] },
+  "db":     { depends_on: [] },
+  "api":    { depends_on: ["db"] },
   "web":    { depends_on: ["api"] },
   "ios":    { depends_on: ["api"] },
   "design": { depends_on: [] },
+  "cli":    { depends_on: [] },
   # ... extend per project
 }
 
 # 2. Topological sort → execution waves
 wave_plan = topological_waves(dependency_graph)
 # Example result:
-#   wave_1: ["api", "design"]   ← no dependencies
-#   wave_2: ["web", "ios"]      ← depend on api (wave 1)
+#   wave_1: ["db", "design", "cli"]   ← no dependencies
+#   wave_2: ["api"]                   ← depends on db (wave 1)
+#   wave_3: ["web", "ios"]            ← depend on api (wave 2)
 
 # 3. Create tasks with wave metadata
 for wave_number, platforms in wave_plan:

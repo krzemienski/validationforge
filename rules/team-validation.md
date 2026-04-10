@@ -35,27 +35,35 @@ Validators execute in **dependency-aware waves** — upstream platforms must PAS
 
 ### Wave Structure
 
-**Wave 1 — Foundation (no dependencies):**
-- API Validator runs first; all other validators depend on a working API
+**Wave 1 — Foundation (no dependencies, run in parallel):**
+- DB Validator (if present) — validates schema, migrations, data integrity
+- Design Validator (if present) — visual audit is independent of runtime behavior
+- CLI Validator (if present) — independent command-line tools
 
-**Wave 2 — Client Platforms (depend on Wave 1 PASS):**
+**Wave 2 — API Layer (depends on Wave 1 PASS):**
+- API Validator — must PASS before any client platform launches
+
+**Wave 3 — Client Platforms (depend on Wave 2 PASS):**
 - Web Validator and iOS Validator launch only after API Validator reports PASS
-- Design Validator may run in parallel with Wave 2 (no API dependency)
+- Web and iOS run in parallel within Wave 3
 
-**Wave 3 — Synthesis:**
+**Wave 4 — Synthesis:**
 - Verdict Writer aggregates all evidence after all platform validators complete
 
 ### Execution Steps
 
 1. Lead creates validation plan with journey assignments and dependency graph
-2. Lead dispatches Wave 1 validators (API)
+2. Lead dispatches Wave 1 validators (DB, Design, CLI — all independent) in parallel
 3. Lead waits for Wave 1 PASS before launching Wave 2
-4. If Wave 1 FAILs, Wave 2 validators are marked BLOCKED (see Conflict Resolution)
-5. Lead dispatches Wave 2 validators in parallel once Wave 1 PASSes
-6. Each validator captures evidence to its owned directory
-7. Validators report completion to Lead
-8. Lead invokes verdict-writer to synthesize all evidence
-9. Lead reviews and approves final verdict
+4. If Wave 1 FAILs, downstream validators are marked BLOCKED (see Conflict Resolution)
+5. Lead dispatches Wave 2 validator (API) once Wave 1 PASSes
+6. Lead waits for Wave 2 PASS before launching Wave 3
+7. If Wave 2 FAILs, Wave 3 validators are marked BLOCKED
+8. Lead dispatches Wave 3 validators (Web, iOS) in parallel once Wave 2 PASSes
+9. Each validator captures evidence to its owned directory
+10. Validators report completion to Lead
+11. Lead invokes verdict-writer to synthesize all evidence
+12. Lead reviews and approves final verdict
 
 ## Evidence Handoff
 
@@ -70,10 +78,12 @@ Verdict Writer → writes → e2e-evidence/report.md
 
 | Validator | Depends On | Launch Condition |
 |-----------|-----------|-----------------|
-| API Validator | — | Launches immediately (Wave 1) |
-| Web Validator | API Validator | API must PASS before launch |
-| iOS Validator | API Validator | API must PASS before launch |
-| Design Validator | — | Launches immediately (no API dependency) |
+| DB Validator | — | Launches immediately (Wave 1) |
+| Design Validator | — | Launches immediately (Wave 1, no runtime dependency) |
+| CLI Validator | — | Launches immediately (Wave 1, if independent) |
+| API Validator | DB Validator | DB must PASS before launch (Wave 2) |
+| Web Validator | API Validator | API must PASS before launch (Wave 3) |
+| iOS Validator | API Validator | API must PASS before launch (Wave 3) |
 | Verdict Writer | All validators | All waves must complete |
 
 **Rule:** Never launch a dependent validator against a failing upstream. A Web or iOS validator running against a broken API produces meaningless results — mark them BLOCKED instead.
