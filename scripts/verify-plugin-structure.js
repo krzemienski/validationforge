@@ -2,11 +2,11 @@
 // ValidationForge plugin structure verification script.
 // Validates the complete plugin component inventory:
 //   - plugin.json directory declarations (commands, skills, agents, rules, hooks)
-//   - 41 skill directories each containing SKILL.md
+//   - 45 skill directories each containing SKILL.md
 //   - 15 command .md files in commands/
 //   - 5 agent .md files in agents/
 //   - 8 rule .md files in rules/
-//   - 7 hook .js files in hooks/ + hooks.json
+//   - 9 hook .js files in hooks/ + hooks.json
 //
 // Usage:
 //   node ./scripts/verify-plugin-structure.js
@@ -69,22 +69,24 @@ function listSubdirs(dir) {
 // Each check: { label, run(root) → { passed, detail } }
 
 const EXPECTED = {
-  SKILLS: 41,
+  SKILLS: 45,
   COMMANDS: 15,
   AGENTS: 5,
   RULES: 8,
-  HOOKS_JS: 7,
+  HOOKS_JS: 9,
   PLUGIN_JSON_KEYS: ['commands', 'skills', 'agents', 'rules', 'hooks'],
 };
 
 const EXPECTED_HOOK_FILES = [
   'block-test-files.js',
   'completion-claim-validator.js',
+  'config-loader.js',
   'evidence-gate-reminder.js',
   'evidence-quality-check.js',
   'mock-detection.js',
   'validation-not-compilation.js',
   'validation-state-tracker.js',
+  'verify-e2e.js',
 ];
 
 const checks = [
@@ -113,9 +115,9 @@ const checks = [
     },
   },
 
-  // 2. skills/ — 41 directories each containing SKILL.md
+  // 2. skills/ — 45 directories each containing SKILL.md
   {
-    label: 'skills/ (41 dirs with SKILL.md)',
+    label: 'skills/ (45 dirs with SKILL.md)',
     run(root) {
       const skillsDir = path.join(root, 'skills');
       const subdirs = listSubdirs(skillsDir);
@@ -198,9 +200,9 @@ const checks = [
     },
   },
 
-  // 6. hooks/ — exactly the 7 expected .js files + hooks.json
+  // 6. hooks/ — exactly the 9 expected .js files + hooks.json
   {
-    label: 'hooks/ (7 .js files + hooks.json)',
+    label: 'hooks/ (9 .js files + hooks.json)',
     run(root) {
       const hooksDir = path.join(root, 'hooks');
       if (!fs.existsSync(hooksDir)) {
