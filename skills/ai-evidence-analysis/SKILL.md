@@ -125,10 +125,39 @@ Skip files that are 0 bytes — empty evidence files are invalid and should be n
 
 ### Step 2: Classify Evidence Types
 
-For each file, determine its type:
-- Image files (`*.png`, `*.jpg`, `*.webp`) → `screenshot`
-- JSON files (`*.json`) → `api-response`
-- Text/log files (`*.txt`, `*.log`) → `cli-output`
+Determine evidence type using **both file extension and content inspection**:
+
+#### By File Extension (primary detection)
+
+| Extension | Evidence Type | Analysis Model |
+|-----------|--------------|----------------|
+| `.png`, `.jpg`, `.jpeg`, `.webp` | `screenshot` | Vision (claude-sonnet with vision) |
+| `.json` | `api-response` | LLM text analysis |
+| `.txt`, `.log` | `cli-output` | LLM text analysis |
+
+#### By Content (fallback when extension is ambiguous)
+
+When the extension is missing or generic (e.g., no extension, `.out`, `.data`), inspect the first 512 bytes of the file:
+
+```bash
+file_head=$(head -c 512 "$evidence_file")
+
+# Detect JSON
+if echo "$file_head" | python3 -c "import sys,json; json.load(sys.stdin)" 2>/dev/null; then
+  evidence_type="api-response"
+# Detect image magic bytes (PNG: \x89PNG, JPEG: \xFF\xD8)
+elif xxd -l 4 "$evidence_file" | grep -qE "8950 4e47|ffd8 ffe"; then
+  evidence_type="screenshot"
+# Default to CLI output for readable text
+else
+  evidence_type="cli-output"
+fi
+```
+
+Skip analysis (and flag as invalid) for:
+- Files that are 0 bytes
+- Files that cannot be read (permissions error)
+- Binary files with no detected image magic bytes
 
 ### Step 3: Analyze by Type
 
@@ -179,14 +208,28 @@ Respond in JSON matching the AnalysisResult schema.
 
 ### Step 4: Save Analysis Results
 
-Save each result as a sidecar file alongside the evidence:
+Save each result using the standard output format. The output file is named sequentially within the journey directory:
 
 ```
-e2e-evidence/{journey-slug}/step-03-login-response.json          ← original evidence
-e2e-evidence/{journey-slug}/step-03-login-response.analysis.json ← AI analysis result
+e2e-evidence/{journey-slug}/ai-analysis-step-NN-{description}.json
 ```
 
-Also append to the aggregate analysis report:
+Where:
+- `{journey-slug}` is the kebab-case journey name (e.g., `user-login`, `api-create-order`)
+- `NN` is a zero-padded two-digit step counter scoped to the analysis run (01, 02, …)
+- `{description}` is a short kebab-case label derived from the evidence file being analyzed
+
+**Examples:**
+```
+e2e-evidence/user-login/ai-analysis-step-01-screenshot-home.json
+e2e-evidence/user-login/ai-analysis-step-02-api-response-auth.json
+e2e-evidence/user-login/ai-analysis-step-03-cli-output-build.json
+e2e-evidence/api-create-order/ai-analysis-step-01-response-body.json
+```
+
+**Original evidence files are never modified.** Analysis results are always new files.
+
+Also append each result to the aggregate analysis report:
 
 ```bash
 cat >> e2e-evidence/ai-analysis-report.json << 'EOF'
@@ -234,17 +277,52 @@ List any items where confidence < 70 and explain why human review is needed.
 
 ## Enabling and Disabling Analysis
 
-AI evidence analysis is **optional**. It can be disabled in two ways:
+AI evidence analysis is **optional**. Check the disabled/offline state before invoking any model calls.
 
-1. **Environment variable**: `VALIDATIONFORGE_AI_ANALYSIS=false`
-2. **Config flag**: `"ai_evidence_analysis": false` in the active config file (`config/strict.json`, `config/standard.json`, or `config/permissive.json`)
+### Disable Checks (must run before Step 1)
 
-When disabled, this skill exits immediately with a notice:
+```bash
+# 1. Check environment variable
+if [ "${VF_AI_ANALYSIS}" = "disabled" ]; then
+  echo "AI evidence analysis is disabled (VF_AI_ANALYSIS=disabled)."
+  echo "Skipping analysis. Evidence will be reviewed manually by verdict-writer."
+  exit 0
+fi
 
+# 2. Check config flag in active config file
+config_file="config/standard.json"  # or strict.json / permissive.json
+if command -v jq >/dev/null 2>&1; then
+  ai_enabled=$(jq -r '.ai_evidence_analysis // true' "$config_file" 2>/dev/null)
+  if [ "$ai_enabled" = "false" ]; then
+    echo "AI evidence analysis is disabled (config: ai_evidence_analysis=false)."
+    echo "Skipping analysis. Evidence will be reviewed manually by verdict-writer."
+    exit 0
+  fi
+fi
 ```
-AI evidence analysis is disabled (VALIDATIONFORGE_AI_ANALYSIS=false).
-Skipping analysis. Evidence will be reviewed manually by verdict-writer.
+
+### Disable Methods
+
+| Method | Value | Effect |
+|--------|-------|--------|
+| `VF_AI_ANALYSIS=disabled` | Environment variable | Disables for the current shell session |
+| `"ai_evidence_analysis": false` | Config file flag | Disables for all runs using that config |
+
+### Offline / Air-Gapped Mode
+
+When running in an **offline** environment without API access (CI behind a firewall, air-gapped workstations), set:
+
+```bash
+export VF_AI_ANALYSIS=disabled
 ```
+
+In offline mode, the skill:
+1. Skips all model API calls
+2. Produces no `.analysis.json` files
+3. Logs a single notice line: `[ai-evidence-analysis] offline — analysis skipped`
+4. Does NOT fail the pipeline — the `verdict-writer` proceeds with raw evidence only
+
+**Never hard-fail the validation pipeline because AI analysis is unavailable.** Offline is an expected operational state, not an error.
 
 ## Integration with ValidationForge Pipeline
 
