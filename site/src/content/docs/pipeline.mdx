@@ -1,0 +1,75 @@
+---
+title: The 7-Phase Pipeline
+description: How ValidationForge validates your code end-to-end
+---
+
+ValidationForge uses a structured 7-phase pipeline to ensure rigorous, evidence-backed validation.
+
+## Phase 0: RESEARCH
+
+Gather relevant standards, best practices, and applicable validation criteria for your platform and framework.
+
+**Output:** Research notes, applicable standards checklist
+
+## Phase 1: PLAN
+
+Define validation journeys, PASS criteria, and evidence requirements before any execution.
+
+**Output:** Journey list with entry/exit criteria, evidence requirements per journey
+
+## Phase 2: PREFLIGHT
+
+Verify the environment is ready:
+- Build compiles without errors
+- Services are running and responding
+- MCP servers are available (if required)
+- Required test data exists
+
+**Rule:** If preflight fails, STOP. Fix the environment before proceeding.
+
+## Phase 3: EXECUTE
+
+Run each journey against the real system:
+- Capture screenshots at each step
+- Record API requests/responses
+- Log console output with timestamps
+- Document exact user interactions
+
+**Evidence naming:** `step-{NN}-{description}.{ext}` in `e2e-evidence/{journey-slug}/`
+
+## Phase 4: ANALYZE
+
+For any FAIL, perform root cause analysis using sequential thinking:
+1. What exactly failed?
+2. Why did it fail?
+3. Is this a code bug, environment issue, or spec mismatch?
+4. What is the minimal fix?
+
+## Phase 5: VERDICT
+
+Produce evidence-backed PASS/FAIL verdict per journey:
+
+```
+JOURNEY: {name}
+STATUS: PASS | FAIL
+EVIDENCE:
+  - {evidence-file}: {what you observed}
+NOTES: {optional context}
+```
+
+**Rule:** Never mark PASS without specific cited evidence. Never skip this phase.
+
+## Phase 6: SHIP
+
+Production readiness audit:
+- All journeys PASS
+- No critical evidence gaps
+- Deploy decision documented
+
+## The Iron Rules
+
+1. **Never mock** — If the real system doesn't work, fix the real system
+2. **Evidence required** — No PASS without specific cited evidence
+3. **Preflight gates** — Never skip, never proceed on failure
+4. **3-strike limit** — Maximum 3 fix attempts per failing journey
+5. **Fresh evidence** — Never reuse evidence from a previous attempt

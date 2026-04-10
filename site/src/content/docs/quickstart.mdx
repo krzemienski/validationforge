@@ -1,0 +1,63 @@
+---
+title: Quickstart
+description: Run your first validation in under 5 minutes
+---
+
+## Your First Validation
+
+### Step 1: Install
+
+```bash
+curl -fsSL https://validationforge.dev/install | bash
+```
+
+### Step 2: Setup
+
+In Claude Code, run:
+
+```
+/vf-setup
+```
+
+### Step 3: Validate
+
+```
+/validate
+```
+
+That's it. ValidationForge will:
+- Detect your platform automatically
+- Plan validation journeys
+- Check all services are running
+- Execute journeys against the real system
+- Capture evidence (screenshots, logs, responses)
+- Produce a PASS/FAIL verdict with citations
+
+## Understanding the Output
+
+A typical validation verdict looks like:
+
+```
+JOURNEY: User Login Flow
+STATUS: PASS
+EVIDENCE:
+  - step-01-login-page.png: Login form visible with email/password fields
+  - step-02-submit.json: POST /api/auth/login returned 200 with JWT token
+  - step-03-dashboard.png: Dashboard loaded with user name "testuser" visible
+```
+
+## Common Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/validate` | Full pipeline: detect → plan → execute → verdict |
+| `/validate-audit` | Read-only audit, no side effects |
+| `/validate-fix` | Fix FAIL verdicts and re-validate |
+| `/validate-ci` | Non-interactive CI/CD mode with exit codes |
+| `/validate-sweep` | Autonomous fix loop until all journeys PASS |
+
+## Next Steps
+
+- Read about the [7-phase pipeline](/pipeline)
+- Explore all [commands](/commands)
+- See how VF [compares to alternatives](/comparison)
