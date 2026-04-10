@@ -36,28 +36,32 @@ User: "/validate-team 3 validate the full application"
               |
               +-- platform-detector agent
               |       -> detects: ios, web, api
+              |       -> resolves cross-platform dependencies
               |
               +-- create-validation-plan skill
               |       -> generates journey list per platform
+              |       -> annotates dependency graph
               |
               +-- TeamCreate("vf-validation")
               |
-              +-- TaskCreate per journey cluster
-              |       -> ios-journeys (agent-1)
-              |       -> web-journeys (agent-2)
-              |       -> api-journeys (agent-3)
+              +-- WAVE 1 (independent — run in parallel)
+              |       +-- Task(name="api-validator") x 1
+              |               -> MUST PASS before Wave 2 launches
               |
-              +-- Task(name="ios-validator") x 1
-              +-- Task(name="web-validator") x 1
-              +-- Task(name="api-validator") x 1
+              +-- WAVE 2 (depends on api-validator PASS)
+              |       +-- Task(name="web-validator") x 1   <-- blocked until API passes
+              |       +-- Task(name="ios-validator") x 1   <-- blocked until API passes
+              |               (web and ios run in parallel within wave)
               |
               +-- Monitor loop
               |       <- evidence files accumulate
               |       -> TaskList polling
+              |       -> promote wave-2 tasks when wave-1 PASS confirmed
+              |       -> mark wave-2 tasks BLOCKED if wave-1 FAIL
               |
               +-- verdict-writer agent
               |       -> reads all e2e-evidence/
-              |       -> unified report
+              |       -> unified coordinated report
               |
               +-- Shutdown
                       -> SendMessage(shutdown_request) to each
@@ -77,13 +81,80 @@ User: "/validate-team 3 validate the full application"
 
 ## Team Sizing
 
-| Application | Agents | Assignment |
-|-------------|--------|------------|
-| Single platform | 1-2 | 1 validator + lead |
-| Web + API | 2-3 | 1 web + 1 api + lead |
-| iOS + Web + API | 3-4 | 1 per platform + lead |
-| Fullstack + Design | 4-5 | platform validators + design validator + lead |
-| Everything | 5-6 | All platform types + lead |
+| Application | Agents | Wave Assignment |
+|-------------|--------|-----------------|
+| Single platform | 1-2 | Wave 1: 1 validator; lead |
+| Web + API | 2-3 | Wave 1: api; Wave 2: web (parallel); lead |
+| iOS + Web + API | 3-4 | Wave 1: api; Wave 2: web + ios (parallel); lead |
+| Fullstack + Design | 4-5 | Wave 1: api; Wave 2: web + ios (parallel); Wave 3: design; lead |
+| Everything | 5-6 | Wave 1: api; Wave 2: web + ios (parallel); Wave 3: design + cli; lead |
+
+## Dependency-Aware Execution
+
+Coordinated validation executes in waves based on cross-platform dependencies detected in the codebase. Independent platforms run in parallel within each wave; dependent platforms wait for upstream PASS.
+
+### Execution Waves
+
+```
+Wave 1 — Foundation (always first)
+  API validator         → validates backend endpoints, auth, data contracts
+  CLI validator         → validates build tools, scripts (if independent)
+
+Wave 2 — Consumers (launch only after Wave 1 PASS)
+  Web validator    ──── depends on: api-validator PASS
+  iOS validator    ──── depends on: api-validator PASS
+  (web and ios execute in parallel within Wave 2)
+
+Wave 3 — Cross-cutting (launch after Wave 2 PASS)
+  Design validator ──── depends on: web-validator PASS
+```
+
+### Platform Dependency Table
+
+| Platform | Depends On | Can Run In Parallel With |
+|----------|-----------|--------------------------|
+| API | (none — wave 1 root) | CLI (if independent) |
+| CLI | (none — wave 1 root) | API |
+| Web | API (wave 1) | iOS (same wave) |
+| iOS | API (wave 1) | Web (same wave) |
+| Design | Web (wave 2) | (none in wave 3) |
+
+> **Dependency detection**: The lead reads `package.json`, import paths, and environment configs to infer which platforms consume the API. Explicit override via `--dependency-map` flag.
+
+## Platform Failure Blocking
+
+When a Wave 1 platform fails, all downstream platforms are marked **BLOCKED** immediately — no cycles are wasted validating a frontend against a broken backend.
+
+### Blocking Rules
+
+```
+IF api-validator → FAIL
+  THEN web-validator  → BLOCKED (not run)
+       ios-validator  → BLOCKED (not run)
+       design-validator → BLOCKED (not run)
+
+IF web-validator → FAIL
+  THEN design-validator → BLOCKED (not run)
+
+IF api-validator → PASS, web-validator → FAIL
+  THEN ios-validator continues (not blocked — independent within wave)
+       design-validator → BLOCKED
+```
+
+### BLOCKED Status in Reports
+
+A BLOCKED platform receives a structured non-verdict entry in the unified report:
+
+```
+Platform: web
+Status:   BLOCKED
+Reason:   api-validator returned FAIL — web validation skipped
+Blocked By: api-validator (wave-1)
+Evidence: none captured (upstream prerequisite failed)
+Action:   Fix API failures first, then re-run /validate-team
+```
+
+BLOCKED platforms do **not** count as PASS or FAIL in the aggregation — they are recorded as INCOMPLETE with a blocking cause. The overall verdict is `FAIL` if any upstream platform failed, regardless of BLOCKED downstream status.
 
 ## Agent Prompt Template
 
