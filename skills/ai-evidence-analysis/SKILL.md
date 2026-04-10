@@ -326,13 +326,13 @@ In offline mode, the skill:
 
 ## Integration with ValidationForge Pipeline
 
-This skill runs between Phase 4 (ANALYZE) and Phase 5 (VERDICT) of the 7-phase pipeline:
+This skill runs at step 3.5 — between Phase 3 (EXECUTE) and Phase 4 (ANALYZE) — in the 7-phase pipeline:
 
 ```
-3. EXECUTE    → Capture evidence to e2e-evidence/
-4. ANALYZE    → Root cause investigation for FAILs
-  └─ ai-evidence-analysis  ← runs here
-5. VERDICT    → verdict-writer reads ai-analysis-*.json sidecar files
+3.   EXECUTE      → Capture evidence to e2e-evidence/
+3.5  AI ANALYZE   → ai-evidence-analysis runs here ← confidence scores + findings
+4.   ANALYZE      → Root cause investigation for FAILs (informed by AI analysis)
+5.   VERDICT      → verdict-writer reads ai-analysis-*.json sidecar files
 ```
 
 The `verdict-writer` agent is AI-analysis-aware: when `ai-analysis-*.json` sidecar files are present, it reads the confidence scores and findings as additional input when writing its PASS/FAIL verdict.
