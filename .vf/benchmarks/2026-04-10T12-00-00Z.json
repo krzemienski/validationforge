@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-04-10T12:00:00Z",
+  "aggregate": {
+    "weighted_score": 78,
+    "grade": "C"
+  },
+  "coverage": 65,
+  "regressions": 2,
+  "journey_count": 12
+}

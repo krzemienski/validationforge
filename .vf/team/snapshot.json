@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-04-10T19:40:31Z",
+  "team": "vf-core",
+  "total_projects": 2,
+  "avg_posture_score": 39,
+  "projects": [
+    {
+      "name": "validationforge",
+      "path": "/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/017-team-validation-dashboard/.",
+      "last_validated": "2026-04-10T12:00:00Z",
+      "posture_score": 78,
+      "coverage_pct": 65,
+      "regression_count": 2,
+      "journey_count": 12
+    },
+    {
+      "name": "nonexistent-project",
+      "path": "/tmp/no-such-dir",
+      "last_validated": "never",
+      "posture_score": 0,
+      "coverage_pct": 0,
+      "regression_count": 0,
+      "journey_count": 0
+    }
+  ]
+}
