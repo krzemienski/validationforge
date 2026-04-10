@@ -1,7 +1,4 @@
 {
-  "team": "vf-core",
-  "projects": [
-    {"name": "validationforge", "path": "."},
-    {"name": "nonexistent-project", "path": "/tmp/no-such-dir"}
-  ]
+  "team": "my-team",
+  "projects": []
 }
