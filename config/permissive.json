@@ -24,5 +24,10 @@
     "mock-detection": "warn",
     "validation-state-tracker": "warn",
     "evidence-quality-check": "disabled"
+  },
+  "ai_analysis": {
+    "enabled": false,
+    "model": "auto",
+    "skip_on_offline": true
   }
 }

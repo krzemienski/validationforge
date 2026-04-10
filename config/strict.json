@@ -24,5 +24,10 @@
     "mock-detection": "enabled",
     "validation-state-tracker": "enabled",
     "evidence-quality-check": "enabled"
+  },
+  "ai_analysis": {
+    "enabled": true,
+    "model": "auto",
+    "skip_on_offline": true
   }
 }
