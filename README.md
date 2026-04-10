@@ -351,6 +351,19 @@ These are honest disclosures about what ValidationForge has **not** been verifie
 
 If CC hooks log `[ValidationForge] patterns.js: Could not load ...`, the bridge falls back to inline patterns. Check that `patterns.ts` exists at `.opencode/plugins/validationforge/patterns.ts` relative to the project root. The bridge uses `vm.runInNewContext` to strip TypeScript syntax at runtime.
 
+## Privacy & Telemetry
+
+Telemetry is **opt-in** and **disabled by default**. No data is collected unless you explicitly enable it.
+
+When enabled, the following anonymized metrics are collected: command name, platform type, pipeline phase, pass/fail verdict, VF version, and a random anonymous UUID — no PII, no file paths, no source code. See [PRIVACY.md](./PRIVACY.md) for full details.
+
+```bash
+vf telemetry enable    # Opt in — displays disclosure before activating
+vf telemetry disable   # Opt out at any time
+vf telemetry status    # Show current status
+vf telemetry show      # Preview exact payload without sending
+```
+
 ## License
 
 MIT
