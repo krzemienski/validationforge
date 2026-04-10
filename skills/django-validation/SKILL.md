@@ -4,6 +4,7 @@ description: >
   Django and Flask web application validation through server startup, database
   migration verification, curl endpoint testing, and Django admin checks.
   Captures HTTP responses, migration status, and server logs as evidence.
+context_priority: standard
 ---
 
 # Django / Flask Validation

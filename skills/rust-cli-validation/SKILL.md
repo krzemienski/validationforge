@@ -6,6 +6,7 @@ description: >
   with real inputs. Captures stdout, stderr, exit codes, and pipe behavior
   as evidence. Validates compilation correctness, lint cleanliness, happy
   paths, error handling, and output format correctness.
+context_priority: standard
 ---
 
 # Rust CLI Validation

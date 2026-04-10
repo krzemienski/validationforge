@@ -1,6 +1,7 @@
 ---
 name: team-validation-dashboard
 description: Aggregate team validation posture into a shared dashboard. Shows coverage, posture scores, regression trends, and ownership assignments across all registered projects.
+context_priority: reference
 ---
 
 # team-validation-dashboard

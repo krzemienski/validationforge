@@ -4,6 +4,7 @@ description: >
   Flutter platform validation through dependency installation, build, device
   launch, and screenshot capture via flutter screenshot. Captures logs, widget
   trees, and crash output as validation evidence across Android and iOS targets.
+context_priority: standard
 ---
 
 # Flutter Validation
