@@ -408,6 +408,49 @@ fi
 echo "=== Setup Complete ==="
 ```
 
+### Step 8b: Telemetry Opt-In
+
+Use AskUserQuestion:
+
+**Question:** "Would you like to help improve ValidationForge with anonymous usage telemetry?"
+
+> ValidationForge can collect anonymous, non-identifying usage data to improve the tool.
+> See [PRIVACY.md](../PRIVACY.md) for full details on what is and isn't collected.
+
+**Options:**
+1. **Yes, enable telemetry** (Recommended) — Help improve ValidationForge by sharing anonymous usage data.
+   Collected: command names, validation outcomes (PASS/FAIL), platform type, enforcement level, setup version.
+   Never collected: file contents, code, project names, personal information, or API keys.
+2. **No, keep telemetry disabled** — No data will be sent. You can enable later with `vf telemetry enable`.
+
+#### If telemetry enabled:
+
+```bash
+# Generate a random anonymous UUID for this installation (no personal info)
+TELEMETRY_ENABLED="true"
+TELEMETRY_ANONYMOUS_ID=$(uuidgen 2>/dev/null || python3 -c "import uuid; print(uuid.uuid4())" 2>/dev/null || echo "")
+
+if [ -n "$TELEMETRY_ANONYMOUS_ID" ]; then
+  echo "  [OK] Telemetry enabled"
+  echo "       Anonymous ID: ${TELEMETRY_ANONYMOUS_ID}"
+  echo "       Data collected: command usage, validation outcomes, platform type"
+  echo "       See PRIVACY.md for full details — run 'vf telemetry status' to review"
+else
+  echo "  [WARN] Could not generate anonymous ID — telemetry will be disabled"
+  TELEMETRY_ENABLED="false"
+  TELEMETRY_ANONYMOUS_ID=""
+fi
+```
+
+#### If telemetry disabled:
+
+```bash
+TELEMETRY_ENABLED="false"
+TELEMETRY_ANONYMOUS_ID=""
+echo "  [OK] Telemetry disabled. No data will be collected or sent."
+echo "       To enable later, run: vf telemetry enable"
+```
+
 ### Step 9: Save Config
 
 ```bash
@@ -431,7 +474,12 @@ cat > "$HOME/.claude/.vf-config.json" << EOF
   "rulesDir": "${RULES_DIR}",
   "pluginDir": "${INSTALL_DIR}",
   "hooksInstalled": true,
-  "evidence_retention_days": 30
+  "evidence_retention_days": 30,
+  "telemetry": {
+    "enabled": ${TELEMETRY_ENABLED},
+    "anonymousId": "${TELEMETRY_ANONYMOUS_ID}",
+    "endpoint": "https://telemetry.validationforge.dev/events"
+  }
 }
 EOF
 ```
