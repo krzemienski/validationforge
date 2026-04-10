@@ -1,0 +1,504 @@
+{
+  "feature": "AI-Powered Evidence Analysis",
+  "workflow_type": "feature",
+  "workflow_rationale": "This is a new, self-contained feature that adds AI-powered analysis capabilities on top of the existing evidence collection pipeline. It follows service dependency order: core analysis engine first (can be tested standalone), then integration with the evidence capturer agent, then verdict writer enrichment, then the optional config/flag system for disabling, and finally end-to-end verification.",
+  "phases": [
+    {
+      "id": "phase-1-core-analyzer",
+      "name": "Core AI Analysis Engine",
+      "type": "implementation",
+      "description": "Build the standalone AI analysis engine skill that accepts evidence files and returns structured analysis results with confidence scores. This is the foundational layer all other phases depend on.",
+      "depends_on": [],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-1-1",
+          "description": "Create the `ai-evidence-analysis` skill directory and SKILL.md with frontmatter, scope definition, supported evidence types (screenshot, api-response, cli-output), and the analysis output schema (confidence 0-100, findings array, verdict label).",
+          "service": "skill",
+          "files_to_modify": [],
+          "files_to_create": [
+            "skills/ai-evidence-analysis/SKILL.md"
+          ],
+          "patterns_from": [
+            "skills/visual-inspection/SKILL.md",
+            "skills/api-validation/SKILL.md",
+            "skills/functional-validation/SKILL.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "test -f skills/ai-evidence-analysis/SKILL.md && grep -q 'name: ai-evidence-analysis' skills/ai-evidence-analysis/SKILL.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Created skills/ai-evidence-analysis/SKILL.md with frontmatter, scope, supported evidence types (screenshot, api-response, cli-output), analysis output schema (confidence 0-100, findings array, verdict label), and full analysis protocol. Verification passed. Committed as 255b693.",
+          "updated_at": "2026-04-10T19:31:05.275878+00:00"
+        },
+        {
+          "id": "subtask-1-2",
+          "description": "Create the screenshot analysis reference document that defines the vision model prompt template, the expected output schema (page_load_complete, expected_elements, visual_regressions fields), and example analysis output. Save as `skills/ai-evidence-analysis/references/screenshot-analysis.md`.",
+          "service": "skill",
+          "files_to_modify": [],
+          "files_to_create": [
+            "skills/ai-evidence-analysis/references/screenshot-analysis.md"
+          ],
+          "patterns_from": [
+            "skills/visual-inspection/SKILL.md",
+            "skills/functional-validation/references/evidence-capture-commands.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "test -f skills/ai-evidence-analysis/references/screenshot-analysis.md && grep -q 'confidence' skills/ai-evidence-analysis/references/screenshot-analysis.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Created skills/ai-evidence-analysis/references/screenshot-analysis.md with vision model prompt template, full ScreenshotAnalysisResult schema (page_load_complete, expected_elements, visual_regressions), three example analyses (PASS/WARN/FAIL), and usage notes. Verification passed.",
+          "updated_at": "2026-04-10T19:33:34.539465+00:00"
+        },
+        {
+          "id": "subtask-1-3",
+          "description": "Create the API response analysis reference document that defines the LLM prompt template for schema compliance checking, error handling detection, edge case coverage analysis, and the structured JSON output format with confidence scores. Save as `skills/ai-evidence-analysis/references/api-response-analysis.md`.",
+          "service": "skill",
+          "files_to_modify": [],
+          "files_to_create": [
+            "skills/ai-evidence-analysis/references/api-response-analysis.md"
+          ],
+          "patterns_from": [
+            "skills/api-validation/SKILL.md",
+            "skills/sequential-analysis/SKILL.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "test -f skills/ai-evidence-analysis/references/api-response-analysis.md && grep -q 'schema_compliance' skills/ai-evidence-analysis/references/api-response-analysis.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Created skills/ai-evidence-analysis/references/api-response-analysis.md with LLM prompt template for schema compliance checking, error handling detection, edge case coverage analysis, and structured ApiResponseAnalysisResult JSON output format with confidence scores. All sub-schemas documented: SchemaComplianceResult, ErrorHandlingResult, EdgeCaseIssue, TypeMismatch, Finding. Three example analyses (PASS/WARN/FAIL) included. Verification passed. Committed as 61d6c1b.",
+          "updated_at": "2026-04-10T19:36:22.979610+00:00"
+        },
+        {
+          "id": "subtask-1-4",
+          "description": "Create the CLI output analysis reference document that defines the LLM prompt template for detecting error indicators, success markers, and unexpected warnings in CLI evidence files, along with the structured output format. Save as `skills/ai-evidence-analysis/references/cli-output-analysis.md`.",
+          "service": "skill",
+          "files_to_modify": [],
+          "files_to_create": [
+            "skills/ai-evidence-analysis/references/cli-output-analysis.md"
+          ],
+          "patterns_from": [
+            "skills/api-validation/SKILL.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "test -f skills/ai-evidence-analysis/references/cli-output-analysis.md && grep -q 'error_indicators' skills/ai-evidence-analysis/references/cli-output-analysis.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Created skills/ai-evidence-analysis/references/cli-output-analysis.md with LLM prompt template, CliOutputAnalysisResult output schema (CliErrorResult, SuccessMarkerCheck, UnexpectedWarning, Finding sub-schemas), three annotated examples (PASS/WARN/FAIL), and usage notes. Verification passed: file exists and contains error_indicators field.",
+          "updated_at": "2026-04-10T19:39:28.729528+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-2-analysis-protocol",
+      "name": "Analysis Protocol & Workflow",
+      "type": "implementation",
+      "description": "Define the full analysis protocol within the core skill — how to detect evidence type, which model to invoke, how to structure output, and where to write results. Also implement the offline/disabled mode check.",
+      "depends_on": [
+        "phase-1-core-analyzer"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-2-1",
+          "description": "Add the full Analysis Protocol section to `skills/ai-evidence-analysis/SKILL.md`: evidence type detection (by file extension and content), model selection (vision for .png/.jpg, LLM for .json/.txt), analysis invocation steps, offline/disabled mode behavior (check VF_AI_ANALYSIS=disabled env var or config flag), and output file format (`e2e-evidence/{journey}/ai-analysis-step-NN-{description}.json`).",
+          "service": "skill",
+          "files_to_modify": [
+            "skills/ai-evidence-analysis/SKILL.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "skills/visual-inspection/SKILL.md",
+            "skills/functional-validation/SKILL.md",
+            "skills/sequential-analysis/SKILL.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -q 'VF_AI_ANALYSIS' skills/ai-evidence-analysis/SKILL.md && grep -q 'offline' skills/ai-evidence-analysis/SKILL.md && grep -q 'confidence' skills/ai-evidence-analysis/SKILL.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Added evidence type detection (extension + content fallback), model selection table, offline/disabled mode with VF_AI_ANALYSIS=disabled env var, output file format ai-analysis-step-NN-{description}.json. Verification passes: VF_AI_ANALYSIS, offline, and confidence all present.",
+          "updated_at": "2026-04-10T19:41:36.485901+00:00"
+        },
+        {
+          "id": "subtask-2-2",
+          "description": "Create the confidence scoring reference document that defines the 0-100 scoring rubric: 90-100 (high certainty, clear evidence), 70-89 (moderate certainty, some ambiguity), 50-69 (low certainty, significant gaps), 0-49 (insufficient evidence or analysis blocked). Include per-evidence-type scoring criteria and how scores aggregate to a journey-level score. Save as `skills/ai-evidence-analysis/references/confidence-scoring.md`.",
+          "service": "skill",
+          "files_to_modify": [],
+          "files_to_create": [
+            "skills/ai-evidence-analysis/references/confidence-scoring.md"
+          ],
+          "patterns_from": [
+            "agents/verdict-writer.md",
+            "skills/visual-inspection/SKILL.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "test -f skills/ai-evidence-analysis/references/confidence-scoring.md && grep -q '0-100' skills/ai-evidence-analysis/references/confidence-scoring.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Created skills/ai-evidence-analysis/references/confidence-scoring.md with the complete 0-100 scoring rubric (4 tiers), per-evidence-type scoring criteria and adjustment rules for screenshot/api-response/cli-output, and journey-level aggregation algorithm with weighted averaging and floor rules. Verification passes.",
+          "updated_at": "2026-04-10T19:49:40.184491+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-3-config-integration",
+      "name": "Config & Flag Integration",
+      "type": "implementation",
+      "description": "Wire AI analysis into the ValidationForge config system so it can be disabled for offline/cost-sensitive environments. Add the `ai_analysis` field to all config files and update the /validate command documentation.",
+      "depends_on": [
+        "phase-2-analysis-protocol"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-3-1",
+          "description": "Update `config/standard.json` to add `\"ai_analysis\": {\"enabled\": true, \"model\": \"auto\", \"skip_on_offline\": true}`. Update `config/strict.json` to add the same with `\"enabled\": true`. Update `config/permissive.json` with `\"enabled\": false` (off by default for permissive mode).",
+          "service": "config",
+          "files_to_modify": [
+            "config/standard.json",
+            "config/strict.json",
+            "config/permissive.json"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "config/standard.json"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "node -e \"const s=require('./config/standard.json'); const st=require('./config/strict.json'); const p=require('./config/permissive.json'); if(s.ai_analysis && st.ai_analysis && p.ai_analysis) console.log('OK'); else console.log('FAIL')\"",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Added ai_analysis block to all three config files: standard.json (enabled:true), strict.json (enabled:true), permissive.json (enabled:false). Verification passed: OK.",
+          "updated_at": "2026-04-10T19:55:33.124484+00:00"
+        },
+        {
+          "id": "subtask-3-2",
+          "description": "Update `commands/validate.md` to document the `--ai-analysis` flag (enable/disable AI analysis per-run), document the `VF_AI_ANALYSIS=disabled` environment variable, and add AI analysis as an optional step in the EXECUTE pipeline stage section (step 4b: Run AI analysis on captured evidence if ai_analysis.enabled is true).",
+          "service": "command",
+          "files_to_modify": [
+            "commands/validate.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "commands/validate.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -q 'ai-analysis' commands/validate.md && grep -q 'VF_AI_ANALYSIS' commands/validate.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Updated commands/validate.md with: (1) --ai-analysis and --no-ai-analysis flags in Usage section, (2) both flags documented in Supported Flags table with VF_AI_ANALYSIS reference, (3) AI analysis toggle bash code block in Pre-Pipeline section with env var precedence logic, (4) dedicated VF_AI_ANALYSIS env var subsection with priority order, (5) step 4b in EXECUTE stage describing optional AI analysis invocation. Verification passed: both ai-analysis and VF_AI_ANALYSIS present. Committed as 7de09ee.",
+          "updated_at": "2026-04-10T20:04:21.629015+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-4-evidence-capturer-integration",
+      "name": "Evidence Capturer Agent Integration",
+      "type": "implementation",
+      "description": "Update the evidence-capturer agent to optionally trigger AI analysis immediately after capturing each evidence file, tagging the analysis result alongside the evidence in the inventory.",
+      "depends_on": [
+        "phase-3-config-integration"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-4-1",
+          "description": "Update `agents/evidence-capturer.md` to add an optional AI Analysis step: after capturing each evidence file, if ai_analysis is enabled, invoke the `ai-evidence-analysis` skill on the captured file, save the analysis result to `e2e-evidence/{journey}/ai-analysis-step-NN-{description}.json`, and include the result in the evidence inventory with a `ai_analyzed: true` tag.",
+          "service": "agent",
+          "files_to_modify": [
+            "agents/evidence-capturer.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "agents/evidence-capturer.md",
+            "skills/ai-evidence-analysis/SKILL.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -q 'ai-evidence-analysis' agents/evidence-capturer.md && grep -q 'ai_analyzed' agents/evidence-capturer.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Updated agents/evidence-capturer.md to add optional AI Analysis step. Added capability ai-evidence-analysis to frontmatter. Added new section explaining how to check if AI analysis is enabled (VF_AI_ANALYSIS env var + config flag), per-file analysis protocol invoking ai-evidence-analysis skill, saving results to e2e-evidence/{journey}/ai-analysis-step-NN-{description}.json, and updated evidence inventory handoff to tag entries with [ai_analyzed: true] when sidecar analysis exists. Verification passed: grep -q 'ai-evidence-analysis' && grep -q 'ai_analyzed' returns OK.",
+          "updated_at": "2026-04-10T20:05:57.806868+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-5-verdict-writer-integration",
+      "name": "Verdict Writer Integration",
+      "type": "implementation",
+      "description": "Update the verdict-writer agent to incorporate AI analysis results into PASS/FAIL verdicts, citing confidence scores and AI findings alongside human-readable evidence observations.",
+      "depends_on": [
+        "phase-4-evidence-capturer-integration"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-5-1",
+          "description": "Update `agents/verdict-writer.md` to: (1) read ai-analysis JSON files alongside evidence files in the evidence inventory, (2) include an AI Analysis section in the verdict structure showing confidence score (0-100) and key findings for each evidence item, (3) use AI confidence to inform the overall verdict confidence (HIGH/MEDIUM/LOW), and (4) add anti-pattern: never override a FAIL verdict based solely on a high AI confidence score — AI analysis supplements, not replaces, evidence review.",
+          "service": "agent",
+          "files_to_modify": [
+            "agents/verdict-writer.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "agents/verdict-writer.md",
+            "skills/sequential-analysis/SKILL.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -q 'AI Analysis' agents/verdict-writer.md && grep -q 'confidence score' agents/verdict-writer.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Updated agents/verdict-writer.md with: (1) Evidence Inventory Reading section explaining how to find and read ai-analysis-step-NN-*.json sidecar files alongside evidence files; (2) AI Analysis Summary table in the verdict structure showing confidence score (0-100), AI verdict label, and key findings per evidence item, plus journey-level aggregated AI confidence score; (3) Mapping of aggregated AI confidence scores to verdict confidence adjustments (80-100 may elevate, 50-79 no change, 0-49 may lower); (4) Two new anti-patterns: never override a FAIL verdict based solely on high AI confidence (AI supplements, not replaces, evidence review), and never skip AI Analysis section when sidecar files exist. Added ai-analysis-integration capability to frontmatter. Verification passed: both 'AI Analysis' and 'confidence score' present. Committed as cb87178.",
+          "updated_at": "2026-04-10T20:07:36.556596+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-6-skills-index",
+      "name": "Skills Index & Documentation",
+      "type": "implementation",
+      "description": "Register the new skill in the SKILLS.md index and update CLAUDE.md to reflect the AI analysis capability in the platform pipeline overview.",
+      "depends_on": [
+        "phase-5-verdict-writer-integration"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-6-1",
+          "description": "Update `SKILLS.md` to add `ai-evidence-analysis` to the Analysis & Research category (currently has 3 entries — add it as #4 in that category, making it 42 total skills). Update the category header count from 3 to 4 and from 41 to 42 total. Entry description: 'AI-powered analysis of screenshot, API response, and CLI output evidence using vision and LLM models. Produces confidence scores (0-100) and structured findings for each evidence item.'",
+          "service": "docs",
+          "files_to_modify": [
+            "SKILLS.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "SKILLS.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -q 'ai-evidence-analysis' SKILLS.md && grep -q '42 skills' SKILLS.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Added ai-evidence-analysis as entry #25 in Analysis & Research category. Updated category header from (3) to (4), total count from 41 to 42 skills, and renumbered all subsequent entries (26-42). Verification passed: grep confirms both 'ai-evidence-analysis' and '42 skills' present.",
+          "updated_at": "2026-04-10T20:08:57.030483+00:00"
+        },
+        {
+          "id": "subtask-6-2",
+          "description": "Update `CLAUDE.md` to add AI Analysis as step 3.5 in the 7-Phase Pipeline section (between EXECUTE and ANALYZE): 'AI ANALYZE → Vision + LLM analysis of captured evidence, confidence scores per item'. Also add `ai-evidence-analysis` to the Analysis & Research row in the platform detection table's Skills column.",
+          "service": "docs",
+          "files_to_modify": [
+            "CLAUDE.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "CLAUDE.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -q 'ai-evidence-analysis' CLAUDE.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Added step 3.5 AI ANALYZE to 7-Phase Pipeline between EXECUTE and ANALYZE. Added ai-evidence-analysis to Analysis & Research skills section (count updated from 3 to 4). Verification passed.",
+          "updated_at": "2026-04-10T20:10:08.051527+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-7-integration",
+      "name": "End-to-End Integration Verification",
+      "type": "integration",
+      "description": "Verify the full AI analysis pipeline works end-to-end: skill is discoverable, config flags work, evidence flow through analysis, and verdict reports include AI findings.",
+      "depends_on": [
+        "phase-6-skills-index"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-7-1",
+          "description": "Verify the `ai-evidence-analysis` skill is structurally complete and consistent: SKILL.md has valid frontmatter, all 4 reference documents exist, confidence scoring reference is complete, and the skill is registered in SKILLS.md.",
+          "service": "all",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "test -f skills/ai-evidence-analysis/SKILL.md && test -f skills/ai-evidence-analysis/references/screenshot-analysis.md && test -f skills/ai-evidence-analysis/references/api-response-analysis.md && test -f skills/ai-evidence-analysis/references/cli-output-analysis.md && test -f skills/ai-evidence-analysis/references/confidence-scoring.md && grep -q 'ai-evidence-analysis' SKILLS.md && echo OK",
+            "expected": "OK"
+          },
+          "status": "completed",
+          "notes": "Verification passed: all 5 skill files exist (SKILL.md + 4 reference docs), SKILL.md has valid frontmatter with name: ai-evidence-analysis, confidence-scoring.md contains the 0-100 rubric, and ai-evidence-analysis is registered in SKILLS.md. No files needed to be created or modified — all were completed in prior subtasks.",
+          "updated_at": "2026-04-10T20:11:17.965078+00:00"
+        },
+        {
+          "id": "subtask-7-2",
+          "description": "Verify all config files contain the `ai_analysis` block, commands/validate.md documents the --ai-analysis flag and VF_AI_ANALYSIS env var, evidence-capturer.md references the ai-evidence-analysis skill, and verdict-writer.md includes AI Analysis in the verdict structure.",
+          "service": "all",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "node -e \"const s=require('./config/standard.json'); if(s.ai_analysis && s.ai_analysis.enabled !== undefined) console.log('config OK'); else console.log('FAIL')\" && grep -q 'ai-evidence-analysis' agents/evidence-capturer.md && grep -q 'AI Analysis' agents/verdict-writer.md && echo integration-OK",
+            "expected": "integration-OK"
+          },
+          "status": "pending"
+        },
+        {
+          "id": "subtask-7-3",
+          "description": "Run the `validate-audit-benchmarks` skill to confirm the new skill passes structural integrity checks: valid SKILL.md frontmatter, references directory present, and skill is registered in SKILLS.md index. Document results.",
+          "service": "all",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "manual",
+            "instructions": "Invoke /validate-audit-benchmarks and confirm the ai-evidence-analysis skill passes structural integrity checks. Check that the benchmark reports no missing frontmatter, no orphaned reference files, and no index discrepancies."
+          },
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_phases": 7,
+    "total_subtasks": 15,
+    "services_involved": [
+      "skill",
+      "config",
+      "command",
+      "agent",
+      "docs"
+    ],
+    "parallelism": {
+      "max_parallel_phases": 1,
+      "parallel_groups": [],
+      "recommended_workers": 1,
+      "speedup_estimate": "Sequential only — each phase depends on the previous"
+    },
+    "startup_command": "source auto-claude/.venv/bin/activate && python auto-claude/run.py --spec 016 --parallel 1"
+  },
+  "verification_strategy": {
+    "risk_level": "low",
+    "skip_validation": false,
+    "test_creation_phase": "post_implementation",
+    "test_types_required": [
+      "manual"
+    ],
+    "security_scanning_required": false,
+    "staging_deployment_required": false,
+    "acceptance_criteria": [
+      "ai-evidence-analysis skill exists with valid SKILL.md frontmatter",
+      "All 4 reference documents exist and contain required schema definitions",
+      "Config files include ai_analysis block with enabled/disabled toggle",
+      "commands/validate.md documents --ai-analysis flag and VF_AI_ANALYSIS env var",
+      "evidence-capturer.md integrates ai-evidence-analysis skill invocation",
+      "verdict-writer.md includes AI Analysis section in verdict structure",
+      "SKILLS.md and CLAUDE.md updated with new skill registration",
+      "validate-audit-benchmarks passes structural integrity for new skill"
+    ],
+    "verification_steps": [
+      {
+        "name": "Skill File Integrity",
+        "command": "test -f skills/ai-evidence-analysis/SKILL.md && grep -q 'name: ai-evidence-analysis' skills/ai-evidence-analysis/SKILL.md && echo OK",
+        "expected_outcome": "OK",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Reference Docs Complete",
+        "command": "test -f skills/ai-evidence-analysis/references/screenshot-analysis.md && test -f skills/ai-evidence-analysis/references/api-response-analysis.md && test -f skills/ai-evidence-analysis/references/cli-output-analysis.md && test -f skills/ai-evidence-analysis/references/confidence-scoring.md && echo OK",
+        "expected_outcome": "OK",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Config Integration Valid",
+        "command": "node -e \"['./config/standard.json','./config/strict.json','./config/permissive.json'].forEach(f=>{const c=require(f);if(!c.ai_analysis)throw new Error(f+' missing ai_analysis')}); console.log('OK')\"",
+        "expected_outcome": "OK",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Agent Integration Check",
+        "command": "grep -q 'ai-evidence-analysis' agents/evidence-capturer.md && grep -q 'AI Analysis' agents/verdict-writer.md && echo OK",
+        "expected_outcome": "OK",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Skills Index Updated",
+        "command": "grep -q 'ai-evidence-analysis' SKILLS.md && echo OK",
+        "expected_outcome": "OK",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Benchmark Structural Audit",
+        "command": "manual",
+        "expected_outcome": "validate-audit-benchmarks passes for ai-evidence-analysis",
+        "type": "manual",
+        "required": true,
+        "blocking": false
+      }
+    ],
+    "reasoning": "Low risk — this feature adds new skill files and updates documentation/config. No existing validation logic is removed or broken. The main risk is omitting a required field or registration entry, which the command-based verifications catch."
+  },
+  "qa_acceptance": {
+    "unit_tests": {
+      "required": false,
+      "commands": [],
+      "minimum_coverage": null
+    },
+    "integration_tests": {
+      "required": false,
+      "commands": [],
+      "services_to_test": []
+    },
+    "e2e_tests": {
+      "required": false,
+      "commands": [],
+      "flows": []
+    },
+    "browser_verification": {
+      "required": false,
+      "pages": []
+    },
+    "database_verification": {
+      "required": false,
+      "checks": []
+    }
+  },
+  "qa_signoff": null,
+  "status": "in_progress",
+  "planStatus": "in_progress",
+  "xstateState": "planning",
+  "executionPhase": "coding",
+  "updated_at": "2026-04-10T20:10:36.112Z",
+  "last_updated": "2026-04-10T20:11:17.965083+00:00"
+}
