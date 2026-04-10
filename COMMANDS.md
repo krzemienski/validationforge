@@ -1,8 +1,8 @@
 # ValidationForge Commands Index
 
-15 slash commands across 2 families.
+16 slash commands across 2 families.
 
-## Validation Commands (9)
+## Validation Commands (10)
 
 | # | Command | Description |
 |---|---------|-------------|
@@ -15,17 +15,18 @@
 | 7 | `/validate-sweep` | Autonomous validation loop -- detect, validate, fix, re-validate until PASS or max attempts. |
 | 8 | `/validate-benchmark` | Benchmark validation coverage, speed, and evidence quality against baseline metrics. |
 | 9 | `/vf-setup` | Setup and configure ValidationForge for a project or globally. |
+| 10 | `/vf-telemetry` | Manage opt-in usage telemetry — enable, disable, show, or check status. |
 
 ## Forge Commands (6)
 
 | # | Command | Description | Allowed Tools |
 |---|---------|-------------|---------------|
-| 10 | `/forge-setup` | Initialize ValidationForge for this project | Read, Write, Edit, Bash, Glob, Grep, Agent |
-| 11 | `/forge-plan` | Generate a validation plan with journey discovery and PASS criteria | Read, Write, Bash, Glob, Grep, Agent |
-| 12 | `/forge-execute` | Run validation journeys against the real system with autonomous fix loop | Read, Write, Edit, Bash, Glob, Grep, Agent |
-| 13 | `/forge-team` | Multi-agent parallel validation across platforms | Read, Write, Bash, Glob, Grep, Agent |
-| 14 | `/forge-benchmark` | Measure validation posture across 5 dimensions with trend tracking | Read, Write, Bash, Glob, Grep |
-| 15 | `/forge-install-rules` | Install ValidationForge rules to .claude/rules/ for cross-session enforcement | Read, Write, Bash, Glob |
+| 11 | `/forge-setup` | Initialize ValidationForge for this project | Read, Write, Edit, Bash, Glob, Grep, Agent |
+| 12 | `/forge-plan` | Generate a validation plan with journey discovery and PASS criteria | Read, Write, Bash, Glob, Grep, Agent |
+| 13 | `/forge-execute` | Run validation journeys against the real system with autonomous fix loop | Read, Write, Edit, Bash, Glob, Grep, Agent |
+| 14 | `/forge-team` | Multi-agent parallel validation across platforms | Read, Write, Bash, Glob, Grep, Agent |
+| 15 | `/forge-benchmark` | Measure validation posture across 5 dimensions with trend tracking | Read, Write, Bash, Glob, Grep |
+| 16 | `/forge-install-rules` | Install ValidationForge rules to .claude/rules/ for cross-session enforcement | Read, Write, Bash, Glob |
 
 ## Command Pipeline Matrix
 
@@ -40,10 +41,11 @@
 | `/validate-sweep` | -- | -- | -- | loop | loop | loop | -- |
 | `/validate-benchmark` | -- | -- | -- | -- | score | report | -- |
 | `/vf-setup` | -- | -- | -- | -- | -- | -- | -- |
+| `/vf-telemetry` | -- | -- | -- | -- | -- | -- | -- |
 
 ## Validation vs Forge Commands
 
 Both families access the same pipeline. The difference:
 
-- **Validation commands** (`/validate*`, `/vf-setup`) are the user-facing interface. No `allowed-tools` restriction -- they use whatever Claude Code makes available.
+- **Validation commands** (`/validate*`, `/vf-setup`, `/vf-telemetry`) are the user-facing interface. No `allowed-tools` restriction -- they use whatever Claude Code makes available.
 - **Forge commands** (`/forge-*`) are the orchestration layer. Each specifies `allowed-tools` in frontmatter to constrain which Claude Code tools the command may invoke. Forge commands are typically called by skills or agents rather than directly by users.
