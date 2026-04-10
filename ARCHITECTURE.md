@@ -6,13 +6,15 @@ Dual-platform enforcement architecture for Claude Code (CC) and OpenCode (OC). B
 
 | Primitive | Count | CC Location | OC Location |
 |-----------|------:|-------------|-------------|
-| Skills | 41 | `skills/*/SKILL.md` | (shared via symlink) |
-| Commands | 15 | `commands/*.md` | (shared via symlink) |
+| Skills | 42 | `skills/*/SKILL.md` | (shared via symlink) |
+| Commands | 16 | `commands/*.md` | (shared via symlink) |
 | Hooks | 8 | `hooks/*.js` + `hooks.json` | `.opencode/plugins/validationforge/index.ts` |
 | Agents | 5 | `agents/*.md` | (shared) |
 | Rules | 8 | `rules/*.md` | (shared) |
 | Shell Scripts | 8 | `scripts/` + `scripts/benchmark/` | (shared) |
 | Config Profiles | 3 | `config/*.json` | (shared) |
+
+> **Recently added:** `team-validation-dashboard` skill (aggregates multi-agent validation results into a unified dashboard view) and `/validate-team-dashboard` command.
 
 ---
 
@@ -328,8 +330,8 @@ e2e-validate
 | Script | Purpose |
 |--------|---------|
 | `scripts/benchmark/test-hooks.sh` | Tests all 7 CC hooks with real JSON stdin payloads |
-| `scripts/benchmark/validate-skills.sh` | Validates structural integrity of all 41 skill SKILL.md files |
-| `scripts/benchmark/validate-cmds.sh` | Validates structural integrity of all 15 command .md files |
+| `scripts/benchmark/validate-skills.sh` | Validates structural integrity of all 42 skill SKILL.md files |
+| `scripts/benchmark/validate-cmds.sh` | Validates structural integrity of all 16 command .md files |
 | `scripts/benchmark/aggregate-results.sh` | Aggregates benchmark scores into a unified report |
 
 ---
