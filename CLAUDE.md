@@ -133,7 +133,7 @@ vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, va
 **Forge Commands**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, forge-install-rules
 
-### Skills (45)
+### Skills (46)
 
 **Platform Validation (15)**
 ios-validation, ios-validation-gate, ios-validation-runner, ios-simulator-control, playwright-validation, web-validation, web-testing, chrome-devtools, api-validation, cli-validation, fullstack-validation, react-native-validation, flutter-validation, django-validation, rust-cli-validation
@@ -153,8 +153,8 @@ accessibility-audit, responsive-validation, parallel-validation, e2e-testing, e2
 **Operational (5)**
 baseline-quality-assessment, condition-based-waiting, error-recovery, production-readiness-audit, full-functional-audit
 
-**Forge Orchestration (6)**
-forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, validate-audit-benchmarks
+**Forge Orchestration (7)**
+forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, validate-audit-benchmarks, coordinated-validation
 
 ### Agents (5)
 
