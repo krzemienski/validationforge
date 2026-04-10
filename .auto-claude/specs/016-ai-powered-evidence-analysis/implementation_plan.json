@@ -362,7 +362,9 @@
             "command": "node -e \"const s=require('./config/standard.json'); if(s.ai_analysis && s.ai_analysis.enabled !== undefined) console.log('config OK'); else console.log('FAIL')\" && grep -q 'ai-evidence-analysis' agents/evidence-capturer.md && grep -q 'AI Analysis' agents/verdict-writer.md && echo integration-OK",
             "expected": "integration-OK"
           },
-          "status": "pending"
+          "status": "completed",
+          "notes": "All integration points verified: config files (strict/permissive/standard) contain ai_analysis block with enabled field; evidence-capturer.md references ai-evidence-analysis skill; verdict-writer.md includes AI Analysis Summary section; validate.md documents --ai-analysis flag and VF_AI_ANALYSIS env var.",
+          "updated_at": "2026-04-10T20:13:07.763332+00:00"
         },
         {
           "id": "subtask-7-3",
@@ -499,6 +501,6 @@
   "planStatus": "in_progress",
   "xstateState": "planning",
   "executionPhase": "coding",
-  "updated_at": "2026-04-10T20:10:36.112Z",
-  "last_updated": "2026-04-10T20:11:17.965083+00:00"
+  "updated_at": "2026-04-10T20:12:04.390Z",
+  "last_updated": "2026-04-10T20:13:07.763338+00:00"
 }
