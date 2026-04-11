@@ -31,7 +31,11 @@ workdirs/
 .worktrees/
 .security-key
 logs/security/
-.claude/
+.claude/*
+!.claude/rules/
+!.claude/rules/**
+!.claude/commands/
+!.claude/commands/**
 .sisyphus/
 
 # Team dashboard runtime-generated output files (not for source control)

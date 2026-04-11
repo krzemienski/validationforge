@@ -1,0 +1,6 @@
+=== J5 re-verify 2026-04-11T22:12:54Z ===
+--- request: POST /api/items with {} ---
+HTTP_STATUS: 400
+--- response body ---
+{"error":"Field 'name' is required and must be non-empty"}
+

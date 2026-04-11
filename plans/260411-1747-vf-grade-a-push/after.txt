@@ -1,0 +1,33 @@
+=== POST-REMEDIATION 2026-04-11T22:13:14Z ===
+
+--- test-hooks.sh ---
+=== SUMMARY ===
+Total: 18  Pass: 18  Fail: 0
+{"total":18,"pass":18,"fail":0}
+
+--- validate-cmds.sh ---
+=== SUMMARY ===
+Total: 17  Pass: 17  Fail: 0
+{"total":17,"pass":17,"fail":0}
+
+--- validate-skills.sh ---
+=== SUMMARY ===
+Total: 48  Pass: 48  Fail: 0  Warnings: 0
+{"total":48,"pass":48,"fail":0,"warnings":0}
+
+--- score-project.sh ---
+
+=== BENCHMARK RESULTS ===
+
+| Dimension        | Weight | Score |
+|------------------|--------|-------|
+| Coverage         |   35%  |  95  |
+| Evidence Quality |   30%  |  100  |
+| Enforcement      |   25%  |  100  |
+| Speed            |   10%  |  80  |
+
+Aggregate: 96 / 100
+Grade: A
+
+Benchmark saved to /Users/nick/Desktop/validationforge/.vf/benchmarks/benchmark-2026-04-11.json
+{"coverage":95,"evidence":100,"enforcement":100,"speed":80,"aggregate":96,"grade":"A"}
