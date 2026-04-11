@@ -52,3 +52,21 @@
 | Item | Status | Notes |
 | --- | --- | --- |
 | `stash@{0}` | PENDING | Created by Task 1 safety checkpoint |
+
+## Post-Campaign Decisions (Phase 7, plan 260411-2242)
+
+### Spec 015 Quarantine Exit Criteria [M9]
+- Quarantined: 2026-04-09
+- Revisit by: 2026-07-01 (3 months)
+- Drop by: 2026-10-01 (6 months) if not revisited
+- Revisit requires: manual diff review, selective cherry-pick of the
+  history-tracking skill subset without protected-path deletions
+
+### Spec 016 + 020 Skip Rationale [M10]
+- 016: Destructive — +1164/-9748 lines, deletes uninstall.sh,
+  hooks/config-loader.js, hooks/verify-e2e.js, 18+ scripts. No unique
+  value beyond what spec 015 attempted.
+- 020: Branch contained only destructive deletions, no production code.
+
+## Campaign status: CLOSED 2026-04-11
+See MERGE_REPORT.md for full report.
