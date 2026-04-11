@@ -1,0 +1,66 @@
+[
+  {
+    "name": "flutter-validation",
+    "original_description": "Flutter platform validation through dependency installation, build, device launch, and screenshot capture via flutter screenshot. Captures logs, widget trees, and crash output as validation evidence across Android and iOS targets.",
+    "improved_description": "Validate Flutter apps on real Android/iOS devices: install deps, build, launch, capture screenshots, check logs for crashes. Use for any flutter project before release; covers both emulators and physical devices.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Added 'before release' and 'real devices' emphasis."
+  },
+  {
+    "name": "forge-benchmark",
+    "original_description": "Measure validation posture across five dimensions. Track trends over time and compare against baseline targets.",
+    "improved_description": "Score validation posture: Coverage (30%), Detection (25%), Evidence Quality (25%), Speed (10%), Cost (10%). Use after validation runs to measure trends, benchmark against baselines, and identify gaps in journeys or evidence.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Made dimensions explicit, clarified use cases."
+  },
+  {
+    "name": "forge-execute",
+    "original_description": "Autonomous validation execution loop. Runs journeys against the real system, captures per-attempt evidence in isolated directories, fixes failures with rebuild-then-revalidate, and persists state to forge-state.json after every phase transition and strike.",
+    "improved_description": "Run validation journeys with autonomous fix loop: execute, capture evidence, analyze failures, rebuild, re-execute (max 3 strikes). Use after plan exists; maintains attempt history and strike tracking in isolated directories.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Simplified language, emphasized autonomy and retry logic."
+  },
+  {
+    "name": "forge-plan",
+    "original_description": "Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes.",
+    "improved_description": "Create validation plan by discovering journeys, defining PASS criteria per step, and specifying evidence types. Use quick mode for small projects, standard for medium, consensus for critical/multi-team review.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Added mode selection guidance."
+  },
+  {
+    "name": "forge-setup",
+    "original_description": "Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture.",
+    "improved_description": "Set up ValidationForge: detect platforms, scaffold directories (.validationforge/, e2e-evidence/), install rules, configure enforcement (strict/standard/permissive). Run first to initialize any new project.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Emphasized setup-first role, clarified output structure."
+  },
+  {
+    "name": "forge-team",
+    "original_description": "Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership. Uses dependency-aware wave execution so that upstream platforms (API, DB) are validated before dependent platforms (Web, iOS) launch.",
+    "improved_description": "Parallel multi-platform validation with wave-based dependencies: DB/Design → API → Web/iOS. Each validator owns isolated evidence directory. Use for fullstack projects; blocks downstream platforms on upstream failure.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Emphasized wave ordering and blocking."
+  },
+  {
+    "name": "full-functional-audit",
+    "original_description": "Read-only validation audit that captures evidence and writes findings without making any code changes. Produces a severity-classified audit report.",
+    "improved_description": "Audit project health without code changes: exercise all features, capture evidence, classify findings by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Use for pre-release gates, compliance reviews, or baseline assessments.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Added use cases, clarified read-only nature."
+  },
+  {
+    "name": "fullstack-validation",
+    "original_description": "Fullstack validation using strict bottom-up approach: Database -> API -> Frontend. Validates each layer independently, then tests integration across the entire stack. References api-validation and web-validation skills for layer-specific procedures.",
+    "improved_description": "Validate fullstack bottom-up: DB schema/data → API CRUD → Frontend rendering → integration (create→read→update→delete across all layers). Use for any multi-layer project; proves data flows correctly end-to-end.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Made bottom-up order explicit, emphasized data flow verification."
+  }
+]

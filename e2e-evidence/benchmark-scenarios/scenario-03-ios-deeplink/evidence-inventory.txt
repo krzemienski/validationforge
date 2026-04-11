@@ -1,5 +1,5 @@
 Scenario: scenario-03-ios-deeplink
-Fixture: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system/scripts/benchmark/fixtures/scenario-03-ios-deeplink
+Fixture: /Users/nick/Desktop/validationforge/scripts/benchmark/fixtures/scenario-03-ios-deeplink
 Grade: F
 Aggregate: 30 / 100
 Coverage: 0

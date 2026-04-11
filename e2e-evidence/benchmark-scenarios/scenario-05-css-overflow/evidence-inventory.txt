@@ -1,5 +1,5 @@
 Scenario: scenario-05-css-overflow
-Fixture: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system/scripts/benchmark/fixtures/scenario-05-css-overflow
+Fixture: /Users/nick/Desktop/validationforge/scripts/benchmark/fixtures/scenario-05-css-overflow
 Grade: F
 Aggregate: 8 / 100
 Coverage: 0

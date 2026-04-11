@@ -1,0 +1,506 @@
+{
+  "accessibility-audit": {
+    "name": "accessibility-audit",
+    "description": "Deep WCAG 2.1 AA accessibility audit with Lighthouse, keyboard navigation, and screen reader validation",
+    "triggers": [
+      "accessibility audit",
+      "a11y audit",
+      "wcag compliance",
+      "accessibility check",
+      "screen reader validation"
+    ],
+    "context_priority": "",
+    "body_preview": "# Accessibility Audit Deep accessibility audit against WCAG 2.1 AA standards. Goes beyond automated scans to include keyboard navigation testing, screen reader simulation, and manual contrast verifica",
+    "line_count": 239
+  },
+  "ai-evidence-analysis": {
+    "name": "ai-evidence-analysis",
+    "description": "AI-powered analysis of validation evidence using vision models for screenshots and LLM analysis for API responses and CLI output. Produces confidence scores (0-100) and structured findings per evidence item to augment human review.",
+    "triggers": [
+      "analyze evidence",
+      "AI evidence analysis",
+      "evidence confidence score",
+      "analyze screenshot",
+      "analyze API response",
+      "analyze CLI output",
+      "evidence quality check",
+      "flag evidence issues"
+    ],
+    "context_priority": "",
+    "body_preview": "# AI-Powered Evidence Analysis Intelligent analysis of captured validation evidence using vision models and LLMs. Produces confidence scores, structured findings, and verdict labels per evidence item ",
+    "line_count": 358
+  },
+  "api-validation": {
+    "name": "api-validation",
+    "description": "API platform validation through direct HTTP requests (curl). Captures full response bodies, headers, and status codes as evidence. Tests CRUD operations, authentication flows, error responses, pagination, and rate limiting.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# API Validation ## Prerequisites",
+    "line_count": 230
+  },
+  "baseline-quality-assessment": {
+    "name": "baseline-quality-assessment",
+    "description": "Establishes a quality baseline before making changes. Captures current state evidence so post-change validation can prove improvement without regression.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Baseline Quality Assessment ## Scope",
+    "line_count": 91
+  },
+  "build-quality-gates": {
+    "name": "build-quality-gates",
+    "description": "Multi-stage build quality enforcement \u2014 compile, lint, type-check, bundle analysis",
+    "triggers": [
+      "build quality",
+      "quality gates",
+      "build pipeline",
+      "pre-deploy checks",
+      "build verification"
+    ],
+    "context_priority": "",
+    "body_preview": "# Build Quality Gates Multi-stage build quality enforcement. Each gate must PASS before proceeding to the next. Build gates verify that code compiles and meets structural quality standards \u2014 but build",
+    "line_count": 194
+  },
+  "chrome-devtools": {
+    "name": "chrome-devtools",
+    "description": "Chrome DevTools MCP integration for deep browser inspection and evidence capture",
+    "triggers": [
+      "chrome devtools",
+      "devtools inspection",
+      "browser devtools",
+      "inspect element",
+      "network inspector"
+    ],
+    "context_priority": "",
+    "body_preview": "# Chrome DevTools Deep browser inspection using the Chrome DevTools MCP server. Complements Playwright MCP with DevTools-specific capabilities: performance traces, network inspection, console monitori",
+    "line_count": 223
+  },
+  "cli-validation": {
+    "name": "cli-validation",
+    "description": "CLI platform validation through direct binary execution. Captures stdout, stderr, exit codes, and pipe behavior as evidence. Validates happy paths, error handling, and output format correctness.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# CLI Validation ## Prerequisites",
+    "line_count": 206
+  },
+  "condition-based-waiting": {
+    "name": "condition-based-waiting",
+    "description": "Smart waiting strategies for async operations during validation. Waits for specific conditions rather than arbitrary sleep durations. Every wait has a timeout, a condition, and a failure path.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Condition-Based Waiting ## Scope",
+    "line_count": 83
+  },
+  "coordinated-validation": {
+    "name": "coordinated-validation",
+    "description": "Multi-platform validation with dependency-aware execution. Validates platforms in dependency order (DB\u2192API\u2192Web, DB\u2192API\u2192iOS), runs independent platforms in parallel, blocks dependent platforms when dependencies fail, and coordinates evidence into a unified cross-platform report.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Coordinated Validation Multi-platform validation that respects cross-platform dependencies. Independent platforms run in parallel for speed; dependent platforms wait for their dependencies to pass b",
+    "line_count": 354
+  },
+  "create-validation-plan": {
+    "name": "create-validation-plan",
+    "description": "Generates a structured validation plan with PASS criteria for every user journey before any evidence is captured. Plans define what success looks like upfront.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Create Validation Plan ## Scope",
+    "line_count": 101
+  },
+  "design-token-audit": {
+    "name": "design-token-audit",
+    "description": "Verify CSS and Tailwind tokens match the project's design system specification",
+    "triggers": [
+      "design token audit",
+      "token compliance",
+      "design system drift",
+      "color audit",
+      "typography audit"
+    ],
+    "context_priority": "",
+    "body_preview": "# Design Token Audit Verify that implementation CSS, Tailwind classes, and inline styles match the project's design system specification. Detects hardcoded values, off-palette colors, non-standard spa",
+    "line_count": 222
+  },
+  "design-validation": {
+    "name": "design-validation",
+    "description": "Validate implementation fidelity against design specifications and Stitch-generated references",
+    "triggers": [
+      "design validation",
+      "validate design",
+      "design fidelity",
+      "compare design to implementation",
+      "does it match the design"
+    ],
+    "context_priority": "",
+    "body_preview": "# Design Validation Validate that an implementation visually and structurally matches its design specification. Compares reference designs (from Stitch MCP, Figma exports, or DESIGN.md) against actual",
+    "line_count": 220
+  },
+  "django-validation": {
+    "name": "django-validation",
+    "description": "Django and Flask web application validation through server startup, database migration verification, curl endpoint testing, and Django admin checks. Captures HTTP responses, migration status, and server logs as evidence.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Django / Flask Validation ## Prerequisites",
+    "line_count": 333
+  },
+  "e2e-testing": {
+    "name": "e2e-testing",
+    "description": "End-to-end validation patterns \u2014 journey design, evidence management, flaky flow handling",
+    "triggers": [
+      "e2e testing patterns",
+      "end to end patterns",
+      "journey design",
+      "flaky flow",
+      "e2e strategy"
+    ],
+    "context_priority": "",
+    "body_preview": "# E2E Testing Patterns Patterns and strategies for designing end-to-end validation journeys, managing evidence artifacts, and handling flaky flows. This is a strategy skill \u2014 it tells you HOW to think",
+    "line_count": 199
+  },
+  "e2e-validate": {
+    "name": "e2e-validate",
+    "description": "Full end-to-end validation orchestrator. Detects platform, maps user journeys, defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks. Supports iOS, React Native, Flutter, web, API, CLI, Django/Flask, and fullstack projects.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# ValidationForge: End-to-End Validation Orchestrator ## Scope",
+    "line_count": 151
+  },
+  "error-recovery": {
+    "name": "error-recovery",
+    "description": "Structured 3-strike error recovery during validation. When validation fails, diagnoses root cause, applies fix, and re-validates. Use when any validation step fails, builds break, runtime crashes, or network/auth/database errors occur.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Error Recovery Protocol ## Scope",
+    "line_count": 102
+  },
+  "flutter-validation": {
+    "name": "flutter-validation",
+    "description": "Flutter platform validation through dependency installation, build, device launch, and screenshot capture via flutter screenshot. Captures logs, widget trees, and crash output as validation evidence across Android and iOS targets.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Flutter Validation ## Prerequisites",
+    "line_count": 295
+  },
+  "forge-benchmark": {
+    "name": "forge-benchmark",
+    "description": "Measure validation posture across five dimensions. Track trends over time and compare against baseline targets.",
+    "triggers": [],
+    "context_priority": "reference",
+    "body_preview": "# forge-benchmark Measure validation posture across five dimensions. Track trends over time and compare against baseline targets.",
+    "line_count": 137
+  },
+  "forge-execute": {
+    "name": "forge-execute",
+    "description": "Autonomous validation execution loop. Runs journeys against the real system, captures per-attempt evidence in isolated directories, fixes failures with rebuild-then-revalidate, and persists state to forge-state.json after every phase transition and strike.",
+    "triggers": [],
+    "context_priority": "reference",
+    "body_preview": "# forge-execute Autonomous validation execution loop. Runs journeys, captures fresh evidence per attempt, fixes failures, rebuilds, and re-validates until all pass or the 3-strike limit is reached.",
+    "line_count": 138
+  },
+  "forge-plan": {
+    "name": "forge-plan",
+    "description": "Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes.",
+    "triggers": [],
+    "context_priority": "reference",
+    "body_preview": "# forge-plan Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes.",
+    "line_count": 95
+  },
+  "forge-setup": {
+    "name": "forge-setup",
+    "description": "Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture.",
+    "triggers": [],
+    "context_priority": "reference",
+    "body_preview": "# forge-setup Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture.",
+    "line_count": 119
+  },
+  "forge-team": {
+    "name": "forge-team",
+    "description": "Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership.",
+    "triggers": [],
+    "context_priority": "reference",
+    "body_preview": "# forge-team Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership. Uses dependency-aware wave execution so that upstream ",
+    "line_count": 318
+  },
+  "full-functional-audit": {
+    "name": "full-functional-audit",
+    "description": "Read-only validation audit that captures evidence and writes findings without making any code changes. Produces a severity-classified audit report.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Full Functional Audit ## Scope",
+    "line_count": 102
+  },
+  "fullstack-validation": {
+    "name": "fullstack-validation",
+    "description": "Fullstack validation using strict bottom-up approach: Database -> API -> Frontend. Validates each layer independently, then tests integration across the entire stack. References api-validation and web-validation skills for layer-specific procedures.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Fullstack Validation ## The Bottom-Up Rule",
+    "line_count": 221
+  },
+  "functional-validation": {
+    "name": "functional-validation",
+    "description": "Enforces end-user perspective validation through real system execution. Never write mocks or test files. Validate via simulator, browser, CLI, or cURL. Covers iOS, Web, API, CLI, and Full-Stack with evidence-based PASS/FAIL.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Functional Validation Protocol ## Scope",
+    "line_count": 102
+  },
+  "gate-validation-discipline": {
+    "name": "gate-validation-discipline",
+    "description": "Enforces evidence-based validation before marking any gate, task, or checkpoint complete. Requires personal examination of evidence, specific proof citations, and evidence-to-criteria matching. Prevents premature completion claims.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Gate Validation Discipline ## Scope",
+    "line_count": 84
+  },
+  "ios-simulator-control": {
+    "name": "ios-simulator-control",
+    "description": "iOS Simulator lifecycle management \u2014 boot, install, launch, screenshot, logs, reset",
+    "triggers": [
+      "simulator control",
+      "boot simulator",
+      "simulator screenshot",
+      "manage simulator",
+      "simulator lifecycle"
+    ],
+    "context_priority": "",
+    "body_preview": "# iOS Simulator Control Reference for all iOS Simulator lifecycle operations. Use these commands within ValidationForge validation flows to interact with real simulators.",
+    "line_count": 276
+  },
+  "ios-validation": {
+    "name": "ios-validation",
+    "description": "iOS/macOS platform validation through Xcode build, simulator launch, and real device interaction via simctl and idb. Captures screenshots, video, and accessibility tree as validation evidence.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# iOS Validation ## Prerequisites",
+    "line_count": 233
+  },
+  "ios-validation-gate": {
+    "name": "ios-validation-gate",
+    "description": "Three-gate iOS validation \u2014 Simulator, Backend, Analysis \u2014 all must PASS",
+    "triggers": [
+      "ios validation gate",
+      "ios gate",
+      "validate ios app",
+      "ios quality gate"
+    ],
+    "context_priority": "",
+    "body_preview": "# iOS Validation Gate Three-gate enforcement for iOS applications. ALL gates must PASS before claiming completion. Each gate captures evidence to `e2e-evidence/`.",
+    "line_count": 227
+  },
+  "ios-validation-runner": {
+    "name": "ios-validation-runner",
+    "description": "Five-phase iOS validation with video recording, log streaming, and evidence collection",
+    "triggers": [
+      "ios validation runner",
+      "run ios validation",
+      "ios test run",
+      "validate ios feature"
+    ],
+    "context_priority": "",
+    "body_preview": "# iOS Validation Runner Five-phase protocol for capturing comprehensive iOS validation evidence: SETUP, RECORD, ACT, COLLECT, VERIFY.",
+    "line_count": 248
+  },
+  "no-mocking-validation-gates": {
+    "name": "no-mocking-validation-gates",
+    "description": "Enforces the Iron Rule: never create mocks, stubs, test doubles, or test files. Detects mock-creation intent and redirects to real system validation. Works with pre-tool-use hooks to block test file creation at the enforcement layer.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# No-Mocking Validation Gates ## Scope",
+    "line_count": 78
+  },
+  "parallel-validation": {
+    "name": "parallel-validation",
+    "description": "Orchestrate multiple validation agents in parallel across independent journeys or platforms",
+    "triggers": [
+      "parallel validation",
+      "validate in parallel",
+      "concurrent validation",
+      "multi-platform validation",
+      "fan out validation"
+    ],
+    "context_priority": "",
+    "body_preview": "# Parallel Validation Orchestrate multiple validation agents working simultaneously on independent validation journeys. Maximizes throughput by running non-overlapping validations concurrently while m",
+    "line_count": 220
+  },
+  "playwright-validation": {
+    "name": "playwright-validation",
+    "description": "Browser-based validation using Playwright MCP \u2014 real browser interaction, evidence capture",
+    "triggers": [
+      "playwright validation",
+      "browser validation",
+      "web browser test",
+      "playwright verify"
+    ],
+    "context_priority": "",
+    "body_preview": "# Playwright Validation Browser-based validation using Playwright MCP tools. Interacts with real running web applications, captures screenshots and DOM snapshots as evidence.",
+    "line_count": 215
+  },
+  "preflight": {
+    "name": "preflight",
+    "description": "Pre-execution checklist before starting any validation. Ensures prerequisites are met: servers running, databases seeded, tools available. Auto-fixes common failures. Saves preflight report to e2e-evidence/.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Preflight Checklist ## Scope",
+    "line_count": 91
+  },
+  "production-readiness-audit": {
+    "name": "production-readiness-audit",
+    "description": "Systematic audit of application readiness for production deployment",
+    "triggers": [
+      "production readiness",
+      "deploy audit",
+      "is this ready for production",
+      "production checklist",
+      "readiness review"
+    ],
+    "context_priority": "",
+    "body_preview": "# Production Readiness Audit Systematic multi-phase audit to determine if an application is ready for production deployment. Produces an evidence-backed readiness report with PASS/FAIL verdicts per ca",
+    "line_count": 212
+  },
+  "react-native-validation": {
+    "name": "react-native-validation",
+    "description": "React Native platform validation through Metro bundler startup, Expo/RN CLI build and launch, screenshot capture, log streaming, and deep link testing. Validates both iOS and Android targets via simulator/emulator or real device.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# React Native Validation ## Prerequisites",
+    "line_count": 358
+  },
+  "research-validation": {
+    "name": "research-validation",
+    "description": "Research standards, best practices, and tools before designing validation strategies",
+    "triggers": [
+      "research validation",
+      "validation research",
+      "what standards apply",
+      "how should we validate",
+      "research before validation"
+    ],
+    "context_priority": "",
+    "body_preview": "# Research Validation Research applicable standards, best practices, and available tools before designing a validation strategy. This is Phase 0 \u2014 the intelligence-gathering step that informs `create-",
+    "line_count": 181
+  },
+  "responsive-validation": {
+    "name": "responsive-validation",
+    "description": "Systematic viewport matrix testing with device-specific validation checks",
+    "triggers": [
+      "responsive validation",
+      "responsive testing",
+      "viewport testing",
+      "mobile responsive",
+      "breakpoint validation"
+    ],
+    "context_priority": "",
+    "body_preview": "# Responsive Validation Systematic validation across a device viewport matrix. Goes beyond basic screenshot comparison \u2014 validates layout behavior, touch targets, content parity, overflow, and respons",
+    "line_count": 199
+  },
+  "retrospective-validation": {
+    "name": "retrospective-validation",
+    "description": "Validate methodologies and approaches using historical evidence and past results",
+    "triggers": [
+      "retrospective validation",
+      "validate methodology",
+      "historical validation",
+      "did our approach work",
+      "post-mortem analysis"
+    ],
+    "context_priority": "",
+    "body_preview": "# Retrospective Validation Validate whether a methodology, process, or technical approach actually worked by analyzing historical evidence. Uses past validation results, deployment outcomes, and incid",
+    "line_count": 213
+  },
+  "rust-cli-validation": {
+    "name": "rust-cli-validation",
+    "description": "Rust CLI platform validation through cargo toolchain and direct binary execution. Runs cargo check, clippy, release build, and binary execution with real inputs. Captures stdout, stderr, exit codes, and pipe behavior as evidence. Validates compilation correctness, lint cleanliness, happy paths, error handling, and output format correctness.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Rust CLI Validation ## Prerequisites",
+    "line_count": 201
+  },
+  "sequential-analysis": {
+    "name": "sequential-analysis",
+    "description": "Systematic root cause analysis for validation failures using step-by-step reasoning",
+    "triggers": [
+      "sequential analysis",
+      "root cause analysis",
+      "why did validation fail",
+      "trace the failure",
+      "debug validation"
+    ],
+    "context_priority": "",
+    "body_preview": "# Sequential Analysis When a validation produces a FAIL verdict, systematically trace the root cause through step-by-step reasoning. Uses the sequential-thinking MCP tool wrapped in ValidationForge's ",
+    "line_count": 193
+  },
+  "stitch-integration": {
+    "name": "stitch-integration",
+    "description": "Stitch MCP workflow for design generation, iteration, and design-to-code validation",
+    "triggers": [
+      "stitch integration",
+      "stitch design",
+      "generate design",
+      "design to code",
+      "stitch project"
+    ],
+    "context_priority": "",
+    "body_preview": "# Stitch Integration Manage the design-to-code pipeline using Stitch MCP. Generate reference designs from text prompts, iterate with variants, and produce design references for `design-validation` to ",
+    "line_count": 198
+  },
+  "team-validation-dashboard": {
+    "name": "team-validation-dashboard",
+    "description": "Aggregate team validation posture into a shared dashboard. Shows coverage, posture scores, regression trends, and ownership assignments across all registered projects.",
+    "triggers": [],
+    "context_priority": "reference",
+    "body_preview": "# team-validation-dashboard Aggregate team validation posture into a shared dashboard. Shows coverage, posture scores, regression trends, and ownership assignments across all registered projects.",
+    "line_count": 167
+  },
+  "validate-audit-benchmarks": {
+    "name": "validate-audit-benchmarks",
+    "description": "Run automated benchmark suite to score hook correctness, skill/command structural integrity, and aggregate quality metrics.",
+    "triggers": [],
+    "context_priority": "reference",
+    "body_preview": "# Validate Audit Benchmarks Score the structural integrity and functional correctness of ValidationForge primitives.",
+    "line_count": 75
+  },
+  "verification-before-completion": {
+    "name": "verification-before-completion",
+    "description": "Prevents premature completion claims by requiring personally examined evidence, specific citations, and criteria matching before marking any task complete. Use whenever completing tasks, closing gates, reporting to leads, or merging code.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Verification Before Completion ## Scope",
+    "line_count": 85
+  },
+  "visual-inspection": {
+    "name": "visual-inspection",
+    "description": "Evidence-based visual inspection of running UIs \u2014 captures what IS, not what SHOULD BE",
+    "triggers": [
+      "visual inspection",
+      "check the UI",
+      "does it look right",
+      "visual review",
+      "UI inspection",
+      "screenshot review"
+    ],
+    "context_priority": "",
+    "body_preview": "# Visual Inspection Systematic visual inspection of running application UIs. Captures screenshots, describes what is ACTUALLY visible, and produces structured PASS/FAIL verdicts per checklist item wit",
+    "line_count": 192
+  },
+  "web-testing": {
+    "name": "web-testing",
+    "description": "Comprehensive web validation strategy \u2014 integration, E2E, accessibility, performance, security",
+    "triggers": [
+      "web testing strategy",
+      "web validation strategy",
+      "how to validate web app",
+      "web quality strategy"
+    ],
+    "context_priority": "",
+    "body_preview": "# Web Testing Strategy Comprehensive web validation strategy covering integration, end-to-end, accessibility, performance, and security validation. All validation is performed against real running sys",
+    "line_count": 218
+  },
+  "web-validation": {
+    "name": "web-validation",
+    "description": "Web platform validation through browser automation (Playwright MCP or Chrome DevTools MCP). Captures screenshots, console logs, network responses, and DOM snapshots as evidence.",
+    "triggers": [],
+    "context_priority": "",
+    "body_preview": "# Web Validation ## Prerequisites",
+    "line_count": 184
+  }
+}

@@ -3,7 +3,7 @@
 **Project:** ValidationForge (no-mock validation platform for Claude Code)
 **Date:** 2026-04-08
 **Duration:** 2026-04-08T22:00Z → 2026-04-08T23:10Z
-**Overall Result:** CONDITIONAL SHIP
+**Overall Result:** SHIP (upgraded from CONDITIONAL SHIP after validate-fix)
 
 ---
 
@@ -12,11 +12,11 @@
 | Metric | Value |
 |--------|-------|
 | Total Journeys | 14 |
-| Passed | 13 (93%) |
-| Failed | 1 (7%) |
+| Passed | 14 (100%) |
+| Failed | 0 (0%) |
 | Unresolved | 0 |
-| Evidence Files | 28 |
-| Fix Attempts | 0 |
+| Evidence Files | 29 |
+| Fix Attempts | 1 (successful on Strike 1) |
 | Platforms Validated | 2 (Web/Next.js, API/Python Flask) |
 | Pipeline Phases Covered | All 7 (0–6) |
 | Preflight Error Scenarios | 2 (BLOCKED + WARN paths verified) |
@@ -81,30 +81,34 @@ All 7 pipeline phases executed against both target platforms. Zero phases skippe
 | J2: List Items — Read Collection | `e2e-evidence/api-python/step-02-items-list.json` | 5/5 | **PASS** |
 | J3: Create Item — Happy Path | `e2e-evidence/api-python/step-03-item-create.json` | 5/5 | **PASS** |
 | J4: Create Item — State Consistency | `e2e-evidence/api-python/step-04-list-after-create.json` | 4/4 | **PASS** |
-| J5: Create Item — Validation Error (Missing Name) | `e2e-evidence/api-python/step-05-create-bad-request.json` | 4/5 | **FAIL** |
+| J5: Create Item — Validation Error (Missing Name) | `e2e-evidence/api-python/step-05-create-bad-request.json`, `e2e-evidence/api-python/step-05-create-bad-request-fix-1.json` | 5/5 | **PASS** (fixed on Strike 1) |
 | J6: Get Item by ID — Single Resource Fetch | `e2e-evidence/api-python/step-06-get-item-1.json` | 5/5 | **PASS** |
 | J7: Get Item by ID — 404 Not Found | `e2e-evidence/api-python/step-07-get-item-404.json` | 5/5 | **PASS** |
 
-**Score:** 6/7 journeys PASS, 33/34 individual criteria met
+**Score:** 7/7 journeys PASS, 34/34 individual criteria met
 
-**Ship Verdict:** CONDITIONAL SHIP — 1 non-blocking defect:
-- J5 FAIL: `POST /api/items {}` returns `"Request body must be valid JSON"` instead of referencing missing `name` field. HTTP 400 status correct; only error message is misleading. Fix: change `if not body:` → `if body is None:` in `app.py` line 62.
+**Ship Verdict:** SHIP — J5 FAIL resolved on Strike 1 via `/validate-fix`:
+- Fix applied: `demo/python-api/app.py` line 62: `if not body:` → `if body is None:`
+- Re-validation evidence: `e2e-evidence/api-python/step-05-create-bad-request-fix-1.json`
+- New response body: `{"error": "Field 'name' is required and must be non-empty"}` — correctly references missing `name` field
+- HTTP 400 status maintained; regression tests on J1, J2, J6, J7 all PASS
 
 ---
 
-## FAILED Journeys
+## FIXED Journeys (via /validate-fix)
 
-### J5: Create Item — Validation Error (Missing Name) — FAIL
+### J5: Create Item — Validation Error (Missing Name) — PASS (fixed on Strike 1)
 
 - **Platform:** API / Python Flask
-- **Evidence:** `e2e-evidence/api-python/step-05-create-bad-request.json`
-- **Criteria met:** 4/5
+- **Original evidence:** `e2e-evidence/api-python/step-05-create-bad-request.json`
+- **Fix evidence:** `e2e-evidence/api-python/step-05-create-bad-request-fix-1.json`
+- **Criteria met:** 5/5 (was 4/5)
 - **Root cause:** Python truthiness bug — `if not body:` evaluates `True` for `{}` (empty dict). Code falls into "invalid JSON" branch before reaching `name` field check.
-- **Actual response:** `{"error": "Request body must be valid JSON"}` — misleading, since `{}` IS valid JSON
-- **Expected response:** error message referencing the missing `name` field
-- **HTTP status code:** 400 ✅ (correct)
-- **Severity:** LOW — status code correct, JSON contract maintained, only error text is misleading
-- **Remediation:** One-line fix: `app.py` line 62, `if not body:` → `if body is None:`
+- **Fix applied:** `demo/python-api/app.py` line 62: `if not body:` → `if body is None:`
+- **Verified response:** `{"error": "Field 'name' is required and must be non-empty"}` — correctly references `name` field
+- **HTTP status code:** 400 (unchanged, correct)
+- **Regression tests:** J1 (health), J2 (list), J3 (create happy), J6 (get by ID), J7 (404) — all PASS
+- **Strikes used:** 1 of 3
 
 ---
 
@@ -215,11 +219,58 @@ The preflight phase error-handling paths were verified against real system condi
 
 ---
 
-## Overall Verdict: CONDITIONAL SHIP
+## Overall Verdict: SHIP
 
-ValidationForge's 7-phase end-to-end validation pipeline has been verified against two real targets (Next.js web platform and Python Flask API). The pipeline correctly executes all phases, captures evidence from live systems, identifies real defects, and issues evidence-backed verdicts. All blocking production readiness gates (Security, Deployment) pass on both platforms. Non-blocking conditionals are documented with remediation steps.
+ValidationForge's 7-phase end-to-end validation pipeline has been verified against two real targets (Next.js web platform and Python Flask API). The pipeline correctly executes all phases, captures evidence from live systems, identifies real defects, and issues evidence-backed verdicts. All blocking production readiness gates (Security, Deployment) pass on both platforms. The only prior defect (J5) was resolved via `/validate-fix` on Strike 1.
 
-**Validation complete: CONDITIONAL SHIP — 13/14 journeys passed. Report: `e2e-evidence/report.md`**
+**Validation complete: SHIP — 14/14 journeys passed. Report: `e2e-evidence/report.md`**
+
+---
+
+## Benchmark Results (2026-04-11, post-validate-fix)
+
+### Project Posture Score (bash scripts/benchmark/score-project.sh .)
+
+| Dimension        | Weight | Score |
+|------------------|--------|-------|
+| Coverage         |   35%  |  95   |
+| Evidence Quality |   30%  |  100  |
+| Enforcement      |   25%  |  70   |
+| Speed            |   10%  |  80   |
+
+**Aggregate: 88/100 — Grade B**
+
+- Coverage boosted by 8 journey evidence subdirs + 33 plan files
+- Evidence Quality: 85/85 files non-empty, 7 verdict/report files present
+- Enforcement: -20 for missing `.claude/rules/` markdown files, -10 for missing `.vf/config.json`
+- Output saved: `.vf/benchmarks/benchmark-2026-04-11.json`
+
+### Structural Benchmarks
+
+| Benchmark | Total | Pass | Fail | Score |
+|-----------|------:|-----:|-----:|------:|
+| Hooks (test-hooks.sh) | 18 | 18 | 0 | 100% |
+| Skills (manual, validate-skills.sh has pipefail bug) | 48 | 48 | 0 | 100% |
+| Commands (validate-cmds.sh) | 17 | 17 | 0 | 100% |
+
+**Weighted aggregate: 100% — Grade A**
+
+### Scenario Benchmarks (bash scripts/benchmark/run-scenarios.sh)
+
+| Scenario | Grade | Aggregate |
+|----------|:-----:|----------:|
+| scenario-01-api-rename | C | 76 |
+| scenario-02-jwt-expiry | F | 59 |
+| scenario-03-ios-deeplink | F | 30 |
+| scenario-04-db-migration | B | 84 |
+| scenario-05-css-overflow | F | 8 |
+| **VF self-assessment** | **B** | **88** |
+
+Differentiation validated: `highest=B, lowest=F`. Output: `e2e-evidence/benchmark-scenarios/VERDICT.md`.
+
+### Known Issues Found During Benchmarking
+
+- `scripts/benchmark/validate-skills.sh` crashes on `set -euo pipefail` when a skill lacks `context_priority` key (e.g., `coordinated-validation`). Workaround used to verify 48/48 skills pass. Fix: trap grep no-match or remove `pipefail` on lines 31–33.
 
 ---
 

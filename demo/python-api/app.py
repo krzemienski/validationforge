@@ -59,7 +59,7 @@ def create_item():
     global _next_id
 
     body = request.get_json(silent=True)
-    if not body:
+    if body is None:
         return jsonify({"error": "Request body must be valid JSON"}), 400
 
     name = body.get("name", "").strip()

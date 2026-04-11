@@ -1,5 +1,5 @@
 === ValidationForge 4-Dimension Benchmark Scorer ===
-Project: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system/scripts/benchmark/fixtures/scenario-02-jwt-expiry
+Project: /Users/nick/Desktop/validationforge/scripts/benchmark/fixtures/scenario-02-jwt-expiry
 
 [enforcement]  +0: no hooks/hooks.json or .claude/hooks/
 [enforcement] +20: no test/spec files in src/ or lib/
@@ -34,5 +34,5 @@ Speed score: 80 / 100
 Aggregate: 59 / 100
 Grade: F
 
-Benchmark saved to /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system/scripts/benchmark/fixtures/scenario-02-jwt-expiry/.vf/benchmarks/benchmark-2026-04-08.json
+Benchmark saved to /Users/nick/Desktop/validationforge/scripts/benchmark/fixtures/scenario-02-jwt-expiry/.vf/benchmarks/benchmark-2026-04-11.json
 {"coverage":50,"evidence":70,"enforcement":50,"speed":80,"aggregate":59,"grade":"F"}

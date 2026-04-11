@@ -1,0 +1,66 @@
+[
+  {
+    "name": "accessibility-audit",
+    "original_description": "Deep WCAG 2.1 AA accessibility audit with Lighthouse, keyboard navigation, and screen reader validation",
+    "improved_description": "Audit WCAG 2.1 AA compliance across 4 layers: Lighthouse automated scan, keyboard navigation, screen reader tree structure, and color contrast. Use before public release, after UI changes, or when a11y complaints arise. Tools: Lighthouse, Chrome DevTools.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Added WHEN context, tools, negation (use even when non-critical), and practical triggers. Expanded from 3 to 4 detailed layers."
+  },
+  {
+    "name": "ai-evidence-analysis",
+    "original_description": "AI-powered analysis of validation evidence using vision models for screenshots and LLM analysis for API responses and CLI output. Produces confidence scores (0-100) and structured findings per evidence item to augment human review.",
+    "improved_description": "AI-augmented evidence review: vision models analyze screenshots for completeness, LLMs check API responses and CLI output against expected patterns. Produces 0-100 confidence scores and finding lists. Use after capture, before verdict. Optional (disabled in offline/air-gapped).",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Reduced verbosity, emphasized WHEN (after capture, before verdict), clarified offline-safe operation."
+  },
+  {
+    "name": "api-validation",
+    "original_description": "API platform validation through direct HTTP requests (curl). Captures full response bodies, headers, and status codes as evidence. Tests CRUD operations, authentication flows, error responses, pagination, and rate limiting.",
+    "improved_description": "Validate APIs via curl: health checks, CRUD cycles (create/read/update/delete), auth (token, 401/403 errors), error responses, pagination. Capture full JSON bodies and status codes. Use when API changes, before API-dependent features deploy, or on integration issues.",
+    "missing_context_priority": null,
+    "missing_triggers": ["api testing", "curl validation", "api contract", "endpoint verification", "HTTP status codes"],
+    "changes_made": "Added WHEN (API changes, before deploy, integration issues), tools (curl), 5 specific triggers."
+  },
+  {
+    "name": "baseline-quality-assessment",
+    "original_description": "Establishes a quality baseline before making changes. Captures current state evidence so post-change validation can prove improvement without regression.",
+    "improved_description": "Capture immutable 'before' evidence (journeys, features, endpoints, screens) before code changes. Proves changes improved targets without regressing existing functionality. Use for refactor, migration, dependency update, bug fix. Baseline detects pre-existing bugs vs. regressions.",
+    "missing_context_priority": null,
+    "missing_triggers": ["baseline capture", "before-after comparison", "regression detection", "no-regressions proof", "change impact"],
+    "changes_made": "Added WHEN (refactor, migration, dependency, bug fix), emphasized immutability and regression vs. pre-existing separation."
+  },
+  {
+    "name": "build-quality-gates",
+    "original_description": "Multi-stage build quality enforcement — compile, lint, type-check, bundle analysis",
+    "improved_description": "4-stage build pipeline: compile (errors only), lint (style rules), type-check (typed langs), bundle (size/deps). Each gate PASS required before next. Build gates are necessary NOT sufficient—functional validation still required. Use pre-deploy, pre-PR, when builds fail.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Expanded stages, emphasized necessary-not-sufficient rule, clarified gate dependency order."
+  },
+  {
+    "name": "chrome-devtools",
+    "original_description": "Chrome DevTools MCP integration for deep browser inspection and evidence capture",
+    "improved_description": "Deep browser inspection via Chrome DevTools MCP: performance profiling (Core Web Vitals), Lighthouse audits (a11y/SEO/best practices), network inspection (headers/payloads/timing), console monitoring, memory snapshots. Use for debugging, perf analysis, a11y audits. Complements Playwright.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Added tools/capabilities, WHEN (perf, debugging, audits), complementary role to Playwright."
+  },
+  {
+    "name": "cli-validation",
+    "original_description": "CLI platform validation through direct binary execution. Captures stdout, stderr, exit codes, and pipe behavior as evidence. Validates happy paths, error handling, and output format correctness.",
+    "improved_description": "Validate CLI binaries: build, help/version output, happy path execution, error cases (bad flags, missing args, file not found), exit codes, stdin/pipe, output format (JSON/CSV parsing). Capture full stdout/stderr. Use on all binary changes, before release, on CLI behavior regression.",
+    "missing_context_priority": null,
+    "missing_triggers": ["binary validation", "CLI testing", "exit code verification", "command-line tool", "stderr/stdout capture"],
+    "changes_made": "Added WHEN (binary changes, pre-release, behavior regression), detailed what's captured."
+  },
+  {
+    "name": "condition-based-waiting",
+    "original_description": "Smart waiting strategies for async operations during validation. Waits for specific conditions rather than arbitrary sleep durations. Every wait has a timeout, a condition, and a failure path.",
+    "improved_description": "Wait for conditions, not time: HTTP health polls, port availability, file existence, process readiness, browser content, iOS simulator boot, DB ready, log patterns. Every wait must timeout (30–90s). Captures diagnostic state on failure. Never use bare sleep.",
+    "missing_context_priority": null,
+    "missing_triggers": ["wait for server", "async operation", "service readiness", "health check polling", "timeout handling"],
+    "changes_made": "Listed all 8 wait strategies, emphasized timeout rules and diagnostic capture."
+  }
+]

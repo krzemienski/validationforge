@@ -1,0 +1,38 @@
+[
+  {
+    "name": "functional-validation",
+    "improved_description": "Build & validate real systems end-to-end (iOS, Web, API, CLI, fullstack)—never mocks or test files. Capture evidence from browser, simulator, CLI, or cURL. Platform detection, 4-step protocol, verdict format with evidence citations. Use even when slowness tempts shortcuts."
+  },
+  {
+    "name": "gate-validation-discipline",
+    "improved_description": "EVIDENCE BEFORE COMPLETION—never mark gates/tasks done without reading actual evidence, citing specific proof, matching evidence to criteria. Personal examination required; delegate reports but verify findings yourself. Use before any checkpoint.",
+    "missing_triggers": ["evidence examination", "before completion", "verify gate", "checkpoint validation", "proof citation"]
+  },
+  {
+    "name": "ios-simulator-control",
+    "improved_description": "iOS Simulator operations: boot, install, launch, screenshot, video, logs, deep links, permissions, location, crash detection. Reference for evidence capture commands. Use with all iOS validation skills. Also covers status bar override, app container access."
+  },
+  {
+    "name": "ios-validation",
+    "improved_description": "iOS/macOS validation: Xcode build → simulator install/launch → screenshot/video/logs/deep links/idb accessibility tree. 9-step protocol from build through crash detection. Evidence quality standards. Use for all iOS feature validation. Also covers simulator prerequisites.",
+    "missing_triggers": ["ios feature validation", "xcode build simulator", "ios ui testing", "deep link validation", "ios accessibility testing"]
+  },
+  {
+    "name": "ios-validation-gate",
+    "improved_description": "Three-gate iOS enforcement: Simulator (build/install/launch/screenshot/a11y), Backend (health/endpoints/responses), Analysis (logs/behavior correlation). ALL gates must PASS. Use after each iOS feature. Also covers skip conditions for offline apps."
+  },
+  {
+    "name": "ios-validation-runner",
+    "improved_description": "Five-phase iOS protocol: SETUP (boot sim) → RECORD (video+logs) → ACT (user interaction) → COLLECT (artifacts) → VERIFY (verdict). Complex multi-step flows & debug scenarios. Video proves temporal evidence screenshots miss. Kill -INT not -9.",
+    "missing_triggers": ["ios validation flow", "ios video recording", "ios debug evidence", "ios multi-step testing", "ios workflow validation"]
+  },
+  {
+    "name": "no-mocking-validation-gates",
+    "improved_description": "THE IRON RULE: no mocks/stubs/test files—hook blocks *.test.ts, __tests__/, jest.mock(), etc. When mocking tempts: diagnose why real system unavailable, fix it, validate real system instead. Redirect 12+ thought patterns to real validation.",
+    "missing_triggers": ["block test file", "mock detection", "prevent mocking", "test double elimination", "real system validation redirect"]
+  },
+  {
+    "name": "parallel-validation",
+    "improved_description": "Multi-agent parallel validation—iOS+Web+API simultaneously on independent journeys. Strict file ownership rules prevent conflicts. Verdict aggregation: any FAIL=FAIL. Use for large apps, CI/CD, multi-platform. Sequential-only: auth→pages, create→read→update."
+  }
+]

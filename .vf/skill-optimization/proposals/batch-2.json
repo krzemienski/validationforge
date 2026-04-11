@@ -1,0 +1,66 @@
+[
+  {
+    "name": "coordinated-validation",
+    "original_description": "Multi-platform validation with dependency-aware execution. Validates platforms in dependency order (DB→API→Web, DB→API→iOS), runs independent platforms in parallel, blocks dependent platforms when dependencies fail, and coordinates evidence into a unified cross-platform report.",
+    "improved_description": "Multi-platform validation respecting cross-platform dependencies: DB→API→Web/iOS. Parallelizes independent layers, blocks downstream when dependencies fail, coordinates evidence waves, prevents race conditions. Use for fullstack projects, mobile+API integration, CI/CD multi-layer verification.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Added keywords (parallelizes, waves, integration), explicit use-cases."
+  },
+  {
+    "name": "create-validation-plan",
+    "original_description": "Generates a structured validation plan with PASS criteria for every user journey before any evidence is captured. Plans define what success looks like upfront.",
+    "improved_description": "Create BEFORE evidence capture. Defines PASS criteria per journey (P0/P1/P2 priority). Maps routes/endpoints/screens, orders by dependency, checks prerequisites. Use when starting validation, refining journeys, or validating changes. Falsifiable criteria only — no vague goals.",
+    "missing_context_priority": null,
+    "missing_triggers": ["validation plan generation", "journey discovery", "pass criteria definition", "validation strategy planning", "upfront planning before execution"],
+    "changes_made": "Added 'create before', priority system, falsifiability emphasis."
+  },
+  {
+    "name": "design-token-audit",
+    "original_description": "Verify CSS and Tailwind tokens match the project's design system specification",
+    "improved_description": "Audit CSS/Tailwind/inline styles against design system spec (DESIGN.md, tailwind.config, CSS vars). Detects hardcoded values, off-palette colors, non-standard spacing, typography drift. Use after style changes, before release, during DS migration, on new codebases.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Expanded to name specific sources, violation types."
+  },
+  {
+    "name": "design-validation",
+    "original_description": "Validate implementation fidelity against design specifications and Stitch-generated references",
+    "improved_description": "Compare implementation screenshots against design refs (Stitch MCP, DESIGN.md, Figma). Scores colors, typography, spacing, layout, interactions (5-category fidelity). Use after UI implementation, before release, during design reviews, post-refactor for visual regressions.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Named sources, scoring method, 5 categories weighted."
+  },
+  {
+    "name": "django-validation",
+    "original_description": "Django and Flask web application validation through server startup, database migration verification, curl endpoint testing, and Django admin checks. Captures HTTP responses, migration status, and server logs as evidence.",
+    "improved_description": "Django/Flask validation: dependencies → system check → migrations → server startup → health/CRUD endpoints (GET/POST/PUT/DELETE) → auth flows → admin check. Uses curl, capture HTTP responses/migrations/logs. Also Flask+Gunicorn.",
+    "missing_context_priority": null,
+    "missing_triggers": ["django framework testing", "flask validation", "django server check", "migration validation", "django endpoint testing"],
+    "changes_made": "Added execution sequence, Flask+Gunicorn variant."
+  },
+  {
+    "name": "e2e-testing",
+    "original_description": "End-to-end validation patterns — journey design, evidence management, flaky flow handling",
+    "improved_description": "E2E strategy patterns: design journeys (one goal per journey, precondition→action→assertion). Manage evidence (step-NN naming, inventory). Diagnose flaky flows (3 runs, capture delta, fix root cause). Use for journey planning, handling intermittent failures, organizing cross-journey artifacts.",
+    "missing_context_priority": null,
+    "missing_triggers": null,
+    "changes_made": "Named journey structure, flaky diagnosis method."
+  },
+  {
+    "name": "e2e-validate",
+    "original_description": "Full end-to-end validation orchestrator. Detects platform, maps user journeys, defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks. Supports iOS, React Native, Flutter, web, API, CLI, Django/Flask, and fullstack projects.",
+    "improved_description": "Orchestrator: detect platform → map journeys → PASS criteria → capture evidence → write verdicts (zero mocks). Platform detection (iOS/RN/Flutter/web/API/CLI/Django/fullstack), bottom-up fullstack order, fix loop (3-strike). Use for any project validation start-to-finish.",
+    "missing_context_priority": null,
+    "missing_triggers": ["end to end validation", "full validation pipeline", "orchestrate validation", "platform detection", "validation orchestration"],
+    "changes_made": "Emphasized zero-mock rule, bottom-up order, 3-strike fix loop."
+  },
+  {
+    "name": "error-recovery",
+    "original_description": "Structured 3-strike error recovery during validation. When validation fails, diagnoses root cause, applies fix, and re-validates. Use when any validation step fails, builds break, runtime crashes, or network/auth/database errors occur.",
+    "improved_description": "3-strike recovery: strike 1 (targeted fix, same step), strike 2 (alt tool/path), strike 3 (rethink assumptions, broader fix). Never mock; fix real cause. Use on build fails, runtime crashes, network/auth/DB errors, flaky flows. Log all 3 attempts.",
+    "missing_context_priority": null,
+    "missing_triggers": ["error recovery protocol", "fix validation failures", "3 strike protocol", "recover from failure", "diagnose root cause"],
+    "changes_made": "Detailed 3-strike sequence, named specific error types."
+  }
+]

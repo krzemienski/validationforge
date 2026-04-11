@@ -1,5 +1,5 @@
 Scenario: scenario-02-jwt-expiry
-Fixture: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system/scripts/benchmark/fixtures/scenario-02-jwt-expiry
+Fixture: /Users/nick/Desktop/validationforge/scripts/benchmark/fixtures/scenario-02-jwt-expiry
 Grade: F
 Aggregate: 59 / 100
 Coverage: 50

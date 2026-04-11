@@ -4,8 +4,12 @@ status: planned
 created: 2026-04-08
 branch: audit/plugin-improvements
 mode: hard
-blockedBy: [260409-0432-merge-campaign-continuation]
+blockedBy: [260409-0432-merge-campaign-continuation, 260411-2242-vf-gap-closure]
 blocks: []
+triage_pending: true
+triage_plan: plans/260411-2242-vf-gap-closure/plan.md
+triage_phase: Phase 8
+note: 15 red-team findings pending triage in gap closure plan. On completion, status will become `retired` or findings will be split into new plans.
 ---
 
 # VF Dual-Platform Audit Plan — Rewrite

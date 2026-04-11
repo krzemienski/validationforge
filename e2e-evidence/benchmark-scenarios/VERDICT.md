@@ -1,6 +1,6 @@
 # Benchmark Scenario Comparison — VERDICT
 
-Generated: 2026-04-09T03:25:22Z
+Generated: 2026-04-11T09:26:39Z
 
 ## Scenario Comparison Table
 
@@ -11,7 +11,7 @@ Generated: 2026-04-09T03:25:22Z
 | scenario-03-ios-deeplink | Enforcement without evidence | F | 30 | 0 | 90 | 0 |
 | scenario-04-db-migration | Full posture with verdicts | B | 84 | 60 | 100 | 100 |
 | scenario-05-css-overflow | Zero validation, mocks present | F | 8 | 0 | 0 | 0 |
-| vf-self-assessment | ValidationForge itself | B | 81 | 60 | 90 | 100 |
+| vf-self-assessment | ValidationForge itself | B | 88 | 95 | 70 | 100 |
 
 ## Differentiation Validation
 

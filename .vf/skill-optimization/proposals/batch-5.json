@@ -1,0 +1,34 @@
+[
+  {
+    "name": "playwright-validation",
+    "improved_description": "Validate web features through real browser interaction with Playwright MCP. Use for feature verification, screenshot evidence, form testing, responsive layouts, and console error detection. Captures DOM snapshots and network logs."
+  },
+  {
+    "name": "preflight",
+    "improved_description": "Run before validation to catch missing dependencies, dead servers, unseeded databases upfront. Detects platform, auto-fixes common failures (services, configs), produces CLEAR/BLOCKED/WARN verdict. Prevents 10-30min debugging mid-validation."
+  },
+  {
+    "name": "production-readiness-audit",
+    "improved_description": "Audit app readiness across 8 phases: code quality, security, performance, reliability, observability, documentation, deployment. Use before first deploy, major releases, significant refactors. Produces READY/NOT READY/CONDITIONAL verdict with blocking issues."
+  },
+  {
+    "name": "react-native-validation",
+    "improved_description": "Validate React Native apps via Metro/Expo with platform-specific build, launch, screenshots, logs, and deep link testing. Use for iOS/Android feature validation, launch verification, crash detection. Covers Expo Go, Expo CLI, and bare RN projects."
+  },
+  {
+    "name": "research-validation",
+    "improved_description": "Research applicable standards, tools, and best practices before planning validation (Phase 0). Use entering new domains, when standards change, or deciding coverage. Maps standards to skills, produces research report feeding into validation planning."
+  },
+  {
+    "name": "responsive-validation",
+    "improved_description": "Validate layouts across 8 device viewports (375px–1920px). Use after responsive redesigns, mobile launches, CSS refactors, or user-reported breakpoint issues. Tests layout, touch targets, typography, content parity, orientation, overflow at each breakpoint."
+  },
+  {
+    "name": "retrospective-validation",
+    "improved_description": "Assess whether validation methodology actually worked by analyzing past results, deployments, incidents. Use post-sprint, pre/post approach changes, or after production issues. Calculates false PASS/FAIL rates, revert frequency, confidence score, and recommends process changes."
+  },
+  {
+    "name": "rust-cli-validation",
+    "improved_description": "Validate Rust CLI apps via cargo toolchain: check, clippy, release build, binary execution. Use for Rust tool feature validation, panic detection, exit code verification, happy/error paths. Captures help, version, output, error messages, and exit codes as evidence."
+  }
+]

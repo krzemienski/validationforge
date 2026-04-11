@@ -1,5 +1,5 @@
 Scenario: scenario-01-api-rename
-Fixture: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system/scripts/benchmark/fixtures/scenario-01-api-rename
+Fixture: /Users/nick/Desktop/validationforge/scripts/benchmark/fixtures/scenario-01-api-rename
 Grade: C
 Aggregate: 76 / 100
 Coverage: 60

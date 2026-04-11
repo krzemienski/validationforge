@@ -1,0 +1,38 @@
+[
+  {
+    "name": "sequential-analysis",
+    "improved_description": "Root cause analysis for FAIL verdicts using structured hypothesis testing & sequential thinking. Use when validation fails unexpectedly, error messages are ambiguous, or multiple journeys share common causes. Evidence-backed investigation produces documented recommendations & prevention strategies."
+  },
+  {
+    "name": "stitch-integration",
+    "improved_description": "Generate reference designs via Stitch MCP, iterate variants, capture as evidence for design-validation. Use when starting UI features, exploring design options before code, or validating implementation fidelity. Bridges design-to-code via project persistence, design system tokens, and variant generation."
+  },
+  {
+    "name": "team-validation-dashboard",
+    "improved_description": "Aggregate validation metrics across projects into shared dashboard: posture scores, coverage %, regressions, ownership. Use to identify critical projects (score <60), review team validation posture, track regressions over time, assign journey owners. Also for CI/CD metric reporting.",
+    "missing_triggers": ["team dashboard", "validation posture", "show team metrics", "which projects need attention", "who owns this journey"]
+  },
+  {
+    "name": "validate-audit-benchmarks",
+    "improved_description": "Score ValidationForge primitives: hooks (60% weight), skill structure (20%), command structure (20%). Run before releases, after modifications, or during audits. Produces baseline metrics, grades A–F, compares against previous benchmarks. 10 high-impact skills prioritized for manual review.",
+    "missing_triggers": ["audit benchmarks", "run benchmark suite", "score hook correctness", "validate primitives", "quality metrics"]
+  },
+  {
+    "name": "verification-before-completion",
+    "improved_description": "Block premature completion claims: require personally examined evidence, specific citations (file paths, line numbers, screenshots), criteria-to-evidence matching, regression checks, final state capture. Use before TaskUpdate completed, gate closure, lead reports, code merge. Never skip verification steps.",
+    "missing_triggers": ["verification before completion", "complete task", "close gate", "mark done", "evidence checklist", "can i ship this"]
+  },
+  {
+    "name": "visual-inspection",
+    "improved_description": "Capture & describe actual rendered UI state via screenshots across breakpoints, modes, & edge cases. Use before claiming frontend work complete, validating responsive layouts, checking dark/light modes, testing empty/error/loading states. Severity-classified findings prevent invisible text, overlapping elements, layout overflow issues."
+  },
+  {
+    "name": "web-testing",
+    "improved_description": "5-layer web validation: integration (APIs), E2E (user journeys), accessibility (WCAG), performance (Core Web Vitals), security (OWASP). Use when planning comprehensive web feature validation, determining validation types needed, building validation plans. All validation against real running systems—no mocks."
+  },
+  {
+    "name": "web-validation",
+    "improved_description": "Web validation via browser automation: health checks, screenshots at breakpoints (375/768/1920px), form testing (valid/invalid), console/network/route validation. Captures DOM snapshots & error logs. Also detects CORS, hydration, CSS issues. PASS criteria include no console errors, <3s load time.",
+    "missing_triggers": ["web validation", "browser automation", "playwright validation", "web testing", "validate web app", "screenshot test"]
+  }
+]

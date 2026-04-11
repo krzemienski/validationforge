@@ -1,9 +1,9 @@
 Scenario: ValidationForge Self-Assessment
-Project: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/018-verified-benchmark-scoring-system
+Project: /Users/nick/Desktop/validationforge
 Grade: B
-Aggregate: 81 / 100
-Coverage: 60
-Enforcement: 90
+Aggregate: 88 / 100
+Coverage: 95
+Enforcement: 70
 Evidence Quality: 100
 Files:
   step-01-score-output.md - Full scorer output
