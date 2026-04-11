@@ -1,0 +1,75 @@
+---
+title: Comparison
+description: ValidationForge vs alternatives — how they compare
+---
+
+## ValidationForge vs Other Approaches
+
+How does ValidationForge compare to other validation and testing strategies?
+
+## Feature Comparison
+
+| Feature | ValidationForge | Playwright/Cypress | TDD/Jest | OMC | ECC |
+|---------|----------------|-------------------|----------|-----|-----|
+| No mocks required | ✅ | ⚠️ | ❌ | ⚠️ | ⚠️ |
+| Evidence-backed verdicts | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Real system validation | ✅ | ✅ | ❌ | ⚠️ | ✅ |
+| AI-native workflow | ✅ | ❌ | ❌ | ✅ | ✅ |
+| Multi-platform support | ✅ | ⚠️ | ⚠️ | ❌ | ⚠️ |
+| CI/CD integration | ✅ | ✅ | ✅ | ⚠️ | ⚠️ |
+| Autonomous fix loops | ✅ | ❌ | ❌ | ⚠️ | ❌ |
+| Gate discipline | ✅ | ⚠️ | ⚠️ | ❌ | ⚠️ |
+
+**Legend:** ✅ Full support | ⚠️ Partial/optional | ❌ Not supported
+
+## Philosophy Comparison
+
+### ValidationForge
+- **Principle:** Validate the real system, never mock it
+- **Evidence:** Mandatory citations for every PASS/FAIL
+- **Workflow:** 7-phase pipeline with strict gates
+- **Best for:** AI-assisted development, ensuring generated code actually works
+
+### Traditional TDD (Test-Driven Development)
+- **Principle:** Write tests before code
+- **Evidence:** Test pass/fail counts
+- **Workflow:** Red-Green-Refactor cycle
+- **Best for:** Well-understood domains with stable interfaces
+- **Gap:** Mocks hide real-world failures; tests can pass while production fails
+
+### Playwright / Cypress (E2E Testing)
+- **Principle:** Automate browser interactions
+- **Evidence:** Screenshots, pass/fail assertions
+- **Workflow:** Script-based test suites
+- **Best for:** Web UI regression testing
+- **Gap:** Requires upfront scripting investment; doesn't handle non-web platforms
+
+### OMC (Output-Match Checks)
+- **Principle:** Compare output to expected patterns
+- **Evidence:** Diff output
+- **Workflow:** Run → compare → pass/fail
+- **Best for:** CLI tools, deterministic outputs
+- **Gap:** Brittle to minor output changes; no behavioral depth
+
+### ECC (Evidence-Captured Checks)
+- **Principle:** Capture evidence during execution
+- **Evidence:** Captured artifacts
+- **Workflow:** Execute → capture → review
+- **Best for:** Manual verification workflows
+- **Gap:** No automated verdict logic; requires human interpretation
+
+## When to Use ValidationForge
+
+ValidationForge is the right choice when:
+
+1. **You're using AI code generation** — AI output needs real validation, not just compilation
+2. **Mocking would hide real failures** — Your system has external dependencies that matter
+3. **You need audit-quality evidence** — Compliance, review, or handoff requires citations
+4. **Multi-platform projects** — iOS + Web + API need coordinated validation
+5. **Autonomous fix loops** — You want to delegate fix-and-retry to the AI agent
+
+## When to Use Something Else
+
+- **Pure unit testing of isolated functions** → Jest/Vitest is simpler and faster
+- **Browser automation of well-defined UI flows** → Playwright/Cypress is purpose-built
+- **Quick smoke tests** → Shell scripts may be sufficient

@@ -1,0 +1,732 @@
+---
+import { Image } from 'astro:assets';
+import heroSvg from '../assets/hero.svg';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Ship verified code, not 'it compiled' code. No-mock functional validation for Claude Code and OpenCode." />
+    <title>ValidationForge — Ship Verified Code</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --color-bg: #0f0f12;
+        --color-surface: #17171d;
+        --color-surface-2: #1e1e27;
+        --color-border: #2a2a38;
+        --color-accent: #7c3aed;
+        --color-accent-light: #a78bfa;
+        --color-accent-glow: rgba(124, 58, 237, 0.25);
+        --color-text: #e2e8f0;
+        --color-text-muted: #94a3b8;
+        --color-text-dim: #64748b;
+        --color-success: #22c55e;
+        --color-warning: #f59e0b;
+        --color-code-bg: #1a1a24;
+        --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+        --radius: 0.5rem;
+        --radius-lg: 0.75rem;
+      }
+
+      html { font-family: var(--font-sans); background: var(--color-bg); color: var(--color-text); scroll-behavior: smooth; }
+      body { min-height: 100vh; overflow-x: hidden; }
+
+      /* NAV */
+      nav {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 2rem; height: 3.5rem;
+        background: rgba(15, 15, 18, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--color-border);
+      }
+      .nav-brand { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.1rem; color: var(--color-text); text-decoration: none; }
+      .nav-brand span { color: var(--color-accent-light); }
+      .nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; }
+      .nav-links a { color: var(--color-text-muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+      .nav-links a:hover { color: var(--color-text); }
+      .nav-cta {
+        background: var(--color-accent); color: #fff; padding: 0.4rem 1rem;
+        border-radius: var(--radius); font-size: 0.875rem; font-weight: 600;
+        text-decoration: none; transition: background 0.2s;
+      }
+      .nav-cta:hover { background: #6d28d9; color: #fff; }
+
+      /* HERO */
+      .hero {
+        min-height: 100vh; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; text-align: center;
+        padding: 6rem 2rem 4rem;
+        background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.12) 0%, transparent 70%);
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: repeating-linear-gradient(
+          0deg, transparent, transparent 39px,
+          rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px
+        ),
+        repeating-linear-gradient(
+          90deg, transparent, transparent 39px,
+          rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px
+        );
+        pointer-events: none;
+      }
+
+      .hero-badge {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4);
+        color: var(--color-accent-light); padding: 0.3rem 0.8rem;
+        border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+        margin-bottom: 1.5rem; letter-spacing: 0.05em; text-transform: uppercase;
+      }
+      .hero-title {
+        font-size: clamp(2.4rem, 6vw, 4.5rem);
+        font-weight: 800; line-height: 1.1; letter-spacing: -0.02em;
+        margin-bottom: 1.5rem; max-width: 18ch;
+      }
+      .hero-title em { font-style: normal; color: var(--color-accent-light); }
+
+      .hero-subtitle {
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        color: var(--color-text-muted); max-width: 52ch;
+        line-height: 1.7; margin-bottom: 2.5rem;
+      }
+      .hero-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+      .btn-primary {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        background: var(--color-accent); color: #fff;
+        padding: 0.75rem 1.75rem; border-radius: var(--radius);
+        font-size: 1rem; font-weight: 700; text-decoration: none;
+        box-shadow: 0 0 24px var(--color-accent-glow);
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      }
+      .btn-primary:hover { background: #6d28d9; transform: translateY(-1px); box-shadow: 0 0 36px var(--color-accent-glow); }
+
+      .btn-secondary {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        background: var(--color-surface-2); color: var(--color-text);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 1.75rem; border-radius: var(--radius);
+        font-size: 1rem; font-weight: 600; text-decoration: none;
+        transition: background 0.2s, border-color 0.2s;
+      }
+      .btn-secondary:hover { background: var(--color-surface); border-color: var(--color-accent); }
+
+      .install-snippet {
+        margin-top: 2.5rem; display: flex; align-items: center; gap: 0.75rem;
+        background: var(--color-code-bg); border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg); padding: 0.75rem 1.25rem;
+        font-family: var(--font-mono); font-size: 0.875rem; color: var(--color-text-muted);
+        max-width: 44rem; width: 100%;
+      }
+      .install-snippet .prompt { color: var(--color-accent-light); user-select: none; }
+      .install-snippet code { color: var(--color-text); flex: 1; text-align: left; }
+      .install-snippet button {
+        background: none; border: 1px solid var(--color-border); color: var(--color-text-dim);
+        padding: 0.25rem 0.6rem; border-radius: 0.25rem; cursor: pointer;
+        font-size: 0.75rem; font-family: var(--font-sans); transition: all 0.2s;
+        white-space: nowrap; flex-shrink: 0;
+      }
+      .install-snippet button:hover { border-color: var(--color-accent); color: var(--color-accent-light); }
+
+      .hero-stats {
+        display: flex; gap: 2.5rem; margin-top: 3.5rem; flex-wrap: wrap; justify-content: center;
+      }
+      .stat { text-align: center; }
+      .stat-value { font-size: 1.75rem; font-weight: 800; color: var(--color-accent-light); }
+      .stat-label { font-size: 0.8rem; color: var(--color-text-dim); margin-top: 0.2rem; letter-spacing: 0.04em; }
+
+      /* SECTIONS */
+      section { padding: 5rem 2rem; }
+      .container { max-width: 72rem; margin: 0 auto; }
+      .section-label {
+        font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--color-accent-light); margin-bottom: 0.75rem;
+      }
+      .section-title { font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
+      .section-desc { font-size: 1.05rem; color: var(--color-text-muted); max-width: 52ch; line-height: 1.7; }
+
+      /* IRON RULE */
+      .iron-rule {
+        background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(124,58,237,0.02));
+        border: 1px solid rgba(124,58,237,0.3);
+        border-left: 3px solid var(--color-accent);
+        border-radius: var(--radius-lg); padding: 2rem 2.5rem;
+        margin: 3rem auto; max-width: 72rem;
+      }
+      .iron-rule h3 { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent-light); margin-bottom: 1rem; }
+      .iron-rule pre {
+        font-family: var(--font-mono); font-size: 0.9rem; color: var(--color-text);
+        line-height: 1.8; white-space: pre-wrap; word-break: break-word;
+      }
+      .iron-rule pre .keyword { color: var(--color-warning); font-weight: 700; }
+      .iron-rule pre .string { color: var(--color-accent-light); }
+
+      /* WHY NOT MOCKS */
+      .table-wrap { overflow-x: auto; margin-top: 2rem; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+      thead th {
+        background: var(--color-surface); color: var(--color-text-muted);
+        padding: 0.75rem 1rem; text-align: left; font-weight: 600;
+        border-bottom: 1px solid var(--color-border); white-space: nowrap;
+      }
+      tbody td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-border); vertical-align: top; line-height: 1.5; }
+      tbody tr:last-child td { border-bottom: none; }
+      tbody tr:hover td { background: var(--color-surface); }
+      .badge-pass { color: var(--color-success); font-weight: 700; }
+      .badge-fail { color: #f87171; font-weight: 700; }
+      .badge-na { color: var(--color-text-dim); }
+
+      /* DEMO SECTION */
+      .demo-gif-placeholder {
+        margin: 2.5rem 0;
+        background: var(--color-code-bg);
+        border: 1px dashed var(--color-border);
+        border-radius: var(--radius-lg);
+        min-height: 20rem;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 0.75rem; color: var(--color-text-dim); text-align: center; padding: 2rem;
+        position: relative; overflow: hidden;
+      }
+      .demo-gif-placeholder::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: repeating-linear-gradient(
+          45deg,
+          transparent, transparent 10px,
+          rgba(124,58,237,0.03) 10px, rgba(124,58,237,0.03) 20px
+        );
+        pointer-events: none;
+      }
+      .demo-gif-icon { font-size: 3rem; opacity: 0.4; }
+      .demo-gif-title { font-size: 1rem; font-weight: 600; color: var(--color-text-muted); }
+      .demo-gif-note { font-size: 0.8rem; color: var(--color-text-dim); max-width: 40ch; line-height: 1.6; }
+      .demo-gif-link {
+        display: inline-flex; align-items: center; gap: 0.3rem;
+        color: var(--color-accent-light); font-size: 0.8rem; text-decoration: none;
+        border: 1px solid rgba(124,58,237,0.4); border-radius: var(--radius);
+        padding: 0.3rem 0.75rem; transition: background 0.2s; margin-top: 0.25rem;
+        position: relative; z-index: 1;
+      }
+      .demo-gif-link:hover { background: rgba(124,58,237,0.15); }
+
+      .scenario-cards { display: grid; gap: 1rem; margin-top: 2rem; }
+      .scenario-card {
+        background: var(--color-surface); border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg); overflow: hidden;
+        transition: border-color 0.2s;
+      }
+      .scenario-card:hover { border-color: rgba(124,58,237,0.4); }
+      .scenario-header {
+        display: flex; align-items: center; gap: 0.75rem;
+        padding: 0.875rem 1.25rem; background: var(--color-surface-2);
+        border-bottom: 1px solid var(--color-border);
+      }
+      .scenario-num {
+        display: flex; align-items: center; justify-content: center;
+        width: 1.5rem; height: 1.5rem; border-radius: 50%;
+        background: rgba(124,58,237,0.2); color: var(--color-accent-light);
+        font-size: 0.7rem; font-weight: 800; flex-shrink: 0;
+      }
+      .scenario-title { font-size: 0.9rem; font-weight: 700; flex: 1; }
+      .scenario-body {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      }
+      .scenario-col {
+        padding: 1rem 1.25rem;
+      }
+      .scenario-col:first-child { border-right: 1px solid var(--color-border); }
+      .scenario-col-label {
+        font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+        text-transform: uppercase; margin-bottom: 0.5rem;
+        display: flex; align-items: center; gap: 0.4rem;
+      }
+      .scenario-col-label.pass { color: var(--color-success); }
+      .scenario-col-label.fail { color: #f87171; }
+      .scenario-verdict { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; }
+      .scenario-verdict.pass { color: var(--color-success); }
+      .scenario-verdict.fail { color: #f87171; }
+      .scenario-reason { font-size: 0.8rem; color: var(--color-text-dim); line-height: 1.5; font-family: var(--font-mono); }
+
+      @media (max-width: 640px) {
+        .scenario-body { grid-template-columns: 1fr; }
+        .scenario-col:first-child { border-right: none; border-bottom: 1px solid var(--color-border); }
+      }
+
+      /* FEATURES GRID */
+      .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1.25rem; margin-top: 2.5rem; }
+      .feature-card {
+        background: var(--color-surface); border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg); padding: 1.5rem;
+        transition: border-color 0.2s, background 0.2s;
+      }
+      .feature-card:hover { border-color: rgba(124,58,237,0.5); background: var(--color-surface-2); }
+      .feature-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+      .feature-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+      .feature-desc { font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.6; }
+
+      /* PIPELINE */
+      .pipeline { display: flex; flex-wrap: wrap; gap: 0; margin-top: 2.5rem; }
+      .pipeline-step {
+        flex: 1; min-width: 8rem; background: var(--color-surface);
+        border: 1px solid var(--color-border); padding: 1.25rem 1rem;
+        text-align: center; position: relative;
+      }
+      .pipeline-step:not(:last-child)::after {
+        content: '→'; position: absolute; right: -0.6rem; top: 50%;
+        transform: translateY(-50%); color: var(--color-accent); font-size: 1rem;
+        z-index: 1; background: var(--color-bg); padding: 0 0.1rem;
+      }
+      .pipeline-step:first-child { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+      .pipeline-step:last-child { border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+      .pipeline-num { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-accent-light); text-transform: uppercase; margin-bottom: 0.4rem; }
+      .pipeline-name { font-size: 0.875rem; font-weight: 700; }
+      .pipeline-desc { font-size: 0.75rem; color: var(--color-text-dim); margin-top: 0.2rem; }
+
+      /* CTA */
+      .cta-section {
+        text-align: center;
+        background: linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(124,58,237,0.03) 100%);
+        border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);
+      }
+
+      /* FOOTER */
+      footer {
+        padding: 2rem; text-align: center;
+        border-top: 1px solid var(--color-border);
+        color: var(--color-text-dim); font-size: 0.875rem;
+      }
+      footer a { color: var(--color-text-muted); text-decoration: none; }
+      footer a:hover { color: var(--color-text); }
+
+      /* RESPONSIVE */
+      @media (max-width: 640px) {
+        nav { padding: 0 1rem; }
+        .nav-links { display: none; }
+        .pipeline { flex-direction: column; }
+        .pipeline-step { border-radius: 0; }
+        .pipeline-step:first-child { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+        .pipeline-step:last-child { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+        .pipeline-step:not(:last-child)::after { content: '↓'; right: unset; top: unset; bottom: -0.65rem; left: 50%; transform: translateX(-50%); }
+        .hero-stats { gap: 1.5rem; }
+        .iron-rule { padding: 1.25rem 1.5rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <a href="/" class="nav-brand">Validation<span>Forge</span></a>
+      <ul class="nav-links">
+        <li><a href="/docs">Docs</a></li>
+        <li><a href="/installation">Install</a></li>
+        <li><a href="/commands">Commands</a></li>
+        <li><a href="/comparison">Comparison</a></li>
+        <li><a href="https://github.com/validationforge/validationforge" target="_blank" rel="noopener">GitHub ↗</a></li>
+      </ul>
+      <a href="/installation" class="nav-cta">Get Started</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">🔬 No-Mock Validation Platform</div>
+
+      <h1 class="hero-title">
+        Ship <em>verified</em> code,<br>not "it compiled" code
+      </h1>
+
+      <p class="hero-subtitle">
+        ValidationForge replaces mocks and guesswork with real evidence — actual builds,
+        actual interactions, actual proof your code works. End-to-end validation for
+        Claude Code and OpenCode.
+      </p>
+
+      <div class="hero-actions">
+        <a href="/installation" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+          Install ValidationForge
+        </a>
+        <a href="/quickstart" class="btn-secondary">
+          Quick Start Guide →
+        </a>
+      </div>
+
+      <div class="install-snippet">
+        <span class="prompt">$</span>
+        <code>curl -fsSL https://raw.githubusercontent.com/validationforge/validationforge/main/install.sh | bash</code>
+        <button onclick="navigator.clipboard.writeText('curl -fsSL https://raw.githubusercontent.com/validationforge/validationforge/main/install.sh | bash').then(() => { this.textContent = 'Copied!'; setTimeout(() => this.textContent = 'Copy', 2000); })">Copy</button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-value">41</div><div class="stat-label">Skills</div></div>
+        <div class="stat"><div class="stat-value">15</div><div class="stat-label">Commands</div></div>
+        <div class="stat"><div class="stat-value">7</div><div class="stat-label">Hooks</div></div>
+        <div class="stat"><div class="stat-value">5</div><div class="stat-label">Agents</div></div>
+        <div class="stat"><div class="stat-value">0</div><div class="stat-label">Mocks Ever</div></div>
+      </div>
+    </section>
+
+    <!-- IRON RULE -->
+    <div style="padding: 0 2rem;">
+      <div class="iron-rule">
+        <h3>⚡ The Iron Rule</h3>
+        <pre><span class="keyword">IF</span> the real system doesn't work, <span class="keyword">FIX THE REAL SYSTEM.</span>
+<span class="keyword">NEVER</span> create mocks, stubs, test doubles, or test files.
+<span class="keyword">ALWAYS</span> validate through the same interfaces real users experience.
+<span class="keyword">ALWAYS</span> capture evidence. <span class="keyword">ALWAYS</span> review evidence. <span class="keyword">ALWAYS</span> write verdicts.</pre>
+      </div>
+    </div>
+
+    <!-- WHY NOT MOCKS -->
+    <section style="background: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
+      <div class="container">
+        <p class="section-label">The Problem</p>
+        <h2 class="section-title">Why Not Unit Tests?</h2>
+        <p class="section-desc">
+          Unit tests verify code in isolation with mocks. Mocks drift from reality.
+          ValidationForge verifies <strong>systems in production</strong> through the same interfaces your users experience.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th>Unit Tests</th>
+                <th>ValidationForge</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>API field renamed (<code>users</code> → <code>data</code>)</td>
+                <td><span class="badge-pass">PASS</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(mock returns old field)</span></td>
+                <td><span class="badge-fail">FAIL</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(curl shows new field, frontend crashes)</span></td>
+              </tr>
+              <tr>
+                <td>JWT expiry reduced to 15 min</td>
+                <td><span class="badge-pass">PASS</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(mock time, never wait)</span></td>
+                <td><span class="badge-fail">FAIL</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(real token expires, refresh fails)</span></td>
+              </tr>
+              <tr>
+                <td>iOS deep link after nav refactor</td>
+                <td><span class="badge-pass">PASS</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(mock URL handler)</span></td>
+                <td><span class="badge-fail">FAIL</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(simctl openurl → wrong screen)</span></td>
+              </tr>
+              <tr>
+                <td>DB migration with duplicate emails</td>
+                <td><span class="badge-pass">PASS</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(clean in-memory DB)</span></td>
+                <td><span class="badge-fail">FAIL</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(real migration fails on duplicates)</span></td>
+              </tr>
+              <tr>
+                <td>CSS grid overflow on small screens</td>
+                <td><span class="badge-pass">PASS</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(no visual rendering)</span></td>
+                <td><span class="badge-fail">FAIL</span> <span style="color:var(--color-text-dim);font-size:0.8rem;">(Playwright screenshot shows overflow)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEMO: 5 SCENARIOS -->
+    <section id="demo">
+      <div class="container">
+        <p class="section-label">Live Demo</p>
+        <h2 class="section-title">5 bugs unit tests can't catch</h2>
+        <p class="section-desc">
+          Each scenario below has a green test suite and a broken app.
+          ValidationForge catches them all by validating the <em>real</em> system —
+          not an isolated mock.
+        </p>
+
+        <!-- Demo GIF placeholder — see demo/DEMO-SCENARIO.md for recording instructions -->
+        <div class="demo-gif-placeholder">
+          <div class="demo-gif-icon">🎬</div>
+          <div class="demo-gif-title">Demo GIF — Coming Soon</div>
+          <div class="demo-gif-note">
+            A 30-second recording showing ValidationForge catch the API field-rename bug
+            that 4 passing unit tests missed.
+          </div>
+          <a href="https://github.com/validationforge/validationforge/blob/main/demo/DEMO-SCENARIO.md" target="_blank" rel="noopener" class="demo-gif-link">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            View demo scenario script
+          </a>
+        </div>
+
+        <!-- 5 Scenario Cards -->
+        <div class="scenario-cards">
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">1</div>
+              <div class="scenario-title">API field renamed: <code style="font-size:0.8em;color:var(--color-accent-light)">users</code> → <code style="font-size:0.8em;color:var(--color-accent-light)">data</code></div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">Mock returns old field.<br>Nobody updated the Dashboard test mock.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">curl shows new field.<br>Frontend reads <code>.users</code> → undefined → crash.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">2</div>
+              <div class="scenario-title">JWT expiry reduced to 15 min</div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">Mocks time — never waits.<br>Token never actually expires in the test.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">Real token expires mid-session.<br>Refresh call fails — user is logged out.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">3</div>
+              <div class="scenario-title">iOS deep link after navigation refactor</div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">Mock URL handler returns expected screen.<br>Never runs the real nav stack.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">simctl openurl lands on wrong screen.<br>Screenshot shows Home, not Profile.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">4</div>
+              <div class="scenario-title">DB migration with duplicate emails</div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">Clean in-memory DB — no duplicates.<br>Migration runs fine on pristine data.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">Real DB has legacy dupes.<br>UNIQUE constraint fails on production data.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">5</div>
+              <div class="scenario-title">CSS grid overflow on small screens</div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">No visual rendering in test env.<br>Layout logic never exercised.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">Playwright screenshot shows overflow.<br>Content clips at 375px viewport.</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /scenario-cards -->
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section>
+      <div class="container">
+        <p class="section-label">What You Get</p>
+        <h2 class="section-title">Everything you need to validate real systems</h2>
+        <p class="section-desc">
+          41 skills, 15 commands, 7 hooks, and 5 agents — all wired together in a 7-phase pipeline
+          that catches what unit tests miss.
+        </p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🚫</div>
+            <div class="feature-title">No Mocks Ever</div>
+            <div class="feature-desc">Hooks block test file creation. Never create mocks, stubs, test doubles, or test files. Validate against the real system.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📸</div>
+            <div class="feature-title">Evidence-Based Verdicts</div>
+            <div class="feature-desc">Every PASS/FAIL cites specific evidence: screenshots, API logs, build output. No evidence = no verdict.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <div class="feature-title">7-Phase Pipeline</div>
+            <div class="feature-desc">Research → Plan → Preflight → Execute → Analyze → Verdict → Ship. Each phase gates the next.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💻</div>
+            <div class="feature-title">Multi-Platform</div>
+            <div class="feature-desc">iOS, Web, API, CLI, Fullstack, Design — auto-detect your platform and apply the right validators.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <div class="feature-title">Autonomous Fix Loop</div>
+            <div class="feature-desc">Don't just find defects — fix them and re-validate automatically. 3-strike discipline enforced.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">Benchmark Posture</div>
+            <div class="feature-desc">Grade your validation posture across Coverage, Evidence Quality, Enforcement, and Speed.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PIPELINE -->
+    <section style="background: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
+      <div class="container">
+        <p class="section-label">How It Works</p>
+        <h2 class="section-title">The 7-Phase Validation Pipeline</h2>
+        <p class="section-desc">A disciplined sequence that ensures every validation is reproducible and evidence-backed.</p>
+
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <div class="pipeline-num">Phase 0</div>
+            <div class="pipeline-name">Research</div>
+            <div class="pipeline-desc">Standards & criteria</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">Phase 1</div>
+            <div class="pipeline-name">Plan</div>
+            <div class="pipeline-desc">Journeys & PASS criteria</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">Phase 2</div>
+            <div class="pipeline-name">Preflight</div>
+            <div class="pipeline-desc">Build & services</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">Phase 3</div>
+            <div class="pipeline-name">Execute</div>
+            <div class="pipeline-desc">Real system journeys</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">Phase 4</div>
+            <div class="pipeline-name">Analyze</div>
+            <div class="pipeline-desc">Root cause investigation</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">Phase 5</div>
+            <div class="pipeline-name">Verdict</div>
+            <div class="pipeline-desc">PASS/FAIL with evidence</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-num">Phase 6</div>
+            <div class="pipeline-name">Ship</div>
+            <div class="pipeline-desc">Deploy decision</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <p class="section-label">Ready to ship verified code?</p>
+        <h2 class="section-title">Install in 30 seconds</h2>
+        <p class="section-desc" style="margin: 0 auto 2rem;">
+          One curl command installs all 41 skills, 15 commands, 7 hooks, and configures
+          your project for real-system validation.
+        </p>
+
+        <div class="hero-actions" style="justify-content: center; margin-bottom: 2rem;">
+          <a href="/installation" class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+            Installation Guide
+          </a>
+          <a href="https://github.com/validationforge/validationforge" target="_blank" rel="noopener" class="btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            View on GitHub
+          </a>
+        </div>
+
+        <div class="install-snippet" style="margin: 0 auto;">
+          <span class="prompt">$</span>
+          <code>curl -fsSL https://raw.githubusercontent.com/validationforge/validationforge/main/install.sh | bash</code>
+          <button onclick="navigator.clipboard.writeText('curl -fsSL https://raw.githubusercontent.com/validationforge/validationforge/main/install.sh | bash').then(() => { this.textContent = 'Copied!'; setTimeout(() => this.textContent = 'Copy', 2000); })">Copy</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>
+        ValidationForge &mdash;
+        <a href="https://github.com/validationforge/validationforge" target="_blank" rel="noopener">GitHub</a> &middot;
+        <a href="/docs">Documentation</a> &middot;
+        <a href="/comparison">Comparison</a>
+      </p>
+      <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+        Ship verified code, not "it compiled" code.
+      </p>
+    </footer>
+  </body>
+</html>

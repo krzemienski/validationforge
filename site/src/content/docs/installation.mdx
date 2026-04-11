@@ -1,0 +1,51 @@
+---
+title: Installation
+description: Install ValidationForge into your project
+---
+
+## Prerequisites
+
+- Claude Code (claude.ai/code)
+- A project with at least one runnable service
+
+## Installation
+
+### Method 1: Install Script
+
+Run the install script directly in your project:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/validationforge/validationforge/main/install.sh | bash
+```
+
+### Method 2: Clone and Install
+
+```bash
+git clone https://github.com/validationforge/validationforge.git
+cd validationforge
+./install.sh /path/to/your/project
+```
+
+## Initial Setup
+
+After installation, run setup to configure ValidationForge for your project:
+
+```
+/vf-setup
+```
+
+This will:
+1. Detect your project platform (iOS, Web, API, CLI, etc.)
+2. Install appropriate hooks
+3. Create the `e2e-evidence/` directory
+4. Configure enforcement level (strict/standard/permissive)
+
+## Verification
+
+Verify the installation by running a validation audit:
+
+```
+/validate-audit
+```
+
+This performs a read-only scan with no side effects.

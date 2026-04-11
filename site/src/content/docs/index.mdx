@@ -1,0 +1,40 @@
+---
+title: ValidationForge
+description: Ship verified code, not just compiled code. End-to-end validation for AI-assisted development.
+template: splash
+hero:
+  tagline: Ship verified code, not "it compiled" code
+  image:
+    file: ../../assets/hero.svg
+  actions:
+    - text: Get Started
+      link: /quickstart
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/validationforge/validationforge
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What is ValidationForge?
+
+ValidationForge is a no-mock validation platform for Claude Code. It replaces guesswork with real evidence — actual builds, actual interactions, actual proof your code works.
+
+## Key Features
+
+<CardGrid stagger>
+  <Card title="No Mocks Ever" icon="warning">
+    Never create test files, mocks, stubs, or test doubles. Validate against the real system.
+  </Card>
+  <Card title="Evidence-Based" icon="document">
+    Every PASS/FAIL cites specific evidence: screenshots, logs, API responses.
+  </Card>
+  <Card title="7-Phase Pipeline" icon="list-format">
+    Research → Plan → Preflight → Execute → Analyze → Verdict → Ship
+  </Card>
+  <Card title="Multi-Platform" icon="laptop">
+    iOS, Web, API, CLI, Fullstack — validate any platform with the right validator.
+  </Card>
+</CardGrid>

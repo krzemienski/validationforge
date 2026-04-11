@@ -1,0 +1,102 @@
+---
+title: Commands Reference
+description: Complete reference for all ValidationForge commands
+---
+
+## Validation Commands
+
+### `/validate`
+
+The full validation pipeline. Detects platform, plans journeys, runs preflight, executes, analyzes, and produces a verdict.
+
+```
+/validate
+```
+
+### `/validate-plan`
+
+Plan only — no execution. Useful for previewing what will be validated.
+
+```
+/validate-plan
+```
+
+### `/validate-audit`
+
+Read-only audit with severity classification. Does not modify any files or run services.
+
+```
+/validate-audit
+```
+
+### `/validate-fix`
+
+Fix FAIL verdicts and re-validate. Applies a 3-strike limit per journey.
+
+```
+/validate-fix
+```
+
+### `/validate-ci`
+
+Non-interactive CI/CD mode. Returns exit code 0 for PASS, 1 for FAIL.
+
+```
+/validate-ci
+```
+
+### `/validate-team`
+
+Multi-agent parallel platform validation. Spawns specialized validators per platform.
+
+```
+/validate-team
+```
+
+### `/validate-sweep`
+
+Autonomous fix-and-revalidate loop until all journeys PASS or max attempts reached.
+
+```
+/validate-sweep
+```
+
+### `/validate-benchmark`
+
+Measure validation posture across four dimensions: Coverage, Evidence Quality, Enforcement, Speed.
+
+```
+/validate-benchmark
+```
+
+## Setup Commands
+
+### `/vf-setup`
+
+Initialize ValidationForge for the current project. Detects platform, installs hooks, creates evidence directory.
+
+```
+/vf-setup
+```
+
+## Forge Commands
+
+### `/forge-setup`
+
+Initialize a new build task with spec and plan.
+
+### `/forge-plan`
+
+Plan implementation phases and subtasks.
+
+### `/forge-execute`
+
+Execute the current build plan.
+
+### `/forge-team`
+
+Multi-agent parallel build execution.
+
+### `/forge-benchmark`
+
+Measure build quality and delivery speed.
