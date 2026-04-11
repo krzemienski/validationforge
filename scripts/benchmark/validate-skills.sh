@@ -28,9 +28,12 @@ for skill_dir in "$SKILLS_DIR"/*/; do
   fi
 
   # Extract frontmatter fields
-  fm_name=$(grep -m1 '^name:' "$skill_file" 2>/dev/null | sed 's/^name:\s*//' | tr -d '"' | tr -d "'" | xargs)
-  fm_desc=$(grep -m1 '^description:' "$skill_file" 2>/dev/null | sed 's/^description:\s*//' | tr -d '"' | tr -d "'")
-  fm_priority=$(grep -m1 '^context_priority:' "$skill_file" 2>/dev/null | sed 's/^context_priority:\s*//' | tr -d '"' | tr -d "'" | xargs)
+  # Extract frontmatter fields (pipefail-safe)
+  set +o pipefail
+  fm_name=$(grep -m1 '^name:' "$skill_file" 2>/dev/null | sed 's/^name:\s*//' | tr -d '"' | tr -d "'" | xargs || true)
+  fm_desc=$(grep -m1 '^description:' "$skill_file" 2>/dev/null | sed 's/^description:\s*//' | tr -d '"' | tr -d "'" || true)
+  fm_priority=$(grep -m1 '^context_priority:' "$skill_file" 2>/dev/null | sed 's/^context_priority:\s*//' | tr -d '"' | tr -d "'" | xargs || true)
+  set -o pipefail
 
   issues=""
 
