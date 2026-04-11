@@ -32,6 +32,7 @@ No-mock validation platform for Claude Code. Ship verified code, not "it compile
 1. PLAN       → Journeys, PASS criteria, evidence requirements
 2. PREFLIGHT  → Build compiles, services running, MCP servers available
 3. EXECUTE    → Run journeys against real system, capture evidence
+3.5 AI ANALYZE → Vision + LLM analysis of captured evidence, confidence scores per item
 4. ANALYZE    → Root cause investigation for FAILs (sequential thinking)
 5. VERDICT    → Evidence-backed PASS/FAIL per journey, unified report
 6. SHIP       → Production readiness audit, deploy decision
@@ -133,7 +134,7 @@ vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, va
 **Forge Commands**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, forge-install-rules
 
-### Skills (45)
+### Skills (46)
 
 **Platform Validation (15)**
 ios-validation, ios-validation-gate, ios-validation-runner, ios-simulator-control, playwright-validation, web-validation, web-testing, chrome-devtools, api-validation, cli-validation, fullstack-validation, react-native-validation, flutter-validation, django-validation, rust-cli-validation
@@ -144,8 +145,8 @@ functional-validation, gate-validation-discipline, no-mocking-validation-gates, 
 **Design Validation (4)**
 design-validation, design-token-audit, stitch-integration, visual-inspection
 
-**Analysis & Research (3)**
-sequential-analysis, research-validation, retrospective-validation
+**Analysis & Research (4)**
+sequential-analysis, research-validation, retrospective-validation, ai-evidence-analysis
 
 **Specialized (6)**
 accessibility-audit, responsive-validation, parallel-validation, e2e-testing, e2e-validate, create-validation-plan

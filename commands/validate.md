@@ -21,6 +21,8 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 /validate --fix                    # Alias for /validate-fix (fix failures + re-validate)
 /validate --report                 # After validation, open a visual HTML dashboard in the browser
 /validate --clean                  # Remove old evidence before validating
+/validate --ai-analysis            # Enable AI analysis of captured evidence (overrides config)
+/validate --no-ai-analysis         # Disable AI analysis for this run (overrides config)
 ```
 
 ## Supported Flags
@@ -34,8 +36,8 @@ Run the full ValidationForge validation pipeline. Detects your platform, maps us
 | `--fix` | off | After validation, automatically fix FAILs and re-validate (3-strike limit) |
 | `--report` | off | After validation, generate and open a visual HTML dashboard in the default browser |
 | `--clean` | off | Remove evidence older than configured retention period before running validation |
-| `--report` | off | After validation, generate and open a visual HTML dashboard in the default browser |
-| `--clean` | off | Remove evidence older than configured retention period before running validation |
+| `--ai-analysis` | config | Enable AI analysis of captured evidence. Overrides `ai_analysis.enabled` in config for this run. Set `VF_AI_ANALYSIS=disabled` to disable globally. |
+| `--no-ai-analysis` | config | Disable AI analysis for this run. Overrides `ai_analysis.enabled` in config. Useful for offline or cost-sensitive environments. |
 
 ## Pre-Pipeline: Read Config
 
@@ -64,14 +66,46 @@ else
   PLATFORM="${FLAG_PLATFORM:-}"
 fi
 
+# AI analysis toggle — env var takes highest precedence, then --ai-analysis/--no-ai-analysis flags, then config
+AI_ANALYSIS_ENABLED="true"  # default: enabled
+if [ "${VF_AI_ANALYSIS:-}" = "disabled" ]; then
+  AI_ANALYSIS_ENABLED="false"
+elif [ -n "${FLAG_NO_AI_ANALYSIS:-}" ]; then
+  AI_ANALYSIS_ENABLED="false"
+elif [ -n "${FLAG_AI_ANALYSIS:-}" ]; then
+  AI_ANALYSIS_ENABLED="true"
+elif [ -f "$CONFIG_FILE" ]; then
+  AI_ANALYSIS_ENABLED=$(jq -r '.ai_analysis.enabled // true | if . then "true" else "false" end' "$CONFIG_FILE" 2>/dev/null)
+fi
+
 # Print active config summary when VF_VERBOSE is set
 if [ -n "${VF_VERBOSE:-}" ]; then
-  echo "[vf] Config: enforcement=${ENFORCEMENT} | evidence_dir=${EVIDENCE_DIR} | platform=${PLATFORM:-auto-detect}"
+  echo "[vf] Config: enforcement=${ENFORCEMENT} | evidence_dir=${EVIDENCE_DIR} | platform=${PLATFORM:-auto-detect} | ai_analysis=${AI_ANALYSIS_ENABLED}"
 fi
 ```
 
 > **Note:** If `~/.claude/.vf-config.json` is missing, defaults apply automatically:
 > `enforcement: standard`, `evidence_dir: e2e-evidence/`. Run `/vf-setup` to create a config.
+
+### AI Analysis Environment Variable
+
+`VF_AI_ANALYSIS=disabled` — Set this environment variable to globally disable AI analysis of captured evidence for all runs in the current shell session. This takes highest precedence over all flags and config settings. Useful for offline environments, CI pipelines where AI calls are cost-prohibitive, or when the analysis model is unavailable.
+
+```bash
+# Disable AI analysis for the entire session
+export VF_AI_ANALYSIS=disabled
+/validate
+
+# Disable AI analysis for a single run only
+VF_AI_ANALYSIS=disabled /validate
+```
+
+Priority order (highest to lowest):
+1. `VF_AI_ANALYSIS=disabled` env var
+2. `--no-ai-analysis` flag (disable for this run)
+3. `--ai-analysis` flag (enable for this run)
+4. `ai_analysis.enabled` in `~/.claude/.vf-config.json`
+5. Default: enabled
 
 ## Pre-Pipeline: Evidence Cleanup (--clean)
 
@@ -239,6 +273,7 @@ For each approved journey:
 2. Perform real interactions with the running system
 3. Capture evidence via the `evidence-capturer` agent at every state transition
 4. Save all evidence to `e2e-evidence/` with descriptive filenames
+4b. **AI Analysis (optional):** If `ai_analysis.enabled` is `true` (and `VF_AI_ANALYSIS` is not `disabled`), invoke the `ai-evidence-analysis` skill on each captured evidence file. The skill assigns a confidence score (0–100) and produces structured findings (e.g., page load completeness for screenshots, schema compliance for API responses, error indicators for CLI output). Analysis results are saved alongside evidence as `e2e-evidence/{journey}/ai-analysis-step-NN-{description}.json` and tagged `ai_analyzed: true` in the evidence inventory. Skip this step when `AI_ANALYSIS_ENABLED="false"`.
 5. Never skip a journey — run all, report all
 
 ### Phase 4: ANALYZE

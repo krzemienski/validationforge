@@ -28,5 +28,10 @@
   "telemetry": {
     "enabled": false,
     "endpoint": "https://telemetry.validationforge.dev/events"
+  },
+  "ai_analysis": {
+    "enabled": true,
+    "model": "auto",
+    "skip_on_offline": true
   }
 }
