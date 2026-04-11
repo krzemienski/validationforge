@@ -33,3 +33,8 @@ workdirs/
 logs/security/
 .claude/
 .sisyphus/
+
+# Team dashboard runtime-generated output files (not for source control)
+.vf/team/snapshot.json
+.vf/team/dashboard.md
+.vf/team/dashboard.html

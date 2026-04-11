@@ -4,6 +4,7 @@ description: >
   React Native platform validation through Metro bundler startup, Expo/RN CLI
   build and launch, screenshot capture, log streaming, and deep link testing.
   Validates both iOS and Android targets via simulator/emulator or real device.
+context_priority: standard
 ---
 
 # React Native Validation

@@ -21,6 +21,7 @@ No-mock validation platform for Claude Code. Ship verified code, not "it compile
 /validate-fix                # Fix FAIL verdicts and re-validate (3-strike limit)
 /validate-ci                 # Non-interactive CI/CD mode with exit codes
 /validate-team               # Multi-agent parallel platform validation
+/validate-team-dashboard     # Aggregate team validation posture dashboard
 /validate-sweep              # Autonomous fix-and-revalidate loop until PASS
 /validate-benchmark          # Measure validation posture (coverage, evidence, enforcement, speed)
 ```
@@ -126,10 +127,10 @@ History tracked in `.vf/benchmarks/`.
 
 ## Inventory
 
-### Commands (15)
+### Commands (16)
 
 **Validation Commands**
-vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-sweep, validate-benchmark
+vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-team-dashboard, validate-sweep, validate-benchmark
 
 **Forge Commands**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, forge-install-rules
@@ -154,8 +155,8 @@ accessibility-audit, responsive-validation, parallel-validation, e2e-testing, e2
 **Operational (5)**
 baseline-quality-assessment, condition-based-waiting, error-recovery, production-readiness-audit, full-functional-audit
 
-**Forge Orchestration (6)**
-forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, validate-audit-benchmarks
+**Forge Orchestration (7)**
+forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, validate-audit-benchmarks, team-validation-dashboard
 
 ### Agents (5)
 
