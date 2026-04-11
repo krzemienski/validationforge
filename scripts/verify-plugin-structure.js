@@ -69,8 +69,8 @@ function listSubdirs(dir) {
 // Each check: { label, run(root) → { passed, detail } }
 
 const EXPECTED = {
-  SKILLS: 45,
-  COMMANDS: 15,
+  SKILLS: 48,
+  COMMANDS: 17,
   AGENTS: 5,
   RULES: 8,
   HOOKS_JS: 9,
@@ -117,7 +117,7 @@ const checks = [
 
   // 2. skills/ — 45 directories each containing SKILL.md
   {
-    label: 'skills/ (45 dirs with SKILL.md)',
+    label: 'skills/ (48 dirs with SKILL.md)',
     run(root) {
       const skillsDir = path.join(root, 'skills');
       const subdirs = listSubdirs(skillsDir);
@@ -145,7 +145,7 @@ const checks = [
 
   // 3. commands/ — 15 .md files
   {
-    label: 'commands/ (15 .md files)',
+    label: 'commands/ (17 .md files)',
     run(root) {
       const commandsDir = path.join(root, 'commands');
       const files = listMatching(commandsDir, f => f.endsWith('.md'));
