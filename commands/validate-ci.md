@@ -54,6 +54,38 @@ fi
 
 > **Note:** In CI mode, a missing `~/.claude/.vf-config.json` is a **warning, not a failure** — defaults apply and the pipeline continues. Run `/vf-setup` locally and commit the resulting config to avoid this warning in future runs.
 
+## Telemetry
+
+After reading config, resolve the telemetry script path and emit a `command.invoked` event to record that `/validate-ci` was started. All telemetry calls use `2>/dev/null || true` so they never block or fail the pipeline.
+
+```bash
+# Resolve plugin install directory (same pattern as vf-setup.md Step 4)
+CONFIG_FILE="$HOME/.claude/.vf-config.json"
+INSTALL_DIR=""
+
+if [ -f "$CONFIG_FILE" ]; then
+  INSTALL_DIR=$(jq -r '.installDir // empty' "$CONFIG_FILE" 2>/dev/null)
+fi
+
+# Fall back to CLAUDE_PLUGIN_ROOT, then to the default install path used by install.sh
+INSTALL_DIR="${INSTALL_DIR:-${CLAUDE_PLUGIN_ROOT:-${HOME}/.claude/plugins/validationforge}}"
+TELEMETRY_SH="${INSTALL_DIR}/scripts/telemetry.sh"
+
+# Emit command.invoked at pipeline start
+"${TELEMETRY_SH}" command.invoked command=validate-ci 2>/dev/null || true
+```
+
+At the end of the pipeline, emit `validation.verdict` with the final outcome:
+
+```bash
+# Set VERDICT to "pass" or "fail" based on the report outcome
+# VERDICT="pass"   # if all journeys passed
+# VERDICT="fail"   # if any journey failed
+"${TELEMETRY_SH}" validation.verdict verdict="${VERDICT}" 2>/dev/null || true
+```
+
+> **Note:** Telemetry failures are always silent in CI mode — the `2>/dev/null || true` guard ensures no telemetry error can affect exit codes or break the pipeline. Telemetry is only transmitted when the user opted in during `/vf-setup`. See [PRIVACY.md](../PRIVACY.md) for full details on what is and is not collected.
+
 ## Differences from `/validate`
 
 | Behavior | `/validate` | `/validate-ci` |

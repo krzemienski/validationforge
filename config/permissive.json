@@ -24,5 +24,9 @@
     "mock-detection": "warn",
     "validation-state-tracker": "warn",
     "evidence-quality-check": "disabled"
+  },
+  "telemetry": {
+    "enabled": false,
+    "endpoint": "https://telemetry.validationforge.dev/events"
   }
 }

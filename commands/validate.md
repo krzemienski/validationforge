@@ -129,6 +129,60 @@ trap 'rm -f "$LOCK_FILE"; echo "[vf] Lock released: $LOCK_FILE"' EXIT
 > exits — whether it completes successfully, encounters an error, or is interrupted. The `trap EXIT`
 > handler guarantees cleanup even on unexpected termination. If a stale lock exists from a crashed
 > session, remove it manually with `rm .vf/state/validation-in-progress.lock`.
+## Telemetry
+
+After reading config, resolve the telemetry script path and emit a `command.invoked` event to record that `/validate` was started. All telemetry calls use `2>/dev/null || true` so they never block or fail the pipeline.
+
+```bash
+# Resolve plugin install directory (same pattern as vf-setup.md Step 4)
+CONFIG_FILE="$HOME/.claude/.vf-config.json"
+INSTALL_DIR=""
+
+if [ -f "$CONFIG_FILE" ]; then
+  INSTALL_DIR=$(jq -r '.installDir // empty' "$CONFIG_FILE" 2>/dev/null)
+fi
+
+# Fall back to CLAUDE_PLUGIN_ROOT, then to the default install path used by install.sh
+INSTALL_DIR="${INSTALL_DIR:-${CLAUDE_PLUGIN_ROOT:-${HOME}/.claude/plugins/validationforge}}"
+TELEMETRY_SH="${INSTALL_DIR}/scripts/telemetry.sh"
+
+# Emit command.invoked at pipeline start
+"${TELEMETRY_SH}" command.invoked command=validate 2>/dev/null || true
+```
+
+After Phase 0 (platform detection) resolves the platform, emit `platform.detected`:
+
+```bash
+# After platform is detected — ${PLATFORM} holds the resolved platform value
+"${TELEMETRY_SH}" platform.detected platform="${PLATFORM}" 2>/dev/null || true
+```
+
+After each major pipeline phase completes, emit `pipeline.phase.completed`:
+
+```bash
+# After PREFLIGHT phase completes
+"${TELEMETRY_SH}" pipeline.phase.completed phase=preflight 2>/dev/null || true
+
+# After PLAN phase completes
+"${TELEMETRY_SH}" pipeline.phase.completed phase=plan 2>/dev/null || true
+
+# After EXECUTE phase completes
+"${TELEMETRY_SH}" pipeline.phase.completed phase=execute 2>/dev/null || true
+
+# After REPORT phase completes
+"${TELEMETRY_SH}" pipeline.phase.completed phase=report 2>/dev/null || true
+```
+
+At the end of the pipeline, emit `validation.verdict` with the final outcome:
+
+```bash
+# Set VERDICT to "pass" or "fail" based on the report outcome
+# VERDICT="pass"   # if all journeys passed
+# VERDICT="fail"   # if any journey failed
+"${TELEMETRY_SH}" validation.verdict verdict="${VERDICT}" 2>/dev/null || true
+```
+
+> **Note:** Telemetry is only transmitted when the user opted in during `/vf-setup`. The `2>/dev/null || true` guard ensures telemetry failures never interrupt validation. See [PRIVACY.md](../PRIVACY.md) for full details on what is and is not collected.
 
 ## Enforcement Level Behavior
 
@@ -198,7 +252,6 @@ Invoke the `verdict-writer` agent to:
 4. Aggregate into a final report at `e2e-evidence/report.md`
 5. Print summary to stdout
 
-<<<<<<< HEAD
 Never produce a partial verdict — wait for ALL validators before writing the report.
 
 After VERDICT completes, the lock file (`.vf/state/validation-in-progress.lock`) is released via the `trap EXIT` handler registered during pipeline startup.
