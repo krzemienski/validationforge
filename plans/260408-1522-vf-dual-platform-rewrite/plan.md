@@ -1,12 +1,14 @@
 ---
 title: VF Dual-Platform Audit Rewrite
-status: planned
+status: retired
 created: 2026-04-08
 branch: audit/plugin-improvements
 mode: hard
 blockedBy: [260409-0432-merge-campaign-continuation, 260411-2242-vf-gap-closure]
 blocks: []
-triage_pending: true
+triage_pending: false
+retired_date: 2026-04-11
+retired_reason: Superseded by merge campaign; 15 findings triaged (9 resolved, 3 debt, 3 obsolete)
 triage_plan: plans/260411-2242-vf-gap-closure/plan.md
 triage_phase: Phase 8
 note: 15 red-team findings pending triage in gap closure plan. On completion, status will become `retired` or findings will be split into new plans.

@@ -367,3 +367,25 @@ Two options:
 npm run build:patterns
 ```
 This regenerates `hooks/patterns.js`. The file is marked `AUTO-GENERATED` — do not edit it directly.
+
+## X. Inherited from Plan 260408-1522 (Dual-Platform Audit)
+
+### X.1 Duplicate enforcement patterns (H7 from plan 260408-1522)
+62 regex patterns hardcoded identically in hooks/ JS files AND patterns.ts.
+Drift risk on every update.
+**Severity:** HIGH
+**Fix:** Consolidate into single source (patterns.ts, with JS compile step)
+**Owner:** Future plan
+
+### X.2 Shell script side effects (H8 from plan 260408-1522)
+install.sh, uninstall.sh, health-check.sh have unaudited filesystem side
+effects on user's ~/.claude directory.
+**Severity:** HIGH
+**Fix:** Add dry-run mode, URL scheme whitelist, input validation
+**Owner:** Future plan
+
+### X.3 shell.env hook validity (M13 from plan 260408-1522)
+Hook shell.env handling never verified across bash 3.2 (macOS) and bash 5+.
+**Severity:** MEDIUM
+**Fix:** Cross-platform smoke test
+**Owner:** Future plan
