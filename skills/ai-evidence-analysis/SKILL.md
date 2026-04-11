@@ -4,6 +4,7 @@ description: >
   AI-powered analysis of validation evidence using vision models for screenshots
   and LLM analysis for API responses and CLI output. Produces confidence scores
   (0-100) and structured findings per evidence item to augment human review.
+context_priority: standard
 triggers:
   - "analyze evidence"
   - "AI evidence analysis"
