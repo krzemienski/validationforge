@@ -1,9 +1,12 @@
 ---
 name: no-mocking-validation-gates
-description: >
-  Enforces the Iron Rule: never create mocks, stubs, test doubles, or test files.
-  Detects mock-creation intent and redirects to real system validation. Works with
-  pre-tool-use hooks to block test file creation at the enforcement layer.
+description: "Iron rule: no mocks/stubs/test files. Hook blocks *.test.ts, __tests__/, jest.mock(), etc. When mocking tempts: diagnose why real system unavailable, fix it, validate real system instead."
+triggers:
+  - "block test file"
+  - "mock detection"
+  - "prevent mocking"
+  - "test double elimination"
+  - "real system validation redirect"
 context_priority: critical
 ---
 

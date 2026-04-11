@@ -1,6 +1,6 @@
 ---
 name: playwright-validation
-description: Browser-based validation using Playwright MCP — real browser interaction, evidence capture
+description: "Validate web features via real browser interaction: screenshots, DOM snapshots, form testing, responsive layouts, console/network error detection. Use for feature verification and evidence capture."
 triggers:
   - "playwright validation"
   - "browser validation"

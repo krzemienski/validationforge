@@ -1,6 +1,6 @@
 ---
 name: build-quality-gates
-description: Multi-stage build quality enforcement — compile, lint, type-check, bundle analysis
+description: "4-stage pipeline: compile, lint, type-check, bundle. Each gate PASS required before next. Build gates are necessary NOT sufficient—functional validation still required. Use pre-deploy, pre-PR."
 triggers:
   - "build quality"
   - "quality gates"

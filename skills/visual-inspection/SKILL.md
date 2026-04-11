@@ -1,6 +1,6 @@
 ---
 name: visual-inspection
-description: Evidence-based visual inspection of running UIs — captures what IS, not what SHOULD BE
+description: "Capture rendered UI state via screenshots across breakpoints, modes, edge cases. Use before claiming frontend work done, validating responsive layouts, dark/light modes, empty/error/loading states."
 triggers:
   - "visual inspection"
   - "check the UI"

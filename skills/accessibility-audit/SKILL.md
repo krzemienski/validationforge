@@ -1,6 +1,6 @@
 ---
 name: accessibility-audit
-description: Deep WCAG 2.1 AA accessibility audit with Lighthouse, keyboard navigation, and screen reader validation
+description: "Audit WCAG 2.1 AA compliance across 4 layers (Lighthouse, keyboard nav, screen reader, contrast). Use before public release, after UI changes, or on a11y complaints."
 triggers:
   - "accessibility audit"
   - "a11y audit"

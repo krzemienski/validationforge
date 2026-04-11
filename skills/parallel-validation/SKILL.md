@@ -1,6 +1,6 @@
 ---
 name: parallel-validation
-description: Orchestrate multiple validation agents in parallel across independent journeys or platforms
+description: "Multi-agent parallel validation: iOS+Web+API simultaneously on independent journeys. Strict file ownership prevents conflicts. Verdict aggregation: any FAIL=FAIL. Use for large apps, CI/CD, multi-platform."
 triggers:
   - "parallel validation"
   - "validate in parallel"

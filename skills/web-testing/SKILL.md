@@ -1,6 +1,6 @@
 ---
 name: web-testing
-description: Comprehensive web validation strategy — integration, E2E, accessibility, performance, security
+description: "5-layer web validation: integration (APIs), E2E (journeys), accessibility (WCAG), performance (Core Web Vitals), security (OWASP). Decide which layers a feature needs. Real systems only—no mocks."
 triggers:
   - "web testing strategy"
   - "web validation strategy"

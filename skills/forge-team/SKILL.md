@@ -1,6 +1,6 @@
 ---
 name: forge-team
-description: Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership.
+description: "Multi-agent parallel validation with wave-based dependencies: DB/Design → API → Web/iOS. Each validator owns isolated evidence directory. Blocks downstream on upstream failure. Use for fullstack."
 context_priority: reference
 ---
 

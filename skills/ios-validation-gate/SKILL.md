@@ -1,6 +1,6 @@
 ---
 name: ios-validation-gate
-description: Three-gate iOS validation — Simulator, Backend, Analysis — all must PASS
+description: "Three-gate iOS enforcement: Simulator (build/install/launch/screenshot/a11y) + Backend (health/endpoints/responses) + Analysis (logs/correlation). ALL gates must PASS. Use after each iOS feature."
 triggers:
   - "ios validation gate"
   - "ios gate"

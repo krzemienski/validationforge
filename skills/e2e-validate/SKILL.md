@@ -1,9 +1,12 @@
 ---
 name: e2e-validate
-description: >
-  Full end-to-end validation orchestrator. Detects platform, maps user journeys,
-  defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks.
-  Supports iOS, React Native, Flutter, web, API, CLI, Django/Flask, and fullstack projects.
+description: "Orchestrator: detect platform → map journeys → PASS criteria → capture evidence → verdicts (zero mocks). Supports iOS/RN/Flutter/web/API/CLI/Django/fullstack. Bottom-up order, 3-strike fix loop."
+triggers:
+  - "end to end validation"
+  - "full validation pipeline"
+  - "orchestrate validation"
+  - "platform detection"
+  - "validation orchestration"
 context_priority: critical
 ---
 

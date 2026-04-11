@@ -1,9 +1,6 @@
 ---
 name: fullstack-validation
-description: >
-  Fullstack validation using strict bottom-up approach: Database -> API -> Frontend.
-  Validates each layer independently, then tests integration across the entire stack.
-  References api-validation and web-validation skills for layer-specific procedures.
+description: "Validate fullstack bottom-up: DB schema/data → API CRUD → frontend rendering → integration (create→read→update→delete across layers). Use for multi-layer projects; proves data flows end-to-end."
 context_priority: standard
 ---
 

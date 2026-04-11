@@ -1,6 +1,6 @@
 ---
 name: sequential-analysis
-description: Systematic root cause analysis for validation failures using step-by-step reasoning
+description: "Root cause analysis for FAIL verdicts: structured hypothesis testing, evidence investigation, sequential thinking. Use when validation fails unexpectedly, errors are ambiguous, or journeys share causes."
 triggers:
   - "sequential analysis"
   - "root cause analysis"

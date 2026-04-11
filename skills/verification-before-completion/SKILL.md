@@ -1,9 +1,13 @@
 ---
 name: verification-before-completion
-description: >
-  Prevents premature completion claims by requiring personally examined evidence,
-  specific citations, and criteria matching before marking any task complete.
-  Use whenever completing tasks, closing gates, reporting to leads, or merging code.
+description: "Block premature completion: require personally examined evidence, specific citations, criteria matching, regression checks, final state capture. Use before marking tasks done, closing gates, merging code."
+triggers:
+  - "verification before completion"
+  - "complete task"
+  - "close gate"
+  - "mark done"
+  - "evidence checklist"
+  - "can i ship this"
 context_priority: critical
 ---
 

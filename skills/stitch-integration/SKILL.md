@@ -1,6 +1,6 @@
 ---
 name: stitch-integration
-description: Stitch MCP workflow for design generation, iteration, and design-to-code validation
+description: "Generate reference designs via Stitch MCP, iterate variants, persist projects and design tokens. Use when starting UI features, exploring options before code, or validating implementation fidelity."
 triggers:
   - "stitch integration"
   - "stitch design"

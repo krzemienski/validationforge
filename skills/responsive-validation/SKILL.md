@@ -1,6 +1,6 @@
 ---
 name: responsive-validation
-description: Systematic viewport matrix testing with device-specific validation checks
+description: "Validate layouts across 8 device viewports (375px–1920px): layout, touch targets, typography, content parity, orientation, overflow. Use after responsive redesigns, CSS refactors, mobile launches."
 triggers:
   - "responsive validation"
   - "responsive testing"

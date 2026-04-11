@@ -1,8 +1,12 @@
 ---
 name: create-validation-plan
-description: >
-  Generates a structured validation plan with PASS criteria for every user journey
-  before any evidence is captured. Plans define what success looks like upfront.
+description: "Create BEFORE evidence capture. Defines PASS criteria per journey (P0/P1/P2 priority). Maps routes/endpoints/screens, orders by dependency, checks prerequisites. Use when starting validation."
+triggers:
+  - "validation plan generation"
+  - "journey discovery"
+  - "pass criteria definition"
+  - "validation strategy planning"
+  - "upfront planning before execution"
 context_priority: critical
 ---
 

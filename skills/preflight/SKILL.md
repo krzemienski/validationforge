@@ -1,9 +1,6 @@
 ---
 name: preflight
-description: >
-  Pre-execution checklist before starting any validation. Ensures prerequisites
-  are met: servers running, databases seeded, tools available. Auto-fixes common
-  failures. Saves preflight report to e2e-evidence/.
+description: "Run before validation to detect missing dependencies, dead servers, unseeded databases. Auto-fixes common failures, produces CLEAR/BLOCKED/WARN verdict. Prevents mid-validation debugging cycles."
 context_priority: critical
 ---
 

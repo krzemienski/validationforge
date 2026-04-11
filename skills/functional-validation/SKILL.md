@@ -1,9 +1,6 @@
 ---
 name: functional-validation
-description: >
-  Enforces end-user perspective validation through real system execution. Never
-  write mocks or test files. Validate via simulator, browser, CLI, or cURL.
-  Covers iOS, Web, API, CLI, and Full-Stack with evidence-based PASS/FAIL.
+description: "Build & validate real systems (iOS, Web, API, CLI, fullstack)—never mocks or test files. Capture evidence from browser, simulator, CLI, cURL. Platform detection, 4-step protocol, verdict with evidence."
 context_priority: critical
 ---
 

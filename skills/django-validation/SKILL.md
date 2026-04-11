@@ -1,9 +1,12 @@
 ---
 name: django-validation
-description: >
-  Django and Flask web application validation through server startup, database
-  migration verification, curl endpoint testing, and Django admin checks.
-  Captures HTTP responses, migration status, and server logs as evidence.
+description: "Django/Flask validation: dependencies → system check → migrations → server startup → health/CRUD endpoints → auth flows → admin check. Uses curl, captures HTTP/migrations/logs. Also Flask+Gunicorn."
+triggers:
+  - "django framework testing"
+  - "flask validation"
+  - "django server check"
+  - "migration validation"
+  - "django endpoint testing"
 context_priority: standard
 ---
 

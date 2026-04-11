@@ -1,9 +1,12 @@
 ---
 name: error-recovery
-description: >
-  Structured 3-strike error recovery during validation. When validation fails,
-  diagnoses root cause, applies fix, and re-validates. Use when any validation
-  step fails, builds break, runtime crashes, or network/auth/database errors occur.
+description: "3-strike recovery: strike 1 (targeted fix, same step), strike 2 (alt tool/path), strike 3 (rethink assumptions). Never mock; fix real cause. Use on build fails, crashes, network/auth/DB errors, flaky flows."
+triggers:
+  - "error recovery protocol"
+  - "fix validation failures"
+  - "3 strike protocol"
+  - "recover from failure"
+  - "diagnose root cause"
 context_priority: critical
 ---
 

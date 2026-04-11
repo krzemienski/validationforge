@@ -1,9 +1,12 @@
 ---
 name: condition-based-waiting
-description: >
-  Smart waiting strategies for async operations during validation. Waits for
-  specific conditions rather than arbitrary sleep durations. Every wait has
-  a timeout, a condition, and a failure path.
+description: "Wait for conditions, not time: HTTP health polls, port availability, file existence, process readiness, browser content, iOS simulator, DB ready, log patterns. Every wait must timeout. Never bare sleep."
+triggers:
+  - "wait for server"
+  - "async operation"
+  - "service readiness"
+  - "health check polling"
+  - "timeout handling"
 context_priority: standard
 ---
 

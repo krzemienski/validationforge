@@ -1,8 +1,13 @@
 ---
 name: web-validation
-description: >
-  Web platform validation through browser automation (Playwright MCP or Chrome DevTools MCP).
-  Captures screenshots, console logs, network responses, and DOM snapshots as evidence.
+description: "Web validation via browser automation: health checks, screenshots at 375/768/1920px, form testing, console/network validation. Detects CORS, hydration, CSS issues. PASS: no console errors, <3s load."
+triggers:
+  - "web validation"
+  - "browser automation"
+  - "playwright validation"
+  - "web testing"
+  - "validate web app"
+  - "screenshot test"
 context_priority: standard
 ---
 

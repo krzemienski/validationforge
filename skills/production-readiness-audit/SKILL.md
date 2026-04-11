@@ -1,6 +1,6 @@
 ---
 name: production-readiness-audit
-description: Systematic audit of application readiness for production deployment
+description: "Audit app readiness across 8 phases: code quality, security, performance, reliability, observability, documentation, deployment. Produces READY/NOT READY/CONDITIONAL verdict with blocking issues."
 triggers:
   - "production readiness"
   - "deploy audit"

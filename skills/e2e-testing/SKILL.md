@@ -1,6 +1,6 @@
 ---
 name: e2e-testing
-description: End-to-end validation patterns — journey design, evidence management, flaky flow handling
+description: "E2E patterns: journey design (one goal per journey, precondition→action→assertion), evidence management (step-NN naming, inventory), flaky flow diagnosis (3 runs, capture delta, fix root)."
 triggers:
   - "e2e testing patterns"
   - "end to end patterns"

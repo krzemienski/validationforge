@@ -1,6 +1,6 @@
 ---
 name: retrospective-validation
-description: Validate methodologies and approaches using historical evidence and past results
+description: "Assess if validation methodology worked: analyze past results, deployments, incidents. Calculates false PASS/FAIL rates, revert frequency, confidence score. Recommends process changes."
 triggers:
   - "retrospective validation"
   - "validate methodology"

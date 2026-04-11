@@ -1,6 +1,6 @@
 ---
 name: forge-setup
-description: Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture.
+description: "Initialize ValidationForge: detect platforms, scaffold .validationforge/ + e2e-evidence/, install rules, configure enforcement (strict/standard/permissive). Run first on any new project."
 context_priority: reference
 ---
 

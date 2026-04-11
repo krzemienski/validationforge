@@ -1,6 +1,6 @@
 ---
 name: ios-validation-runner
-description: Five-phase iOS validation with video recording, log streaming, and evidence collection
+description: "Five-phase iOS protocol: SETUP → RECORD (video+logs) → ACT (interaction) → COLLECT (artifacts) → VERIFY (verdict). Complex flows & debug scenarios. Video catches temporal evidence screenshots miss."
 triggers:
   - "ios validation runner"
   - "run ios validation"

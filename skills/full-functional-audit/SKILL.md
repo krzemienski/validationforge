@@ -1,8 +1,6 @@
 ---
 name: full-functional-audit
-description: >
-  Read-only validation audit that captures evidence and writes findings
-  without making any code changes. Produces a severity-classified audit report.
+description: "Audit project health without code changes: exercise all features, capture evidence, classify findings by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Use for pre-release gates, compliance, baseline assessments."
 context_priority: standard
 ---
 

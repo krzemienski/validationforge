@@ -1,11 +1,6 @@
 ---
 name: rust-cli-validation
-description: >
-  Rust CLI platform validation through cargo toolchain and direct binary
-  execution. Runs cargo check, clippy, release build, and binary execution
-  with real inputs. Captures stdout, stderr, exit codes, and pipe behavior
-  as evidence. Validates compilation correctness, lint cleanliness, happy
-  paths, error handling, and output format correctness.
+description: "Validate Rust CLI apps via cargo: check, clippy, release build, binary execution. Detects panics, exit codes, error messages. Tests help, version, happy path, error cases."
 context_priority: standard
 ---
 

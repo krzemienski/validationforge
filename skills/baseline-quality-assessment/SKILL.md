@@ -1,8 +1,12 @@
 ---
 name: baseline-quality-assessment
-description: >
-  Establishes a quality baseline before making changes. Captures current state
-  evidence so post-change validation can prove improvement without regression.
+description: "Capture immutable 'before' evidence before code changes. Proves changes improved targets without regressing existing functionality. Use for refactor, migration, dependency update, bug fix."
+triggers:
+  - "baseline capture"
+  - "before-after comparison"
+  - "regression detection"
+  - "no-regressions proof"
+  - "change impact"
 context_priority: standard
 ---
 

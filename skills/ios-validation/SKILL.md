@@ -1,9 +1,12 @@
 ---
 name: ios-validation
-description: >
-  iOS/macOS platform validation through Xcode build, simulator launch, and
-  real device interaction via simctl and idb. Captures screenshots, video,
-  and accessibility tree as validation evidence.
+description: "iOS/macOS validation: Xcode build → simulator install/launch → screenshot/video/logs/deep links/accessibility tree. 9-step protocol from build through crash detection. Use for all iOS feature validation."
+triggers:
+  - "ios feature validation"
+  - "xcode build simulator"
+  - "ios ui testing"
+  - "deep link validation"
+  - "ios accessibility testing"
 context_priority: reference
 ---
 

@@ -1,9 +1,12 @@
 ---
 name: gate-validation-discipline
-description: >
-  Enforces evidence-based validation before marking any gate, task, or checkpoint
-  complete. Requires personal examination of evidence, specific proof citations,
-  and evidence-to-criteria matching. Prevents premature completion claims.
+description: "Evidence before completion: examine actual evidence (not reports), cite specific proof, match evidence to criteria. Read files, view screenshots, quote output. Use before any checkpoint or gate closure."
+triggers:
+  - "evidence examination"
+  - "before completion"
+  - "verify gate"
+  - "checkpoint validation"
+  - "proof citation"
 context_priority: critical
 ---
 

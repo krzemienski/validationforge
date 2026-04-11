@@ -1,6 +1,6 @@
 ---
 name: ios-simulator-control
-description: iOS Simulator lifecycle management — boot, install, launch, screenshot, logs, reset
+description: "iOS Simulator commands: boot, install, launch, screenshot, video, logs, deep links, permissions, location, crash detection. Reference for evidence capture. Used with all iOS validation skills."
 triggers:
   - "simulator control"
   - "boot simulator"

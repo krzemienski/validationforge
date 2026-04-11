@@ -1,9 +1,6 @@
 ---
 name: flutter-validation
-description: >
-  Flutter platform validation through dependency installation, build, device
-  launch, and screenshot capture via flutter screenshot. Captures logs, widget
-  trees, and crash output as validation evidence across Android and iOS targets.
+description: "Flutter validation: build, install, launch, screenshot, log streaming, crash detection on Android/iOS devices and emulators. Uses flutter CLI. Use before release for any Flutter project."
 context_priority: standard
 ---
 

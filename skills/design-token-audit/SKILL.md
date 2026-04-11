@@ -1,6 +1,6 @@
 ---
 name: design-token-audit
-description: Verify CSS and Tailwind tokens match the project's design system specification
+description: "Audit CSS/Tailwind/inline styles against design system spec (DESIGN.md, tailwind.config, CSS vars). Detects hardcoded values, off-palette colors, non-standard spacing, typography drift."
 triggers:
   - "design token audit"
   - "token compliance"

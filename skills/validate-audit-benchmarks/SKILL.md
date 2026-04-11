@@ -1,6 +1,12 @@
 ---
 name: validate-audit-benchmarks
-description: Run automated benchmark suite to score hook correctness, skill/command structural integrity, and aggregate quality metrics.
+description: "Score ValidationForge primitives: hooks (60% weight), skills (20%), commands (20%). Produces A-F grade, compares against prior benchmarks. Run before releases, after modifications, during audits."
+triggers:
+  - "audit benchmarks"
+  - "run benchmark suite"
+  - "score hook correctness"
+  - "validate primitives"
+  - "quality metrics"
 context_priority: reference
 ---
 

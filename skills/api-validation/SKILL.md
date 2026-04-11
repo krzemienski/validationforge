@@ -1,9 +1,12 @@
 ---
 name: api-validation
-description: >
-  API platform validation through direct HTTP requests (curl). Captures full
-  response bodies, headers, and status codes as evidence. Tests CRUD operations,
-  authentication flows, error responses, pagination, and rate limiting.
+description: "Validate APIs via curl: health checks, CRUD cycles (create/read/update/delete), auth (token, 401/403), error responses, pagination. Capture JSON bodies and status codes. Use on API changes, before deploy."
+triggers:
+  - "api testing"
+  - "curl validation"
+  - "api contract"
+  - "endpoint verification"
+  - "HTTP status codes"
 context_priority: standard
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: chrome-devtools
-description: Chrome DevTools MCP integration for deep browser inspection and evidence capture
+description: "Deep browser inspection via Chrome DevTools MCP: performance profiling (Core Web Vitals), Lighthouse audits, network inspection, console monitoring, memory snapshots. Use for debugging, perf, a11y."
 triggers:
   - "chrome devtools"
   - "devtools inspection"

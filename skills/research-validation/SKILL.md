@@ -1,6 +1,6 @@
 ---
 name: research-validation
-description: Research standards, best practices, and tools before designing validation strategies
+description: "Research applicable standards, best practices, tools before validation planning (Phase 0). Maps domain standards to skills. Use entering new domains, when standards change, or deciding coverage."
 triggers:
   - "research validation"
   - "validation research"

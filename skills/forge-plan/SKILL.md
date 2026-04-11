@@ -1,6 +1,6 @@
 ---
 name: forge-plan
-description: Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes.
+description: "Create validation plan: discover journeys, define PASS criteria per step, specify evidence types. Modes: quick (small projects), standard (medium), consensus (critical/multi-team). Use before /validate."
 context_priority: reference
 ---
 

@@ -1,9 +1,6 @@
 ---
 name: react-native-validation
-description: >
-  React Native platform validation through Metro bundler startup, Expo/RN CLI
-  build and launch, screenshot capture, log streaming, and deep link testing.
-  Validates both iOS and Android targets via simulator/emulator or real device.
+description: "Validate React Native apps via Metro/Expo: platform build, launch, screenshots, logs, deep link testing on iOS/Android. Detects crashes, console errors, bundle issues. Covers Expo Go, CLI, bare RN."
 context_priority: standard
 ---
 

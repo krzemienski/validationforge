@@ -1,9 +1,12 @@
 ---
 name: cli-validation
-description: >
-  CLI platform validation through direct binary execution. Captures stdout,
-  stderr, exit codes, and pipe behavior as evidence. Validates happy paths,
-  error handling, and output format correctness.
+description: "Validate CLI binaries: build, help/version output, happy path, error cases (bad flags, missing args), exit codes, stdin/pipe, output format (JSON/CSV). Capture full stdout/stderr. Use on binary changes."
+triggers:
+  - "binary validation"
+  - "CLI testing"
+  - "exit code verification"
+  - "command-line tool"
+  - "stderr/stdout capture"
 context_priority: standard
 ---
 

@@ -1,6 +1,12 @@
 ---
 name: team-validation-dashboard
-description: Aggregate team validation posture into a shared dashboard. Shows coverage, posture scores, regression trends, and ownership assignments across all registered projects.
+description: "Aggregate team validation metrics: posture scores, coverage %, regressions, journey ownership. Identifies critical projects (score <60). Use for CI/CD reporting, team reviews, regression tracking."
+triggers:
+  - "team dashboard"
+  - "validation posture"
+  - "show team metrics"
+  - "which projects need attention"
+  - "who owns this journey"
 context_priority: reference
 ---
 
