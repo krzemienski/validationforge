@@ -389,3 +389,19 @@ Hook shell.env handling never verified across bash 3.2 (macOS) and bash 5+.
 **Severity:** MEDIUM
 **Fix:** Cross-platform smoke test
 **Owner:** Future plan
+
+### 3.1 CONSENSUS engine — TRIAGED (not tested)
+Skills `coordinated-validation`, `forge-team` + command `/validate-team` exist.
+3-reviewer unanimous voting mechanism documented but untested with live agents.
+Status: TRIAGED to debt (scope: needs separate test plan)
+
+### 3.2 FORGE engine — TRIAGED (not tested)
+Skills `forge-execute`, `forge-plan`, `forge-setup`, `forge-benchmark`,
+`forge-team` + commands exist. Autonomous build→validate→fix loop never
+tested end-to-end.
+Status: TRIAGED to debt (scope: needs separate test plan)
+
+### 3.4 Evidence retention / cleanup — PARTIAL VERIFY
+scripts/evidence-cleanup.sh syntax-checks clean via bash -n.
+Full retention policy not exercised.
+Status: TRIAGED (smoke only)
