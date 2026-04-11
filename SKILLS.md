@@ -1,6 +1,6 @@
 # ValidationForge Skills Index
 
-46 skills across 7 categories. All skills use Claude Code SKILL.md frontmatter for discovery.
+48 skills across 7 categories. All skills use Claude Code SKILL.md frontmatter for discovery.
 
 ## Platform Validation (15)
 
@@ -51,34 +51,36 @@
 | 28 | `retrospective-validation` | Validate methodologies and approaches using historical evidence and past results |
 | 29 | `ai-evidence-analysis` | AI-powered analysis of screenshot, API response, and CLI output evidence using vision and LLM models. Produces confidence scores (0-100) and structured findings for each evidence item. |
 
-## Specialized (6)
+## Specialized (7)
 
 | # | Skill | Description |
 |---|-------|-------------|
 | 30 | `accessibility-audit` | Deep WCAG 2.1 AA accessibility audit with Lighthouse, keyboard navigation, and screen reader validation |
 | 31 | `responsive-validation` | Systematic viewport matrix testing with device-specific validation checks |
 | 32 | `parallel-validation` | Orchestrate multiple validation agents in parallel across independent journeys or platforms |
-| 33 | `e2e-testing` | End-to-end validation patterns -- journey design, evidence management, flaky flow handling |
-| 34 | `e2e-validate` | Full end-to-end validation orchestrator. Detects platform, maps user journeys, defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks. Supports iOS, web, API, CLI, and fullstack projects. |
-| 35 | `create-validation-plan` | Generates a structured validation plan with PASS criteria for every user journey before any evidence is captured. Plans define what success looks like upfront. |
+| 33 | `coordinated-validation` | Multi-platform validation respecting cross-platform dependencies: DB->API->Web/iOS. Parallelizes independent layers, blocks downstream on failure, coordinates evidence. Use for fullstack, mobile+API, CI/CD. |
+| 34 | `e2e-testing` | End-to-end validation patterns -- journey design, evidence management, flaky flow handling |
+| 35 | `e2e-validate` | Full end-to-end validation orchestrator. Detects platform, maps user journeys, defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks. Supports iOS, web, API, CLI, and fullstack projects. |
+| 36 | `create-validation-plan` | Generates a structured validation plan with PASS criteria for every user journey before any evidence is captured. Plans define what success looks like upfront. |
 
 ## Operational (5)
 
 | # | Skill | Description |
 |---|-------|-------------|
-| 36 | `baseline-quality-assessment` | Establishes a quality baseline before making changes. Captures current state evidence so post-change validation can prove improvement without regression. |
-| 37 | `condition-based-waiting` | Smart waiting strategies for async operations during validation. Waits for specific conditions rather than arbitrary sleep durations. Every wait has a timeout, a condition, and a failure path. |
-| 38 | `error-recovery` | Structured 3-strike error recovery during validation. When validation fails, diagnoses root cause, applies fix, and re-validates. |
-| 39 | `production-readiness-audit` | Systematic audit of application readiness for production deployment |
-| 40 | `full-functional-audit` | Read-only validation audit that captures evidence and writes findings without making any code changes. Produces a severity-classified audit report. |
+| 37 | `baseline-quality-assessment` | Establishes a quality baseline before making changes. Captures current state evidence so post-change validation can prove improvement without regression. |
+| 38 | `condition-based-waiting` | Smart waiting strategies for async operations during validation. Waits for specific conditions rather than arbitrary sleep durations. Every wait has a timeout, a condition, and a failure path. |
+| 39 | `error-recovery` | Structured 3-strike error recovery during validation. When validation fails, diagnoses root cause, applies fix, and re-validates. |
+| 40 | `production-readiness-audit` | Systematic audit of application readiness for production deployment |
+| 41 | `full-functional-audit` | Read-only validation audit that captures evidence and writes findings without making any code changes. Produces a severity-classified audit report. |
 
-## Forge Orchestration (6)
+## Forge Orchestration (7)
 
 | # | Skill | Description |
 |---|-------|-------------|
-| 41 | `forge-setup` | Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture. |
-| 42 | `forge-plan` | Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes. |
-| 43 | `forge-execute` | Autonomous validation execution loop. Runs validation journeys against the real system, captures evidence, and fixes failures with re-validation. |
-| 44 | `forge-team` | Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership. |
-| 45 | `forge-benchmark` | Measure validation posture across five dimensions. Track trends over time and compare against baseline targets. |
-| 46 | `validate-audit-benchmarks` | Run automated benchmark suite to score hook correctness, skill/command structural integrity, and aggregate quality metrics. |
+| 42 | `forge-setup` | Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture. |
+| 43 | `forge-plan` | Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes. |
+| 44 | `forge-execute` | Autonomous validation execution loop. Runs validation journeys against the real system, captures evidence, and fixes failures with re-validation. |
+| 45 | `forge-team` | Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership. |
+| 46 | `forge-benchmark` | Measure validation posture across five dimensions. Track trends over time and compare against baseline targets. |
+| 47 | `validate-audit-benchmarks` | Run automated benchmark suite to score hook correctness, skill/command structural integrity, and aggregate quality metrics. |
+| 48 | `team-validation-dashboard` | Aggregate team validation metrics: posture scores, coverage %, regressions, journey ownership. Identifies critical projects (score <60). Use for CI/CD reporting, team reviews, regression tracking. |

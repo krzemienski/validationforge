@@ -2,7 +2,7 @@
 
 **No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
 
-> **45 skills | 15 commands | 7 hooks | 5 agents | 8 rules | 17 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
+> **48 skills | 17 commands | 7 registered hooks (+3 support .js) | 5 agents | 8 rules | 17 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
 
 ## The Iron Rule
 
@@ -25,7 +25,7 @@ We applied VF's methodology to VF's own codebase: hooks invoked directly, script
 
 Key findings:
 - `block-test-files.js` produces the exact deny JSON structure Claude Code reads to block test file creation
-- All 45 skills, 15 commands, 5 agents, and 8 rules exist on disk — cross-references resolve
+- All 48 skills, 17 commands, 5 agents, and 8 rules exist on disk — cross-references resolve
 - `install.sh` passes `bash -n` and contains `git clone`, rules install loop, and config write
 - `detect-platform.sh` correctly classifies VF itself as `generic` (meta-tool, no framework)
 
@@ -136,7 +136,7 @@ The uninstaller removes `~/.claude/plugins/validationforge`, deletes all copied 
 
 ### Skills
 
-Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 45 skills across 7 categories.
+Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 48 skills across 7 categories.
 
 ### Hooks
 
@@ -250,9 +250,9 @@ Designed grade thresholds (pending empirical calibration): A (90+), B (80–89),
 
 | Primitive | Count | Location |
 |-----------|------:|----------|
-| Skills | 45 | `skills/*/SKILL.md` |
-| Commands | 15 | `commands/*.md` |
-| CC Hooks | 7 + 4 support | `hooks/*.js` + `hooks/hooks.json` |
+| Skills | 48 | `skills/*/SKILL.md` |
+| Commands | 17 | `commands/*.md` |
+| CC Hooks | 7 registered + 3 support .js | `hooks/*.js` + `hooks/hooks.json` |
 | Agents | 5 | `agents/*.md` |
 | Rules | 8 | `rules/*.md` |
 | Shell Scripts | 17 | `scripts/*.sh` + `scripts/benchmark/*.sh` |
@@ -273,8 +273,8 @@ validationforge/
 |   +-- patterns.ts                   Shared regex patterns (source of truth)
 |   +-- package.json                  Package manifest
 |   +-- tsconfig.json                 TypeScript config
-+-- skills/                           45 skills (SKILL.md frontmatter)
-+-- commands/                         15 slash commands
++-- skills/                           48 skills (SKILL.md frontmatter)
++-- commands/                         17 slash commands
 +-- hooks/                            7 enforcement hooks + 1 patterns bridge
 |   +-- hooks.json                    Hook registration manifest
 |   +-- patterns.js                   CommonJS bridge to patterns.ts
@@ -297,7 +297,7 @@ What has actually been verified about ValidationForge, and what has not:
 
 | Area | Status |
 |------|--------|
-| File inventory (45 skills, 15 commands, 7 hooks, 5 agents, 8 rules) | Verified on disk |
+| File inventory (48 skills, 17 commands, 7 hooks, 5 agents, 8 rules) | Verified on disk |
 | Hook syntax and functional behavior (all 7) | Verified — syntax PASS, functional tests PASS |
 | Cross-references (commands → skills, agents, rules) | Verified — zero broken references |
 | Plugin manifest format | Verified — matches ECC 1.8.0 and OMC patterns |
@@ -321,7 +321,7 @@ These are honest disclosures about what ValidationForge has **not** been verifie
 
 4. **Benchmark scoring not empirically tested** — The scoring algorithm in `scripts/benchmark/` and the `/validate-benchmark` command have never been executed against a real project. Dimension weights (Coverage 35%, Evidence Quality 30%, Enforcement 25%, Speed 10%) and grade thresholds (A/B/C/D/F) are design targets derived from the specification, not calibrated from observed outputs.
 
-5. **Skill content quality partially verified** — Of the 45 skill directories, 5 were deep-reviewed (frontmatter, content accuracy, cross-reference validity) and the remaining 40 were spot-checked for file presence and frontmatter structure. Content correctness and trigger accuracy for the unreviewed skills is assumed, not confirmed.
+5. **Skill content quality partially verified** — Of the 48 skill directories, 5 were deep-reviewed (frontmatter, content accuracy, cross-reference validity) and the remaining 40 were spot-checked for file presence and frontmatter structure. Content correctness and trigger accuracy for the unreviewed skills is assumed, not confirmed.
 
 6. **OpenCode plugin not verified in live OpenCode session** — The OpenCode plugin (`index.ts`) compiles without errors and follows the documented plugin interface, but has never been loaded into a running OpenCode session. Hook registration (`permission.ask`, `tool.execute.after`, `shell.env`) and custom tool availability (`vf_validate`, `vf_check_evidence`) are unconfirmed at runtime.
 

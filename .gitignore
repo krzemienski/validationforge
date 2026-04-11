@@ -42,3 +42,5 @@ logs/security/
 .vf/team/snapshot.json
 .vf/team/dashboard.md
 .vf/team/dashboard.html
+.vf/.gap-closure.lock
+benchmark/
