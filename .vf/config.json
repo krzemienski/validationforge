@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "validationforge",
+    "root": ".",
+    "detected_platforms": ["cli", "api", "plugin"]
+  },
+  "enforcement": {
+    "level": "strict",
+    "block_test_files": true,
+    "block_mocks": true,
+    "require_evidence": true,
+    "rules_dir": ".claude/rules"
+  },
+  "evidence": {
+    "root": "e2e-evidence",
+    "report_file": "e2e-evidence/report.md",
+    "require_verdicts": true,
+    "min_file_bytes": 10
+  },
+  "benchmark": {
+    "weights": {"coverage": 35, "evidence_quality": 30, "enforcement": 25, "speed": 10},
+    "grade_thresholds": {"A": 90, "B": 80, "C": 70, "D": 60}
+  },
+  "hooks": { "manifest": "hooks/hooks.json" }
+}
