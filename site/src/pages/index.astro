@@ -187,6 +187,82 @@ import heroSvg from '../assets/hero.svg';
       .badge-fail { color: #f87171; font-weight: 700; }
       .badge-na { color: var(--color-text-dim); }
 
+      /* DEMO SECTION */
+      .demo-gif-placeholder {
+        margin: 2.5rem 0;
+        background: var(--color-code-bg);
+        border: 1px dashed var(--color-border);
+        border-radius: var(--radius-lg);
+        min-height: 20rem;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 0.75rem; color: var(--color-text-dim); text-align: center; padding: 2rem;
+        position: relative; overflow: hidden;
+      }
+      .demo-gif-placeholder::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: repeating-linear-gradient(
+          45deg,
+          transparent, transparent 10px,
+          rgba(124,58,237,0.03) 10px, rgba(124,58,237,0.03) 20px
+        );
+        pointer-events: none;
+      }
+      .demo-gif-icon { font-size: 3rem; opacity: 0.4; }
+      .demo-gif-title { font-size: 1rem; font-weight: 600; color: var(--color-text-muted); }
+      .demo-gif-note { font-size: 0.8rem; color: var(--color-text-dim); max-width: 40ch; line-height: 1.6; }
+      .demo-gif-link {
+        display: inline-flex; align-items: center; gap: 0.3rem;
+        color: var(--color-accent-light); font-size: 0.8rem; text-decoration: none;
+        border: 1px solid rgba(124,58,237,0.4); border-radius: var(--radius);
+        padding: 0.3rem 0.75rem; transition: background 0.2s; margin-top: 0.25rem;
+        position: relative; z-index: 1;
+      }
+      .demo-gif-link:hover { background: rgba(124,58,237,0.15); }
+
+      .scenario-cards { display: grid; gap: 1rem; margin-top: 2rem; }
+      .scenario-card {
+        background: var(--color-surface); border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg); overflow: hidden;
+        transition: border-color 0.2s;
+      }
+      .scenario-card:hover { border-color: rgba(124,58,237,0.4); }
+      .scenario-header {
+        display: flex; align-items: center; gap: 0.75rem;
+        padding: 0.875rem 1.25rem; background: var(--color-surface-2);
+        border-bottom: 1px solid var(--color-border);
+      }
+      .scenario-num {
+        display: flex; align-items: center; justify-content: center;
+        width: 1.5rem; height: 1.5rem; border-radius: 50%;
+        background: rgba(124,58,237,0.2); color: var(--color-accent-light);
+        font-size: 0.7rem; font-weight: 800; flex-shrink: 0;
+      }
+      .scenario-title { font-size: 0.9rem; font-weight: 700; flex: 1; }
+      .scenario-body {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      }
+      .scenario-col {
+        padding: 1rem 1.25rem;
+      }
+      .scenario-col:first-child { border-right: 1px solid var(--color-border); }
+      .scenario-col-label {
+        font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+        text-transform: uppercase; margin-bottom: 0.5rem;
+        display: flex; align-items: center; gap: 0.4rem;
+      }
+      .scenario-col-label.pass { color: var(--color-success); }
+      .scenario-col-label.fail { color: #f87171; }
+      .scenario-verdict { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; }
+      .scenario-verdict.pass { color: var(--color-success); }
+      .scenario-verdict.fail { color: #f87171; }
+      .scenario-reason { font-size: 0.8rem; color: var(--color-text-dim); line-height: 1.5; font-family: var(--font-mono); }
+
+      @media (max-width: 640px) {
+        .scenario-body { grid-template-columns: 1fr; }
+        .scenario-col:first-child { border-right: none; border-bottom: 1px solid var(--color-border); }
+      }
+
       /* FEATURES GRID */
       .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1.25rem; margin-top: 2.5rem; }
       .feature-card {
@@ -359,6 +435,163 @@ import heroSvg from '../assets/hero.svg';
             </tbody>
           </table>
         </div>
+      </div>
+    </section>
+
+    <!-- DEMO: 5 SCENARIOS -->
+    <section id="demo">
+      <div class="container">
+        <p class="section-label">Live Demo</p>
+        <h2 class="section-title">5 bugs unit tests can't catch</h2>
+        <p class="section-desc">
+          Each scenario below has a green test suite and a broken app.
+          ValidationForge catches them all by validating the <em>real</em> system —
+          not an isolated mock.
+        </p>
+
+        <!-- Demo GIF placeholder — see demo/DEMO-SCENARIO.md for recording instructions -->
+        <div class="demo-gif-placeholder">
+          <div class="demo-gif-icon">🎬</div>
+          <div class="demo-gif-title">Demo GIF — Coming Soon</div>
+          <div class="demo-gif-note">
+            A 30-second recording showing ValidationForge catch the API field-rename bug
+            that 4 passing unit tests missed.
+          </div>
+          <a href="https://github.com/validationforge/validationforge/blob/main/demo/DEMO-SCENARIO.md" target="_blank" rel="noopener" class="demo-gif-link">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            View demo scenario script
+          </a>
+        </div>
+
+        <!-- 5 Scenario Cards -->
+        <div class="scenario-cards">
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">1</div>
+              <div class="scenario-title">API field renamed: <code style="font-size:0.8em;color:var(--color-accent-light)">users</code> → <code style="font-size:0.8em;color:var(--color-accent-light)">data</code></div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">Mock returns old field.<br>Nobody updated the Dashboard test mock.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">curl shows new field.<br>Frontend reads <code>.users</code> → undefined → crash.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">2</div>
+              <div class="scenario-title">JWT expiry reduced to 15 min</div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">Mocks time — never waits.<br>Token never actually expires in the test.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">Real token expires mid-session.<br>Refresh call fails — user is logged out.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">3</div>
+              <div class="scenario-title">iOS deep link after navigation refactor</div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">Mock URL handler returns expected screen.<br>Never runs the real nav stack.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">simctl openurl lands on wrong screen.<br>Screenshot shows Home, not Profile.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">4</div>
+              <div class="scenario-title">DB migration with duplicate emails</div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">Clean in-memory DB — no duplicates.<br>Migration runs fine on pristine data.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">Real DB has legacy dupes.<br>UNIQUE constraint fails on production data.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="scenario-header">
+              <div class="scenario-num">5</div>
+              <div class="scenario-title">CSS grid overflow on small screens</div>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-col">
+                <div class="scenario-col-label pass">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Unit Tests
+                </div>
+                <div class="scenario-verdict pass">PASS</div>
+                <div class="scenario-reason">No visual rendering in test env.<br>Layout logic never exercised.</div>
+              </div>
+              <div class="scenario-col">
+                <div class="scenario-col-label fail">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  ValidationForge
+                </div>
+                <div class="scenario-verdict fail">FAIL</div>
+                <div class="scenario-reason">Playwright screenshot shows overflow.<br>Content clips at 375px viewport.</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /scenario-cards -->
       </div>
     </section>
 
