@@ -15,7 +15,7 @@ ALWAYS capture evidence. ALWAYS review evidence. ALWAYS write verdicts.
 
 ValidationForge enforces this through hooks that block test file creation, skills that guide real-system validation, and agents that capture and review evidence through actual user interfaces.
 
-<!-- demo GIF pending: see demo/DEMO-SCENARIO.md -->
+![ValidationForge demo](demo/vf-demo.gif)
 
 ## Self-Validation Case Study
 
