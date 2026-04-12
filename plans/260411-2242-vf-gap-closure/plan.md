@@ -1,6 +1,6 @@
 ---
 title: VF Gap Closure — All Tiers (v2, red-team hardened)
-status: planned
+status: in_progress
 version: 2
 created: 2026-04-11
 revised: 2026-04-11
