@@ -1,0 +1,8 @@
+skills=48
+commands=17
+hooks_js=10
+hooks_registered=7
+agents=5
+rules=8
+scripts_top=17
+scripts_bench=6

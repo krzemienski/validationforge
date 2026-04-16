@@ -1,0 +1,22 @@
+{
+  "source_file": "/Users/nick/.claude/projects/-Users-nick-Desktop-validationforge-benchmark-results-run-20260409-111952-workdirs-control-WF-01/ec6b366a-5fde-4e7b-bb72-8c3ff09ec9d1.jsonl",
+  "message_counts": {
+    "user": 12,
+    "assistant": 19,
+    "system": 0,
+    "other": 195
+  },
+  "tool_counts": {
+    "Glob": 1,
+    "Read": 4,
+    "Write": 1,
+    "Edit": 1,
+    "Bash": 4
+  },
+  "skill_invocations": [],
+  "file_writes": [
+    "/Users/nick/Desktop/validationforge/benchmark/results/run-20260409-111952/workdirs/control/WF-01/src/login-form.tsx"
+  ],
+  "hook_events": [],
+  "errors": []
+}

@@ -1,0 +1,55 @@
+=== Gap validation run started 2026-04-16T22:54:06Z ===
+[22:54:06] --- PHASE PREFLIGHT START ---
+tmux: tmux 3.6a
+jq: jq-1.8.1
+claude: 2.1.112 (Claude Code)
+scripts dir: /Users/nick/.claude/plugins/cache/superpowers-marketplace/claude-session-driver/1.0.1/scripts
+VF plugin symlink: lrwxr-xr-x@ 1 nick  staff  35 Apr 11 21:11 /Users/nick/.claude/plugins/validationforge -> /Users/nick/Desktop/validationforge
+scaffolds: node-cli node-express node-fullstack node-nextjs node-react python-cli python-flask swift-ios 
+[22:54:49] --- PHASE PREFLIGHT END (43s) ---
+[22:54:49] --- PHASE C START ---
+[22:54:53] C worker launched: b32cc1a9-7e49-478e-b26f-4b81e652fcb6
+C-launch: PASS
+C-M1: PASS
+C-M2: PASS (worker cites block message)
+C-M2-fallback: PASS
+C-M3: FAIL
+C-M4: PASS
+C-M5: PASS (command behavior)
+C-M6: PASS
+[23:00:44] --- PHASE C END (355s) ---
+[23:00:44] --- PHASE D START ---
+D-M1: PASS
+PHASES_HIT=6/6
+D-M2: PASS
+D-M3: PASS (NEW=21)
+D-M4: PASS (/Users/nick/Desktop/validationforge/e2e-evidence/python-api-260416-1900/report.md)
+D-M5: PASS
+D-secondary: PASS
+[23:34:30] --- PHASE D END (2026s) ---
+[23:34:30] --- PHASE E START ---
+# E3 Self-honesty delta
+
+## Scaffold scores
+- node-nextjs: aggregate=18
+- python-flask: aggregate=18
+- swift-ios: aggregate=18
+
+## VF self-score (claimed)
+- VF: aggregate=96 grade=A
+
+## Delta
+- Max scaffold: 18
+- Min scaffold: 18
+- Delta (VF − max): 78
+- Delta (VF − min): 78
+
+**FLAGGED**: VF scores 78 above highest scaffold.
+[23:34:30] --- PHASE E END (0s) ---
+[23:34:30] --- PHASE F START ---
+F-syntax: PASS
+F3: PASS
+[23:34:31] --- PHASE F END (1s) ---
+[23:34:31] --- PHASE G START ---
+[23:34:31] --- PHASE G END (0s) ---
+[23:34:31] --- PHASE H START ---

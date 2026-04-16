@@ -1,0 +1,6 @@
+tmux: tmux 3.6a
+jq: jq-1.8.1
+claude: 2.1.112 (Claude Code)
+scripts dir: /Users/nick/.claude/plugins/cache/superpowers-marketplace/claude-session-driver/1.0.1/scripts
+VF plugin symlink: lrwxr-xr-x@ 1 nick  staff  35 Apr 11 21:11 /Users/nick/.claude/plugins/validationforge -> /Users/nick/Desktop/validationforge
+scaffolds: node-cli node-express node-fullstack node-nextjs node-react python-cli python-flask swift-ios 

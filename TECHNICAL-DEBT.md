@@ -405,3 +405,10 @@ Status: TRIAGED to debt (scope: needs separate test plan)
 scripts/evidence-cleanup.sh syntax-checks clean via bash -n.
 Full retention policy not exercised.
 Status: TRIAGED (smoke only)
+
+## Gap validation closure — 2026-04-16
+
+- [ ] C-M3: FAIL
+- [ ] flagged
+
+Source: plans/260411-2305-gap-validation/GAP-VALIDATION-REPORT.md

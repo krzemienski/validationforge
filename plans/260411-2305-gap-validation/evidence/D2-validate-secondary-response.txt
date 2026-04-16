@@ -1,0 +1,9 @@
+`★ Insight ─────────────────────────────────────`
+- **Astro's preview vs dev modes:** `astro preview` serves only `dist/` static output, so it's a true production-fidelity probe — any route that 200s here will 200 in prod on the same host. `astro dev` would hide build-time warnings like the `/[...slug]` route collision.
+- **Pagefind as validation signal:** Starlight bundles Pagefind for client-side search. Verifying `/pagefind/pagefind.js` ships at 45 KB with `text/javascript` confirms the build post-processor ran end-to-end, not just Astro's compile step.
+- **Non-mock evidence chain:** Every verdict row cites a real file (`*.data` = raw HTTP body bytes, `.txt` = captured stdout). An empty file or 0-byte response would have been auto-caught by `bytes=` in the summary.
+`─────────────────────────────────────────────────`
+
+**Summary:** `/validate` ran the full 7-phase pipeline against `site/`: Astro build (7 pages, 1.23s) → preview server on :4323 → 9 HTTP route probes (all 200) → content quality checks (titles, h1s, nav, error scan). 13/13 journeys PASS. One cosmetic Starlight `/[...slug]` warning is non-blocking.
+
+VALIDATE_DONE=yes EVIDENCE_DIR=/Users/nick/Desktop/validationforge/e2e-evidence/site

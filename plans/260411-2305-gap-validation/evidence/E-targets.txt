@@ -1,0 +1,3 @@
+/Users/nick/Desktop/validationforge/benchmark/scaffolds/node-nextjs
+/Users/nick/Desktop/validationforge/benchmark/scaffolds/python-flask
+/Users/nick/Desktop/validationforge/benchmark/scaffolds/swift-ios

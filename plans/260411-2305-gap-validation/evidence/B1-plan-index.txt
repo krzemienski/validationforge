@@ -1,0 +1,107 @@
+=== plans/260307-unified-validationforge-product/vf.md (no plan.md) ===
+<identity>
+	You are a senior software architect and OpenCode plugin systems engineer with deep expertise in:
+	- The OpenCode plugin SDK (`@opencode-ai/plugin`, `@opencode-ai/sdk`)
+	- OpenCode's four extension primitives: Plugins (hooks + custom tools), Skills (`SKILL.md`), Commands (slash commands), and Rules (`AGENTS.md`)
+	- MCP (Model Context Protocol) server integration
+	- TypeScript/Bun plugin development, Zod schema validation, and secure input handling
+	- LLM agent benchmark design and skill evaluation
+	- Developer documentation and architecture diagramming
+	You operate as a systematic auditor and implementer — methodical, exhaustive, evidence-driven. You never skim, never assume, never ship without validation.
+</identity>
+
+<purpose>
+	Execute a full-lifecycle audit, documentation overhaul, and measurable skill improvement pass on an OpenCode plugin system. Ensure correct plugin format compatibility, input sanitization, and benchmark-validated quality across every skill — scoped strictly to the OpenCode extension primitives that are actually present in the codebase.
+</purpose>
+
+
+=== plans/260408-1522-vf-dual-platform-rewrite/plan.md ===
+---
+title: VF Dual-Platform Audit Rewrite
+status: retired
+created: 2026-04-08
+branch: audit/plugin-improvements
+mode: hard
+blockedBy: [260409-0432-merge-campaign-continuation, 260411-2242-vf-gap-closure]
+blocks: []
+triage_pending: false
+retired_date: 2026-04-11
+retired_reason: Superseded by merge campaign; 15 findings triaged (9 resolved, 3 debt, 3 obsolete)
+triage_plan: plans/260411-2242-vf-gap-closure/plan.md
+triage_phase: Phase 8
+note: 15 red-team findings pending triage in gap closure plan. On completion, status will become `retired` or findings will be split into new plans.
+---
+
+=== plans/260411-1731-skill-optimization-remediation/plan.md ===
+---
+title: Skill Optimization Remediation
+status: complete
+created: 2026-04-11
+mode: deep
+blockedBy: []
+blocks: [260411-2242-vf-gap-closure]
+note: VERIFICATION.md shows all phases complete (5.0/5.0). Status flip to `complete` is Phase 0 of plan 260411-2242-vf-gap-closure.
+---
+
+# Skill Optimization Remediation
+
+## Context
+
+On 2026-04-11 a batch skill-description optimization pass was executed against all 48 VF skills. A subsequent deep reflection (reflexion:reflect) found the pass shipped with multiple defects. This plan remediates those defects and installs safeguards so the same mistakes don't recur.
+
+=== plans/260411-1747-vf-grade-a-push/plan.md ===
+---
+title: VF Grade-A Push
+status: complete
+created: 2026-04-11
+mode: deep
+blockedBy: []
+blocks: []
+result: Aggregate 96 / Grade A
+---
+# VF Grade-A Push
+## Context
+Session 1 froze 48 skills at 5.00/5.0 (plan `260411-1731`). This plan pushes benchmark
+from `88 Grade B` → `≥90 Grade A` by fixing pipefail in `validate-skills.sh`, creating
+`.claude/rules/*.md` + `.vf/config.json`, and re-verifying Flask J5 fix. Fresh ulw session,
+no prior memory. CWD `/Users/nick/Desktop/validationforge`, branch main, darwin zsh, python3.
+
+=== plans/260411-2242-vf-gap-closure/plan.md ===
+---
+title: VF Gap Closure — All Tiers (v2, red-team hardened)
+status: in_progress
+version: 2
+created: 2026-04-11
+revised: 2026-04-11
+mode: deep
+blockedBy: []
+blocks: [260408-1522-vf-dual-platform-rewrite, 260411-1731-skill-optimization-remediation]
+source_analysis: plans/260411-2230-gap-analysis/GAP-ANALYSIS.md
+red_team_review: plans/260411-2242-vf-gap-closure/red-team-review.md
+red_team_issues_addressed: "7 Critical, 18 High, 20 Medium, 3 Low (v1 refuted H7)"
+---
+
+# VF Gap Closure — v2
+
+  --- plans/260411-2242-vf-gap-closure/progress.md (head) ---
+# Gap Closure Plan v2 — Progress Log
+
+**Plan:** plans/260411-2242-vf-gap-closure/plan.md (v2)
+**Manual protocol:** plans/260411-2242-vf-gap-closure/plan-manual.md
+**Session-continuity log — update after every phase.**
+
+## Phase table
+
+| Phase | Name | Status | Timestamp | Evidence | Notes |
+|-------|------|--------|-----------|----------|-------|
+| 0 | Admin flip (H2) | complete | 2026-04-11T23:31Z | `status: complete` | plan 260411-1731 |
+| 1a | Pre-flight (C1, C2, lock, tag) | complete | 2026-04-11T23:33Z | C1+C2 PASS | TAG=vf-pre-gap-closure-20260411T233158Z |
+| 1A | Commit A: plan dirs | complete | 2026-04-11T23:33Z | cfad40c | 17 files |
+| 1B | Commit B: skills | complete | 2026-04-11T23:34Z | 6853fa0 | 48 skills, diff-reviews |
+| 1C | Commit C: pipefail fix | complete | 2026-04-11T23:34Z | eb2689d | |
+| 1D | Commit D: .vf config | complete | 2026-04-11T23:34Z | 9aea6e5 | JSON validated |
+| 1E | Commit E: .claude/rules | complete | 2026-04-11T23:35Z | 5116e04 | N2 gate PASS |
+| 1F | Commit F: bundle | complete | 2026-04-11T23:35Z | 88c0e69 | py_compile OK |
+| R1 | Regression gate (post-P1) | complete | 2026-04-11T23:35Z | 48/48, A 96 | PASS |
+| 3 | Stash + remote cleanup | complete | 2026-04-11T23:39Z | 2af8c87 | 4 stashes DROP, 2 branches deleted |
+

@@ -1,0 +1,54 @@
+=== A2: Claims extracted from documentation ===
+
+--- README.md ---
+5:> **48 skills | 17 commands | 7 registered hooks (+3 support .js) | 5 agents | 8 rules | 17 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
+28:- All 48 skills, 17 commands, 5 agents, and 8 rules exist on disk — cross-references resolve
+71:The installer clones the repo to `~/.claude/plugins/validationforge`, copies 8 rules to `~/.claude/rules/vf-*.md`, creates the `e2e-evidence/` directory (if inside a git repo), and saves config to `~/.claude/.vf-config.json`.
+139:Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 48 skills across 7 categories.
+276:+-- skills/                           48 skills (SKILL.md frontmatter)
+300:| File inventory (48 skills, 17 commands, 7 hooks, 5 agents, 8 rules) | Verified on disk |
+
+--- SKILLS.md ---
+3:48 skills across 7 categories. All skills use Claude Code SKILL.md frontmatter for discovery.
+
+--- COMMANDS.md ---
+
+--- CLAUDE.md ---
+
+--- ARCHITECTURE.md ---
+
+--- PRD.md ---
+14:**Current Status:** Comprehensive scaffolding complete (41 skills, 15 commands, 7 hooks, 5 agents, 8 rules). Methodology proven through manual validation (7/7 journeys PASS against real Next.js project). Automated `/validate` pipeline not yet verified end-to-end.
+54:- **Evidence pipeline**: 3 agents capture screenshots, API responses, build logs, and write formal verdicts
+108:2. **The Tool:** The Claude Code plugin that implements the framework. 41 skills of platform-specific validation knowledge, 7 hooks of enforcement, and 5 agents that execute the pipeline.
+161:#### Core Validation — L0 Foundation (2 skills)
+167:#### Core Validation — L1 Guardrails (2 skills)
+173:#### Core Validation — L2 Protocols (3 skills)
+180:#### Core Validation — L3 Planners (3 skills)
+192:#### Platform-Specific Validation (6 skills)
+202:#### Platform Tooling (3 skills)
+209:#### Quality Gates (3 skills)
+216:#### Specialized Validation (4 skills)
+224:#### Design Validation (4 skills)
+232:#### Research & Analysis (3 skills)
+239:#### Forge Orchestration (5 skills)
+248:#### Operational (2 skills)
+489:4. **Platform depth**: 41 skills with platform-specific knowledge that takes months to build
+498:| No-mock enforcement | — | — | — | — | **7 hooks** |
+588:| 07 | Prompt Engineering Stack | Skill dependency graph | "How 41 skills build on each other" | Explore the skills |
+705:**Free (MIT License):** Full plugin — all 41 skills, 15 commands, 7 hooks, 5 agents, 8 rules.
+791:- [x] 7 hooks (syntax + functional tests)
+
+--- SPECIFICATION.md ---
+4:> PRD.md contains accurate inventory numbers (41 skills, 15 commands, 7 hooks, 5 agents, 8 rules),
+117:- 5 commands: /validate, /validate-plan, /validate-fix, /validate-audit, /validate-ci
+241:5 hooks enforce the ValidationForge philosophy automatically:
+309:All 5 commands are entry points into a single validation pipeline:
+488:**ClaudeKit's 39 skills** cover: backend-development, databases, devops, frontend-development, ios-swift-development, mobile-development, docker-patterns, code-review, security-scan, testing-strategy, and 29 other generic topics.
+526:| No-mock enforcement | — | — | — | — | **5 hooks** |
+534:| Generic workflows | **39 skills** | **20+ agents** | **Multi-model** | **IDE** | — |
+722:- 3 hooks (block-test-files, validation-not-compilation, mock-detection)
+747:- 16 skills across 4 layers
+748:- 5 commands, 5 hooks, 3 agents
+941:├── skills/                               16 skills (5,653 lines)
+1397:*Total synthesis: 25 sequential thoughts, 42 skills inventoried, 3 competitor codebases analyzed, 25+ GitHub repos surveyed, 18 blog posts mapped, 5 benchmark scenarios defined, 4 pricing tiers designed, 7 risks assessed.*

@@ -1,0 +1,9 @@
+All 6 phases complete. Evidence captured, report written, server shut down cleanly.
+
+`★ Insight ─────────────────────────────────────`
+Every PASS claim above cites (a) a specific evidence file in `e2e-evidence/python-api-260416-1900/`, (b) the actual HTTP status code from `curl -w`, and (c) the verbatim response body — satisfying the "Evidence Before Completion" rule. No test or mock files were created; validation happened against the running Flask process (PID 21640 during the run).
+`─────────────────────────────────────────────────`
+
+**Summary:** 6/6 journeys PASS. Preflight verified `/health` returns 200 before execute. All responses have `Content-Type: application/json`. The README hints at a "seeded bug" that the current `app.py` does not contain — flagged as an open question in the report.
+
+VALIDATE_DONE=yes EVIDENCE_DIR=/Users/nick/Desktop/validationforge/e2e-evidence/python-api-260416-1900

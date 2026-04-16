@@ -1,0 +1,8 @@
+C-launch: PASS
+C-M1: PASS
+C-M2: PASS (worker cites block message)
+C-M2-fallback: PASS
+C-M3: FAIL
+C-M4: PASS
+C-M5: PASS (command behavior)
+C-M6: PASS

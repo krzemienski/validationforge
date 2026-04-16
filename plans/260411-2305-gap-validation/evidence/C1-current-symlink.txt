@@ -1,0 +1,9 @@
+lrwxr-xr-x@ 1 nick  staff  35 Apr 11 21:11 /Users/nick/.claude/plugins/validationforge -> /Users/nick/Desktop/validationforge
+---
+{
+  "validationforge@validationforge": {
+    "path": "/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0",
+    "scope": "user",
+    "installedAt": "2026-04-09T02:30:17.034Z"
+  }
+}
