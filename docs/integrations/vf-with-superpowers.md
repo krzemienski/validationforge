@@ -2,7 +2,7 @@
 
 Superpowers enforces disciplined red/green TDD and Socratic brainstorming, producing well-tested code with high unit-test coverage. VF complements this with real-system validation: the unit tests pass AND the system actually works under live conditions. Superpowers protects against logic bugs in isolation; VF protects against integration failures, mock drift, and behavior the unit tests cannot see.
 
-This guide shows how to pair the two plugins so each keeps its strengths. Superpowers owns the `brainstorm → write-plan → execute-plan` loop: its subagent-driven RED/GREEN cycle produces compile-clean code with passing unit tests, and its two-stage code review (spec compliance, then code quality) keeps the unit layer disciplined. ValidationForge then takes the artifact Superpowers hands over and proves — with screenshots, response bodies, console logs, and cited evidence files — that the assembled system actually behaves the way the unit tests *claim* it does. Mocks pass, integrations break; that gap is exactly where VF lives. This guide assumes Superpowers installed from `obra/superpowers-marketplace` (requires Claude Code v2.0.13+) and ValidationForge v1.x. Inventory numbers are as of April 2026.
+This guide shows how to pair the two plugins so each keeps its strengths. Superpowers owns the `brainstorm → write-plan → execute-plan` loop: its subagent-driven RED/GREEN cycle produces compile-clean code with passing unit tests, and its two-stage code review (spec compliance, then code quality) keeps the unit layer disciplined. ValidationForge then takes the artifact Superpowers hands over and proves — with screenshots, response bodies, console logs, and cited evidence files — that the assembled system actually behaves the way the unit tests *claim* it does. Mocks pass, integrations break; that gap is exactly where VF lives. This guide assumes Superpowers installed from `obra/superpowers-marketplace` (requires Claude Code v2.0.13+) and ValidationForge v1.x. Inventory numbers are as of April 2026. The canonical Superpowers command list (`/brainstorm`, `/write-plan`, `/execute-plan`) and skill catalog referenced throughout this guide come from [`docs/integrations/.research-notes.md`](./.research-notes.md) — a local contributor working document that tracks the source-of-truth URLs for each fact cited here.
 
 ## Quick Reference
 
@@ -114,6 +114,44 @@ Both plugins merge their hook definitions into Claude Code's hook pipeline and b
 ```
 
 Each plugin keeps its own `.claude-plugin/plugin.json` manifest under its install root; they do not conflict because their `name` fields (`superpowers` vs `validationforge`) are distinct. Commands, skills, hooks, agents, and rules are namespaced by plugin name, so `/brainstorm` and `/validate` never collide even though both appear in `/help`.
+
+### Sample `marketplace.json` registering both plugins
+
+The `/plugin install` flow in the [Install both plugins](#install-both-plugins-side-by-side) block uses the upstream `obra/superpowers-marketplace` for Superpowers and VF's own `install.sh` for VF. Teams that prefer to distribute both plugins through a single internal marketplace (for example, a private `team-marketplace` repo that pins versions for everyone on the team) can merge the two entries into one `marketplace.json`. The VF [`.claude-plugin/marketplace.json`](../../.claude-plugin/marketplace.json) is the minimal single-plugin reference — the sample below adds Superpowers alongside it, referenced by its upstream `github:` source so Claude Code still pulls the canonical Superpowers plugin from `obra/superpowers` at install time. Pin `version` to the exact release you have tested both plugins against:
+
+```json
+{
+  "name": "team-marketplace",
+  "owner": {
+    "name": "Your Team",
+    "url": "https://github.com/your-team"
+  },
+  "plugins": [
+    {
+      "name": "superpowers",
+      "source": "github:obra/superpowers",
+      "description": "Plan-and-execute TDD with RED/GREEN subagents and Socratic brainstorming.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "validationforge",
+      "source": "github:krzemienski/validationforge",
+      "description": "No-mock functional validation for Claude Code. Ship verified code, not 'it compiled' code.",
+      "version": "1.0.0"
+    }
+  ]
+}
+```
+
+Drop this file at `.claude-plugin/marketplace.json` in the team-marketplace repo, then the end-user install flow becomes a single command pair that mirrors the upstream recipe but points at the team marketplace:
+
+```bash
+/plugin marketplace add your-team/team-marketplace
+/plugin install superpowers@team-marketplace
+/plugin install validationforge@team-marketplace
+```
+
+The plugin order in the `plugins` array is cosmetic — install order, not array order, decides hook precedence, and install order is governed by the two `/plugin install` lines above. Keep Superpowers installed first so VF's hooks fire last (see [Recommended hook ordering](#recommended-hook-ordering-vf-fires-after-superpowers)).
 
 ### Recommended hook ordering: VF fires AFTER Superpowers
 
