@@ -1,0 +1,118 @@
+---
+title: no-mocking-validation-gates
+description: >
+  Enforces the Iron Rule: never create mocks, stubs, test doubles, or test files.
+  Detects mock-creation intent and redirects to real system validation. Works with
+  pre-tool-use hooks to block test file creation at the enforcement layer.
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# No-Mocking Validation Gates
+
+The enforcement skill behind ValidationForge's Iron Rule. It detects mock-creation
+intent and redirects it — and, paired with the `block-test-files` pre-tool-use
+hook, it rejects mock/test file writes before they hit disk.
+
+## When to Use
+
+This skill runs implicitly on every Write or Edit in a ValidationForge-enabled
+project, but it's worth explicitly invoking when:
+
+- You catch yourself about to write a `*.test.ts`, `*_test.go`, or
+  `*Tests.swift` file and want the rule stated out loud.
+- A teammate is pushing back on the no-mocks mandate and you need the
+  mock-drift argument in writing.
+- You hit a real-system dependency that's flaky or slow and your first
+  instinct is to mock around it.
+
+Does **not** describe how to validate through the real system — use
+[`functional-validation`](/skills/functional-validation/) for the protocol —
+and does not examine evidence at completion (use
+[`gate-validation-discipline`](/skills/gate-validation-discipline/)).
+
+## The Iron Rule
+
+Mocking creates **false confidence**. Mock drift is the silent killer:
+
+```
+Month 1: API returns {"data": [...]}           Mock returns {"data": [...]}       MATCH
+Month 3: API adds {"data": [...], "meta": {}}  Mock still returns {"data": [...]} DRIFT
+Month 6: Code crashes on missing "meta"        Tests still pass                   BUG HIDDEN
+```
+
+The tests pass. The code is broken. The mock is lying.
+
+## What Gets Blocked
+
+The pre-tool-use hook rejects Write/Edit operations targeting:
+
+| Category   | Examples                                                                               |
+|------------|----------------------------------------------------------------------------------------|
+| Test files | `*.test.ts`, `*.spec.js`, `*_test.go`, `test_*.py`, `*Tests.swift`                     |
+| Test dirs  | `__tests__/`, `__mocks__/`, `mocks/`, `stubs/`, `fixtures/`                            |
+| Mock code  | `jest.mock()`, `vi.fn()`, `sinon.stub()`, `unittest.mock`, `XCTest`, `gomock`          |
+
+<Aside type="note" title="Complete pattern catalog lives in the repo">
+  For the full pattern catalog (12 thought patterns, all blocked file patterns,
+  all blocked code patterns by language), see
+  `skills/no-mocking-validation-gates/references/mock-pattern-catalog.md`.
+</Aside>
+
+## What Is NOT Blocked
+
+- Playwright or browser automation (interacts with the real system)
+- Database seed scripts (populates real databases with real data)
+- API client code that calls real endpoints
+- Integration with real external services via staging/dev environments
+- Files in `e2e-evidence/`, `validation-evidence/`, `.claude/`, `validationforge/`
+
+## When You Want to Mock: The Three-Step Correction
+
+1. **DIAGNOSE** — Why can't I use the real system? (not running? not configured? too slow?)
+2. **FIX** — Make the real system available (start it, configure it, fix it)
+3. **VERIFY** — Validate through the real system (run it, exercise it, capture evidence)
+
+<Aside type="tip" title="Commands and a real-world drift example">
+  For detailed commands and a real-world mock-drift example, see
+  `skills/no-mocking-validation-gates/references/real-system-validation-guide.md`.
+</Aside>
+
+## Rules
+
+1. **NEVER create** any file matching blocked patterns — the hook will reject it
+2. **NEVER write** mock/stub/spy code in any language — the hook detects it
+3. **ALWAYS fix** the real dependency instead of mocking it
+4. **ALWAYS validate** through the actual system interface
+5. **Slowness is a bug** — profile and fix it, don't mock around it
+
+## Security Policy
+
+This skill blocks file creation and code patterns. It never modifies existing
+production code, never disables security checks, and never introduces new
+functionality. It only prevents the creation of mock/test artifacts.
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="The protocol for how to validate through the real system once mocking is off the table."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Evidence examination before marking tasks complete — the companion gate."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="End-to-end validation flows for complex user journeys."
+    href="/skills/e2e-validate/"
+  />
+  <LinkCard
+    title="error-recovery"
+    description="When real-system validation fails, a structured recovery protocol rather than falling back to mocks."
+    href="https://github.com/krzemienski/validationforge/blob/main/skills/error-recovery/SKILL.md"
+  />
+</CardGrid>

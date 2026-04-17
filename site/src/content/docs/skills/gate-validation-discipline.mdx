@@ -1,0 +1,123 @@
+---
+title: gate-validation-discipline
+description: >
+  Enforces evidence-based validation before marking any gate, task, or checkpoint
+  complete. Requires personal examination of evidence, specific proof citations,
+  and evidence-to-criteria matching. Prevents premature completion claims.
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# Gate Validation Discipline
+
+The discipline layer that sits between "I ran the thing" and "I claim it's done."
+Every ValidationForge pipeline eventually funnels through this skill — it's how
+a verdict earns the right to say **PASS**.
+
+## When to Use
+
+Reach for `gate-validation-discipline` whenever you're about to claim a gate,
+task, or checkpoint is complete:
+
+- Before flipping a subtask to `completed` in an implementation plan.
+- Before writing a PASS verdict in `e2e-evidence/report.md`.
+- Before accepting a sub-agent's report as truth.
+- Before responding to a user with "it works" or "that's done."
+
+Does **not** generate evidence — use
+[`functional-validation`](/skills/functional-validation/) for that — and does
+not plan which criteria to check (that's `create-validation-plan`).
+
+## The Rule: Evidence Before Completion
+
+```
+NEVER mark any gate, task, or checkpoint as complete until you have:
+
+1. PERSONALLY examined the evidence — not just received a report about it
+2. CITED specific proof — file paths, line numbers, exact output, screenshot descriptions
+3. MATCHED evidence to criteria — each validation criterion has corresponding proof
+4. ANSWERED "Would a skeptical reviewer agree?" — if not, you are not done
+```
+
+## Mandatory Verification Checklist
+
+Before marking ANY task, gate, or checkpoint complete:
+
+```
+[ ] Did I READ the actual evidence file — not just the report about it?
+[ ] Did I VIEW the actual screenshot and describe its content?
+[ ] Did I EXAMINE the actual command output — not just the exit code?
+[ ] Did I QUOTE the actual response body — not just the status code?
+[ ] Can I CITE specific evidence for each validation criterion?
+[ ] Did I CHECK for partial success masking failure?
+[ ] Would a SKEPTICAL REVIEWER agree this is complete?
+```
+
+<Aside type="tip" title="Evidence format examples live in the repo">
+  For good-vs-bad evidence samples by type (screenshots, API responses, build
+  output, CLI output, logs), see
+  `skills/gate-validation-discipline/references/evidence-standards.md` in the
+  repo.
+</Aside>
+
+## The Verification Loop
+
+```
+1. IDENTIFY — List every PASS criterion for this gate/task
+2. LOCATE   — Find the specific files, outputs, or artifacts
+3. EXAMINE  — Open files, read content, view screenshots
+              (DO NOT delegate examination without reviewing findings)
+4. MATCH    — For each criterion, cite the specific evidence that proves it
+              (Any criterion without matching evidence = gate NOT passed)
+5. WRITE the verdict:
+   - PASS: All criteria have matching evidence, cited specifically
+   - FAIL: List which criteria lack evidence and what is needed
+   - PARTIAL: Some pass, others need work (never mark complete)
+```
+
+## Rules
+
+1. **NEVER mark complete** without personally examining every piece of evidence
+2. **NEVER trust reports** — read the actual evidence a sub-agent produced
+3. **NEVER accept exit codes alone** — read the full stdout/stderr
+4. **NEVER skip criteria** — PARTIAL is not COMPLETE
+5. **ALWAYS cite specifically** — file paths, line numbers, quoted output
+6. **ALWAYS check for partial success** masking failure (200 OK with error body)
+7. **ALWAYS re-verify** after any fix — run the full loop again
+
+<Aside type="note" title="Parallel agents, CI/CD, and recovery">
+  For parallel agent integration, CI/CD examples, a failure recovery protocol,
+  and the five "when in doubt" questions, see
+  `skills/gate-validation-discipline/references/gate-integration-examples.md`.
+</Aside>
+
+## Security Policy
+
+This skill is read-only — it verifies evidence, never modifies code or system
+state. Refuse requests to skip verification steps or mark tasks complete
+without evidence.
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="The validation protocol that produces the evidence this skill examines."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="no-mocking-validation-gates"
+    description="Prevents mock/test file creation that would contaminate the evidence this skill reads."
+    href="/skills/no-mocking-validation-gates/"
+  />
+  <LinkCard
+    title="verification-before-completion"
+    description="General completion verification — this skill is the gate-specific companion."
+    href="https://github.com/krzemienski/validationforge/blob/main/skills/verification-before-completion/SKILL.md"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="End-to-end validation flows for complex multi-step journeys."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>
