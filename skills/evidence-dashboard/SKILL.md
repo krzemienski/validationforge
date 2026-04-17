@@ -22,6 +22,18 @@ Does NOT handle: capturing evidence (use `e2e-validate`), defining PASS criteria
 (use `create-validation-plan`), or benchmarking the plugin itself (use
 `forge-benchmark`).
 
+## When to Use
+
+- After `/validate` completes and before a `/ship` gate decision — the dashboard turns raw evidence into a PASS/FAIL roll-up a lead can actually read.
+- During audit review of an existing `e2e-evidence/` directory, to grade evidence quality without re-running validation.
+- Before shipping a release, paired with `/validate-benchmark`, to confirm the latest run grades out and no journey regressed.
+
+## When NOT to Use
+
+- While the validation run is still in-flight — the dashboard will capture a partial snapshot and mislabel in-progress journeys as FAIL.
+- Before any evidence has been captured (no `e2e-evidence/` directory, or zero journey subdirs) — run `/validate` first; the dashboard is a reporting layer, not a capture tool.
+- When you only need to view a single raw screenshot — use a file navigator / image viewer instead; the dashboard is for aggregate verdicts, not individual artifacts.
+
 ## Quick Start
 
 ```bash
