@@ -1,0 +1,34 @@
+---
+title: /forge-plan
+description: Generate a validation plan with journey discovery and PASS criteria — runs in quick, standard, or consensus mode.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Generate a validation plan for the current project.
+
+<Aside type="note" title="Allowed tools">
+  `/forge-plan` runs with restricted Claude Code tool access:
+  **Read, Write, Bash, Glob, Grep, Agent**.
+
+  Forge commands declare `allowed-tools` in their source frontmatter so
+  skills and agents can invoke them under a constrained permission set.
+</Aside>
+
+## Modes
+
+- **quick** — Fast journey generation for small projects
+- **standard** — Full discovery, journey generation, coverage analysis
+- **consensus** — Three perspectives (User Advocate, Security Analyst, Quality Engineer) independently analyze, then merge
+
+## Usage
+
+```
+/forge-plan                     # Standard mode
+/forge-plan --quick             # Quick mode
+/forge-plan --consensus         # Consensus mode with 3 perspectives
+```
+
+Output: `e2e-evidence/validation-plan.md`
+
+Invoke the `forge-plan` skill to execute.

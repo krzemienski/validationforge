@@ -1,0 +1,126 @@
+---
+title: Commands
+description: The 15 ValidationForge slash commands across two families — 9 user-facing Validation commands and 6 Forge orchestration commands — that drive the 7-phase pipeline end to end.
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+ValidationForge ships **15 slash commands** across two families. The
+**Validation** family is the user-facing interface (nine `/validate*`
+commands plus `/vf-setup`). The **Forge** family is the orchestration
+layer (six `/forge-*` commands) typically invoked by skills or agents
+with explicit tool restrictions. Both families access the same 7-phase
+pipeline.
+
+<Aside type="tip" title="Jump to a command">
+  Every command below links to its own page with the full usage, flags,
+  and behavior details ported from the source `commands/*.md` files.
+</Aside>
+
+## Validation Commands (9)
+
+The user-facing interface. No `allowed-tools` restriction — these use
+whatever Claude Code makes available in the session.
+
+| # | Command                                           | Description                                                                                                  |
+| - | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 1 | [`/validate`](/commands/validate/)                 | Run full end-to-end validation — detect platform, map journeys, capture evidence, write verdicts.            |
+| 2 | [`/validate-plan`](/commands/validate-plan/)       | Analyze codebase and generate a validation plan with PASS criteria — no execution.                           |
+| 3 | [`/validate-audit`](/commands/validate-audit/)     | Read-only validation audit — captures evidence and classifies findings without modifying code.               |
+| 4 | [`/validate-fix`](/commands/validate-fix/)         | Fix validation failures and re-validate until all journeys pass (3-strike limit).                            |
+| 5 | [`/validate-ci`](/commands/validate-ci/)           | Non-interactive CI/CD mode — auto-execute full validation pipeline with exit codes.                          |
+| 6 | [`/validate-team`](/commands/validate-team/)       | Spawn coordinated validation agents across platforms with evidence handoff.                                  |
+| 7 | [`/validate-sweep`](/commands/validate-sweep/)     | Autonomous validation loop — detect, validate, fix, re-validate until PASS or max attempts.                  |
+| 8 | [`/validate-benchmark`](/commands/validate-benchmark/) | Benchmark validation coverage, speed, and evidence quality against baseline metrics.                      |
+| 9 | [`/vf-setup`](/commands/vf-setup/)                 | Setup and configure ValidationForge for a project or globally.                                               |
+
+## Forge Commands (6)
+
+The orchestration layer. Each command specifies `allowed-tools` in
+frontmatter to constrain which Claude Code tools it may invoke. Forge
+commands are typically called by skills or agents rather than directly
+by users.
+
+| #  | Command                                                | Description                                                                                | Allowed Tools                              |
+| -- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------ |
+| 10 | [`/forge-setup`](/commands/forge-setup/)               | Initialize ValidationForge for this project                                                | Read, Write, Edit, Bash, Glob, Grep, Agent |
+| 11 | [`/forge-plan`](/commands/forge-plan/)                 | Generate a validation plan with journey discovery and PASS criteria                        | Read, Write, Bash, Glob, Grep, Agent       |
+| 12 | [`/forge-execute`](/commands/forge-execute/)           | Run validation journeys against the real system with autonomous fix loop                   | Read, Write, Edit, Bash, Glob, Grep, Agent |
+| 13 | [`/forge-team`](/commands/forge-team/)                 | Multi-agent parallel validation across platforms                                           | Read, Write, Bash, Glob, Grep, Agent       |
+| 14 | [`/forge-benchmark`](/commands/forge-benchmark/)       | Measure validation posture across 5 dimensions with trend tracking                         | Read, Write, Bash, Glob, Grep              |
+| 15 | [`/forge-install-rules`](/commands/forge-install-rules/) | Install ValidationForge rules to `.claude/rules/` for cross-session enforcement          | Read, Write, Bash, Glob                    |
+
+## Command Pipeline Matrix
+
+Which pipeline phases each command drives. A `yes` means the command
+runs that phase; `--` means it skips it; `read-only` / `parallel` /
+`loop` / `score` describe a phase-specific mode.
+
+| Command                | Research | Plan  | Preflight | Execute     | Analyze | Verdict  | Ship |
+| ---------------------- | :------: | :---: | :-------: | :---------: | :-----: | :------: | :--: |
+| `/validate`            |   yes    |  yes  |    yes    |     yes     |   yes   |   yes    |  no  |
+| `/validate-plan`       |   yes    |  yes  |    yes    |     --      |   --    |   --     |  --  |
+| `/validate-audit`      |   yes    |  --   |    yes    |  read-only  |   yes   |   yes    |  --  |
+| `/validate-fix`        |   --     |  --   |    --     |     yes     |   yes   |   yes    |  --  |
+| `/validate-ci`         |   yes    |  yes  |    yes    |     yes     |   yes   |   yes    |  --  |
+| `/validate-team`       |   yes    |  yes  |    yes    |  parallel   |   yes   | unified  |  --  |
+| `/validate-sweep`      |   --     |  --   |    --     |    loop     |   loop  |   loop   |  --  |
+| `/validate-benchmark`  |   --     |  --   |    --     |     --      |  score  |  report  |  --  |
+| `/vf-setup`            |   --     |  --   |    --     |     --      |   --    |   --     |  --  |
+
+## Validation vs. Forge Commands
+
+Both families access the same pipeline. The difference:
+
+- **Validation commands** (`/validate*`, `/vf-setup`) are the user-facing
+  interface. No `allowed-tools` restriction — they use whatever Claude
+  Code makes available in the session.
+- **Forge commands** (`/forge-*`) are the orchestration layer. Each
+  specifies `allowed-tools` in frontmatter to constrain which Claude
+  Code tools the command may invoke. Forge commands are typically
+  called by skills or agents rather than directly by users.
+
+## The 7-Phase Pipeline
+
+Every validation command drives some subset of the same seven phases:
+
+1. **RESEARCH** — standards, best practices, and applicable criteria.
+2. **PLAN** — journeys, per-journey PASS criteria, and evidence
+   requirements.
+3. **PREFLIGHT** — build compiles, services running, MCP servers
+   available. If preflight fails, the pipeline stops.
+4. **EXECUTE** — run each journey against the real system and capture
+   evidence into `e2e-evidence/<journey-slug>/`.
+5. **ANALYZE** — root-cause investigation for FAILs using sequential
+   thinking.
+6. **VERDICT** — evidence-backed PASS / FAIL per journey, consolidated
+   into a unified `e2e-evidence/report.md`.
+7. **SHIP** — production readiness audit and a deploy decision.
+
+See the [Pipeline Matrix](#command-pipeline-matrix) above for the exact
+phases each command runs.
+
+## Related Pages
+
+<CardGrid>
+  <LinkCard
+    title="Getting Started"
+    description="Install ValidationForge, run /vf-setup, and ship your first evidence-backed verdict."
+    href="/getting-started/"
+  />
+  <LinkCard
+    title="Configuration"
+    description="The three enforcement profiles — strict, standard, and permissive — rule-by-rule."
+    href="/configuration/"
+  />
+  <LinkCard
+    title="Skills"
+    description="41 skills across platform validation, quality gates, analysis, and operations."
+    href="/skills/"
+  />
+  <LinkCard
+    title="Integrations"
+    description="Claude Code plugin, OpenCode plugin, and CI/CD usage."
+    href="/integrations/"
+  />
+</CardGrid>

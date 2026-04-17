@@ -1,40 +1,86 @@
 ---
 title: ValidationForge
-description: Ship verified code, not just compiled code. End-to-end validation for AI-assisted development.
+description: No-mock functional validation for Claude Code and OpenCode. Ship verified code, not "it compiled" code — enforced through hooks, skills, and evidence-backed verdicts.
 template: splash
 hero:
-  tagline: Ship verified code, not "it compiled" code
-  image:
-    file: ../../assets/hero.svg
+  title: ValidationForge
+  tagline: No-mock functional validation for Claude Code and OpenCode. Ship verified code, not "it compiled" code.
   actions:
     - text: Get Started
-      link: /quickstart
+      link: /getting-started/
       icon: right-arrow
       variant: primary
     - text: View on GitHub
-      link: https://github.com/validationforge/validationforge
+      link: https://github.com/krzemienski/validationforge
       icon: external
+      variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
-## What is ValidationForge?
+<Aside type="danger" title="The Iron Rule">
+  **IF the real system doesn't work, FIX THE REAL SYSTEM.**
 
-ValidationForge is a no-mock validation platform for Claude Code. It replaces guesswork with real evidence — actual builds, actual interactions, actual proof your code works.
+  - NEVER create mocks, stubs, test doubles, or test files.
+  - ALWAYS validate through the same interfaces real users experience.
+  - ALWAYS capture evidence. ALWAYS review evidence. ALWAYS write verdicts.
+</Aside>
 
-## Key Features
+ValidationForge enforces the Iron Rule through hooks that block test file
+creation, skills that guide real-system validation, and agents that capture
+and review evidence through actual user interfaces.
 
-<CardGrid stagger>
-  <Card title="No Mocks Ever" icon="warning">
-    Never create test files, mocks, stubs, or test doubles. Validate against the real system.
-  </Card>
-  <Card title="Evidence-Based" icon="document">
-    Every PASS/FAIL cites specific evidence: screenshots, logs, API responses.
-  </Card>
-  <Card title="7-Phase Pipeline" icon="list-format">
-    Research → Plan → Preflight → Execute → Analyze → Verdict → Ship
-  </Card>
-  <Card title="Multi-Platform" icon="laptop">
-    iOS, Web, API, CLI, Fullstack — validate any platform with the right validator.
-  </Card>
+## Why Not Unit Tests?
+
+Unit tests verify code in isolation with mocks. Mocks drift from reality.
+ValidationForge verifies **systems in production** through the same
+interfaces your users experience.
+
+| Scenario                                     | Unit Tests                       | ValidationForge                                           |
+| -------------------------------------------- | -------------------------------- | --------------------------------------------------------- |
+| API field renamed (`users` → `data`)         | PASS (mock returns old field)    | **FAIL** (curl shows new field, frontend crashes)         |
+| JWT expiry reduced to 15 min                 | PASS (mock time, never wait)     | **FAIL** (real token expires, refresh fails)              |
+| iOS deep link after nav refactor             | PASS (mock URL handler)          | **FAIL** (`simctl openurl` → wrong screen)                |
+| DB migration with duplicate emails           | PASS (clean in-memory DB)        | **FAIL** (real migration fails on duplicates)             |
+| CSS grid overflow on small screens           | PASS (no visual rendering)       | **FAIL** (Playwright screenshot shows overflow)           |
+
+These are design scenarios where mock-based testing is structurally blind.
+ValidationForge targets exactly these gaps by validating against live
+systems.
+
+## Explore the Docs
+
+<CardGrid>
+  <LinkCard
+    title="Getting Started"
+    description="Install the plugin, run /vf-setup, and ship your first evidence-backed verdict."
+    href="/getting-started/"
+  />
+  <LinkCard
+    title="Commands"
+    description="The 15 slash commands that drive the 7-phase pipeline end to end."
+    href="/commands/"
+  />
+  <LinkCard
+    title="Skills"
+    description="41 skills across platform validation, quality gates, analysis, and operations."
+    href="/skills/"
+  />
+  <LinkCard
+    title="Configuration"
+    description="Three enforcement profiles — strict, standard, and permissive — for every team."
+    href="/configuration/"
+  />
 </CardGrid>
+
+## Install
+
+```bash
+# Claude Code — quick install via curl
+curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
+```
+
+Then restart Claude Code and run `/vf-setup` in your project to scaffold
+evidence, install rules, and pick an enforcement profile. See
+[Getting Started](/getting-started/) for the full walkthrough, including
+manual clone and OpenCode installation.

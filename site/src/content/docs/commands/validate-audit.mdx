@@ -1,0 +1,106 @@
+---
+title: /validate-audit
+description: Read-only validation audit — captures evidence and classifies findings without modifying code.
+---
+
+Run a full validation audit without modifying any code. Captures evidence, classifies findings by severity, and produces an audit report. Designed for compliance documentation, pre-release assessment, and baseline quality evaluation.
+
+## Usage
+
+```
+/validate-audit                        # Full audit of entire project
+/validate-audit --platform api         # Audit API layer only
+/validate-audit --scope src/dashboard/ # Audit specific directory
+```
+
+## Supported Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--platform PLATFORM` | auto-detect | Force platform. Values: `ios`, `web`, `api`, `cli`, `fullstack` |
+| `--scope PATH` | entire project | Limit audit to files under PATH |
+
+## The Audit Rule
+
+```
+OBSERVE and DOCUMENT. DO NOT FIX.
+An audit captures the current state — it does not change it.
+```
+
+No file writes, no code edits, no configuration changes. The ONLY files created are evidence captures and the audit report itself, all within `e2e-evidence/`.
+
+## Process
+
+### 1. Platform Detection
+Same as [`/validate`](/commands/validate/) — detect platform type and confidence.
+
+### 2. Feature Discovery
+Scan the codebase to enumerate all discoverable features, endpoints, screens, or commands.
+
+### 3. Evidence Capture
+For each discovered feature:
+- Interact with the running system (navigate, call endpoints, run commands)
+- Capture screenshots, responses, output
+- Record what is observed — not what is expected
+
+### 4. Finding Classification
+
+Each finding is classified by severity:
+
+| Severity | Definition | Example |
+|----------|------------|---------|
+| **CRITICAL** | Feature is broken, data loss risk, security vulnerability | API returns 500 on login, unencrypted passwords in response |
+| **HIGH** | Feature does not work as expected, significant UX issue | Form submits but data not saved, page crashes on mobile |
+| **MEDIUM** | Feature works but has notable issues | Slow response (&gt;3s), missing error messages, layout shift |
+| **LOW** | Minor cosmetic or usability issues | Typo in label, slightly off alignment, missing favicon |
+| **INFO** | Observation, not a defect | Feature exists but is not documented, unused endpoint |
+
+### 5. Report Generation
+
+Audit report saved to `e2e-evidence/audit-report.md` with structure:
+
+```markdown
+# Validation Audit Report
+Date: YYYY-MM-DD HH:MM
+Platform: web (confidence: high)
+Scope: entire project
+Auditor: ValidationForge
+
+## Summary
+- Features discovered: N
+- Findings: N total (C critical, H high, M medium, L low, I info)
+
+## Findings
+
+### CRITICAL
+| # | Feature | Finding | Evidence |
+|---|---------|---------|----------|
+| 1 | Login | Returns 500 on valid credentials | `e2e-evidence/audit-login-500.json` |
+
+### HIGH
+...
+
+### MEDIUM
+...
+
+### LOW
+...
+
+### INFO
+...
+
+## Evidence Inventory
+| File | Description |
+|------|-------------|
+| `e2e-evidence/audit-*.png` | Screenshots |
+| `e2e-evidence/audit-*.json` | API responses |
+| `e2e-evidence/audit-*.txt` | CLI/log output |
+```
+
+## Use Cases
+
+- **Pre-release assessment:** Audit before deploying to production
+- **Compliance documentation:** Produce evidence trail for stakeholders
+- **Baseline measurement:** Capture current state before starting a refactor
+- **Handoff documentation:** Document system state for a new team member
+- **Regression detection:** Compare audit results before and after changes

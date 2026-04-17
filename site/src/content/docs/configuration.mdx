@@ -1,0 +1,404 @@
+---
+title: Configuration
+description: ValidationForge's three enforcement profiles — strict, standard, and permissive — compared rule-by-rule and hook-by-hook, with the /vf-setup flags to switch between them.
+---
+
+import { Aside, Tabs, TabItem, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+ValidationForge ships three enforcement profiles. Each profile is a single
+JSON file in [`config/`](https://github.com/krzemienski/validationforge/tree/main/config)
+that controls **which rules block** vs. **which rules warn** and **which
+hooks are enabled**. Pick one during `/vf-setup` and switch any time by
+re-running `/vf-setup` with a flag.
+
+<Aside type="tip" title="Source of truth">
+  The tables on this page are rendered from the three JSON files that
+  ship with the plugin: `config/strict.json`, `config/standard.json`,
+  and `config/permissive.json`. If you tune a profile in a fork, update
+  the corresponding JSON file — the hook loader reads these directly.
+</Aside>
+
+## Profile Summary
+
+| Profile         | Test files | Mock detection | Evidence on completion | Best for                                 |
+| --------------- | :--------: | :------------: | :--------------------: | ---------------------------------------- |
+| **strict**      |  Blocked   |    Blocked     |      **Required**      | Production, compliance, audited systems  |
+| **standard**    |  Blocked   |    Blocked     |       Required         | Daily development on most projects       |
+| **permissive**  |   Warned   |     Warned     |       Optional         | Teams transitioning away from unit tests |
+
+The three profiles only differ in **how strictly** the same set of rules is
+enforced — the rule list itself is identical across profiles. Strict turns
+every rule on and fails hard when evidence is missing; standard keeps the
+blocking rules on but relaxes the "planning-overhead" rules; permissive
+turns every block into an advisory warning.
+
+## Rule Comparison
+
+Every profile exposes the same `rules` object. Values below are rendered
+directly from each `config/*.json` file.
+
+| Rule                              | `strict`  | `standard` | `permissive` | What it does                                                           |
+| --------------------------------- | :-------: | :--------: | :----------: | ---------------------------------------------------------------------- |
+| `block_test_files`                |  `true`   |  `true`    |   `false`    | Refuse Write/Edit of `*.test.*`, `*.spec.*`, `__tests__/` paths.      |
+| `block_mock_patterns`             |  `true`   |  `true`    |   `false`    | Refuse writes that introduce `jest.mock`, `sinon.stub`, `unittest.mock`. |
+| `require_evidence_on_completion`  |  `true`   |  `true`    |   `false`    | Gate task completion on `e2e-evidence/` being populated.              |
+| `require_validation_plan`         |  `true`   |  `false`   |   `false`    | Demand a validation plan before the execute phase runs.               |
+| `require_preflight`               |  `true`   |  `false`   |   `false`    | Run the preflight gate (build compiles, services up) before execute.  |
+| `require_baseline`                |  `true`   |  `false`   |   `false`    | Capture a baseline quality snapshot before the first run.             |
+| `max_recovery_attempts`           |    `3`    |    `3`     |     `5`      | Fix-loop strike limit per journey before giving up.                   |
+| `fail_on_missing_evidence`        |  `true`   |  `false`   |   `false`    | Convert "no evidence captured" from a warning into a hard failure.    |
+| `require_screenshot_review`       |  `true`   |  `false`   |   `false`    | Require the verdict author to describe what each screenshot _shows_.  |
+
+<Aside type="note" title="Blocking vs. warning">
+  `strict` and `standard` both set `block_test_files` and
+  `block_mock_patterns` to `true`, so both profiles **block** those
+  writes. `permissive` sets them to `false` and the hooks downgrade to
+  `warn` — you'll still see a console message, but the write goes
+  through.
+</Aside>
+
+## Hook Enablement Matrix
+
+Each profile toggles the five core hooks between `enabled` (block on
+match) and `warn` (print a reminder but don't block). The matrix below is
+rendered directly from the `hooks` object in each config file.
+
+| Hook                          | `strict`  | `standard` | `permissive` | Trigger                                    |
+| ----------------------------- | :-------: | :--------: | :----------: | ------------------------------------------ |
+| `block-test-files`            | `enabled` | `enabled`  |    `warn`    | PreToolUse on Write/Edit/MultiEdit         |
+| `evidence-gate-reminder`      | `enabled` | `enabled`  |  `enabled`   | PreToolUse on TaskUpdate                   |
+| `validation-not-compilation`  | `enabled` | `enabled`  |  `enabled`   | PostToolUse on Bash                        |
+| `completion-claim-validator`  | `enabled` | `enabled`  |    `warn`    | PostToolUse on Bash                        |
+| `mock-detection`              | `enabled` | `enabled`  |    `warn`    | PostToolUse on Edit/Write/MultiEdit        |
+
+Two hooks — `evidence-gate-reminder` and `validation-not-compilation` —
+stay `enabled` in every profile because they are purely advisory: they
+inject context, they do not block tool use.
+
+## Per-Profile Drill-Down
+
+<Tabs syncKey="enforcement-profile">
+  <TabItem label="strict">
+    Full contents of `config/strict.json`:
+
+    ```json
+    {
+      "name": "strict",
+      "description": "Maximum enforcement — blocks all test files, requires evidence for every gate, no exceptions",
+      "strictness": "strict",
+      "evidence_dir": "e2e-evidence",
+      "ci_mode": false,
+      "rules": {
+        "block_test_files": true,
+        "block_mock_patterns": true,
+        "require_evidence_on_completion": true,
+        "require_validation_plan": true,
+        "require_preflight": true,
+        "require_baseline": true,
+        "max_recovery_attempts": 3,
+        "fail_on_missing_evidence": true,
+        "require_screenshot_review": true
+      },
+      "hooks": {
+        "block-test-files": "enabled",
+        "evidence-gate-reminder": "enabled",
+        "validation-not-compilation": "enabled",
+        "completion-claim-validator": "enabled",
+        "mock-detection": "enabled"
+      }
+    }
+    ```
+
+    **When to pick strict:**
+
+    - You're shipping to production and want every commit backed by
+      captured, reviewed evidence.
+    - You're under a compliance regime that requires an auditable
+      validation plan before execution.
+    - Your team has internalized the Iron Rule and wants the hooks to
+      refuse anything that slips.
+
+    **What strict changes vs. standard:**
+
+    - `require_validation_plan: true` — no execute phase without a plan.
+    - `require_preflight: true` — the preflight gate is mandatory, not
+      advisory.
+    - `require_baseline: true` — capture a baseline snapshot on first run.
+    - `fail_on_missing_evidence: true` — missing evidence is a hard FAIL,
+      not a warning.
+    - `require_screenshot_review: true` — every screenshot must be
+      described (what it _shows_, not that it exists).
+  </TabItem>
+  <TabItem label="standard">
+    Full contents of `config/standard.json`:
+
+    ```json
+    {
+      "name": "standard",
+      "description": "Balanced enforcement — blocks test files, reminds about evidence, allows flexibility",
+      "strictness": "standard",
+      "evidence_dir": "e2e-evidence",
+      "ci_mode": false,
+      "rules": {
+        "block_test_files": true,
+        "block_mock_patterns": true,
+        "require_evidence_on_completion": true,
+        "require_validation_plan": false,
+        "require_preflight": false,
+        "require_baseline": false,
+        "max_recovery_attempts": 3,
+        "fail_on_missing_evidence": false,
+        "require_screenshot_review": false
+      },
+      "hooks": {
+        "block-test-files": "enabled",
+        "evidence-gate-reminder": "enabled",
+        "validation-not-compilation": "enabled",
+        "completion-claim-validator": "enabled",
+        "mock-detection": "enabled"
+      }
+    }
+    ```
+
+    **When to pick standard (the default):**
+
+    - You want the three no-mock mandates (no test files, no mock
+      patterns, evidence on completion) enforced, but you don't want
+      `/validate` refusing to run just because a plan hasn't been
+      generated yet.
+    - You're in day-to-day development and need room to iterate.
+    - Your project doesn't yet have a baseline, and capturing one is not
+      a blocker.
+
+    **What standard relaxes vs. strict:**
+
+    - `require_validation_plan: false`
+    - `require_preflight: false`
+    - `require_baseline: false`
+    - `fail_on_missing_evidence: false`
+    - `require_screenshot_review: false`
+
+    The blocking hooks stay on — the profile only relaxes the
+    _planning-overhead_ requirements.
+  </TabItem>
+  <TabItem label="permissive">
+    Full contents of `config/permissive.json`:
+
+    ```json
+    {
+      "name": "permissive",
+      "description": "Minimal enforcement — warns but does not block. For teams transitioning from unit tests.",
+      "strictness": "permissive",
+      "evidence_dir": "e2e-evidence",
+      "ci_mode": false,
+      "rules": {
+        "block_test_files": false,
+        "block_mock_patterns": false,
+        "require_evidence_on_completion": false,
+        "require_validation_plan": false,
+        "require_preflight": false,
+        "require_baseline": false,
+        "max_recovery_attempts": 5,
+        "fail_on_missing_evidence": false,
+        "require_screenshot_review": false
+      },
+      "hooks": {
+        "block-test-files": "warn",
+        "evidence-gate-reminder": "enabled",
+        "validation-not-compilation": "enabled",
+        "completion-claim-validator": "warn",
+        "mock-detection": "warn"
+      }
+    }
+    ```
+
+    **When to pick permissive:**
+
+    - Your team is transitioning away from a large unit-test suite and
+      can't delete every `*.test.*` file in a single PR.
+    - You want ValidationForge's guidance (skills, rules, evidence
+      capture) without the hooks refusing writes.
+    - You're evaluating ValidationForge and want to see warnings before
+      turning them into blocks.
+
+    **What permissive changes vs. standard:**
+
+    - Every blocking rule becomes `false` — writes go through, the hook
+      prints a warning.
+    - `max_recovery_attempts: 5` — the fix loop gets two extra strikes
+      per journey before giving up.
+    - `block-test-files`, `completion-claim-validator`, and
+      `mock-detection` drop to `warn` — the hooks stay loaded, they
+      just stop refusing tool use.
+
+    <Aside type="caution" title="Permissive is a ramp, not a destination">
+      Permissive is designed for the first 2–4 weeks of a migration away
+      from mock-based testing. Once your team is comfortable with
+      evidence-backed verdicts, move to **standard** — the warnings
+      alone won't stop drift.
+    </Aside>
+  </TabItem>
+</Tabs>
+
+## Shared Settings
+
+Three fields are identical across all three profiles and apply regardless
+of which profile you pick:
+
+| Field           | Value               | What it does                                                           |
+| --------------- | ------------------- | ---------------------------------------------------------------------- |
+| `evidence_dir`  | `"e2e-evidence"`    | Directory where every journey writes its evidence + `report.md`.       |
+| `ci_mode`       | `false`             | Non-interactive CI mode. `/validate-ci` flips this to `true` at runtime. |
+| `strictness`    | matches `name`      | Human-readable label surfaced in reports and hook messages.            |
+
+## Switching Profiles
+
+### During initial setup
+
+Pick a profile when you run `/vf-setup`. The setup wizard asks, but you
+can also skip the prompt with a flag:
+
+```bash
+/vf-setup                    # Interactive wizard, recommends standard
+/vf-setup --strict           # Skip prompt, use strict enforcement
+/vf-setup --standard         # Skip prompt, use standard (same as interactive default)
+/vf-setup --permissive       # Skip prompt, use permissive enforcement
+```
+
+### After setup (switching profiles)
+
+Re-run `/vf-setup` with `--force` plus the profile flag you want. The
+command detects that ValidationForge is already configured and, with
+`--force`, re-applies the profile without asking again.
+
+```bash
+# Tighten from standard to strict
+/vf-setup --force --strict
+
+# Loosen from strict to permissive during a migration
+/vf-setup --force --permissive
+```
+
+### Full `/vf-setup` flag reference
+
+| Flag                            | Behavior                                                   |
+| ------------------------------- | ---------------------------------------------------------- |
+| `--local`                       | Install project-level `CLAUDE.md` + rules (default).       |
+| `--global`                      | Install to `~/.claude/` for all projects.                  |
+| `--strict`                      | Use the strict enforcement config.                         |
+| `--standard`                    | Use the standard enforcement config (default).             |
+| `--permissive`                  | Use the permissive enforcement config.                     |
+| `--force`                       | Re-run even if ValidationForge is already configured.      |
+| `--platform ios\|web\|api\|cli` | Pre-configure platform detection, skip auto-detect.        |
+
+## Where Configuration Lives
+
+ValidationForge splits its state across two locations — one global, one
+per-project — so you can set a default for your machine and still
+override it per-repo.
+
+### Global: `~/.claude/.vf-config.json`
+
+This file is created by `install.sh` and updated by every `/vf-setup`
+run. It records which enforcement profile was last applied, the setup
+version, and the timestamp. `/vf-setup` reads it first to detect
+"already configured" runs.
+
+```json
+{
+  "setupCompleted": "2026-04-17T05:29:59Z",
+  "setupVersion": "1.0.0",
+  "profile": "standard"
+}
+```
+
+<Aside type="note" title="Global vs. per-project profile">
+  The **global** `~/.claude/.vf-config.json` records the last profile
+  `/vf-setup` applied anywhere on this machine. The **per-project**
+  profile (below) is what actually controls hooks inside a given repo.
+  Running `/vf-setup --local --strict` in one project and
+  `/vf-setup --local --permissive` in another is fully supported —
+  each project carries its own active profile.
+</Aside>
+
+### Per-project: `.vf/active-config.json`
+
+When you run `/vf-setup` inside a project, the selected profile is
+copied to `.vf/active-config.json` at the project root. The hooks
+resolve this file at tool-execution time to decide whether to block,
+warn, or stay silent.
+
+```
+project-root/
+  .vf/
+    active-config.json    ← Copy of config/<profile>.json
+    state/
+      setup-state.json    ← /vf-setup resume checkpoint
+  .claude/
+    CLAUDE.md             ← Project-level VF reference
+    rules/                ← 8 installed rule files
+  e2e-evidence/           ← Evidence output (from evidence_dir)
+```
+
+If `.vf/active-config.json` is missing, the hooks fall back to `standard`.
+
+### Per-project overrides
+
+You do not need to hand-edit `config/<profile>.json` — those are the
+defaults that ship with the plugin. If you want a custom profile for a
+single project, copy `config/standard.json` into
+`.vf/active-config.json` at the project root and tweak it. The next
+`/vf-setup --force` will overwrite it, so treat custom per-project
+configs as exploratory.
+
+## Verifying Your Active Profile
+
+Quick checks to confirm which profile is in effect:
+
+```bash
+# Which profile did /vf-setup last write globally?
+jq -r '.profile' ~/.claude/.vf-config.json
+
+# What does this project's active config look like?
+jq . .vf/active-config.json
+
+# Specifically: is block_test_files on?
+jq -r '.rules.block_test_files' .vf/active-config.json
+```
+
+If you want to watch a hook in action, try creating a test file with
+`block_test_files` on:
+
+```bash
+# With strict or standard, this is refused by block-test-files.js
+echo '' > foo.test.ts
+```
+
+With `strict` or `standard`, the hook refuses the write and returns a
+non-zero exit so Claude Code surfaces the block. With `permissive`, it
+prints a warning and lets the write through.
+
+## Related Pages
+
+<CardGrid>
+  <LinkCard
+    title="Getting Started"
+    description="Install ValidationForge and run /vf-setup for the first time."
+    href="/getting-started/"
+  />
+  <LinkCard
+    title="Commands"
+    description="Every slash command — including /vf-setup with all flags and examples."
+    href="/commands/"
+  />
+  <LinkCard
+    title="Skills"
+    description="41 skills that enforce the rules defined by your active profile."
+    href="/skills/"
+  />
+  <LinkCard
+    title="Integrations"
+    description="Claude Code plugin, OpenCode plugin, and CI/CD usage."
+    href="/integrations/"
+  />
+</CardGrid>

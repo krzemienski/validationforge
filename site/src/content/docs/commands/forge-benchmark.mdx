@@ -1,0 +1,41 @@
+---
+title: /forge-benchmark
+description: Measure validation posture across 5 dimensions — coverage, detection, evidence quality, speed, and cost — with trend tracking.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Score your project's validation posture.
+
+<Aside type="note" title="Allowed tools">
+  `/forge-benchmark` runs with restricted Claude Code tool access:
+  **Read, Write, Bash, Glob, Grep**.
+
+  Forge commands declare `allowed-tools` in their source frontmatter so
+  skills and agents can invoke them under a constrained permission set.
+</Aside>
+
+## Dimensions
+
+| Dimension | Weight | Target |
+|-----------|--------|--------|
+| Coverage | 30% | &gt;80% features validated |
+| Detection | 25% | &gt;70% defect detection |
+| Evidence Quality | 25% | &gt;90% cited evidence |
+| Speed | 10% | &lt;5 min/journey |
+| Cost | 10% | Decreasing trend |
+
+## Grades
+
+A (90+), B (80-89), C (70-79), D (60-69), F (&lt;60)
+
+## Usage
+
+```
+/forge-benchmark                # Run benchmark, compare to history
+/forge-benchmark --report       # Generate detailed report only
+```
+
+History tracked in `.validationforge/benchmark-history.json`.
+
+Invoke the `forge-benchmark` skill to execute.

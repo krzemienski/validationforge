@@ -1,0 +1,304 @@
+---
+title: Getting Started
+description: Install ValidationForge, run /vf-setup, and ship your first evidence-backed /validate verdict.
+---
+
+import { Aside, Tabs, TabItem, Steps, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+ValidationForge is a Claude Code plugin (with an OpenCode counterpart) that
+enforces no-mock, evidence-backed functional validation. This page walks you
+from a clean machine to your first evidence-backed `/validate` verdict.
+
+## Prerequisites
+
+Before installing, make sure you have:
+
+- **Claude Code** installed and working on your machine.
+- **git** and **curl** available on `PATH`.
+- **jq** available on `PATH` (used by `/vf-setup` to read config files).
+- A project you want to validate (any language / platform).
+- _Optional, platform-specific:_ a matching MCP server for evidence capture —
+  Playwright or Chrome DevTools MCP for web, Xcode CLI tools (`xcrun simctl`)
+  for iOS, Stitch MCP for design. API and CLI validation do not need an MCP
+  server.
+
+<Aside type="note" title="Repo availability">
+  The GitHub repository (`https://github.com/krzemienski/validationforge`) may
+  not be publicly published yet. If the **curl** or **git clone** methods
+  below fail with a `404`, use the **local symlink** method — it works
+  entirely against a local checkout.
+</Aside>
+
+## Installation
+
+Pick one of the three install methods. All three end with the same on-disk
+layout at `~/.claude/plugins/validationforge`.
+
+<Tabs syncKey="install-method">
+  <TabItem label="curl (quick)">
+    Single-line install that runs `install.sh` from the repo:
+
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
+    ```
+
+    Requires the GitHub repo to be publicly published. If the URL returns
+    `404`, use **local symlink** instead.
+  </TabItem>
+  <TabItem label="git clone">
+    Manual clone into the Claude Code plugins directory:
+
+    ```bash
+    git clone --depth 1 https://github.com/krzemienski/validationforge ~/.claude/plugins/validationforge
+    ```
+
+    Also requires the GitHub repo to be publicly published.
+  </TabItem>
+  <TabItem label="local symlink">
+    Works entirely offline against an existing local checkout — use this if
+    the repo is not yet published:
+
+    ```bash
+    ln -s /path/to/your/local/validationforge ~/.claude/plugins/validationforge
+    ```
+  </TabItem>
+</Tabs>
+
+### What the installer does
+
+The `install.sh` flow (and the equivalent manual steps):
+
+- Clones the repo to `~/.claude/plugins/validationforge`.
+- Copies 8 rules to `~/.claude/rules/vf-*.md`.
+- Creates the `e2e-evidence/` directory (if you run it inside a git repo).
+- Saves config to `~/.claude/.vf-config.json`.
+
+Two environment variables let you override installer defaults:
+
+- `VF_SOURCE` — override the repo URL the installer clones from.
+- `VF_INSTALL_DIR` — override the install path (must be under `$HOME` or a
+  temp directory).
+
+<Aside type="caution" title="Restart Claude Code">
+  After running **any** of the install methods above, **restart Claude Code
+  before using ValidationForge**. Plugins are loaded at session startup —
+  hooks, skills, and commands will not be active in the session where you
+  ran the installer.
+</Aside>
+
+## Configure Your Project with `/vf-setup`
+
+Once Claude Code has been restarted, run `/vf-setup` from inside your
+project. It detects your platform, selects an enforcement profile,
+scaffolds `e2e-evidence/`, installs rules to `.claude/rules/vf-*`, and
+verifies MCP server availability.
+
+```
+/vf-setup                    # Interactive setup wizard
+/vf-setup --strict           # Skip prompts, use strict enforcement
+/vf-setup --standard         # Skip prompts, use standard enforcement (default)
+/vf-setup --permissive       # Skip prompts, use permissive enforcement
+```
+
+### Setup flags
+
+| Flag                            | Behavior                                                   |
+| ------------------------------- | ---------------------------------------------------------- |
+| `--local`                       | Install project-level `CLAUDE.md` + rules (default).       |
+| `--global`                      | Install to `~/.claude/` for all projects.                  |
+| `--strict`                      | Use the strict enforcement config.                         |
+| `--standard`                    | Use the standard enforcement config (default).             |
+| `--permissive`                  | Use the permissive enforcement config.                     |
+| `--force`                       | Re-run even if ValidationForge is already configured.      |
+| `--platform ios\|web\|api\|cli` | Pre-configure platform detection, skip auto-detect.        |
+
+### Enforcement profiles at a glance
+
+`/vf-setup` asks which enforcement profile to use. Short version:
+
+- **Strict** — all hooks active, blocks test files, mocks, and
+  unsubstantiated completion claims. Recommended for production projects
+  and compliance-heavy teams.
+- **Standard** _(recommended)_ — core hooks active, warnings for best
+  practices. The right default for most projects.
+- **Permissive** — advisory hooks only, warn but do not block. For teams
+  transitioning away from unit tests.
+
+See the [Configuration](/configuration/) page for the full
+hook-by-hook and rule-by-rule matrix.
+
+### What `/vf-setup` leaves behind
+
+After it completes successfully, your project will contain:
+
+```
+.claude/
+  CLAUDE.md                        ← Project-level VF reference
+  rules/
+    validation-discipline.md       ← No-mock mandate
+    evidence-management.md         ← Evidence directory + naming
+    platform-detection.md          ← Platform routing rules
+    execution-workflow.md          ← 7-phase pipeline
+    team-validation.md             ← Multi-agent validation teams
+    forge-execution.md             ← Fix loop discipline
+    forge-team-orchestration.md    ← Validator assignment + verdict
+    benchmarking.md                ← Metric collection + benchmarks
+.vf/
+  active-config.json               ← Active enforcement profile
+e2e-evidence/                      ← Evidence output directory
+```
+
+A pointer to the active profile is also written to
+`~/.claude/.vf-config.json` so later `/vf-setup` runs can detect that
+ValidationForge is already configured.
+
+## First Validation
+
+Now run your first full validation pipeline:
+
+```
+/validate
+```
+
+This drives the 7-phase pipeline end to end:
+
+<Steps>
+
+1. **RESEARCH** — standards, best practices, and applicable criteria for
+   your project.
+
+2. **PLAN** — discovered user journeys, per-journey PASS criteria, and the
+   evidence each journey must produce.
+
+3. **PREFLIGHT** — build compiles, services running, MCP servers
+   available. **If preflight fails, the pipeline stops.**
+
+4. **EXECUTE** — run each journey against the real system and capture
+   evidence into `e2e-evidence/<journey-slug>/`.
+
+5. **ANALYZE** — root-cause investigation for any FAILs using sequential
+   thinking.
+
+6. **VERDICT** — evidence-backed PASS / FAIL per journey, consolidated
+   into a unified `e2e-evidence/report.md`.
+
+7. **SHIP** — production readiness audit and a deploy decision.
+
+</Steps>
+
+If you want to plan journeys without executing them, run `/validate-plan`
+first and inspect the output before committing to a full run.
+
+## Reading the Verdict
+
+When the pipeline finishes, open `e2e-evidence/report.md`. Evidence is
+organized by journey:
+
+```
+e2e-evidence/
+  {journey-slug}/
+    step-01-{description}.png
+    step-02-{description}.json
+    evidence-inventory.txt
+  report.md
+```
+
+Each journey gets a **PASS** or **FAIL** verdict that cites specific
+evidence. Evidence quality rules:
+
+- **Screenshots** — describe what you _see_, not that a file exists.
+  _Good:_ "Shows 3 sessions with green status badges". _Bad:_ "Screenshot
+  exists".
+- **API responses** — quote the actual body **and** headers, not just the
+  status code. _Good:_ `{"total": 41, "items": [...]}`. _Bad:_ `200 OK`.
+- **Build output** — quote the actual success or failure line, not
+  "build passed".
+- **Console logs** — include timestamps.
+- **Empty files** — zero-byte files are **invalid** evidence.
+
+If any journey returns **FAIL**, fix the **real** system (there are no
+mocks to fix) and re-run `/validate-fix` to re-validate only the failed
+journeys. The fix loop has a 3-strike limit per journey.
+
+## Troubleshooting
+
+### Repo not published yet
+
+If `https://github.com/krzemienski/validationforge` returns a `404`, the
+repo isn't public yet. Use the **local symlink** install method above
+against a local checkout of the repo — the plugin works identically
+either way.
+
+### Plugin not loaded after install
+
+Hooks, skills, and commands only become active **after Claude Code
+restarts** following install. If `/vf-setup` or `/validate` is not
+recognized after install:
+
+1. Fully quit and relaunch Claude Code — this is the most common fix.
+2. Verify the plugin is registered: `~/.claude/installed_plugins.json`
+   should contain the `validationforge` plugin path.
+3. Confirm `hooks/hooks.json` exists under
+   `~/.claude/plugins/validationforge/` and that `${CLAUDE_PLUGIN_ROOT}`
+   resolves to that directory at hook-execution time.
+4. Run a hook manually to check syntax:
+
+   ```bash
+   echo '{"tool_name":"Write","tool_input":{"file_path":"foo.test.ts"}}' \
+     | node ~/.claude/plugins/validationforge/hooks/block-test-files.js
+   ```
+
+### No MCP server available
+
+Some platforms need an MCP server for evidence capture:
+
+| Platform | Required MCP                           | Quick check                                                |
+| -------- | -------------------------------------- | ---------------------------------------------------------- |
+| Web      | Playwright MCP or Chrome DevTools MCP  | `mcp__playwright__*` or `mcp__chrome-devtools__*` tools.   |
+| iOS      | Xcode CLI tools                        | `xcrun simctl list` succeeds.                              |
+| Design   | Stitch MCP                             | `mcp__stitch__*` tools available.                          |
+| API      | None — `curl` is enough.               | `curl --version`.                                          |
+| CLI      | None — your shell is enough.           | —                                                          |
+
+`/vf-setup` reports missing MCP servers but does **not** fail setup — it
+just prints a warning. Install the missing server and re-run `/validate`.
+
+### Skills not discovered
+
+1. Skills require a `SKILL.md` with valid YAML frontmatter
+   (`name`, `description`, `triggers`).
+2. Verify the skill directory exists under
+   `~/.claude/plugins/validationforge/skills/` and contains a
+   `SKILL.md`.
+3. Restart the Claude Code session after plugin installation.
+
+### Evidence directory missing
+
+Run `/vf-setup` or `mkdir -p e2e-evidence` at your project root. The
+installer creates this automatically when you run it inside a git
+repository.
+
+## Next Steps
+
+<CardGrid>
+  <LinkCard
+    title="Commands"
+    description="All 15 slash commands — /validate, /validate-fix, /validate-team, and the Forge family."
+    href="/commands/"
+  />
+  <LinkCard
+    title="Configuration"
+    description="Strict, standard, and permissive enforcement profiles side-by-side."
+    href="/configuration/"
+  />
+  <LinkCard
+    title="Skills"
+    description="41 skills across platform validation, quality gates, analysis, and operations."
+    href="/skills/"
+  />
+  <LinkCard
+    title="Integrations"
+    description="Claude Code plugin, OpenCode plugin, and CI/CD usage."
+    href="/integrations/"
+  />
+</CardGrid>

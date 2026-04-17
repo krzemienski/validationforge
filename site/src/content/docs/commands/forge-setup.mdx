@@ -1,0 +1,35 @@
+---
+title: /forge-setup
+description: Initialize ValidationForge for this project — detect platforms, select enforcement, scaffold directories, install rules, and verify MCP servers.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Initialize ValidationForge for the current project.
+
+<Aside type="note" title="Allowed tools">
+  `/forge-setup` runs with restricted Claude Code tool access:
+  **Read, Write, Edit, Bash, Glob, Grep, Agent**.
+
+  Forge commands declare `allowed-tools` in their source frontmatter so
+  skills and agents can invoke them under a constrained permission set.
+</Aside>
+
+## What This Does
+
+1. **Detect platforms** — Scan for iOS, Web, API, CLI, Design indicators
+2. **Select enforcement** — Choose strict, standard, or permissive
+3. **Scaffold directories** — Create `.validationforge/` and `e2e-evidence/`
+4. **Install rules** — Copy VF rules to `.claude/rules/vf-*`
+5. **Verify MCP servers** — Check Playwright, Xcode tools, Stitch availability
+6. **Report** — Print setup summary
+
+## Usage
+
+```
+/forge-setup                    # Interactive setup (asks enforcement level)
+/forge-setup --strict           # Skip prompt, use strict enforcement
+/forge-setup --permissive       # Skip prompt, use permissive enforcement
+```
+
+Invoke the `forge-setup` skill to execute.

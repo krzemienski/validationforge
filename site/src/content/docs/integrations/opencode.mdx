@@ -1,0 +1,424 @@
+---
+title: OpenCode
+description: Install ValidationForge as an OpenCode plugin — the sync-opencode.sh shared-content script, the .opencode/plugins/validationforge/ TypeScript entry point, the three registered hooks (permission.ask, tool.execute.after, shell.env), and the two custom tools (vf_validate, vf_check_evidence).
+---
+
+import { Aside, Tabs, TabItem, Steps, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+ValidationForge ships the same 41 skills, 15 commands, 8 rules, and 5
+agents to OpenCode through a TypeScript plugin at
+`.opencode/plugins/validationforge/index.ts`. The plugin registers
+**three hooks** (`permission.ask`, `tool.execute.after`, `shell.env`)
+and **two custom tools** (`vf_validate`, `vf_check_evidence`), and
+imports its validation regexes directly from the shared `patterns.ts`
+that the Claude Code hooks also use — so adding a pattern in one place
+covers both platforms.
+
+<Aside type="caution" title="Unverified in live OpenCode session">
+  The OpenCode plugin has **not** been loaded into a running OpenCode
+  session. `index.ts` compiles without errors and follows the
+  documented `@opencode-ai/plugin` interface, but hook registration
+  (`permission.ask`, `tool.execute.after`, `shell.env`) and custom tool
+  availability (`vf_validate`, `vf_check_evidence`) are **unconfirmed
+  at runtime**. This is [Known Limitation&nbsp;#6](https://github.com/krzemienski/validationforge#known-limitations)
+  in the repo README. Treat this page as the installation and
+  architecture reference; treat the plugin itself as pre-release until
+  a live OpenCode session has exercised it end-to-end.
+</Aside>
+
+## Install Methods
+
+Both methods end with the same on-disk layout at
+`<your-project>/.opencode/plugins/validationforge/`. Pick whichever
+matches how you obtained the source.
+
+<Tabs syncKey="oc-install-method">
+  <TabItem label="sync-opencode.sh (symlink)">
+    Run the repo-shipped sync script from a checkout of ValidationForge
+    to symlink all shared skills and commands into the `.opencode/`
+    directory your OpenCode config expects:
+
+    ```bash
+    # From a ValidationForge checkout:
+    bash scripts/sync-opencode.sh
+    ```
+
+    The script:
+
+    - Creates `.opencode/skill/` and `.opencode/command/` if missing.
+    - For each directory under `skills/`, writes a symlink
+      `.opencode/skill/<name>` → `../../skills/<name>`.
+    - For each file under `commands/`, writes a symlink
+      `.opencode/command/<name>.md` → `../../commands/<name>.md`.
+    - Prints `Synced N skills and M commands to .opencode/` when done.
+
+    Symlinks mean edits to a shared skill or command take effect
+    immediately — both Claude Code and OpenCode see the same file.
+    The script is idempotent: re-running only creates links that
+    don't yet exist.
+  </TabItem>
+  <TabItem label="git clone">
+    Clone the plugin directly into a project's `.opencode/plugins/`
+    directory, typically alongside an `opencode.json` that registers
+    it:
+
+    ```bash
+    mkdir -p .opencode/plugins
+    git clone --depth 1 https://github.com/krzemienski/validationforge \
+      .opencode/plugins/validationforge
+    ```
+
+    Register the plugin in `opencode.json` at the project root:
+
+    ```json
+    {
+      "$schema": "https://opencode.ai/config.json",
+      "plugin": [
+        ["./.opencode/plugins/validationforge", {}]
+      ]
+    }
+    ```
+
+    The array form `["./path", {}]` matches the shape used by the
+    repo's own `opencode.json`, with the second element reserved for
+    plugin options (none currently required).
+  </TabItem>
+</Tabs>
+
+<Aside type="note" title="Repo availability">
+  The GitHub repository (`https://github.com/krzemienski/validationforge`)
+  may not be publicly published yet. If **git clone** returns `404`,
+  check out the repo locally and use the `sync-opencode.sh` method
+  against the checkout.
+</Aside>
+
+## Directory Layout
+
+After either install method the on-disk layout under the project root
+looks like this:
+
+```
+<your-project>/
+├── opencode.json                          ← Registers the plugin
+├── .opencode/
+│   ├── plugins/
+│   │   └── validationforge/
+│   │       ├── index.ts                   ← Plugin entry point (hooks + tools)
+│   │       ├── patterns.ts                ← Shared regex source of truth
+│   │       ├── package.json               ← @opencode-ai/plugin, @opencode-ai/sdk, zod
+│   │       └── tsconfig.json              ← ES2022 target, strict, bundler resolution
+│   ├── skill/                             ← Symlinks → ../../skills/* (41)
+│   └── command/                           ← Symlinks → ../../commands/*.md (15)
+└── e2e-evidence/                          ← Evidence output (created by /validate)
+```
+
+And under the ValidationForge checkout itself (what the symlinks point
+back to):
+
+```
+validationforge/
+├── skills/                                ← 41 SKILL.md files, one per skill dir
+├── commands/                              ← 15 slash-command .md files
+├── agents/                                ← 5 agent .md files
+├── rules/                                 ← 8 rule source files
+└── scripts/
+    └── sync-opencode.sh                   ← The sync script above
+```
+
+The plugin's `package.json` lists three runtime dependencies —
+`@opencode-ai/plugin`, `@opencode-ai/sdk`, and `zod` — and declares
+`"type": "module"` with `"main": "index.ts"`. `tsconfig.json` targets
+ES2022 with `moduleResolution: "bundler"` and `strict: true`.
+
+## Plugin Entry Point
+
+`index.ts` exports a default `Plugin` function. The harness calls it
+once at startup with a context object that includes the project
+`directory` and a shell helper `$`. The function returns an object
+whose keys register hooks, tools, and event subscribers.
+
+```ts
+import type { Plugin } from "@opencode-ai/plugin"
+import { tool } from "@opencode-ai/plugin/tool"
+import {
+  isBlockedTestFile,
+  detectMockPatterns,
+  isBuildSuccess,
+  isCompletionClaim,
+  isValidationCommand,
+} from "./patterns"
+
+const EVIDENCE_DIR = "e2e-evidence"
+
+const plugin: Plugin = async ({ directory, $ }) => {
+  return {
+    tool: { /* vf_validate, vf_check_evidence */ },
+    "permission.ask":      async (input, output) => { /* ... */ },
+    "tool.execute.after":  async (input, output) => { /* ... */ },
+    "shell.env":           async () => { /* ... */ },
+    event:                 async ({ event }) => { /* ... */ },
+  }
+}
+
+export default plugin
+```
+
+Pattern helpers are imported from the sibling `patterns.ts` module —
+the same file the Claude Code hooks consume through a CommonJS bridge.
+This is the single source of truth for all regex patterns ValidationForge
+enforces.
+
+## Registered Hooks
+
+OpenCode hooks are async TypeScript functions that receive a typed
+`(input, output)` pair and mutate `output` directly. There is no
+stdin/stdout or exit-code protocol — the plugin just sets `output.status`
+or appends to `output.metadata`.
+
+### `permission.ask`
+
+Fires **before** the harness asks the user to approve a tool call.
+Setting `output.status = "deny"` blocks the call without prompting.
+
+```ts
+"permission.ask": async (input, output) => {
+  const tool = (input as any).tool || ""
+  if (!["write", "edit", "multiedit"].includes(tool.toLowerCase())) return
+
+  const filePath = (input as any).args?.file_path || (input as any).args?.filePath || ""
+  const reason = isBlockedTestFile(filePath)
+  if (reason) {
+    output.status = "deny"
+  }
+}
+```
+
+The equivalent Claude Code hook is `block-test-files.js`. Both call
+`isBlockedTestFile(path)` from `patterns.ts`, which returns a deny
+reason if the path matches any of **15** `TEST_PATTERNS`
+(`*.test.*`, `*.spec.*`, `_test.go`, `test_*.py`, `*Tests.swift`,
+`__tests__/`, `__mocks__/`, `fixtures/`, `stubs/`, `test-utils/`,
+`.stories.*`, etc.) and does not match one of the four `ALLOWLIST`
+entries (`e2e-evidence`, `validation-evidence`, `.claude/`,
+`validationforge/`).
+
+### `tool.execute.after`
+
+Fires **after** any tool call completes. The plugin reads the output,
+evaluates five pattern checks, and attaches `vf_reminder`,
+`vf_warning`, or `vf_note` entries to `output.metadata`:
+
+```ts
+"tool.execute.after": async (input, output) => {
+  const toolName = (input as any).tool || ""
+  const args = (input as any).args || {}
+
+  if (toolName.toLowerCase() === "bash") {
+    const result = (output as any).output || ""
+    if (isBuildSuccess(result))       { /* vf_reminder: compilation is NOT validation */ }
+    if (isCompletionClaim(result))    { /* vf_warning: no evidence in e2e-evidence/  */ }
+    if (isValidationCommand(args.command || "")) {
+      /* vf_note: capture evidence to e2e-evidence/ */
+    }
+  }
+
+  if (["write", "edit", "multiedit"].includes(toolName.toLowerCase())) {
+    const content = args.content || args.new_string || ""
+    if (content && detectMockPatterns(content)) { /* vf_warning: mock pattern detected */ }
+    const filePath = args.file_path || args.path || ""
+    if (filePath.includes("e2e-evidence") && (!content || content.length === 0)) {
+      /* vf_warning: empty evidence file is INVALID */
+    }
+  }
+}
+```
+
+This single hook consolidates what is **five separate PostToolUse
+hooks** on the Claude Code side:
+
+| `patterns.ts` helper        | Fires when               | Corresponding CC hook                    |
+| --------------------------- | ------------------------ | ---------------------------------------- |
+| `isBuildSuccess(output)`    | Bash output matches `BUILD_PATTERNS`      | `validation-not-compilation.js`     |
+| `isCompletionClaim(output)` | Bash output matches `COMPLETION_PATTERNS` | `completion-claim-validator.js`     |
+| `isValidationCommand(cmd)`  | Bash cmd matches `VALIDATION_COMMAND_PATTERNS` | `validation-state-tracker.js`  |
+| `detectMockPatterns(text)`  | Write/Edit content matches `MOCK_PATTERNS` (20 regexes) | `mock-detection.js`   |
+| `filePath in e2e-evidence/` and content empty | Empty evidence file       | `evidence-quality-check.js`         |
+
+### `shell.env`
+
+Fires whenever the harness is about to spawn a shell. The plugin
+returns an `env` map that the harness merges into the child process:
+
+```ts
+"shell.env": async () => {
+  return {
+    env: {
+      VF_EVIDENCE_DIR: EVIDENCE_DIR,   // "e2e-evidence"
+      VF_VERSION: "1.0.0",
+      VF_ENFORCEMENT: "standard",
+    },
+  }
+}
+```
+
+Any shell invocation from OpenCode — `$`, Bash tool calls, subprocess
+launches — sees these three variables. Skills and commands can read
+`$VF_EVIDENCE_DIR` to find the evidence directory without hardcoding
+the path.
+
+## Custom Tools
+
+OpenCode exposes two validation tools directly to the agent via the
+`tool` helper from `@opencode-ai/plugin/tool`. The agent can call them
+by name without going through a slash command.
+
+### `vf_validate`
+
+Proxies to the `/validate` command with optional platform and scope
+flags. Useful when the agent wants to kick off validation without
+dropping to the command palette.
+
+```ts
+vf_validate: tool({
+  description:
+    "Run ValidationForge validation pipeline. Detects platform, maps journeys, captures evidence, writes verdicts.",
+  args: {
+    platform: tool.schema.string().optional()
+      .describe("Force platform: ios, web, api, cli, fullstack"),
+    scope:    tool.schema.string().optional()
+      .describe("Limit validation to a specific directory or feature"),
+  },
+  async execute(args, context) {
+    const platformFlag = args.platform ? `--platform ${args.platform}` : ""
+    const scopeFlag    = args.scope    ? `--scope ${args.scope}`       : ""
+    return `Invoke /validate ${platformFlag} ${scopeFlag}`.trim()
+  },
+}),
+```
+
+### `vf_check_evidence`
+
+Reports on `e2e-evidence/` without running validation. Takes an
+optional `journey` slug — with no argument it lists all evidence
+directories; with a slug it lists the files inside a specific
+journey directory.
+
+```ts
+vf_check_evidence: tool({
+  description: "Check if validation evidence exists and report its status.",
+  args: {
+    journey: tool.schema.string().optional()
+      .describe("Specific journey slug to check"),
+  },
+  async execute(args) {
+    const evidencePath = join(directory, EVIDENCE_DIR)
+    if (!existsSync(evidencePath))        return "No e2e-evidence/ directory found. Run /validate first."
+    const entries = readdirSync(evidencePath)
+    if (entries.length === 0)             return "e2e-evidence/ exists but is empty. No evidence captured yet."
+    if (args.journey) {
+      const journeyPath = join(evidencePath, args.journey)
+      if (!existsSync(journeyPath))       return `No evidence for journey "${args.journey}". Available: ${entries.join(", ")}`
+      const files = readdirSync(journeyPath)
+      return `Journey "${args.journey}": ${files.length} evidence files.\n${files.join("\n")}`
+    }
+    return `Evidence directories: ${entries.join(", ")}`
+  },
+}),
+```
+
+Both tools resolve paths against the `directory` context passed into
+the plugin function, so they work correctly from any subdirectory of
+the project.
+
+## Skills and Commands
+
+`sync-opencode.sh` wires the shared skills and commands into the
+locations OpenCode scans:
+
+- **41 skills** under `.opencode/skill/<name>/SKILL.md` → symlinked to
+  `skills/<name>/`. YAML frontmatter (`name`, `description`,
+  `triggers`) is identical to the Claude Code format, so the same
+  trigger phrases load the skill under either harness.
+- **15 commands** under `.opencode/command/<name>.md` → symlinked to
+  `commands/<name>.md`. Nine validation commands and six forge
+  commands ship with the same frontmatter; OpenCode honors the same
+  `allowed-tools` restriction on forge commands.
+
+See [Commands](/commands/) and [Skills](/skills/) for the full index.
+
+## Verifying the Install
+
+Three quick checks to confirm the plugin is wired up correctly. These
+do **not** require a live OpenCode session — see the caveat at the top
+of this page.
+
+<Steps>
+
+1. **Plugin registered in `opencode.json`**
+
+   ```bash
+   jq '.plugin' opencode.json
+   ```
+
+   Expected output:
+
+   ```json
+   [["./.opencode/plugins/validationforge", {}]]
+   ```
+
+2. **Shared content synced**
+
+   ```bash
+   ls .opencode/skill | wc -l       # Should print 41
+   ls .opencode/command | wc -l     # Should print 15
+   ```
+
+3. **TypeScript compiles**
+
+   ```bash
+   cd .opencode/plugins/validationforge && npx tsc --noEmit
+   ```
+
+   Expected: no output, exit `0`.
+
+</Steps>
+
+## Uninstall
+
+```bash
+# Remove the plugin and its symlinked skill/command trees
+rm -rf .opencode/plugins/validationforge .opencode/skill .opencode/command
+
+# Remove the plugin registration from opencode.json by hand,
+# or delete the whole file if ValidationForge is the only plugin:
+rm -f opencode.json
+
+# Keep e2e-evidence/ to preserve past verdicts, or rm -rf it if you prefer.
+```
+
+Restart OpenCode after uninstall so the hooks stop firing.
+
+## Next Steps
+
+<CardGrid>
+  <LinkCard
+    title="Claude Code integration"
+    description="The matching reference for the Claude Code plugin — install methods, directory layout, and the seven hooks that map onto OpenCode's three."
+    href="/integrations/claude-code/"
+  />
+  <LinkCard
+    title="Configuration profiles"
+    description="Strict, standard, and permissive enforcement profiles — which rules block, which warn, and how the VF_ENFORCEMENT shell variable is set."
+    href="/configuration/"
+  />
+  <LinkCard
+    title="All commands"
+    description="The 15 slash commands — /validate, /validate-fix, /validate-team, and the Forge family — exposed identically under both harnesses."
+    href="/commands/"
+  />
+  <LinkCard
+    title="Getting started"
+    description="End-to-end walkthrough from install to your first evidence-backed verdict."
+    href="/getting-started/"
+  />
+</CardGrid>
