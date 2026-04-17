@@ -83,7 +83,7 @@ curl -s "$API_URL/endpoint" | tee e2e-evidence/web-integration/step-01-api-respo
 Using browser network tab:
 ```
 browser_navigate → feature page
-browser_network_requests → includeStatic=false
+browser_network_requests → static=false
 ```
 
 Check:
@@ -170,7 +170,7 @@ Key metrics:
 ### Network Waterfall
 
 ```
-browser_network_requests → includeStatic=true
+browser_network_requests → static=true
 ```
 
 Check for:

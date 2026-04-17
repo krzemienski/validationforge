@@ -93,7 +93,7 @@ list_console_messages types=["error", "warn"]
 
 ```
 # Playwright — check API calls
-browser_network_requests includeStatic=false
+browser_network_requests static=false
 
 # Chrome DevTools — check API calls
 list_network_requests resourceTypes=["fetch", "xhr"]

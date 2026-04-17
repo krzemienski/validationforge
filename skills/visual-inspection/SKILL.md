@@ -139,7 +139,8 @@ xcrun simctl io booted screenshot e2e-evidence/visual-inspection/step-NN-{descri
 
 Use idb for accessibility tree:
 ```bash
-idb ui describe-all --udid booted > e2e-evidence/visual-inspection/step-NN-accessibility-tree.txt
+UDID=$(xcrun simctl list devices booted | grep -Eo '[0-9A-F-]{36}' | head -1)
+idb ui describe-all --udid "$UDID" > e2e-evidence/visual-inspection/step-NN-accessibility-tree.txt
 ```
 
 ## Output Format
