@@ -67,7 +67,7 @@ which $BINARY | tee -a e2e-evidence/cli-build.txt
 ## Step 2: Help Output
 
 ```bash
-$BINARY --help 2>&1 | tee e2e-evidence/cli-help.txt
+$BINARY --help > e2e-evidence/cli-help.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-help.txt
 ```
 
@@ -80,7 +80,7 @@ Verify help output includes:
 ## Step 3: Version Check
 
 ```bash
-$BINARY --version 2>&1 | tee e2e-evidence/cli-version.txt
+$BINARY --version > e2e-evidence/cli-version.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-version.txt
 ```
 
@@ -88,13 +88,13 @@ echo "Exit code: $?" >> e2e-evidence/cli-version.txt
 
 Run the primary command with valid arguments:
 ```bash
-$BINARY COMMAND ARG1 ARG2 --flag value 2>&1 | tee e2e-evidence/cli-happy-path.txt
+$BINARY COMMAND ARG1 ARG2 --flag value > e2e-evidence/cli-happy-path.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-happy-path.txt
 ```
 
 If the tool produces output files:
 ```bash
-$BINARY COMMAND --output output.json ARG1 2>&1 | tee e2e-evidence/cli-happy-path.txt
+$BINARY COMMAND --output output.json ARG1 > e2e-evidence/cli-happy-path.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-happy-path.txt
 cp output.json e2e-evidence/cli-output-file.json
 ```
@@ -103,21 +103,21 @@ cp output.json e2e-evidence/cli-output-file.json
 
 ### Invalid flag
 ```bash
-$BINARY --nonexistent-flag 2>&1 | tee e2e-evidence/cli-error-invalid-flag.txt
+$BINARY --nonexistent-flag > e2e-evidence/cli-error-invalid-flag.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-error-invalid-flag.txt
 ```
 Expected: non-zero exit code, helpful error message on stderr.
 
 ### Missing required argument
 ```bash
-$BINARY COMMAND 2>&1 | tee e2e-evidence/cli-error-missing-arg.txt
+$BINARY COMMAND > e2e-evidence/cli-error-missing-arg.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-error-missing-arg.txt
 ```
 Expected: non-zero exit code, message indicating which argument is missing.
 
 ### File not found
 ```bash
-$BINARY COMMAND /path/to/nonexistent/file.txt 2>&1 | tee e2e-evidence/cli-error-no-file.txt
+$BINARY COMMAND /path/to/nonexistent/file.txt > e2e-evidence/cli-error-no-file.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-error-no-file.txt
 ```
 Expected: non-zero exit code, clear "file not found" message (not a stack trace).
@@ -125,7 +125,7 @@ Expected: non-zero exit code, clear "file not found" message (not a stack trace)
 ### Permission denied (if applicable)
 ```bash
 chmod 000 /tmp/test-readonly-file
-$BINARY COMMAND /tmp/test-readonly-file 2>&1 | tee e2e-evidence/cli-error-permission.txt
+$BINARY COMMAND /tmp/test-readonly-file > e2e-evidence/cli-error-permission.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-error-permission.txt
 chmod 644 /tmp/test-readonly-file
 ```
@@ -152,16 +152,16 @@ Standard exit codes: 0 = success, 1 = general error, 2 = usage error.
 
 If the tool accepts stdin:
 ```bash
-echo "input data line 1" | $BINARY COMMAND 2>&1 | tee e2e-evidence/cli-stdin.txt
+echo "input data line 1" | $BINARY COMMAND > e2e-evidence/cli-stdin.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-stdin.txt
 
-cat input-file.txt | $BINARY COMMAND 2>&1 | tee e2e-evidence/cli-pipe.txt
+$BINARY COMMAND < input-file.txt > e2e-evidence/cli-pipe.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-pipe.txt
 ```
 
 Test empty stdin:
 ```bash
-echo "" | $BINARY COMMAND 2>&1 | tee e2e-evidence/cli-empty-stdin.txt
+echo "" | $BINARY COMMAND > e2e-evidence/cli-empty-stdin.txt 2>&1
 echo "Exit code: $?" >> e2e-evidence/cli-empty-stdin.txt
 ```
 
