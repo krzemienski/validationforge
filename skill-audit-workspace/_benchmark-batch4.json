@@ -1,0 +1,144 @@
+{
+  "batch_id": 4,
+  "skills": [
+    {
+      "name": "condition-based-waiting",
+      "eval_prompt_first_line": "I'm validating a fullstack app: Docker Postgres at localhost:5432, Node API at localhost:8080/health, React dev server at localhost:3000. Currently using 'sleep 60' before running tests. How do I replace that with condition-based waits?",
+      "assertions": [
+        "Recommends chained waits for DB -> API -> Frontend in dependency order",
+        "Cites a database-ready strategy (e.g., pg_isready / wait_for_database) for Postgres at 5432",
+        "Cites an HTTP health poll (wait_for_health) for the Node API and React dev server",
+        "Quantifies the win: total ~1s when fast vs the hardcoded 60s sleep"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Baseline suggests generic curl-until-200 loops without naming the 8 strategies, often missing pg_isready-specific DB readiness and not ordering DB->API->Frontend as dependency chain."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill explicitly enumerates strategy #7 (DB), #1 (HTTP health), and the chaining pattern with timeouts."
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "create-validation-plan",
+      "eval_prompt_first_line": "I'm starting validation on a Next.js fullstack app with an API. I have no validation plan yet. How do I create one?",
+      "assertions": [
+        "Creates e2e-evidence/validation-plan.md as the canonical plan file",
+        "Discovers journeys from Next.js App Router (app/*/page.tsx) with P0/P1 prioritization",
+        "Writes 2+ falsifiable PASS criteria per journey (specific, measurable, observable)",
+        "Lists prerequisites and dependencies (DB running, API health) before execution"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Baseline produces generic test plans without the canonical e2e-evidence/validation-plan.md path, skips P0/P1/P2 priority taxonomy, and criteria tend toward vague 'login works' style statements."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill defines file path, journey discovery commands per framework, priority rules, and falsifiable PASS criteria examples."
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "design-token-audit",
+      "eval_prompt_first_line": "I have a React app with Tailwind. DESIGN.md defines 12 colors in a palette. I grep the code and find 147 color references: some using Tailwind classes (bg-primary), some hardcoded (#FF0000). How do I audit compliance?",
+      "assertions": [
+        "Uses the 4-phase process: EXTRACT tokens -> SCAN impl -> COMPARE -> REPORT",
+        "Extracts tokens from DESIGN.md AND tailwind.config (theme.extend.colors)",
+        "Classifies violations by severity (HIGH for hardcoded hex, LOW for arbitrary Tailwind values)",
+        "Produces a compliance percentage (passing refs / total refs) with a PASS/FAIL verdict threshold"
+      ],
+      "old_skill": {
+        "pass_count": 1,
+        "total": 4,
+        "pass_rate": 0.25,
+        "key_miss": "Baseline suggests generic grep for hex without the 4-phase structure, no severity taxonomy, and rarely computes a compliance percentage threshold."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill explicitly maps Phase 1-4 with grep patterns and severity classification."
+      },
+      "delta": "+0.75"
+    },
+    {
+      "name": "design-validation",
+      "eval_prompt_first_line": "I have a React component library. DESIGN.md shows Figma mockups for a Button (blue background, white text, 12px padding). I implemented it as a Tailwind Button. How do I validate design fidelity?",
+      "assertions": [
+        "Uses 3 phases: REFERENCE (extract spec) -> CAPTURE (screenshot + computed styles) -> COMPARE (score per category)",
+        "Extracts reference from DESIGN.md (colors, typography, spacing) into reference/ dir",
+        "Captures computed styles from live rendered component at a design viewport",
+        "Scores fidelity per category (Colors, Typography, etc.) with PASS threshold (>85 = PASS)"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Baseline typically suggests eyeballing a screenshot vs mockup without structured reference/implementation/comparison phases or category scoring."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill defines the 3-phase process, computed-style capture, and weighted category scoring."
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "e2e-testing",
+      "eval_prompt_first_line": "I'm designing an E2E journey for my React app. Users can sign up, create a post, and see it in the feed. That's three actions. Should I make it one journey or three separate journeys?",
+      "assertions": [
+        "Answers ONE journey, because the user goal is singular ('new user creates a post and sees it')",
+        "Applies the precondition -> action(s) -> assertion structure to the flow",
+        "Warns that splitting loses the end-to-end signal (post-created-but-not-in-feed bug is missed)",
+        "Preserves atomicity: one user goal = one journey, even with multiple steps"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Baseline often recommends splitting into smaller tests (unit-test instinct), missing the end-to-end signal justification and the precondition->action->assertion framing."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill's 'One Journey = One User Goal' principle and journey-structure template directly answer the question."
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "error-recovery",
+      "eval_prompt_first_line": "I'm running a Flutter validation on iOS Simulator. The app crashes on launch with 'Fatal Exception: java.lang.NullPointerException'. I've re-run it 5 times and it still crashes. What should I do according to the error-recovery skill?",
+      "assertions": [
+        "Invokes the 3-strike protocol explicitly (Strike 1, 2, 3 with distinct actions)",
+        "Strike 1: read FULL error, find file/line of null access, apply smallest targeted fix",
+        "Strike 2: alternative approach (flutter clean, different config, docs search)",
+        "Strike 3: rethink environment/deps (disk, permissions, flutter doctor); never just retry unchanged"
+      ],
+      "old_skill": {
+        "pass_count": 1,
+        "total": 4,
+        "pass_rate": 0.25,
+        "key_miss": "Baseline suggests ad-hoc debugging steps without the formal Strike 1/2/3 taxonomy, and often allows 'retry and hope' rather than requiring a change between attempts."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill's 3-strike protocol is the canonical answer; diagnose -> alternative -> rethink -> escalate."
+      },
+      "delta": "+0.75"
+    }
+  ],
+  "aggregate_delta": "+0.58"
+}

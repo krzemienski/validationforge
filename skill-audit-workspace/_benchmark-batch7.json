@@ -1,0 +1,144 @@
+{
+  "batch_id": 7,
+  "skills": [
+    {
+      "name": "research-validation",
+      "eval_prompt_first_line": "I'm starting validation on an e-commerce platform handling credit card payments. Never validated fintech before. What standards apply and which ValidationForge skills should I use?",
+      "assertions": [
+        "Identifies PCI DSS, OWASP Top 10, and accessibility laws as applicable standards for payments",
+        "Maps standards to ValidationForge skills: api-validation for payment endpoints, accessibility-audit for compliance",
+        "Produces evidence under e2e-evidence/research/ with scope/standards/tools/mapping structure",
+        "Feeds output into create-validation-plan as Phase 0 input (not an endpoint itself)"
+      ],
+      "old_skill": {
+        "pass_count": 1,
+        "total": 4,
+        "pass_rate": 0.25,
+        "key_miss": "Baseline offers generic 'research PCI' guidance without the 5-phase structure, doesn't map standards to specific VF skill names, and skips the canonical e2e-evidence/research/ path. Phase 0 framing as input to create-validation-plan is missing."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill explicitly enumerates E-commerce domain row (PCI DSS, GDPR, accessibility), provides Phase 4 mapping matrix tying standards to api-validation/accessibility-audit, writes to e2e-evidence/research/, and frames output as Phase 0 feeding create-validation-plan."
+      },
+      "delta": "+0.75"
+    },
+    {
+      "name": "responsive-validation",
+      "eval_prompt_first_line": "Just redesigned our e-commerce checkout for mobile-first. Desktop version is narrower now. Need to validate layouts don't break between 375px phones and 1920px monitors. Where do I start?",
+      "assertions": [
+        "Directs 8-viewport matrix with explicit widths 375/393/430/768/1024/1280/1440/1920",
+        "Emphasizes content parity (critical for checkout) — no desktop-only content inaccessible on mobile",
+        "Enforces touch target validation ≥44x44 CSS pixels on mobile/tablet viewports",
+        "Includes no-horizontal-overflow check at every viewport as FAIL condition"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Baseline suggests 3-4 common widths (mobile/tablet/desktop) without the full 8-viewport matrix, misses Apple HIG 44px touch target threshold specifically, and treats overflow as cosmetic rather than FAIL."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill's device matrix lists exact 8 widths, Phase 2c enforces 44x44 touch targets, Phase 2e covers content parity, and verdict table marks horizontal overflow as FAIL."
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "retrospective-validation",
+      "eval_prompt_first_line": "Last 30 days: 8 deploys, 2 reverts, 1 production incident (payment button missing on mobile). How do we assess if validation methodology prevented or missed this?",
+      "assertions": [
+        "Walks 4-phase process: COLLECT git/incident data → ANALYZE metrics → CORRELATE causes → CONCLUDE",
+        "Quantifies 25% revert rate as CONCERNING per revert-rate metric table (>10% threshold)",
+        "Maps the mobile-button incident to responsive-validation gap (would have caught at 430px viewport)",
+        "Produces confidence score using Detection × Accuracy × Longevity formula with recommendations"
+      ],
+      "old_skill": {
+        "pass_count": 1,
+        "total": 4,
+        "pass_rate": 0.25,
+        "key_miss": "Baseline writes a narrative post-mortem without the 4-phase structure, lacks the false-PASS/false-FAIL metrics table and concerning-threshold taxonomy, and doesn't compute a confidence score tying to specific VF skill gaps."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill defines COLLECT/ANALYZE/CORRELATE/CONCLUDE phases, the revert-rate threshold table (>10% = Concerning), skill-gap correlation matrix, and the Detection×Accuracy×Longevity confidence formula."
+      },
+      "delta": "+0.75"
+    },
+    {
+      "name": "rust-cli-validation",
+      "eval_prompt_first_line": "Just built a new Rust CLI tool called 'csv-parser' that reads CSV files and outputs JSON. Need to validate it before release. Where do I start?",
+      "assertions": [
+        "Walks cargo check → cargo clippy → cargo build --release → binary execution sequence",
+        "Validates --help and --version as part of the 6-step protocol, matching Cargo.toml version",
+        "Tests happy path and error cases (missing file, bad format) — no panic on user input",
+        "Flags exit code 101 (Rust panic) as ALWAYS FAIL and captures evidence to e2e-evidence/rust-*.txt"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Baseline suggests cargo test + generic CLI smoke tests without the formal 6-step order, omits the --help/--version/version-matching specifics, and doesn't treat exit 101 panic as a distinct FAIL class vs exit 1."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill enumerates Steps 1-6 (check/clippy/build/execute/test/exit-codes), shows --help and --version-matches-Cargo.toml, covers error cases, and calls out exit 101 as always-FAIL with evidence paths."
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "sequential-analysis",
+      "eval_prompt_first_line": "Validation FAILED: UI test expected button color='blue' but got color='gray'. Unexpected because color is in CSS not dynamically set. Root cause?",
+      "assertions": [
+        "Walks 4 phases: SYMPTOM → HYPOTHESIZE → INVESTIGATE → CONCLUDE",
+        "Generates at least 5 hypotheses spanning categories (Timing, Code, Environment, Data, Integration)",
+        "Uses sequentialthinking MCP tool for structured reasoning chain, not a single guess",
+        "Produces evidence under e2e-evidence/analysis/ with symptom/hypotheses/investigation/report files"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Baseline jumps to 1-2 likely causes without the SYMPTOM→HYPOTHESIZE→INVESTIGATE→CONCLUDE scaffolding, generates fewer than 5 categorized hypotheses, and doesn't use sequential-thinking MCP for traceable chain."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill defines the 4-phase protocol, lists 7 hypothesis categories requiring ≥5 hypotheses, integrates sequentialthinking MCP with Thought 1..N pattern, and defines the step-01-symptom.md / step-02-hypotheses.md / step-03-investigation.md / report.md evidence layout."
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "stitch-integration",
+      "eval_prompt_first_line": "Starting new feature: shopping cart redesign. Need design reference before coding. Stitch project doesn't exist yet. How do I generate initial designs?",
+      "assertions": [
+        "Creates new Stitch project via create_project and persists project ID to stitch.json",
+        "Includes design system context (colors/fonts from DESIGN.md) in generation prompts",
+        "Specifies deviceType explicitly (DESKTOP/MOBILE/TABLET) on every generate call",
+        "Captures screen references to e2e-evidence/design-validation/reference/stitch-screen-*.png for design-validation bridge"
+      ],
+      "old_skill": {
+        "pass_count": 1,
+        "total": 4,
+        "pass_rate": 0.25,
+        "key_miss": "Baseline calls generate_screen_from_text without persisting project ID to stitch.json, omits design system context in prompts, sometimes skips deviceType, and doesn't route output to the design-validation reference path."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — skill's Rules section enforces all 4 (persist ID, design system context, explicit deviceType, capture to design-validation/reference/), and the Phase 5 bridge documents hand-off to design-validation."
+      },
+      "delta": "+0.75"
+    }
+  ],
+  "aggregate_delta": "+0.625"
+}

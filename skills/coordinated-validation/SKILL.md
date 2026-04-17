@@ -190,4 +190,6 @@ The Verdict Writer produces `e2e-evidence/coordinated-report.md` matching the st
 
 ## Troubleshooting and Performance
 
-For the Common Failures table (empty-data-after-API-PASS, blocked-despite-upstream-PASS, cross-platform count mismatches, shared-directory corruption) and the wall-clock timing formulas for each wave configuration, see `references/troubleshooting.md` — load it when you hit a wave failure, cross-platform inconsistency, or need to estimate total validation time.
+**Wall-clock estimate**: `total ≈ DB + API + max(Web, iOS)`. Waves run sequentially across layers, but Wave 3 (Web + iOS) runs in parallel so its cost is the slower of the two — not the sum. For a typical fullstack project this is usually `DB:30s + API:120s + max(Web:90s, iOS:180s) ≈ 5.5min`.
+
+For the Common Failures table (empty-data-after-API-PASS, blocked-despite-upstream-PASS, cross-platform count mismatches, shared-directory corruption) and additional per-configuration timing breakdowns, see `references/troubleshooting.md` — load it when you hit a wave failure, cross-platform inconsistency, or need a deeper time estimate.

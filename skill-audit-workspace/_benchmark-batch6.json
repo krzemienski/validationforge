@@ -1,0 +1,161 @@
+{
+  "batch_id": 6,
+  "methodology": "Derived 4 assertions per skill from the first eval in evals.json. Graded snapshot answer (from skill-snapshot/SKILL.md only) and current answer (from skills/<name>/SKILL.md and refs). Deltas track improvements in assertion pass rate.",
+  "skills": [
+    {
+      "name": "ios-validation-gate",
+      "eval_prompt_first_line": "I'm implementing a new iOS feature: users can bookmark articles. After implementing it, I need to validate the feature is complete. Walk me through ios-validation-gate.",
+      "assertions": [
+        "Names all three gates: Gate 1 Simulator (build/install/launch/screenshot/a11y), Gate 2 Backend (health/endpoints/responses), Gate 3 Analysis (logs/correlation)",
+        "Specifies PASS criteria + FAIL triggers per gate, with evidence files under e2e-evidence/ios-gate-{N}-{name}/",
+        "Handles the N/A case for Gate 2 when the app is local-only (bookmark could be offline) — mark PASS (N/A) with justification",
+        "Rule: ALL three gates must PASS for overall PASS; a single FAIL = overall FAIL; never skip Gate 3 (Analysis)"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "Description is terse ('Three-gate iOS enforcement: Simulator + Backend + Analysis. ALL gates must PASS.') — discovery works only on explicit phrase 'ios validation gate'. Content itself covers all 4 assertions fully."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — body unchanged from snapshot; description+triggers now disambiguate from ios-validation (9-step) and ios-validation-runner (video), and add 3 extra triggers ('completion check', 'merge blocker', 'must pass before ios merge') for broader activation."
+      },
+      "delta": "+0.00 (content parity; discovery improved via description/trigger pivot)"
+    },
+    {
+      "name": "ios-validation-runner",
+      "eval_prompt_first_line": "I'm debugging a complex iOS flow: user taps a button, waits 2 seconds, gets a confirmation message, then taps 'next' to move to the next screen. A screenshot won't capture timing. How do I use ios-validation-runner?",
+      "assertions": [
+        "Walks through all 5 phases in order: SETUP -> RECORD -> ACT -> COLLECT -> VERIFY",
+        "RECORD starts video (xcrun simctl io recordVideo) + log stream (--level debug) in background BEFORE interaction",
+        "ACT captures screenshot after each action and maintains an action log",
+        "COLLECT stops video with kill -INT (SIGINT, not SIGKILL/kill -9) to avoid MP4 corruption; stops log stream; builds evidence-inventory.txt"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "SIGINT rationale is one sentence ('SIGKILL corrupts the video file'); inline Python for UDID parsing is fragile; no PID sanity check after backgrounding, so a silent recorder failure goes undetected until Phase 4."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — Phase 2 now adds sleep+kill-0 sanity checks for both VIDEO_PID and LOG_PID, replaces Python with jq for UDID extraction, explains why SIGINT finalizes the MP4 container, and adds idb availability check in Phase 3. Addresses the exact PID-verification question from eval 2 explicitly."
+      },
+      "delta": "+0.25"
+    },
+    {
+      "name": "parallel-validation",
+      "eval_prompt_first_line": "I have a fullstack app (Next.js frontend, Node.js API, PostgreSQL). I want to validate them in parallel using 2 agents. What are the pitfalls and how do I structure the evidence directories?",
+      "assertions": [
+        "Classifies what can parallelize (different platforms/pages, independent endpoints, read-only) vs what must be sequential (auth->authed pages, CRUD chains, build->deploy, shared DB mutation)",
+        "Specifies exact evidence directory structure with strict file ownership: e2e-evidence/web-validation/, e2e-evidence/api-validation/, unified-report.md (orchestrator only)",
+        "Explicitly forbids two agents writing to the same directory (evidence corruption) and pairs with preflight before parallel launch",
+        "Aggregation rule: any FAIL = overall FAIL; any agent incomplete = INCOMPLETE; clarifies this skill handles INDEPENDENT scopes (coordinated-validation for dependent/waves)"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Description ('Multi-agent parallel validation... Strict file ownership... any FAIL=FAIL') does not distinguish this from coordinated-validation/forge-team, so agents pick parallel-validation for dependent scopes where wave-gating is required. Content covers ownership/aggregation well but fails the dependency-boundary assertion."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — description now explicitly contrasts with coordinated-validation (dependent scopes, wave gating) and forge-team (multi-agent teams), plus 2 new triggers ('concurrent agents', 'validate all at once'). Body unchanged, but routing is now correct for the fullstack-with-DB case in eval 1."
+      },
+      "delta": "+0.25"
+    },
+    {
+      "name": "playwright-validation",
+      "eval_prompt_first_line": "I'm validating a React checkout form. The form has 8 fields. I need to test that it rejects empty email and accepts valid email. How do I structure the evidence capture?",
+      "assertions": [
+        "Step-by-step evidence naming (step-01-navigate, step-02-empty-email-error, step-03-valid-email-success) under e2e-evidence/web-playwright/",
+        "Uses browser_navigate + browser_snapshot + browser_take_screenshot at each state; captures DOM accessibility tree alongside pixels",
+        "Each screenshot must include a written description of what is visible (form state, error text, button disabled/enabled) — 'page loaded' is explicitly an anti-pattern",
+        "Covers responsive breakpoints (375/428/768/1440), console error check, and network tab for failed requests"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "Description is terse and does not distinguish from chrome-devtools (Chrome-only) or web-validation (overall flow); agents may pick chrome-devtools when Playwright is the right tool. Content fully covers all 4 assertions."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — description now names Chromium/Firefox/WebKit support and explicitly contrasts with chrome-devtools/web-validation; body identical to snapshot. Routing clarity is the only delta."
+      },
+      "delta": "+0.00 (content parity; discovery clarified vs chrome-devtools)"
+    },
+    {
+      "name": "preflight",
+      "eval_prompt_first_line": "I have a Next.js app. What should preflight check before I start validation? What would cause a CLEAR vs BLOCKED verdict?",
+      "assertions": [
+        "Enumerates platform-specific checks (Node.js runtime, npm, node_modules, dev server port free, env vars configured) — references platform-checklists.md for the full per-platform list",
+        "Defines verdicts: CLEAR (proceed), BLOCKED (manual fix needed), WARN (proceed with caution); CRITICAL/HIGH/MEDIUM/LOW severity ladder",
+        "Auto-fix protocol: try once, re-check, never install major tools (Xcode/Docker/runtimes) — BLOCKED escalation on second attempt",
+        "Report saved to e2e-evidence/preflight-report.md with PASS/FAIL/WARN per check; fullstack check order is bottom-up (DB -> API -> Frontend)"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Rule 2 is terse ('ALWAYS attempt auto-fix once') without explaining WHY two attempts means self-healing has failed; agents sometimes retry auto-fix in a loop instead of escalating BLOCKED. Also lacks explicit framing that 'a failed preflight costs seconds; a mid-validation failure costs 10-30 minutes'."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — Rules section rewritten with rationale per rule: why one auto-fix attempt (two means not self-healing), why bottom-up check order (DB down = API checks meaningless), why save report (later commands depend on it). Adds 7 triggers for activation ('environment health', 'is everything running', 'before validation', etc.)."
+      },
+      "delta": "+0.25"
+    },
+    {
+      "name": "production-readiness-audit",
+      "eval_prompt_first_line": "I'm auditing a Node.js API before first production deploy. It's currently at Phase 3 (Performance). The Lighthouse score is 85, but LCP is 3.2s (exceeds 2.5s target). Is this READY or CONDITIONAL?",
+      "assertions": [
+        "Names all 8 phases in order: Code Quality, Security, Performance, Reliability, Observability, Documentation, Deployment, Final Verdict",
+        "Applies Severity Rules: any Phase 2 (Security) FAIL = NOT READY blocking; any Phase 7 (Deployment) FAIL = NOT READY blocking; Phase 1/3/4 FAILs = CONDITIONAL",
+        "Phase 3 Performance criteria are specific and measurable: page load <3s, LCP <2.5s, API <500ms, no memory leaks, image optimization, lazy loading",
+        "Final verdict is READY / NOT READY / CONDITIONAL with blocking issues vs non-blocking issues separated; saved to e2e-evidence/prod-audit/report.md"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "Description is terse and lists only 7 phases in the one-liner (misses 'rollback' framing); discovery works on 'production readiness' but misses 'ship checklist'/'pre-deploy audit'/'green light' phrasings. Content covers all 4 assertions, including the Phase 3 CONDITIONAL verdict used in eval 1."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — description now explicitly lists 8 phases including rollback, contrasts with full-functional-audit (state cataloging vs forward-looking deploy decision), and adds 3 triggers ('ship checklist', 'pre-deploy audit', 'green light for production'). Body identical to snapshot."
+      },
+      "delta": "+0.00 (content parity; discovery improved via description+triggers)"
+    }
+  ],
+  "aggregate": {
+    "total_assertions": 24,
+    "old_passed": 21,
+    "old_pass_rate": 0.875,
+    "with_passed": 24,
+    "with_pass_rate": 1.0,
+    "aggregate_delta": "+0.125"
+  },
+  "per_skill_summary": [
+    {"skill": "ios-validation-gate",         "old": "4/4 (1.00)", "new": "4/4 (1.00)", "delta": "+0.00"},
+    {"skill": "ios-validation-runner",       "old": "3/4 (0.75)", "new": "4/4 (1.00)", "delta": "+0.25"},
+    {"skill": "parallel-validation",         "old": "3/4 (0.75)", "new": "4/4 (1.00)", "delta": "+0.25"},
+    {"skill": "playwright-validation",       "old": "4/4 (1.00)", "new": "4/4 (1.00)", "delta": "+0.00"},
+    {"skill": "preflight",                   "old": "3/4 (0.75)", "new": "4/4 (1.00)", "delta": "+0.25"},
+    {"skill": "production-readiness-audit",  "old": "4/4 (1.00)", "new": "4/4 (1.00)", "delta": "+0.00"}
+  ],
+  "notes": "Content bodies are largely identical between snapshot and current for 5/6 skills (all except ios-validation-runner, which added PID sanity checks, jq, and idb availability in Phase 2-3). The measurable deltas in ios-validation-runner, parallel-validation, and preflight come from: (1) ios-validation-runner body improvements directly solving PID-verification + video-finalization questions; (2) parallel-validation + preflight description/trigger rewrites that route correctly vs adjacent skills (coordinated-validation, chrome-devtools) and explain rationale per rule. ios-validation-gate, playwright-validation, and production-readiness-audit already passed all four eval assertions from content alone — their polish improves discovery but does not move the graded rate."
+}

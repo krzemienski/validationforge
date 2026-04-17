@@ -167,7 +167,9 @@ Capture the widget tree for structural validation (debug mode only). Press `w` i
 
 ## Step 7: Crash Detection
 
-Check for crash output in `flutter run` logs:
+`flutter run` only surfaces Dart-side exceptions. For release-build crashes you almost always need the native-layer path too.
+
+### Dart-side check
 ```bash
 if grep -iE "unhandled exception|FlutterError|RenderFlex overflowed|null check operator" \
    e2e-evidence/flutter-run.txt; then
@@ -177,7 +179,17 @@ else
 fi
 ```
 
-> For the Android `adb logcat -d -s AndroidRuntime:E` FATAL-EXCEPTION check and the iOS `~/Library/Logs/DiagnosticReports/Runner*.ips` `find -newer` snippet, see `references/flutter-logs-crashes.md` — load this at the end of the run when triaging for native-layer crashes; the inline `flutter run` grep above catches only Dart-side errors.
+### Native-layer checks (iOS + Android)
+```bash
+# iOS — crash reports land in DiagnosticReports as .ips
+find ~/Library/Logs/DiagnosticReports -name "Runner*" -newer e2e-evidence/.flutter-run-start 2>/dev/null \
+  | tee e2e-evidence/flutter-ios-crash-reports.txt
+
+# Android — FATAL EXCEPTION lines from the most recent logcat dump
+adb logcat -d -s AndroidRuntime:E | tee e2e-evidence/flutter-android-crash.log
+```
+
+If either file is non-empty the app crashed natively even when the Dart run looked clean. For the full variant matrix (multiple devices, filtered logcat tags, symbolicated stack traces) see `references/flutter-logs-crashes.md` — load it during triage if you need to correlate a stack trace to a Flutter plugin.
 
 ## Step 8: Stop the App
 

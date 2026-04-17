@@ -1,0 +1,154 @@
+{
+  "batch_id": 1,
+  "methodology": "First eval per skill. 4 assertions derived from expected_output. Strict pass/fail grading of simulated answer grounded only in the respective skill version.",
+  "skills": [
+    {
+      "name": "api-validation",
+      "eval_prompt_first_line": "I have a Node.js API at localhost:3000 with /api/posts endpoints. I need to validate the full CRUD cycle (create, read, update, delete) and capture evidence.",
+      "assertions": [
+        "Health check first: curl with tee/jq saved to e2e-evidence (e.g. api-health.json)",
+        "CRUD sequence covered: create -> extract ID -> read -> update -> verify persisted -> delete -> verify 404",
+        "Every response body saved as evidence (JSON body + status code, not just status)",
+        "Empty response body / bare 200 is flagged as FAIL / suspicious"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — snapshot already had full CRUD cycle, ID extraction, tee patterns, and empty-body flag."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — content preserved and augmented with quick-start table + crud-validator.sh fast path."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "ai-evidence-analysis",
+      "eval_prompt_first_line": "I captured 3 pieces of evidence for my login journey: login-page.png, auth-response.json, and build-log.txt. I want AI to analyze all 3 and tell me if they all support a PASS verdict.",
+      "assertions": [
+        "Produces per-evidence-type confidence scores with type-specific score bands (screenshot/api/log)",
+        "Describes aggregation from per-item scores into a journey-level confidence score",
+        "States that if all items are 70+, journey score lands ~75+ (PASS threshold)",
+        "A CRITICAL finding forces the verdict to FAIL regardless of score"
+      ],
+      "old_skill": {
+        "pass_count": 1,
+        "total": 4,
+        "pass_rate": 0.25,
+        "key_miss": "No per-type score bands, no journey-level aggregation formula, no journey-threshold guidance. Only the CRITICAL=>FAIL rule was inline."
+      },
+      "with_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Journey-level 70+ -> 75+ PASS threshold is not stated inline — but references/confidence-scoring.md is explicitly named with aggregation + per-type rubric, which an agent would load to answer."
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "e2e-validate",
+      "eval_prompt_first_line": "I have a project that's a React frontend + Node.js backend in the same repo. /validate says it doesn't know what platform to validate.",
+      "assertions": [
+        "Auto-detects fullstack when both frontend and backend routes are present",
+        "Provides a --platform fullstack override flag",
+        "Guides bottom-up order: DB -> API (curl) -> frontend UI",
+        "Each layer should be independently verifiable so failures can be isolated"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Override flag present as generic --platform <type> but no explicit fullstack example; layer-independence rationale implicit, not stated."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — new 'When signals conflict' table explicitly covers Next.js-with-API-routes -> fullstack, 'override with --platform <type> and re-run' is explicit, and 'Why bottom-up?' + per-platform breakdown covers layer independence."
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "forge-setup",
+      "eval_prompt_first_line": "First-time setup on a monorepo with React frontend + Express API + iOS native. Running /forge-setup.",
+      "assertions": [
+        "Detects web (package.json + React), api (Express), ios (.xcodeproj)",
+        "Recommends/defaults to standard enforcement",
+        "Creates .validationforge/config.json with the platforms array + scaffolds e2e-evidence/",
+        "Prints setup summary line: Platforms / Enforcement / Evidence / Rules: 8 installed / MCP status"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — snapshot already had detection table, standard default, config schema, and output block."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — same content, richer rule-by-rule description table + verification fix column + forge-init.sh automation hint."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "ios-validation",
+      "eval_prompt_first_line": "I have an iOS app in Xcode. It builds fine, but when I try to validate it on simulator, xcodebuild fails with 'No scheme found'.",
+      "assertions": [
+        "Run xcodebuild -list to enumerate available schemes",
+        "Explain that a missing scheme means it isn't registered in the .xcodeproj",
+        "Fix path: add scheme via Xcode Product -> Scheme -> Edit Scheme, or xcodebuild -scheme with exact name",
+        "Retry the Build step after adding the scheme"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Does not mention the Xcode UI path (Product -> Scheme -> Edit Scheme). Only tells you to run xcodebuild -list."
+      },
+      "with_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Same Xcode-UI gap. Pass-1 additions were fast-path script + when-to-use framing; no new scheme-editing guidance."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "no-mocking-validation-gates",
+      "eval_prompt_first_line": "I'm validating a React component that calls an external payment API. The API is slow and flaky in staging. Should I mock it or stub the response?",
+      "assertions": [
+        "Diagnose why the real system is unavailable (slow/flaky staging)",
+        "Propose concrete fixes (fix flakiness, production-like data, caching)",
+        "Redirect to real-system validation",
+        "Reference the Three-Step DIAGNOSE -> FIX -> VERIFY correction protocol"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "No concrete fix proposals (caching, production-like data) — only generic 'fix it / make available'."
+      },
+      "with_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Same: new version adds the 'users -> data field rename' real-world example which is vivid but still no caching / slow-API mitigation menu. Three-step protocol and references/real-system-validation-guide.md still linked."
+      },
+      "delta": "+0.00"
+    }
+  ],
+  "aggregate_delta": "+0.17 (mean across 6 skills: (0.00+0.50+0.50+0.00+0.00+0.00)/6 = 0.1667)",
+  "summary": {
+    "mean_old_pass_rate": 0.708,
+    "mean_new_pass_rate": 0.875,
+    "skills_improved": 2,
+    "skills_tied": 4,
+    "skills_regressed": 0,
+    "largest_gain": "ai-evidence-analysis and e2e-validate (+0.50 each)",
+    "floor_effect_note": "api-validation and forge-setup were already at 1.0 in the snapshot; no room for improvement against eval 1."
+  }
+}

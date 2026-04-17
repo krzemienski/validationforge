@@ -1,0 +1,166 @@
+{
+  "batch_id": 8,
+  "generated_at": "2026-04-17T06:54:00Z",
+  "grader": "general-purpose-a5f6bcfd27b50875f",
+  "scoring_notes": "Each skill graded against 4 assertions derived from eval #1 (expected_output). PASS = assertion clearly satisfied with specific, actionable guidance present in the skill body. FAIL = key_miss — assertion not satisfied, generic, or guidance drifts from expected output.",
+  "skills": [
+    {
+      "name": "team-validation-dashboard",
+      "eval_prompt_first_line": "We have 5 projects across web, iOS, and backend. I need a dashboard showing validation posture so the team lead can spot which ones need urgent attention before next sprint planning. Set it up.",
+      "assertions": [
+        "Names collect-team-metrics.sh as the first step and explains the projects.json registry (name + path entries)",
+        "Names team-dashboard.sh as the render step and describes color-coded terminal table output",
+        "Classifies projects into Critical (<60) / Attention (60–79) / Healthy (≥80) buckets with clear thresholds",
+        "Notes the data-availability caveat — coverage_pct / regression_count display as 0 until enriched benchmark format exists"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — snapshot already documented the 3-script workflow, bucket thresholds, and data availability note."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — current version preserves all four pieces and adds a 'Why these thresholds' rationale (60 = CI gate floor, 80 = benchmark.min_aggregate match) which strengthens assertion 3."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "validate-audit-benchmarks",
+      "eval_prompt_first_line": "I modified three hooks last week and want to verify I didn't introduce regressions before cutting the next release. Run the benchmark suite and compare against the last baseline.",
+      "assertions": [
+        "Recommends running scripts/benchmark/test-hooks.sh (or aggregate-results.sh) as the entry command",
+        "Explains the 60/20/20 weighting rubric (hooks 60%, skills 20%, commands 20%) so the user knows what moves the score",
+        "Describes the baseline-comparison mechanism — results saved to audit-artifacts/benchmark-baseline.json, compare after changes",
+        "Shows how regressions are surfaced — e.g., a per-hook PASS/FAIL listing or delta vs prior baseline"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Snapshot lists the scripts, weights, and baseline file but does not demonstrate the regression-surface output. Baseline comparison is described as 'review cat baseline.json' — user must interpret manually, no sample diff/per-hook verdict shown (assertion 4 FAIL)."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — current skill adds a 'Sample output' block showing per-hook PASS/FAIL verdicts, aggregate delta vs prior baseline ('prior: 98.1% — +1.9pp'), and explicit 'No regressions' line, satisfying assertion 4. Also adds a rationale paragraph for the 60/20/20 weights strengthening assertion 2."
+      },
+      "delta": "+0.25"
+    },
+    {
+      "name": "verification-before-completion",
+      "eval_prompt_first_line": "I implemented the user login form, ran the e2e test, got PASS. Can I mark this task done?",
+      "assertions": [
+        "Rejects the completion claim on 'I saw it pass' alone — requires personal examination of the evidence file",
+        "Demands the user open the screenshot and describe specifics (form fields, buttons, states) — not just that the file exists",
+        "Provides a structured checklist with read/view/examine/cite items the user can walk through",
+        "Maps each checklist item to good-vs-bad examples so the user can distinguish compliant from non-compliant descriptions"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — snapshot has the 5-point rule, 7-item checklist with good/bad pairs, and the rule that marking done is rejected without specific observations."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — current skill preserves all four pieces and adds a 'Scope and relationship to gate-validation-discipline' disambiguation (the skill is the general form; gate-validation-discipline is for formal plan gates). Expanded description + 3 new triggers ('merge it', 'ready to close', 'checklist before marking complete') improve routing but do not change grading."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "visual-inspection",
+      "eval_prompt_first_line": "I just redesigned the product landing page with a new hero section, feature cards, and dark mode toggle. How do I systematically inspect it visually before marking the redesign done?",
+      "assertions": [
+        "Walks through all 7 inspection categories (Layout, Typography, Interactive, Hierarchy, Platform-Specific, Dark/Light Mode, Edge Cases)",
+        "Requires screenshots at minimum 3 breakpoints (375/768/1440px) for each mode",
+        "Covers dark/light mode explicitly — both must render with no invisible text / adaptive images",
+        "Produces a structured report at e2e-evidence/visual-inspection/report.md with findings classified by severity (CRITICAL/HIGH/MEDIUM/LOW)"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — snapshot defines all 7 categories, the 375/768/1440px breakpoints, the dark/light mode section, the severity taxonomy, and the exact report path."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — current skill identical on the four graded pillars. Improved description + 3 new triggers ('empty state check', 'loading state check', 'did I handle all states') enumerate the non-happy-path states the skill catches, improving discoverability but not assertion scores."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "web-testing",
+      "eval_prompt_first_line": "We're adding a new dashboard page that shows user data from three APIs, with interactive charts, a dark mode toggle, and user filtering. The team says 'it's just display code.' I need to define what layers of validation are mandatory.",
+      "assertions": [
+        "Uses the decision matrix to classify 'new page/route' as YES for Layers 1–4 (rejects 'just display code')",
+        "Layer 1: test each of the 3 APIs with real curl — verify response structure, status code, fields",
+        "Layer 3: accessibility required (heading hierarchy, color contrast, keyboard nav) for the new page",
+        "Layer 4: Core Web Vitals (LCP / INP / CLS) with Good / Needs Work / Poor thresholds specified"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — snapshot has the decision matrix (New page/route row: YES YES YES YES -), the curl + jq Layer 1 recipe, the Layer 3 a11y block, and the Layer 4 metric table with all three thresholds."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — current skill preserves all matrix content and adds a 'Why some intersections are skipped' section explaining each '-' in the matrix, which tightens assertion 1 (user now knows why Layer 5 is '-' for a pure display page). Description also distinguishes strategy skill from execution skill (web-validation)."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "forge-benchmark",
+      "eval_prompt_first_line": "I just ran /validate-benchmark on my React project and got a score of 68/100 (Grade: D). The breakdown is: Coverage 50, Evidence Quality 80, Enforcement 60, Speed 95. What does this mean? What should I fix first?",
+      "assertions": [
+        "Interprets each dimension score against its formula (Coverage 50 = ≤2 journey subdirs; Enforcement 60 = ~3 of the 6 +20/+10 slots missing)",
+        "Prescribes a fix order by weighted impact — Coverage first (35% weight, largest gap), then Enforcement (25% weight)",
+        "Names specific fixes for Enforcement: install hooks, add rules, remove *.test.* / *.spec.* files from src/",
+        "Shows the math — adding journeys / enforcement slots moves aggregate back above 80 (B range)"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Snapshot documents the 4 dimensions, tier formulas, and +20/+10 enforcement slots (assertions 1+3 PASS implicitly), plus the aggregate formula (assertion 4 PASS implicitly), but does not prescribe a fix-ordering framework — user must infer 'fix Coverage first because 35% weight × 50 gap = 17.5pp headroom' themselves. Assertion 2 FAIL."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — current skill adds an 'Interpreting a drop in score' section with per-dimension triage playbook (Evidence dropped → check 0-byte files; Coverage dropped → journeys purged or new features missing; Enforcement dropped → which +20 slot zeroed out; Speed dropped → CI contention). This explicitly enables fix-ordering by telling the user which dimension to investigate first. Also adds a 'Sample end-to-end output' block showing the per-slot +20/+0 breakdown the user would see, satisfying assertion 2."
+      },
+      "delta": "+0.25"
+    }
+  ],
+  "aggregate": {
+    "old_total_pass": 22,
+    "old_total_assertions": 24,
+    "old_pass_rate": 0.917,
+    "new_total_pass": 24,
+    "new_total_assertions": 24,
+    "new_pass_rate": 1.0,
+    "aggregate_delta": "+0.083",
+    "skills_with_gain": 2,
+    "skills_stable_at_max": 4,
+    "skills_regressed": 0
+  },
+  "per_skill_table": [
+    { "skill": "team-validation-dashboard",     "old": "4/4 (1.00)", "new": "4/4 (1.00)", "delta": "+0.00" },
+    { "skill": "validate-audit-benchmarks",     "old": "3/4 (0.75)", "new": "4/4 (1.00)", "delta": "+0.25" },
+    { "skill": "verification-before-completion","old": "4/4 (1.00)", "new": "4/4 (1.00)", "delta": "+0.00" },
+    { "skill": "visual-inspection",             "old": "4/4 (1.00)", "new": "4/4 (1.00)", "delta": "+0.00" },
+    { "skill": "web-testing",                   "old": "4/4 (1.00)", "new": "4/4 (1.00)", "delta": "+0.00" },
+    { "skill": "forge-benchmark",               "old": "3/4 (0.75)", "new": "4/4 (1.00)", "delta": "+0.25" }
+  ]
+}

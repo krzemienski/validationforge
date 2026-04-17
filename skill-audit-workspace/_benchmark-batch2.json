@@ -1,0 +1,144 @@
+{
+  "batch_id": 2,
+  "skills": [
+    {
+      "name": "web-validation",
+      "eval_prompt_first_line": "I have a Django app that runs on localhost:8000. I want to validate it end-to-end using this skill. Walk me through.",
+      "assertions": [
+        "Detects manage.py and identifies Django",
+        "Uses python manage.py runserver (not npm)",
+        "Does not hardcode port 3000; flags/uses 8000 for Django",
+        "Describes port discovery from server output or user"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Hardcodes port 3000 in ready-check and health-check; no port discovery mechanism"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none"
+      },
+      "delta": "+0.50"
+    },
+    {
+      "name": "forge-plan",
+      "eval_prompt_first_line": "New fullstack project: React frontend, Node API, PostgreSQL. 3 users: me (lead), Alice (frontend spec), Bob (API spec). We disagree on what 'signup complete' means. Use consensus mode to generate plan.",
+      "assertions": [
+        "Runs 3 parallel independent perspective analyses",
+        "Each perspective focuses on distinct aspect (UX/API/integration)",
+        "Merges overlapping journeys into single unified journey (not drops)",
+        "Writes plan to e2e-evidence/validation-plan.md with mode=consensus"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Conflict resolution says 'most comprehensive journey wins' — picks one, doesn't merge all three concerns"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — explicit 'merge overlapping into single journey', worked example + forge-plan-merge.sh helper"
+      },
+      "delta": "+0.25"
+    },
+    {
+      "name": "fullstack-validation",
+      "eval_prompt_first_line": "Django project with PostgreSQL. Starting fullstack validation. Layer 1 (DB): schema looks good, but migration shows 'pending migrations'. Do I proceed to Layer 2 or fix first?",
+      "assertions": [
+        "STOP at Layer 1 PASS gate — do not proceed",
+        "Explains pending migrations mean DB state is wrong",
+        "Fix first: run python manage.py migrate",
+        "Re-verify schema before advancing to Layer 2"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Gate language present but weaker; no explicit cost-of-skipping rationale to reinforce 'stop' decision"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — added 'Gates matter. 20 minutes of rework into hours' rationale"
+      },
+      "delta": "+0.25"
+    },
+    {
+      "name": "coordinated-validation",
+      "eval_prompt_first_line": "I have a fullstack project: Postgres DB, Node API, React web, iOS app. The web and iOS teams want to validate simultaneously but both depend on API working. How do I structure the validation so they don't block each other?",
+      "assertions": [
+        "3 waves: DB → API → Web+iOS",
+        "Web and iOS run in parallel within Wave 2",
+        "Uses run_in_background: true for parallel agents",
+        "Total time = DB + API + max(Web, iOS)"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — inline wall-clock formula and full wave protocol"
+      },
+      "with_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Timing formula and detailed wave launch commands moved to references/ — requires extra read to recover formula"
+      },
+      "delta": "-0.25"
+    },
+    {
+      "name": "react-native-validation",
+      "eval_prompt_first_line": "I'm validating a bare React Native app (not Expo). I need to test it on both iOS and Android. What's the sequential order of steps, and what evidence do I need to capture?",
+      "assertions": [
+        "Step 1: Metro bundler starts first",
+        "iOS build via react-native run-ios with build log capture",
+        "iOS simulator screenshots + iOS logs captured",
+        "Android build + screenshots + logcat captured"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — all commands inline"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — same coverage via progressive disclosure (references/)"
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "django-validation",
+      "eval_prompt_first_line": "I have a Django REST API project with postgres. I want to validate that the migrations are applied and the /api/posts/ endpoint returns real data, not a mock. What do I check? I'm concerned the DB might have migration errors.",
+      "assertions": [
+        "Run python manage.py check",
+        "Run python manage.py showmigrations and detect [ ] unapplied",
+        "Run python manage.py migrate to apply outstanding",
+        "curl /api/posts/ verify non-empty real response"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — full inline commands"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — step overview references progressive-disclosure files; all criteria covered"
+      },
+      "delta": "+0.00"
+    }
+  ],
+  "aggregate_delta": "+0.125"
+}

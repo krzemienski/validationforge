@@ -1,0 +1,84 @@
+{
+  "batch_id": 3,
+  "skills": [
+    {
+      "name": "flutter-validation",
+      "eval_prompt_first_line": "I'm validating a Flutter app that I need to release tomorrow. It runs fine in debug on the iOS Simulator but I want to validate the release build.",
+      "assertions": [
+        "Mentions flutter build ios --release for device (not simulator)",
+        "Mentions flutter run --release -d DEVICE_ID launch on device",
+        "Captures logs and greps for FlutterError/unhandled exception/crash",
+        "Cites iOS crash log path ~/Library/Logs/DiagnosticReports/"
+      ],
+      "old_skill": {"pass_count": 4, "total": 4, "pass_rate": 1.0, "key_miss": "none"},
+      "with_skill": {"pass_count": 3, "total": 4, "pass_rate": 0.75, "key_miss": "iOS DiagnosticReports crash path moved to references/flutter-logs-crashes.md (not inline)"},
+      "delta": "-0.25"
+    },
+    {
+      "name": "accessibility-audit",
+      "eval_prompt_first_line": "I need to audit our React dashboard before launch next week. It's a data viz app with interactive charts, form inputs, and a dark mode toggle.",
+      "assertions": [
+        "4-layer audit: Lighthouse, keyboard nav, a11y tree, contrast",
+        "Evidence paths under e2e-evidence/accessibility/",
+        "Keyboard findings table format (lines 91-100)",
+        "Verdict template PASS/CONDITIONAL/FAIL with numbered issues"
+      ],
+      "old_skill": {"pass_count": 4, "total": 4, "pass_rate": 1.0, "key_miss": "none"},
+      "with_skill": {"pass_count": 4, "total": 4, "pass_rate": 1.0, "key_miss": "none"},
+      "delta": "+0.00"
+    },
+    {
+      "name": "baseline-quality-assessment",
+      "eval_prompt_first_line": "I'm about to refactor our login form. It currently works fine. How do I capture baseline evidence before I start editing so I can prove the refactor didn't break anything?",
+      "assertions": [
+        "Baseline directory at e2e-evidence/baseline/",
+        "Capture screenshot before editing",
+        "Capture success AND error API responses as JSON",
+        "Save assessment.md summary documenting baseline"
+      ],
+      "old_skill": {"pass_count": 3, "total": 4, "pass_rate": 0.75, "key_miss": "Specific capture commands for login flow delegated to references/baseline-capture-commands.md"},
+      "with_skill": {"pass_count": 3, "total": 4, "pass_rate": 0.75, "key_miss": "Same: capture commands still in references file"},
+      "delta": "+0.00"
+    },
+    {
+      "name": "build-quality-gates",
+      "eval_prompt_first_line": "I have a Next.js project (package.json + next.config.js). I want to run all 4 build quality gates before I deploy.",
+      "assertions": [
+        "Gate 1 Compile: npm run build",
+        "Gate 2 Lint: npx eslint . zero errors",
+        "Gate 3 Type-check: npx tsc --noEmit",
+        "Gate 4 Bundle size analysis with >20% regression threshold"
+      ],
+      "old_skill": {"pass_count": 4, "total": 4, "pass_rate": 1.0, "key_miss": "none"},
+      "with_skill": {"pass_count": 4, "total": 4, "pass_rate": 1.0, "key_miss": "none"},
+      "delta": "+0.00"
+    },
+    {
+      "name": "chrome-devtools",
+      "eval_prompt_first_line": "My dashboard page is slow — it takes 5 seconds to load. I want to debug performance using Chrome DevTools.",
+      "assertions": [
+        "Pattern 1 Page Load Performance guidance",
+        "performance_start_trace with reload=true, autoStop=true",
+        "Analyze LCP/INP/CLS Core Web Vitals",
+        "Trace saved to e2e-evidence/devtools-perf/*.json.gz"
+      ],
+      "old_skill": {"pass_count": 4, "total": 4, "pass_rate": 1.0, "key_miss": "none"},
+      "with_skill": {"pass_count": 4, "total": 4, "pass_rate": 1.0, "key_miss": "none"},
+      "delta": "+0.00"
+    },
+    {
+      "name": "cli-validation",
+      "eval_prompt_first_line": "I've built a Rust CLI at ~/proj/fingerd that parses nginx access logs and validates IPv4 ranges.",
+      "assertions": [
+        "Step 1 build + binary exists check (Rust cargo build --release)",
+        "--help and --version capture with exit codes",
+        "Happy path + error cases (bad flag, missing arg, no file) with evidence files",
+        "Exit code verification + stdin piping test"
+      ],
+      "old_skill": {"pass_count": 4, "total": 4, "pass_rate": 1.0, "key_miss": "none"},
+      "with_skill": {"pass_count": 4, "total": 4, "pass_rate": 1.0, "key_miss": "none"},
+      "delta": "+0.00"
+    }
+  ],
+  "aggregate_delta": "-0.04"
+}

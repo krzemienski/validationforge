@@ -1,0 +1,144 @@
+{
+  "batch_id": 5,
+  "skills": [
+    {
+      "name": "forge-execute",
+      "eval_prompt_first_line": "I have a validation plan in e2e-evidence/validation-plan.md with 5 journeys. Running forge-execute now. First attempt on 'user-signup' fails: form submits but no confirmation page.",
+      "assertions": [
+        "Directs user to read evidence from forge-attempt-1/user-signup/",
+        "Identifies root cause as frontend navigation logic (backend 200 OK but no redirect)",
+        "Prescribes fix + rebuild before re-execution",
+        "Re-executes into forge-attempt-2/user-signup/ and increments strike count in state"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Analyze phase mentions 'sequential thinking to trace root cause' but does not explicitly instruct 'read the actual evidence from forge-attempt-N/ first'; classification list lacks concrete 'quote what you see' discipline."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — new Phase 3 explicitly orders: (1) Read the actual evidence from forge-attempt-N/, (2) Compare to PASS criteria, (3) Classify cause (code bug/config/env/flaky), (4) Decide fixable or BLOCKED, with worked example on the exact 200-OK-but-no-redirect case."
+      },
+      "delta": "+0.25"
+    },
+    {
+      "name": "forge-team",
+      "eval_prompt_first_line": "Fullstack project: React + Node API + PostgreSQL. Running /forge-team. Platform detection finds all 3. Walk me through waves, parallel spawning, and dependency blocking.",
+      "assertions": [
+        "Wave 0 DB spawned alone as foundation, waits for PASS",
+        "Wave 1 API spawned after DB PASS, waits for PASS",
+        "Wave 2 Web spawned after API PASS",
+        "FAIL propagates BLOCKED to dependents; lead writes final aggregated report"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — dependency graph, wave table, wave execution loop, BLOCKED handling, and final report template are all present."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — same body as snapshot; new description adds load-order guidance (coordinated-validation vs forge-team) but core behavior unchanged for this eval."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "full-functional-audit",
+      "eval_prompt_first_line": "Running a full functional audit on a SaaS product before public launch. It has 40+ pages. How do I discover 'every feature' without spending 2 weeks? What's in scope?",
+      "assertions": [
+        "Feature Inventory performed in Phase 2 before execution",
+        "Codebase scanned for routes/components (routing table, OpenAPI)",
+        "Features grouped by user journey; ~20 representative features targeted",
+        "Scope limited to user-facing features; documented in Executive Summary"
+      ],
+      "old_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Phase 2 names 'Feature Inventory' and mentions 'map every user-facing feature' + Executive Summary, but gives no guidance on codebase route/component scanning and no ~20-feature heuristic for large apps."
+      },
+      "with_skill": {
+        "pass_count": 2,
+        "total": 4,
+        "pass_rate": 0.5,
+        "key_miss": "Same gaps — new version adds concrete evidence-capture commands (curl/simctl/Chrome DevTools) but does not add the route-scanning + journey-grouping + ~20-feature heuristic needed to answer 'how to scope a 40+ page SaaS audit'."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "functional-validation",
+      "eval_prompt_first_line": "I've built a React app with a Node.js backend that talks to Postgres. The build succeeds but I don't know if the end-to-end flow actually works.",
+      "assertions": [
+        "Recommends bottom-up order: DB -> API -> Frontend",
+        "References the 4-step Build -> Exercise -> Capture -> Verdict protocol",
+        "Points to fullstack-validation or e2e-validate for multi-layer orchestration",
+        "No mention of jest/mocha/pytest/unit tests"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — iron rule bans test frameworks, 4-step protocol is explicit, bottom-up diagram present, platform table points to fullstack-validation."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — adds richer load-next guidance ('load e2e-validate if orchestrating') and clearer 'validate/verify' trigger phrasing; all four assertions still met."
+      },
+      "delta": "+0.00"
+    },
+    {
+      "name": "gate-validation-discipline",
+      "eval_prompt_first_line": "My iOS team says they've tested the login flow: app builds, logs in, shows dashboard. They're ready to ship. I have 10 minutes to verify before merge.",
+      "assertions": [
+        "Walks the 5-step Verification Loop: IDENTIFY -> LOCATE -> EXAMINE -> MATCH -> WRITE",
+        "Demands concrete artifacts: screenshots, logs, build output",
+        "Mandates read/view/quote of evidence (not trust of reports)",
+        "Flags 'we ran tests' / 'build succeeded' as insufficient without evidence"
+      ],
+      "old_skill": {
+        "pass_count": 3,
+        "total": 4,
+        "pass_rate": 0.75,
+        "key_miss": "Verification Loop + checklist are present, but callout of specific false-PASS phrases ('build succeeded', 'tests pass') is not foregrounded — has to be inferred from general rules."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — new 'Common failure modes' table explicitly names 'Exit code 0, must have worked', '200 OK on every endpoint', 'All 15 screenshots exist', 'Sub-agent reported PASS' as failure patterns with rebuttals, directly satisfying the flag-claims assertion."
+      },
+      "delta": "+0.25"
+    },
+    {
+      "name": "ios-simulator-control",
+      "eval_prompt_first_line": "I need to validate an iOS app on iPhone 16 Pro simulator but I don't know if it's currently booted or which one to use.",
+      "assertions": [
+        "Step 1: xcrun simctl list devices available",
+        "Step 2: xcrun simctl list devices booted to verify state",
+        "Step 3: xcrun simctl boot \"iPhone 16 Pro\" if not booted",
+        "Explains UDID usage for subsequent commands; verify, do not assume booted"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — Simulator Lifecycle section covers list-available, list-booted, boot-by-name, verify, and $UDID convention across App Operations."
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "total": 4,
+        "pass_rate": 1.0,
+        "key_miss": "None — body is identical; new description adds richer trigger phrases (simctl command, trigger deep link, record simulator video) but same content serves this eval."
+      },
+      "delta": "+0.00"
+    }
+  ],
+  "aggregate_delta": "+0.083"
+}
