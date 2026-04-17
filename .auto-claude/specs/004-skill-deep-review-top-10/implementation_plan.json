@@ -2,7 +2,7 @@
   "feature": "Skill Deep Review (Top 10)",
   "description": "Deep-review the 10 most critical ValidationForge skills (5 priority + 5 platform-routing). Read every SKILL.md plus its reference/workflow files line-by-line. Verify every command, every cross-reference, every PASS criterion. Fix broken instructions, stale references, and inaccurate PASS criteria. Document per-skill findings and consolidate into a summary report.",
   "created_at": "2026-04-11T02:22:17.031Z",
-  "updated_at": "2026-04-17T05:51:16.892Z",
+  "updated_at": "2026-04-17T06:01:46.960Z",
   "status": "in_progress",
   "planStatus": "in_progress",
   "xstateState": "ready",
@@ -175,7 +175,7 @@
         {
           "id": "phase-1-subtask-5",
           "name": "Review e2e-validate skill (orchestrator)",
-          "status": "pending",
+          "status": "completed",
           "activeForm": "Reviewing e2e-validate skill",
           "parallel_safe": true,
           "files_involved": [
@@ -201,8 +201,9 @@
             "All 6 platform references cross-checked against their platform skill",
             "Contradictions between orchestrator and delegated skills listed"
           ],
-          "notes": "Largest skill — allocate the most reading time here.",
-          "description": "No description"
+          "notes": "Deep-reviewed e2e-validate orchestrator skill. Findings in e2e-evidence/skill-review/e2e-validate/findings.md (203 lines). 1 CRITICAL issue (F1: preflight skill is listed in Related Skills but NEVER invoked by any of the 8 workflow files — direct violation of Iron Rule #4 \"NEVER skip preflight — if it fails, STOP\"; an agent following e2e-validate literally will skip the preflight gate). 3 HIGH issues (F2: e2e-validate's 6-phase pipeline ANALYZE → PLAN → APPROVE → EXECUTE → FIX → REPORT does NOT map to CLAUDE.md's canonical 7-phase pipeline RESEARCH → PLAN → PREFLIGHT → EXECUTE → ANALYZE → VERDICT → SHIP; RESEARCH/PREFLIGHT/ANALYZE-as-root-cause/VERDICT/SHIP are missing or conflated; F3: semantic collision on \"ANALYZE\" — orchestrator uses it for discovery, CLAUDE.md uses it for root-cause investigation of FAILs; F4: SHIP phase never invoked, production-readiness-audit skill orphaned). 6 MEDIUM (F5: three incompatible evidence naming conventions coexist — e2e-validate uses `j{N}-{slug}.png`, platform skills use `{platform}-NN-name.png`, CLAUDE.md recommends nested `{journey-slug}/step-NN-*.{ext}`; F6: description field at SKILL.md line 6 omits \"generic\" platform; F7: platform detection table omits Design platform despite CLAUDE.md listing it; F8: command routing table has 8 flags but full-run.md describes only 6 phases; F9: Related Skills list omits e2e-testing, research-validation, production-readiness-audit despite citing their concerns; F10: ci-mode.md restates the 5-phase pipeline inconsistently with full-run.md's 6-phase). 5 LOW (phase-numbering inconsistency; audit.md lives at workflows/ but semantically is a standalone entry point; PASS criteria template in plan.md Step 2 rejects \"partially works\" but execute.md fix loop allows 3-strike partial progress; API reference's evidence path pattern `api-{action}-RESOURCE.json` disagrees with platform skill's own pattern; fullstack-validation reference lacks the bottom-up sequence callout from platform skill). All 15 cited files physically exist; all 10 Related Skills cross-links resolve. Cross-check matrix verified 6 platforms (ios/web/api/cli/fullstack/generic) — references vs. platform SKILL.md aligned on content but diverge on naming conventions (documented as F5). No mock/test-file creation. Iron Rule preserved.",
+          "description": "No description",
+          "updated_at": "2026-04-17T06:10:22.628133+00:00"
         }
       ],
       "phase": 1
@@ -538,5 +539,5 @@
     "last_completed_subtask": null,
     "next_subtask": "phase-1-subtask-1"
   },
-  "last_updated": "2026-04-17T05:58:27.418198+00:00"
+  "last_updated": "2026-04-17T06:10:22.628139+00:00"
 }
