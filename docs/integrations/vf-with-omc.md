@@ -26,25 +26,24 @@ The handoff lives at the "OMC reports done" boundary. OMC owns the build pipelin
 
 ```mermaid
 graph LR
-    U[User intent] --> OP["/ralplan or /write-plan<br/>(OMC)"]
-    OP --> OT["/omc-team or /ralph<br/>(OMC execution)"]
-    OT --> OD["OMC reports done<br/>code merged"]
-    OD --> VF["/validate<br/>(ValidationForge)"]
-    VF --> EV["e2e-evidence/<br/>report.md"]
-    EV --> D{PASS?}
+    U[User intent] -->|describe goal| OP["/ralplan<br/>(OMC planning)"]
+    OP -->|consensus plan| OT["/ralph or /autopilot<br/>(OMC execution loop)"]
+    OT -->|code merged| VF["/validate<br/>(VF: preflight + execute + verdict)"]
+    VF -->|report.md| D{PASS?}
     D -->|Yes| SHIP[SHIP]
-    D -->|No| VS["/validate-sweep<br/>3-strike fix loop"]
-    VS --> EV
+    D -->|No: FAIL| VFX["/validate-fix<br/>(VF: autonomous fix loop)"]
+    VFX -->|re-run journeys| VF
 ```
 
-**Step-by-step annotation:**
+**Step-by-step annotation (edges labeled on the diagram):**
 
-1. **Intent → Plan** — User describes the goal. OMC's `/ralplan` runs the Planner/Architect/Critic consensus loop and writes a plan.
-2. **Plan → Build** — OMC's `/omc-team` or `/ralph` executes the plan, dispatching specialized agents (executor, architect, debugger) and routing models for cost.
-3. **Build → Done** — OMC's verify stage reports completion. This is a "did the tasks complete?" signal, not a "does the system actually work?" signal.
-4. **Done → Validate** — VF's `/validate` takes over. `platform-detector` identifies iOS/Web/API/CLI/Design layers, validators run real journeys, and evidence is captured under `e2e-evidence/`.
-5. **Validate → Verdict** — VF's `verdict-writer` synthesizes evidence into PASS/FAIL per journey and writes `e2e-evidence/report.md`.
-6. **Verdict → Ship or Sweep** — A PASS verdict moves to the production-readiness audit. A FAIL verdict triggers `/validate-sweep`, which fixes the real system and re-runs the journeys (up to 3 attempts per journey).
+1. **describe goal** (U → `/ralplan`) — User describes the goal. OMC's `/ralplan` runs the Planner/Architect/Critic consensus loop and writes a plan.
+2. **consensus plan** (`/ralplan` → `/ralph` or `/autopilot`) — OMC's execution loop dispatches specialized agents (executor, architect, debugger) and routes models for cost. Use `/ralph` for persistent loops or `/autopilot` for idea-to-code runs.
+3. **code merged** (`/ralph`/`/autopilot` → `/validate`) — OMC's verify stage reports completion. This is a "did the tasks complete?" signal, not a "does the system actually work?" signal. VF's `/validate` takes over and runs the full preflight → execute → verdict sequence: `platform-detector` identifies iOS/Web/API/CLI/Design layers, validators run real journeys, and `verdict-writer` synthesizes evidence.
+4. **report.md** (`/validate` → PASS?) — VF writes `e2e-evidence/report.md` with PASS/FAIL verdicts per journey, each backed by cited evidence.
+5. **Yes** (PASS? → SHIP) — A PASS verdict moves to the production-readiness audit and the feature ships.
+6. **No: FAIL** (PASS? → `/validate-fix`) — A FAIL verdict triggers VF's autonomous fix loop, which fixes the real system in place (no mocks) with a 3-strike cap per journey.
+7. **re-run journeys** (`/validate-fix` → `/validate`) — After each fix attempt, `/validate-fix` re-invokes the validate pipeline against the real system and captures fresh evidence under `e2e-evidence/attempt-N/`.
 
 ## Installation and Configuration
 
