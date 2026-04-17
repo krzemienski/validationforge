@@ -1,0 +1,52 @@
+---
+title: build-quality-gates
+description: >
+  Use for pre-deploy or pre-PR build quality enforcement through a 4-stage pipeline: compile → lint → type-check → bundle. Each stage must PASS before the next runs. Critical caveat this skill hammers home: build passing is NECESSARY but NOT SUFFICIENT — 'it compiled' is never proof that it works for users. Functional validation through real UI is always the next step. Reach for it on phrases like...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# build-quality-gates
+
+Multi-stage build quality enforcement. Each gate must PASS before proceeding to the next. Build gates verify that code compiles and meets structural quality standards — but build gates alone do NOT constitute validation. Functional validation (through real UI) is always required after build gates pass.
+
+## When to Use
+
+- Before any deployment or PR merge
+- As the first phase of a validation plan
+- When build failures need systematic diagnosis
+- As part of `e2e-validate` preflight checks
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/build-quality-gates/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/build-quality-gates/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `build-quality-gates` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:build-quality-gates` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

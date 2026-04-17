@@ -1,0 +1,51 @@
+---
+title: evidence-dashboard
+description: >
+  >
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# evidence-dashboard
+
+The `evidence-dashboard` skill is part of the ValidationForge catalog.
+
+## When to Use
+
+- After `/validate` completes and before a `/ship` gate decision — the dashboard turns raw evidence into a PASS/FAIL roll-up a lead can actually read.
+- During audit review of an existing `e2e-evidence/` directory, to grade evidence quality without re-running validation.
+- Before shipping a release, paired with `/validate-benchmark`, to confirm the latest run grades out and no journey regressed.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/evidence-dashboard/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/evidence-dashboard/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `evidence-dashboard` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:evidence-dashboard` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

@@ -1,0 +1,51 @@
+---
+title: ios-validation-gate
+description: >
+  Use after an iOS feature is implemented and you want strict gate-based validation — NOT a protocol run-through, but explicit PASS/FAIL gates that all must pass before claiming completion. Three gates: Simulator (build/install/launch/screenshot/accessibility tree), Backend (health/endpoints/responses), Analysis (logs + UI-to-log correlation). Any FAIL on any gate blocks completion. Differs from...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# ios-validation-gate
+
+Three-gate enforcement for iOS applications. ALL gates must PASS before claiming completion. Each gate captures evidence to `e2e-evidence/`.
+
+## When to Use
+
+- After any iOS feature implementation
+- Before claiming an iOS task is complete
+- As the iOS platform validator in `e2e-validate` journeys
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/ios-validation-gate/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/ios-validation-gate/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `ios-validation-gate` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:ios-validation-gate` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

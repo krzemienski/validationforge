@@ -1,0 +1,52 @@
+---
+title: ios-simulator-control
+description: >
+  Use as the command reference for every iOS Simulator operation — boot/shutdown, install/uninstall apps, launch, screenshot, screen recording, log streaming, deep-link triggering, permission grants, location injection, crash log retrieval. This is the primitives layer that ios-validation / ios-validation-gate / ios-validation-runner all build on. Reach for it whenever you need to do something...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# ios-simulator-control
+
+Reference for all iOS Simulator lifecycle operations. Use these commands within ValidationForge validation flows to interact with real simulators.
+
+## When to Use
+
+- When iOS validation skills need to boot/manage simulators
+- When capturing screenshots or logs from simulators
+- When resetting simulator state between validation runs
+- As a reference for `evidence-capturer` agent iOS commands
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/ios-simulator-control/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/ios-simulator-control/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `ios-simulator-control` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:ios-simulator-control` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

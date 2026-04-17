@@ -1,0 +1,45 @@
+---
+title: verification-before-completion
+description: >
+  Use before marking ANY task, gate, or checkpoint complete — whenever you're about to set a todo status to completed, close an issue, merge a PR, hand a verdict to a team lead, or say 'done'. This skill runs a structured 5-point check: personal examination, specific citation, criteria matching, regression scan, final-state capture. It catches the common failure where evidence was produced but...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# verification-before-completion
+
+The `verification-before-completion` skill is part of the ValidationForge catalog.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/verification-before-completion/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/verification-before-completion/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `verification-before-completion` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:verification-before-completion` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

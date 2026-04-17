@@ -1,0 +1,53 @@
+---
+title: visual-inspection
+description: >
+  Use before claiming any frontend work is done to capture the states that often break silently — not just the happy path. Covers: all responsive breakpoints, dark/light mode switching, empty states (no data), error states (API failed), loading states (skeleton / spinner), disabled states, focus states, long-content overflow. Reach for it on phrases like 'is the UI right', 'check the frontend...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# visual-inspection
+
+Systematic visual inspection of running application UIs. Captures screenshots, describes what is ACTUALLY visible, and produces structured PASS/FAIL verdicts per checklist item with evidence files.
+
+## When to Use
+
+- After implementing UI changes — verify the real rendered output
+- Before claiming a frontend task is complete
+- When validating responsive layouts across breakpoints
+- When checking dark/light mode rendering
+- As part of any `e2e-validate` journey that includes UI
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/visual-inspection/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/visual-inspection/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `visual-inspection` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:visual-inspection` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

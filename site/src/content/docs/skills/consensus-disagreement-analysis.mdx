@@ -1,0 +1,57 @@
+---
+title: consensus-disagreement-analysis
+description: >
+  >
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# consensus-disagreement-analysis
+
+When `skills/consensus-synthesis` detects a non-unanimous verdict for a journey,
+this skill resolves the disagreement by applying `skills/sequential-analysis`
+to each diverging criterion. It is the arbitration layer between vote
+tabulation and final verdict emission.
+
+The authoritative contract for when this skill runs, and what resolutions it
+may emit, is `rules/consensus-engine.md §Disagreement Protocol` and
+`§Synthesis States`. In any conflict between this SKILL.md and the rule, the
+rule wins.
+
+This skill is **strictly read-only** against validator subdirectories. It
+NEVER writes to `validator-N/`. It writes only to
+`e2e-evidence/consensus/disagreement-analysis/`.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/consensus-disagreement-analysis/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/consensus-disagreement-analysis/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `consensus-disagreement-analysis` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:consensus-disagreement-analysis` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

@@ -1,0 +1,56 @@
+---
+title: consensus-synthesis
+description: >
+  Synthesize N per-validator verdicts into a single consensus verdict with confidence scoring based on agreement level.
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# consensus-synthesis
+
+Tabulate N per-validator verdicts into a single consensus verdict per journey, then
+assign a confidence tier based on the agreement ratio. This is the voting and
+confidence-scoring skill used by the `consensus-synthesizer` agent. It turns independent
+per-validator reports into one synthesized report without silently discarding any
+dissent.
+
+The authoritative contract for synthesis states and the confidence formula is
+`rules/consensus-engine.md §Synthesis States` and `§Confidence Formula`. In any
+conflict between this SKILL.md and the rule, the rule wins.
+
+This skill is read-only against validator evidence directories. It never writes to
+`validator-N/` — it writes only to `e2e-evidence/consensus/report.md`.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/consensus-synthesis/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/consensus-synthesis/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `consensus-synthesis` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:consensus-synthesis` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

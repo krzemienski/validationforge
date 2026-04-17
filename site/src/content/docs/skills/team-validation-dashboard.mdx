@@ -1,0 +1,45 @@
+---
+title: team-validation-dashboard
+description: >
+  Use for organization-wide visibility across multiple projects' validation health — not for a single project (use forge-benchmark for that). Aggregates posture scores, coverage %, regression trends, and journey ownership across all registered projects in a team's portfolio. Flags critical projects (score < 60) for attention. Reach for it on phrases like 'team dashboard', 'show validation across...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# team-validation-dashboard
+
+Aggregate team validation posture into a shared dashboard. Shows coverage, posture scores, regression trends, and ownership assignments across all registered projects.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/team-validation-dashboard/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/team-validation-dashboard/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `team-validation-dashboard` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:team-validation-dashboard` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

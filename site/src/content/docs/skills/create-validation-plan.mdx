@@ -1,0 +1,45 @@
+---
+title: create-validation-plan
+description: >
+  Use BEFORE capturing any evidence. Plans prevent the two most common validation failures: missed journeys (you didn't test the flow that actually breaks) and vague PASS criteria (you can't tell if a run passed). This skill walks you through discovering every user journey (routes, endpoints, screens, commands), writing falsifiable PASS criteria per journey, ordering journeys by dependency, and...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# create-validation-plan
+
+The `create-validation-plan` skill is part of the ValidationForge catalog.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/create-validation-plan/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/create-validation-plan/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `create-validation-plan` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:create-validation-plan` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

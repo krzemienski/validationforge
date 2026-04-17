@@ -1,0 +1,45 @@
+---
+title: full-functional-audit
+description: >
+  Use for read-only health checks of a project where you want to know 'what's the real state right now' WITHOUT fixing anything along the way. Exercises every discoverable feature through the real UI, captures evidence, and classifies each finding by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Produces e2e-evidence/audit-report.md with prioritized recommendations but doesn't apply fixes — that's for...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# full-functional-audit
+
+The `full-functional-audit` skill is part of the ValidationForge catalog.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/full-functional-audit/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/full-functional-audit/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `full-functional-audit` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:full-functional-audit` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

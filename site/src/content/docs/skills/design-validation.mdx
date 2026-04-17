@@ -1,0 +1,53 @@
+---
+title: design-validation
+description: >
+  Use before a release when the visual spec has drifted from the live product, or when design-token-audit passed but the UI still looks off. Compares a browser/device screenshot against the design source (Stitch MCP export, Figma image, or inline DESIGN.md mockup) across five categories: colors, typography, spacing, layout, interactions. Produces a weighted fidelity score and flags specific...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# design-validation
+
+Validate that an implementation visually and structurally matches its design specification. Compares reference designs (from Stitch MCP, Figma exports, or DESIGN.md) against actual browser/device renders. Produces a fidelity score across five categories.
+
+## When to Use
+
+- After implementing a UI component or page from a design spec
+- Before release to verify design fidelity hasn't drifted
+- During design review to compare implementation against mockups
+- When a designer reports "this doesn't look right"
+- After CSS/Tailwind refactoring to catch visual regressions
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/design-validation/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/design-validation/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `design-validation` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:design-validation` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

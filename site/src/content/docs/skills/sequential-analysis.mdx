@@ -1,0 +1,53 @@
+---
+title: sequential-analysis
+description: >
+  Use when a validation FAIL verdict is unexpected or the error is ambiguous — when you can't tell from the evidence alone what actually went wrong. Runs structured step-by-step hypothesis testing via the sequential-thinking MCP tool: form a hypothesis from the evidence, test it against other evidence, refine, repeat until root cause is pinned. Produces a traceable reasoning chain, not just a...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# sequential-analysis
+
+When a validation produces a FAIL verdict, systematically trace the root cause through step-by-step reasoning. Uses the sequential-thinking MCP tool wrapped in ValidationForge's evidence framework.
+
+## When to Use
+
+- After a validation journey produces a FAIL verdict
+- When a FAIL is unexpected (the feature "should" work)
+- When multiple journeys fail and you suspect a common root cause
+- When error messages are ambiguous or misleading
+- When you need documented root cause analysis for the team
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/sequential-analysis/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/sequential-analysis/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `sequential-analysis` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:sequential-analysis` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

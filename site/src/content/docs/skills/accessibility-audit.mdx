@@ -1,0 +1,53 @@
+---
+title: accessibility-audit
+description: >
+  Use for WCAG 2.1 AA accessibility audits that go beyond what Lighthouse alone catches. Runs 4 layers — automated Lighthouse scan, keyboard-only navigation walk-through (tab order, focus traps, skip links), screen-reader structure check via accessibility tree, and contrast/dark-mode verification — and scores the results with severity ratings. Catches issues Lighthouse misses: keyboard traps,...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# accessibility-audit
+
+Deep accessibility audit against WCAG 2.1 AA standards. Goes beyond automated scans to include keyboard navigation testing, screen reader simulation, and manual contrast verification. Produces scored findings with severity ratings.
+
+## When to Use
+
+- Before any public-facing release
+- When accessibility complaints or legal requirements arise
+- After significant UI changes
+- As part of `production-readiness-audit` Phase 2
+- When targeting WCAG 2.1 AA compliance
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/accessibility-audit/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/accessibility-audit/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `accessibility-audit` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:accessibility-audit` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

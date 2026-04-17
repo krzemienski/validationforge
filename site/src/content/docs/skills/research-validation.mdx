@@ -1,0 +1,53 @@
+---
+title: research-validation
+description: >
+  Use at Phase 0 before validation planning, or when entering an unfamiliar domain (healthcare, payments, a11y-regulated, new framework) where the applicable standards aren't already known. Researches what standards apply (WCAG 2.1 AA? PCI-DSS? SOC 2? GDPR?), what validation tools are industry-standard, and maps each to the ValidationForge skills that implement them. Output informs...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# research-validation
+
+Research applicable standards, best practices, and available tools before designing a validation strategy. This is Phase 0 — the intelligence-gathering step that informs `create-validation-plan`.
+
+## When to Use
+
+- Before validating a system you haven't worked with before
+- When entering a new domain (healthcare, fintech, e-commerce, etc.)
+- When standards have changed or new tools are available
+- When deciding what validation coverage is appropriate
+- When building the case for validation investment
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/research-validation/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/research-validation/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `research-validation` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:research-validation` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

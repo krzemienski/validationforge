@@ -1,0 +1,45 @@
+---
+title: error-recovery
+description: >
+  Use whenever a validation step fails and you're about to try again — this skill enforces a structured 3-strike protocol instead of unguided retrying. Strike 1: diagnose and apply the smallest targeted fix, re-run the same step. Strike 2: try an alternative approach (different tool, different config, docs search). Strike 3: rethink assumptions about the system, check environment and dependencies....
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# error-recovery
+
+The `error-recovery` skill is part of the ValidationForge catalog.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/error-recovery/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/error-recovery/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `error-recovery` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:error-recovery` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

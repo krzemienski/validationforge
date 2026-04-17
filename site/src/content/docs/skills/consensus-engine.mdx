@@ -1,0 +1,66 @@
+---
+title: consensus-engine
+description: >
+  Orchestrate N independent validator agents assessing the same feature; synthesize verdicts into a single consensus report with confidence scoring.
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# consensus-engine
+
+Orchestrate the CONSENSUS engine: spawn N (≥2, default 3) independent validator agents
+against the **same** feature, let each capture evidence blindly, then synthesize their
+per-journey verdicts into a single consensus verdict with a confidence score derived
+from the level of agreement. Disagreements trigger root-cause investigation before a
+final verdict is emitted.
+
+This skill is the top-level orchestration protocol for the consensus engine. It reuses
+the parallel-validation fan-out pattern but differs in intent: every validator receives
+the **same** journey list (not partitioned work) and the goal is **agreement**, not
+**coverage**.
+
+The authoritative contract for this skill is `rules/consensus-engine.md`. In any
+conflict between this SKILL.md and the rule, the rule wins.
+
+## When to Use
+
+- **High-stakes features** where a single-validator PASS is insufficient confidence
+- **Regression review** before merging a large refactor — N validators each re-run the
+- **Pre-ship gate** in release pipelines — block the ship if validators disagree,
+- **Flake hunting** — if a journey passed once but you suspect timing-dependent
+- **Audit trails** for regulated work — an evidence package with N independent
+- Journeys are independent and coverage matters more than agreement → use
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/consensus-engine/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/consensus-engine/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `consensus-engine` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:consensus-engine` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

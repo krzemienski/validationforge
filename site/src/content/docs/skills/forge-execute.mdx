@@ -1,0 +1,45 @@
+---
+title: forge-execute
+description: >
+  Use after a validation plan exists to actually run the journeys and, when they fail, autonomously try to fix them. Runs each journey against the real system, captures evidence into a fresh attempt directory, analyzes failures, applies a fix, rebuilds, and re-runs — up to 3 strikes before giving up on that journey. Preserves the full attempt history (e2e-evidence/forge-attempt-N/) so you can see...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# forge-execute
+
+Autonomous validation execution loop. Runs journeys, captures fresh evidence per attempt, fixes failures, rebuilds, and re-validates until all pass or the 3-strike limit is reached.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/forge-execute/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-execute/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `forge-execute` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:forge-execute` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

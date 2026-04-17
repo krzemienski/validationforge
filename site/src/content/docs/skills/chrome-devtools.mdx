@@ -1,0 +1,53 @@
+---
+title: chrome-devtools
+description: >
+  Use when Playwright MCP isn't detailed enough for debugging — Reach for this when browser debugging goes beyond what Playwright can show cleanly — a page feels slow and you need Core Web Vitals, a request is failing and you need the network waterfall, console errors are intermittent, or a memory leak needs heap comparison. Trigger phrases: 'check performance', 'Lighthouse score', 'Core Web...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# chrome-devtools
+
+Deep browser inspection using the Chrome DevTools MCP server. Complements Playwright MCP with DevTools-specific capabilities: performance traces, network inspection, console monitoring, Lighthouse audits, and element inspection.
+
+## When to Use
+
+- When you need performance profiling (Core Web Vitals, traces)
+- When debugging network requests in detail (headers, payloads, timing)
+- When running Lighthouse audits for accessibility/SEO/best practices
+- When you need to inspect specific DOM elements or computed styles
+- When Playwright MCP doesn't provide enough debugging depth
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/chrome-devtools/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/chrome-devtools/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `chrome-devtools` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:chrome-devtools` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

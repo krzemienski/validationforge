@@ -1,0 +1,54 @@
+---
+title: coordinated-validation
+description: >
+  Use for multi-platform projects (fullstack, mobile+API, web+iOS, any combination where one layer depends on another) when you want validation to respect those dependencies instead of running everything in parallel and getting false positives. This skill organizes validation into dependency-aware waves: DB first, then API, then Web/iOS in parallel. Upstream failures auto-block downstream waves (no...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# coordinated-validation
+
+Multi-platform validation that respects cross-platform dependencies. Independent platforms run in parallel for speed; dependent platforms wait for their dependencies to pass before launching. A failed dependency blocks all downstream validations.
+
+**Why dependency-aware?** Running Web validation against a broken API produces false failures — every Web journey fails, but the real bug is one layer down. Running them in strict order catches the cause first and skips the wasted work on symptoms.
+
+## When to Use
+
+- Fullstack projects where frontend depends on a working API
+- Mobile + API projects where iOS app relies on real backend responses
+- Any multi-platform project where one platform's correctness depends on another
+- CI/CD pipelines where evidence must reflect true integration, not isolated layers
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/coordinated-validation/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/coordinated-validation/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `coordinated-validation` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:coordinated-validation` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

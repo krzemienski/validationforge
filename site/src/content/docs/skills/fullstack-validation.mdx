@@ -1,0 +1,45 @@
+---
+title: fullstack-validation
+description: >
+  Use whenever validating a multi-layer app where frontend depends on backend depends on database — Rails+React, Django+Vue, Next.js+Postgres, any monorepo or separate repos that share data. Runs a strict bottom-up protocol: verify DB schema and seed data first, then API CRUD, then frontend rendering, then cross-layer integration flows (create in frontend → appears in DB, insert in DB → appears in...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# fullstack-validation
+
+**Composed runner**: `bash scripts/fullstack-validate.sh --db-check-cmd='psql -c SELECT 1' --api-base-url=http://localhost:3000 --web-base-url=http://localhost:3000 --evidence-dir=e2e-evidence/fullstack` runs the DB → API → Web gates in order, invoking `api-validation/scripts/crud-validator.sh` for the API layer. It exits non-zero on the first gate that fails.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/fullstack-validation/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/fullstack-validation/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `fullstack-validation` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:fullstack-validation` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

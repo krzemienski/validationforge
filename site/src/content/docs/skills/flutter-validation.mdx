@@ -1,0 +1,45 @@
+---
+title: flutter-validation
+description: >
+  Use for validating Flutter apps on Android emulators, iOS simulators, and connected physical devices. Runs the protocol: flutter doctor check, pub get, analyze, build (APK/AAB for Android, .app/.ipa for iOS), install on device/emulator, launch, screenshot captures at key states, log streaming via flutter logs for os_log/adb logcat, crash detection via error markers in the log stream. Pairs with...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# flutter-validation
+
+The `flutter-validation` skill is part of the ValidationForge catalog.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/flutter-validation/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/flutter-validation/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `flutter-validation` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:flutter-validation` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

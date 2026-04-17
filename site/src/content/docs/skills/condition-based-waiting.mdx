@@ -1,0 +1,45 @@
+---
+title: condition-based-waiting
+description: >
+  Use whenever you need to wait for something asynchronous — a dev server to start, a DB to accept connections, a simulator to boot, a build artifact to appear, a browser to finish rendering. Replaces bare `sleep N` (which is hope, not engineering) with condition-polling patterns that time out cleanly when something is genuinely stuck. Covers 8 strategies: HTTP health polls, port checks, file...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# condition-based-waiting
+
+The `condition-based-waiting` skill is part of the ValidationForge catalog.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/condition-based-waiting/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/condition-based-waiting/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `condition-based-waiting` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:condition-based-waiting` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

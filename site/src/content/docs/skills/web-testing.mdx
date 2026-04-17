@@ -1,0 +1,54 @@
+---
+title: web-testing
+description: >
+  Use when you need to decide WHICH web validation layers apply to a given feature — not all features need all 5 layers, and running every layer on every feature wastes hours. Maps each of 5 layers (integration, E2E journeys, accessibility/WCAG, performance/Core Web Vitals, security/OWASP) to the features that actually need them. Pairs with web-validation (which executes the chosen layers) and...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# web-testing
+
+This is the STRATEGY skill — use `web-validation` when you already know what to validate and need an execution playbook. Reach for this to decide what to validate and at which layer.
+
+Comprehensive web validation strategy covering integration, end-to-end, accessibility, performance, and security validation. All validation is performed against real running systems — no mocks.
+
+## When to Use
+
+- When planning comprehensive validation for a web application
+- When determining what types of validation a web feature needs
+- When building a validation plan for `create-validation-plan`
+- As a reference for which validation techniques apply to your feature
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/web-testing/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/web-testing/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `web-testing` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:web-testing` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

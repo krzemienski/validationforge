@@ -1,0 +1,52 @@
+---
+title: e2e-testing
+description: >
+  Use BEFORE execution when deciding WHAT to validate and HOW to structure it — journey design, priority order, evidence layout, flaky-flow diagnosis patterns. This is the STRATEGY/planning skill (HOW TO THINK); use e2e-validate / playwright-validation / ios-validation for the actual EXECUTION (HOW TO RUN). Covers: one goal per journey, precondition→action→assertion structure, step-NN evidence...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# e2e-testing
+
+Patterns and strategies for designing end-to-end validation journeys, managing evidence artifacts, and handling flaky flows. This is a strategy skill — it tells you HOW to think about E2E validation, not how to execute it (use `e2e-validate`, `playwright-validation`, or `ios-validation` for execution).
+
+## When to Use
+
+- When designing validation journeys for `create-validation-plan`
+- When a validation flow is intermittently failing (flaky)
+- When organizing evidence across multiple journeys
+- When deciding what to validate end-to-end vs. at other layers
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/e2e-testing/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/e2e-testing/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `e2e-testing` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:e2e-testing` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

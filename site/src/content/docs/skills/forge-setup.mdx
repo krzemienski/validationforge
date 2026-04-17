@@ -1,0 +1,47 @@
+---
+title: forge-setup
+description: >
+  Run first on any new project to initialize ValidationForge. Detects which platforms are present (iOS, web, API, CLI, design), picks an enforcement level (strict/standard/permissive), scaffolds .validationforge/ and e2e-evidence/ directories, copies 8 enforcement rules into .claude/rules/ with vf- prefix, and validates that MCP servers for detected platforms are reachable. Reach for it whenever...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# forge-setup
+
+Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture.
+
+**Automated setup**: `bash skills/forge-setup/scripts/forge-init.sh --project-dir=/path/to/project --enforcement-level=standard` runs the install idempotently and logs what it did (config status, rules copied, gitignore update). Re-run safely to repair. Phases below document the full manual flow.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/forge-setup/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-setup/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `forge-setup` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:forge-setup` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

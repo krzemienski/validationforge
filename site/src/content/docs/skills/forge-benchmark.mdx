@@ -1,0 +1,45 @@
+---
+title: forge-benchmark
+description: >
+  Use to measure how mature a project's validation posture is — not whether a single validation run passed, but whether the team has built good validation habits. Scores across 4 weighted dimensions: Coverage (35% — what fraction of features have journeys), Evidence Quality (30% — are evidence files actually reviewed vs just captured), Enforcement (25% — are hooks/rules active), Speed (10% — time...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# forge-benchmark
+
+Score validation posture across 4 dimensions. Track trends over time and compare against baseline targets.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/forge-benchmark/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-benchmark/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `forge-benchmark` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:forge-benchmark` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

@@ -1,0 +1,45 @@
+---
+title: cli-validation
+description: >
+  Use for validating command-line tools built with any language (Rust/cargo, Go, Node/bin, Python/Click, Ruby). Covers: binary builds successfully, --help and --version produce sensible output, happy-path invocations return exit 0 with expected stdout, error cases (bad flags, missing required args, invalid input) return nonzero exits with useful stderr, pipes and stdin work, output format...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# cli-validation
+
+The `cli-validation` skill is part of the ValidationForge catalog.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/cli-validation/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/cli-validation/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `cli-validation` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:cli-validation` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

@@ -1,0 +1,50 @@
+---
+title: forge-team
+description: >
+  Use for fullstack or multi-platform projects (2+ platforms: DB, API, Web, iOS, CLI, Design) when you want validation to run in dependency-aware waves with each platform owned by a separate validator. Wave 0 runs independent layers (DB, Design, CLI) in parallel; Wave 1 runs API (which depended on DB); Wave 2 runs Web and iOS in parallel (both depend on API). Each validator writes to its own...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# forge-team
+
+Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership. Uses dependency-aware wave execution so that upstream platforms (API, DB) are validated before dependent platforms (Web, iOS) launch.
+
+## When to Use
+
+- Load `coordinated-validation` for just the dependency-aware execution logic (no agent spawning).
+- Load this skill when you want the full orchestration including agent-per-platform with isolated evidence dirs.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/forge-team/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-team/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `forge-team` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:forge-team` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

@@ -1,0 +1,53 @@
+---
+title: validate-audit-benchmarks
+description: >
+  Use for ValidationForge plugin maintainers — scores the plugin's own structural integrity, NOT a user project's validation (that's forge-benchmark). Audits the 7 hooks (60% weight — they're the enforcement layer), 48 skills (20% — check frontmatter + schema), and 17 commands (20% — check YAML + references). Produces an A-F grade with regressions flagged against prior benchmarks. Reach for it on...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# validate-audit-benchmarks
+
+Score the structural integrity and functional correctness of ValidationForge primitives.
+
+This skill audits ValidationForge ITSELF — the plugin's hooks, skills, commands, and rules — not a user's project (use `forge-benchmark` for that). Each of the four dimensions maps to a load-bearing surface: hooks are the enforcement layer (a silent hook failure defeats every downstream primitive), skills are the invocable surface (if frontmatter breaks, the skill becomes unreachable), commands are the user UX (the public entrypoint to every workflow), and rules are the policy layer (they shape what "correct" means across the plugin). A regression on any dimension is a release blocker.
+
+## When to Use
+
+- After modifying hooks, skills, or commands
+- Before releases to verify no regressions
+- During audits to establish baseline metrics
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/validate-audit-benchmarks/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/validate-audit-benchmarks/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `validate-audit-benchmarks` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:validate-audit-benchmarks` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

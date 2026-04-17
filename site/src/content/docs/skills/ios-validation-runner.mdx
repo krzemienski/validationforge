@@ -1,0 +1,52 @@
+---
+title: ios-validation-runner
+description: >
+  Use for deep iOS validation of multi-step user flows where screenshots alone miss the timing — animations, loading states, state transitions, anything where the journey matters more than the endpoints. Runs a five-phase protocol (SETUP → RECORD → ACT → COLLECT → VERIFY) that captures video + logs in the background while you interact with the app, then analyzes everything together for a PASS/FAIL...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# ios-validation-runner
+
+Five-phase protocol for capturing comprehensive iOS validation evidence: SETUP, RECORD, ACT, COLLECT, VERIFY.
+
+## When to Use
+
+- When you need deeper evidence than the iOS Validation Gate
+- When validating complex multi-step iOS flows
+- When you need video evidence of interactions
+- When debugging iOS behavior that screenshots alone can't capture
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/ios-validation-runner/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/ios-validation-runner/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `ios-validation-runner` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:ios-validation-runner` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

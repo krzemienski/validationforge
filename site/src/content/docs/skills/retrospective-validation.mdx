@@ -1,0 +1,53 @@
+---
+title: retrospective-validation
+description: >
+  Use to evaluate whether your validation process itself is working — not whether a single run passed, but whether the team's validation discipline is catching real bugs before they ship. Analyzes past validation results, deployments, and incidents to compute false PASS rate (validations that said PASS but bug shipped), false FAIL rate (validations that said FAIL but nothing was actually broken),...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# retrospective-validation
+
+Validate whether a methodology, process, or technical approach actually worked by analyzing historical evidence. Uses past validation results, deployment outcomes, and incident history to assess effectiveness.
+
+## When to Use
+
+- After a sprint/milestone to evaluate the validation approach used
+- When deciding whether to continue or change a methodology
+- When comparing two approaches (A/B validation strategy)
+- Post-incident to assess if validation should have caught the issue
+- When building a case for adopting or abandoning a practice
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/retrospective-validation/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/retrospective-validation/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `retrospective-validation` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:retrospective-validation` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

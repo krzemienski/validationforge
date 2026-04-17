@@ -1,0 +1,53 @@
+---
+title: ai-evidence-analysis
+description: >
+  Use after capturing validation evidence (phase 3.5, between capture and verdict writing) when you want AI to systematically review screenshots, API responses, and CLI output — flagging issues a human reviewer might skim past. Produces a 0-100 confidence score and structured findings per evidence item (3 types supported: screenshot / api-response / cli-output). Optional and easy to disable in...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# ai-evidence-analysis
+
+Intelligent analysis of captured validation evidence using vision models and LLMs. Produces confidence scores, structured findings, and verdict labels per evidence item — catching issues human reviewers might miss.
+
+## When to Use
+
+- After capturing evidence in `e2e-evidence/` and before writing the final verdict
+- When you want AI-assisted review of screenshot quality (rendering, element presence)
+- When validating API response bodies against expected schemas or patterns
+- When CLI output contains warnings or errors that need systematic analysis
+- When confidence scores are needed to prioritize which evidence to cite in verdicts
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/ai-evidence-analysis/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/ai-evidence-analysis/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `ai-evidence-analysis` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:ai-evidence-analysis` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

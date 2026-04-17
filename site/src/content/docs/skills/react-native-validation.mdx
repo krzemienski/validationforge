@@ -1,0 +1,47 @@
+---
+title: react-native-validation
+description: >
+  Use for validating React Native apps built with any workflow (Expo Go, Expo prebuild/EAS, bare RN CLI) on iOS simulators, Android emulators, and physical devices. Covers: Metro bundler starts cleanly, platform build succeeds, app installs + launches, screenshots at key states, JS console errors captured, native crashes detected, deep links route correctly. Reach for it on phrases like 'validate...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# react-native-validation
+
+Validates a React Native app end-to-end by running the real Metro bundler, real
+simulator/emulator, and capturing real evidence. No mocks, no unit tests — only
+functional validation against the live system.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/react-native-validation/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/react-native-validation/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `react-native-validation` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:react-native-validation` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>

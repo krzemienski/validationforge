@@ -1,0 +1,45 @@
+---
+title: forge-plan
+description: >
+  Use before /validate or /forge-execute on any new project. Scans the codebase for user-facing features (routes, endpoints, screens, CLI commands), groups them into user journeys, writes specific PASS criteria per step with required evidence type, and saves to e2e-evidence/validation-plan.md where forge-execute will pick it up. Three modes: quick (small projects, critical journeys only), standard...
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+# forge-plan
+
+Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes.
+
+## Full Reference
+
+The full skill definition — including detailed workflow, platform-specific checks,
+and evidence requirements — lives in the repo:
+
+- [`skills/forge-plan/SKILL.md`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-plan/SKILL.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for the `forge-plan` skill
+  is the `SKILL.md` file in the ValidationForge repo. The skill is invoked via
+  Claude Code's skill system (e.g. `/oh-my-claudecode:forge-plan` or automatic
+  activation on matching triggers) — not imported into this docs site directly.
+</Aside>
+
+## Related Skills
+
+<CardGrid>
+  <LinkCard
+    title="functional-validation"
+    description="Related ValidationForge skill."
+    href="/skills/functional-validation/"
+  />
+  <LinkCard
+    title="gate-validation-discipline"
+    description="Related ValidationForge skill."
+    href="/skills/gate-validation-discipline/"
+  />
+  <LinkCard
+    title="e2e-validate"
+    description="Related ValidationForge skill."
+    href="/skills/e2e-validate/"
+  />
+</CardGrid>
