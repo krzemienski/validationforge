@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ValidationForge favicon placeholder.
+  Replaced with the final brand mark in a later phase.
+  A rounded square with "VF" inside, using the Starlight accent palette.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ValidationForge">
+  <rect width="64" height="64" rx="12" fill="#7C3AED"/>
+  <text
+    x="50%"
+    y="50%"
+    dy=".1em"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="'Segoe UI', system-ui, -apple-system, sans-serif"
+    font-weight="700"
+    font-size="28"
+    fill="#FFFFFF"
+  >VF</text>
+</svg>
