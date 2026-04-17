@@ -59,6 +59,23 @@ Data loss = always CRITICAL. "Works but looks wrong" = at least MEDIUM.
 - If a feature cannot be reached (dead link, missing route), that IS the finding
 - Name evidence: `e2e-evidence/audit/feature-{NN}-{name}.{ext}`
 
+### Concrete capture commands by platform
+
+```sh
+# Web (Chrome DevTools or Playwright MCP)
+take_snapshot && take_screenshot filePath=e2e-evidence/audit/feature-01-home.png
+
+# API (curl with status + headers + body captured)
+curl -sS -D - -w '\nHTTP %{http_code}  %{time_total}s\n' \
+  https://api.local/v1/users | tee e2e-evidence/audit/feature-02-users-api.txt
+
+# CLI (stdout + stderr + exit code)
+{ mytool --flag arg 2>&1; echo "exit=$?"; } | tee e2e-evidence/audit/feature-03-mytool.txt
+
+# iOS simulator (screenshot of current state)
+xcrun simctl io booted screenshot e2e-evidence/audit/feature-04-ios-home.png
+```
+
 ## Audit Report Structure
 
 See `references/audit-report-template.md` for the full template. Key sections:

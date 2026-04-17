@@ -95,6 +95,9 @@ superuser via `manage.py shell`.
 ### Step 9: Stop the Server
 
 ```bash
+# SERVER_PID is set in Step 4 (see references/server-startup.md). If you're working
+# inline without that reference, capture it now:
+SERVER_PID=${SERVER_PID:-$(pgrep -f "manage.py runserver" | head -1)}
 kill $SERVER_PID
 wait $SERVER_PID 2>/dev/null
 echo "Server stopped"

@@ -100,35 +100,42 @@ Save to `e2e-evidence/design-tokens/step-01-spec-tokens.md`.
 
 ### Color Scan
 
-```bash
-# Find hardcoded hex colors
-grep -rn "#[0-9a-fA-F]\{3,8\}" src/ --include="*.{css,scss,tsx,jsx,html,svelte,vue}"
+```sh
+# Find hardcoded hex colors (POSIX sh — no brace expansion)
+grep -rEn "#[0-9a-fA-F]{3,8}" src/ \
+  --include="*.css" --include="*.scss" --include="*.tsx" --include="*.jsx" \
+  --include="*.html" --include="*.svelte" --include="*.vue"
 
 # Find hardcoded rgb/hsl
-grep -rn "rgb\|rgba\|hsl\|hsla" src/ --include="*.{css,scss,tsx,jsx}"
+grep -rEn "rgba?\(|hsla?\(" src/ \
+  --include="*.css" --include="*.scss" --include="*.tsx" --include="*.jsx"
 
 # Find inline color styles
-grep -rn "color:\|background:\|border-color:\|fill:\|stroke:" src/ --include="*.{tsx,jsx,html}"
+grep -rEn "(color|background|border-color|fill|stroke):" src/ \
+  --include="*.tsx" --include="*.jsx" --include="*.html"
 ```
 
 ### Typography Scan
 
-```bash
+```sh
 # Find font declarations
-grep -rn "font-family\|font-size\|font-weight\|line-height" src/ --include="*.{css,scss}"
+grep -rEn "font-family|font-size|font-weight|line-height" src/ \
+  --include="*.css" --include="*.scss"
 
-# Find Tailwind font classes
-grep -rn "text-\[.*\]\|font-\[.*\]" src/ --include="*.{tsx,jsx,html}"
+# Find Tailwind font classes with arbitrary values
+grep -rEn "text-\[.*\]|font-\[.*\]" src/ \
+  --include="*.tsx" --include="*.jsx" --include="*.html"
 ```
 
 ### Spacing Scan
 
-```bash
+```sh
 # Find hardcoded pixel values in styles
-grep -rn "[0-9]\+px" src/ --include="*.{css,scss}"
+grep -rEn "[0-9]+px" src/ --include="*.css" --include="*.scss"
 
-# Find arbitrary Tailwind values
-grep -rn "\(p\|m\|gap\|space\)-\[.*\]" src/ --include="*.{tsx,jsx,html}"
+# Find arbitrary Tailwind spacing values
+grep -rEn "(p|m|gap|space)-\[.*\]" src/ \
+  --include="*.tsx" --include="*.jsx" --include="*.html"
 ```
 
 Save to `e2e-evidence/design-tokens/step-02-implementation-scan.md`.

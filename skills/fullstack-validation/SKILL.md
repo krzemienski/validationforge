@@ -141,7 +141,7 @@ After all three layers pass independently, validate data flows across the entire
 # 1. Create via frontend
 browser_navigate  url="http://localhost:FE_PORT/items/new"
 browser_snapshot                                        # Get refs for form fields
-browser_fill  ref="NAME_REF"  value="Integration Test Item"
+browser_fill_form  fields=[{ref: "NAME_REF", value: "Integration Test Item"}]
 browser_click  ref="SAVE_REF"
 browser_take_screenshot  filename="e2e-evidence/integration-create-frontend.png"
 

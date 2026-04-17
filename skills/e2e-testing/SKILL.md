@@ -1,15 +1,16 @@
 ---
 name: e2e-testing
-description: "Use when designing end-to-end validation strategy — deciding how to structure journeys, how to name evidence, how to diagnose flaky flows. This is a strategy/patterns skill (the HOW-TO-THINK layer), separate from execution skills like e2e-validate / playwright-validation / ios-validation which actually RUN the validation. Covers: one goal per journey, precondition→action→assertion structure, step-NN evidence naming, inventory files, flaky-flow diagnosis (3-run delta technique, root-cause fix patterns). Reach for it on phrases like 'how do I structure e2e tests', 'journey design patterns', 'why is this test flaky', 'e2e strategy', or when planning the shape of E2E work before executing it."
+description: "Use BEFORE execution when deciding WHAT to validate and HOW to structure it — journey design, priority order, evidence layout, flaky-flow diagnosis patterns. This is the STRATEGY/planning skill (HOW TO THINK); use e2e-validate / playwright-validation / ios-validation for the actual EXECUTION (HOW TO RUN). Covers: one goal per journey, precondition→action→assertion structure, step-NN evidence naming, P0/P1/P2/P3 prioritization, 3-run delta technique for flaky flows. Reach for it on phrases like 'how should I structure journeys', 'which user flows to prioritize validation on', 'journey design patterns', 'why is this test flaky', 'e2e strategy', 'what should I validate first', or when planning the shape of E2E work before writing any execution code."
 triggers:
-  - "e2e testing patterns"
-  - "end to end patterns"
-  - "journey design"
-  - "flaky flow"
+  - "how should i structure journeys"
+  - "which user flows to prioritize"
+  - "journey design patterns"
   - "e2e strategy"
-  - "how to structure e2e"
+  - "e2e testing patterns"
+  - "flaky flow"
   - "why is this flaky"
   - "journey naming"
+  - "what should i validate first"
 context_priority: standard
 ---
 
@@ -76,6 +77,8 @@ Each journey MUST be independent — it cannot depend on another journey having 
 
 **Good:** Each journey sets up its own preconditions
 **Bad:** Journey B assumes Journey A created a user account
+
+**Why:** If journey B silently depends on journey A's side effects, a failure in B looks like a B-bug even when the real cause is an A-bug; independence makes failures reproducible and locally-fixable.
 
 ### 4. Journey Prioritization
 

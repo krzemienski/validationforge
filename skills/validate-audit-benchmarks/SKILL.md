@@ -47,6 +47,8 @@ bash scripts/benchmark/validate-cmds.sh     # Command frontmatter validation
 | Skill Structure | 20% | validate-skills.sh — frontmatter, naming, description length |
 | Command Structure | 20% | validate-cmds.sh — frontmatter, description presence |
 
+**Why these weights:** Hooks are weighted 60% because they are the enforcement layer — a failing hook silently defeats every skill and command downstream. Skills (20%) and commands (20%) are equal because each is an invocable surface, and both need to be individually reachable.
+
 ## Grades
 
 | Grade | Score | Meaning |
@@ -56,6 +58,26 @@ bash scripts/benchmark/validate-cmds.sh     # Command frontmatter validation
 | C | 70-79% | Needs attention |
 | D | 60-69% | Significant issues |
 | F | <60% | Failing |
+
+## Sample output
+
+```
+ValidationForge Plugin Benchmark — 2026-04-17T14:22Z
+------------------------------------------------------
+Hooks (60%): 7/7 passing
+  PASS block-test-files.js (exit 2 on *.test.ts)
+  PASS evidence-gate-reminder.js (stderr on TaskUpdate)
+  PASS completion-claim-validator.js (catches "done" w/o evidence)
+  PASS mock-detection.js (flags jest.mock)
+  PASS validation-not-compilation.js (post-build reminder)
+  PASS evidence-quality-check.js (flags 0-byte files)
+  PASS validation-state-tracker.js (tracks validate runs)
+Skills (20%): 48/48 frontmatter valid
+Commands (20%): 17/17 frontmatter valid
+
+Aggregate: 100.0% — Grade A (prior: 98.1% — +1.9pp)
+No regressions vs audit-artifacts/benchmark-baseline.json
+```
 
 ## Baseline Comparison
 

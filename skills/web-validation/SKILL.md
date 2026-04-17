@@ -143,8 +143,7 @@ Use values that actually exercise the rules. `SecurePass123!` passes most rules,
 Test with valid data:
 ```
 browser_snapshot                                    # Get refs for form fields
-browser_fill  ref="EMAIL_REF"  value="user@example.com"
-browser_fill  ref="PASS_REF"  value="SecurePass123!"
+browser_fill_form  fields=[{ref: "EMAIL_REF", value: "user@example.com"}, {ref: "PASS_REF", value: "SecurePass123!"}]
 browser_click  ref="SUBMIT_REF"
 browser_take_screenshot  filename="e2e-evidence/web-form-valid-submit.png"
 ```
@@ -152,8 +151,7 @@ browser_take_screenshot  filename="e2e-evidence/web-form-valid-submit.png"
 Test with invalid data:
 ```
 browser_snapshot                                    # Get refs for form fields
-browser_fill  ref="EMAIL_REF"  value="not-an-email"
-browser_fill  ref="PASS_REF"  value=""
+browser_fill_form  fields=[{ref: "EMAIL_REF", value: "not-an-email"}, {ref: "PASS_REF", value: ""}]
 browser_click  ref="SUBMIT_REF"
 browser_take_screenshot  filename="e2e-evidence/web-form-invalid-submit.png"
 ```

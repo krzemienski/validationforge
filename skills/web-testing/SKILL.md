@@ -14,6 +14,8 @@ context_priority: reference
 
 # Web Testing Strategy
 
+This is the STRATEGY skill — use `web-validation` when you already know what to validate and need an execution playbook. Reach for this to decide what to validate and at which layer.
+
 Comprehensive web validation strategy covering integration, end-to-end, accessibility, performance, and security validation. All validation is performed against real running systems — no mocks.
 
 ## When to Use
@@ -46,6 +48,15 @@ Not every feature needs all 5 layers. Use the decision matrix below.
 | API integration | YES | YES | - | - | YES |
 | Style/layout change | - | YES | YES | - | - |
 | Performance optimization | - | - | - | YES | - |
+
+### Why some intersections are skipped ("-")
+
+- **Authentication flow / Layer 3 (a11y):** a11y isn't critical for the auth form itself — login forms are typically short, keyboard-navigable by default, and gated behind screen-reader testing of the post-auth surface. If you need full a11y coverage (password reset, MFA prompts), switch to `web-validation` and add Layer 3 explicitly.
+- **API integration / Layer 3 (a11y) & Layer 4 (perf):** API integration is a data-layer concern — no new DOM surface, so a11y and Core Web Vitals don't apply. Run Layer 5 (security) instead to verify auth/authz on the new endpoints.
+- **Style/layout change / Layer 1 (integration) & Layer 4 (perf) & Layer 5 (security):** pure CSS/layout changes don't touch data flow, don't add render-blocking JS, and don't introduce new inputs — skip those layers unless the change adds images or web fonts (then add Layer 4).
+- **Performance optimization / Layers 1-3, 5:** by definition the feature is Layer 4. Don't re-run integration/E2E unless the optimization changed rendering logic.
+- **Form with user input / Layer 4 (perf):** form pages are usually lightweight; Layer 4 only applies if the form page also does heavy rendering (live previews, autocomplete against large datasets).
+- **New page/route / Layer 5 (security):** Layer 5 is skipped on pure presentation pages. Add it the moment the route accepts user input, reads from query params in a sensitive way, or renders authenticated content.
 
 ## Layer 1: Integration Validation
 

@@ -1,6 +1,6 @@
 ---
 name: design-validation
-description: "Use after implementing a UI from a design spec to measure how closely the built version matches the reference. Compares a browser/device screenshot against the design source (Stitch MCP export, Figma image, or inline DESIGN.md mockup) across five categories: colors, typography, spacing, layout, interactions. Produces a weighted fidelity score and flags the specific mismatches. Pairs with design-token-audit (which checks the code-level tokens) — this skill checks the rendered output. Reach for it on phrases like 'does it match the design', 'design fidelity', 'visual regression', 'compare to mockup', 'design QA', or before shipping anything where the visual match is part of the acceptance criteria."
+description: "Use before a release when the visual spec has drifted from the live product, or when design-token-audit passed but the UI still looks off. Compares a browser/device screenshot against the design source (Stitch MCP export, Figma image, or inline DESIGN.md mockup) across five categories: colors, typography, spacing, layout, interactions. Produces a weighted fidelity score and flags specific mismatches — token-audit checks source code, this skill checks the rendered output. Reach for it on phrases like 'does it match the design', 'design fidelity', 'visual regression', 'compare to mockup', 'design QA', or when a designer reports 'this doesn't look right'."
 triggers:
   - "design validation"
   - "validate design"
@@ -68,15 +68,34 @@ Using Playwright MCP or Chrome DevTools MCP:
 ```
 1. Navigate to each page/component
 2. Capture full-page screenshot at design viewport size
-3. Capture accessibility tree snapshot
-4. Extract computed styles for key elements:
-   - Background colors, text colors
-   - Font family, size, weight, line-height
-   - Padding, margin, gap values
-   - Border radius, box shadow
-   - Layout direction, alignment
+3. Capture accessibility tree snapshot (browser_snapshot)
+4. Extract computed styles for key elements (see concrete example below)
 5. Save all captures to e2e-evidence/design-validation/implementation/
 ```
+
+#### Concrete: extract computed styles via Chrome DevTools MCP
+
+```
+# Snapshot the accessibility tree to get uid-annotated elements
+take_snapshot
+  → saves uid references for each element
+
+# For each key element (e.g. primary button uid=5_12), dump computed styles:
+evaluate_script → function=`(el) => {
+    const cs = getComputedStyle(el);
+    return {
+      color: cs.color, background: cs.backgroundColor,
+      font: cs.font, fontWeight: cs.fontWeight, lineHeight: cs.lineHeight,
+      padding: cs.padding, margin: cs.margin, gap: cs.gap,
+      borderRadius: cs.borderRadius, boxShadow: cs.boxShadow,
+      display: cs.display, flexDirection: cs.flexDirection,
+      alignItems: cs.alignItems, justifyContent: cs.justifyContent
+    };
+  }`, args=[{uid: "5_12"}]
+  → save JSON output to e2e-evidence/design-validation/implementation/computed-styles.json
+```
+
+Playwright MCP equivalent: `browser_evaluate` with the same function body, selecting elements by ARIA role or CSS selector from `browser_snapshot`. Diff the resulting JSON against token values extracted from DESIGN.md / tailwind.config in Phase 1.
 
 ### Viewport Matching
 
