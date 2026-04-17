@@ -1,0 +1,74 @@
+
+=== File-path block check ===
+__mocks__/api.ts                              -> NOT-BLOCKED
+__mocks__/api.js                              -> NOT-BLOCKED
+/project/__mocks__/api.ts                     -> NOT-BLOCKED
+testing/helpers.ts                            -> NOT-BLOCKED
+/project/testing/helpers.ts                   -> NOT-BLOCKED
+factories/user.ts                             -> NOT-BLOCKED
+/project/factories/user.ts                    -> NOT-BLOCKED
+conftest.py                                   -> NOT-BLOCKED
+/project/conftest.py                          -> NOT-BLOCKED
+my_module_test.py                             -> NOT-BLOCKED
+/project/my_module_test.py                    -> NOT-BLOCKED
+_test.rs                                      -> NOT-BLOCKED
+/project/src/lib_test.rs                      -> NOT-BLOCKED
+SomeTest.java                                 -> NOT-BLOCKED
+SomeTest.kt                                   -> NOT-BLOCKED
+/project/SomeTest.java                        -> NOT-BLOCKED
+handler_test.go                               -> BLOCK: /_test\.go$/
+profile.test.tsx                              -> BLOCK: /\.test\.[jt]sx?$/
+__tests__/profile.test.tsx                    -> BLOCK: /\.test\.[jt]sx?$/
+test_foo.py                                   -> BLOCK: /test_[^/]+\.py$/
+MyTests.swift                                 -> BLOCK: /Tests?\.swift$/
+MyTest.swift                                  -> BLOCK: /Tests?\.swift$/
+foo.spec.ts                                   -> BLOCK: /\.spec\.[jt]sx?$/
+foo.stories.tsx                               -> BLOCK: /\.stories\.[jt]sx?$/
+e2e-evidence/api/response.json                -> ALLOWLIST: /e2e-evidence/
+validation-evidence/report.md                 -> ALLOWLIST: /validation-evidence/
+.claude/skills/x/SKILL.md                     -> ALLOWLIST: /\.claude\//
+validationforge/config.json                   -> ALLOWLIST: /validationforge\//
+
+=== Code-pattern detect (mock-detection.js / MOCK_PATTERNS) ===
+jest.mock                      -> DETECTED by /jest\.mock\(/
+jest.fn                        -> NOT-DETECTED
+jest.spyOn                     -> NOT-DETECTED
+vi.mock                        -> DETECTED by /vi\.mock\(/
+vi.fn                          -> NOT-DETECTED
+vi.spyOn                       -> NOT-DETECTED
+sinon.stub                     -> DETECTED by /sinon\.stub\(/
+sinon.mock                     -> NOT-DETECTED
+sinon.fake                     -> NOT-DETECTED
+nock                           -> DETECTED by /nock\(/
+MSW setupServer                -> NOT-DETECTED
+MSW http.get                   -> NOT-DETECTED
+@testing-library import        -> NOT-DETECTED
+from unittest.mock import      -> DETECTED by /unittest\.mock/, /from unittest\.mock import/
+from unittest import mock      -> NOT-DETECTED
+import mock                    -> NOT-DETECTED
+@patch class                   -> NOT-DETECTED
+@patch.object                  -> NOT-DETECTED
+with patch                     -> NOT-DETECTED
+monkeypatch                    -> NOT-DETECTED
+@pytest.fixture                -> NOT-DETECTED
+pytest.mark.parametrize        -> NOT-DETECTED
+import XCTest                  -> NOT-DETECTED
+class Tests: XCTestCase        -> DETECTED by /XCTestCase/, /class.*Tests.*XCTestCase/
+XCTAssertEqual                 -> NOT-DETECTED
+XCTAssertTrue                  -> NOT-DETECTED
+XCTAssertNil                   -> NOT-DETECTED
+@testable import               -> DETECTED by /@testable import/
+XCTestExpectation              -> NOT-DETECTED
+import testing                 -> NOT-DETECTED
+func Test caps                 -> NOT-DETECTED
+func test lower                -> DETECTED by /func test.*\(\)/
+httptest.NewServer             -> NOT-DETECTED
+httptest.NewRecorder           -> DETECTED by /httptest\.NewRecorder/
+gomock.NewController           -> DETECTED by /gomock\.NewController/
+mock.NewMockClient             -> NOT-DETECTED
+#[cfg(test)]                   -> NOT-DETECTED
+mod tests                      -> NOT-DETECTED
+#[test]                        -> NOT-DETECTED
+fn test_something              -> NOT-DETECTED
+mock! macro                    -> NOT-DETECTED
+automock                       -> NOT-DETECTED

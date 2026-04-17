@@ -1,0 +1,540 @@
+{
+  "feature": "Skill Deep Review (Top 10)",
+  "description": "Deep-review the 10 most critical ValidationForge skills (5 priority + 5 platform-routing). Read every SKILL.md plus its reference/workflow files line-by-line. Verify every command, every cross-reference, every PASS criterion. Fix broken instructions, stale references, and inaccurate PASS criteria. Document per-skill findings and consolidate into a summary report.",
+  "created_at": "2026-04-11T02:22:17.031Z",
+  "updated_at": "2026-04-17T05:42:15.292Z",
+  "status": "in_progress",
+  "planStatus": "in_progress",
+  "xstateState": "ready",
+  "executionPhase": "coding",
+  "task_id": "004-skill-deep-review-top-10",
+  "workflow_type": "feature",
+  "summary": {
+    "title": "Deep-review the 10 most critical ValidationForge skills",
+    "one_line": "Read every line of 10 priority SKILL.md files plus their reference/workflow files, verify cross-references and commands against the real plugin contents, fix every broken or stale instruction, and document per-skill findings.",
+    "deliverables": [
+      "e2e-evidence/skill-review/<skill-name>/findings.md — per-skill deep-review report (10 reports)",
+      "e2e-evidence/skill-review/summary.md — consolidated report ranking severity of findings",
+      "e2e-evidence/skill-review/fixes-applied.md — changelog of every SKILL.md / reference / workflow edit with rationale",
+      "Updated SKILL.md files and reference/workflow files for any broken instructions, stale references, or incorrect PASS criteria"
+    ],
+    "non_goals": [
+      "Do NOT review the other 31 skills (out of scope for this task).",
+      "Do NOT modify commands/, agents/, rules/, or hooks/ source — fix SKILL.md cross-references to match reality instead.",
+      "Do NOT create test files, mocks, or stubs of any kind (Iron Rule)."
+    ]
+  },
+  "parallelism_analysis": {
+    "safe_parallel_work": [
+      "All 10 skill reviews in Phase 1/2 touch different directories and can run in parallel.",
+      "Within a single skill's review subtask, reading SKILL.md + references/ + workflows/ is sequential."
+    ],
+    "must_be_sequential": [
+      "Phase 3 (synthesis) must wait for Phase 1 + Phase 2 completion.",
+      "Phase 4 (fixes) must wait for Phase 3 consolidated severity ranking.",
+      "Phase 5 (re-validation) must wait for Phase 4 fixes to land."
+    ],
+    "recommended_workers": 2,
+    "worker_split": "Worker A: 5 priority skills (Phase 1). Worker B: 5 platform-routing skills (Phase 2). Both merge at Phase 3. 1 worker handles Phases 3/4/5 sequentially."
+  },
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Deep-review 5 priority skills",
+      "type": "investigation",
+      "parallel_safe": true,
+      "depends_on": [],
+      "description": "For each of the 5 priority skills, read SKILL.md line-by-line; verify every referenced file exists at the cited path; read each reference file and check its commands/instructions for accuracy; trace cross-references to other skills, commands, rules, hooks; test representative instructions (tracing or actual execution when safe); produce a findings.md report. Evidence goes to e2e-evidence/skill-review/<skill>/.",
+      "subtasks": [
+        {
+          "id": "phase-1-subtask-1",
+          "name": "Review functional-validation skill",
+          "status": "completed",
+          "activeForm": "Reviewing functional-validation skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/functional-validation/SKILL.md",
+            "./skills/functional-validation/references/common-failure-patterns.md",
+            "./skills/functional-validation/references/evidence-capture-commands.md",
+            "./skills/functional-validation/references/quick-reference-card.md",
+            "./skills/functional-validation/references/team-adoption-guide.md"
+          ],
+          "steps": [
+            "Read SKILL.md and record each claim that can be verified (commands, file paths, cross-skill references).",
+            "Verify each references/*.md file exists; read each and check: (a) does every command in the file run? (b) do cited skills/commands exist? (c) are platform mentions current?",
+            "Cross-check the 4-step protocol: does it align with e2e-validate/workflows/execute.md?",
+            "Cross-check the platform detection table rows: do each of the 5 platform skills mentioned exist?",
+            "Write findings to e2e-evidence/skill-review/functional-validation/findings.md with sections: Summary, Accuracy Issues, Stale References, Missing Content, Broken Cross-Links, Recommendations."
+          ],
+          "verification": {
+            "type": "manual",
+            "description": "Reviewer rereads findings.md; at least one finding or an explicit 'no issues found' statement per section."
+          },
+          "success_criteria": [
+            "findings.md exists and covers every claim in SKILL.md",
+            "Every reference file was opened and inspected",
+            "All cross-skill links resolved to ./skills/<name>/SKILL.md"
+          ],
+          "notes": "Deep-reviewed functional-validation skill. Findings written to e2e-evidence/skill-review/functional-validation/findings.md (298 lines). 2 HIGH issues (team-adoption-guide.md .gitignore advice contradicts repo policy; quick-reference-card.md Android row references nonexistent skill), 4 MEDIUM (add Design row; manual HAR export; under-specified READ-evidence checklist; team-adoption-guide.md unlinked from SKILL.md), 3 LOW (platform-row order vs CLAUDE.md; Business Logic vs fullstack diagram; missing sequential-analysis in Related Skills). No CRITICAL defects — no finding would cause a false PASS verdict. All 10 cross-skill links verified to resolve. All 4 reference files opened and inspected. block-test-files hook existence and allowlist verified.",
+          "description": "No description",
+          "updated_at": "2026-04-17T05:31:35.901500+00:00"
+        },
+        {
+          "id": "phase-1-subtask-2",
+          "name": "Review gate-validation-discipline skill",
+          "status": "completed",
+          "activeForm": "Reviewing gate-validation-discipline skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/gate-validation-discipline/SKILL.md",
+            "./skills/gate-validation-discipline/references/evidence-standards.md",
+            "./skills/gate-validation-discipline/references/gate-integration-examples.md"
+          ],
+          "steps": [
+            "Read SKILL.md; list each step of the verification loop.",
+            "Open references/evidence-standards.md; validate each Good/Bad example still matches current evidence format.",
+            "Open references/gate-integration-examples.md; verify every example command runs and references real commands/skills.",
+            "Check that cross-references to no-mocking-validation-gates, functional-validation, and any hooks are accurate (open hooks/ to confirm).",
+            "Write e2e-evidence/skill-review/gate-validation-discipline/findings.md."
+          ],
+          "verification": {
+            "type": "manual",
+            "description": "Reviewer confirms every anti-pattern in evidence-standards.md is still a relevant pitfall."
+          },
+          "success_criteria": [
+            "findings.md exists",
+            "Every anti-pattern row validated",
+            "Hooks referenced actually exist in ./hooks/"
+          ],
+          "description": "No description",
+          "notes": "Deep-reviewed gate-validation-discipline skill. Findings written to e2e-evidence/skill-review/gate-validation-discipline/findings.md (263 lines). 1 HIGH issue (stale term \"Ultrawork\" in gate-integration-examples.md — not used anywhere else in the repo; should be \"Team mode\"), 2 MEDIUM (gate-integration-examples.md evidence-path convention contradicts rules/team-validation.md subdirectory-per-validator rule; CI-example flat filenames not acknowledged as exception to journey-slug pattern), 3 LOW (informal \"orchestrator\" term vs canonical \"Lead\"/validation-lead agent; missing parallel-validation from Related Skills; overlap with verification-before-completion not disambiguated). No CRITICAL defects — no finding would cause a false PASS verdict. All 4 cross-skill links verified reciprocal. All 10 anti-pattern rows verified still relevant. All 5 evidence-type Good/Bad examples verified accurate. CI-example tooling verified (curl/jq/pnpm/npx playwright syntax all valid on this machine).",
+          "updated_at": "2026-04-17T05:39:35.176613+00:00"
+        },
+        {
+          "id": "phase-1-subtask-3",
+          "name": "Review no-mocking-validation-gates skill",
+          "status": "completed",
+          "activeForm": "Reviewing no-mocking-validation-gates skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/no-mocking-validation-gates/SKILL.md",
+            "./skills/no-mocking-validation-gates/references/mock-pattern-catalog.md",
+            "./skills/no-mocking-validation-gates/references/real-system-validation-guide.md"
+          ],
+          "steps": [
+            "Read SKILL.md; confirm Iron Rule language and blocked pattern table.",
+            "Open mock-pattern-catalog.md; verify every listed file pattern is actually blocked by ./hooks/block-test-files (read the hook source).",
+            "Confirm the 'What Is NOT Blocked' allowlist matches the hook's allowlist.",
+            "Verify every code pattern example is syntactically valid for its language.",
+            "Open real-system-validation-guide.md; verify commands, example mock-drift case, and cross-skill references.",
+            "Write findings.md to e2e-evidence/skill-review/no-mocking-validation-gates/findings.md."
+          ],
+          "verification": {
+            "type": "command",
+            "description": "Cross-verify against hooks/block-test-files (or equivalent hook script): does SKILL.md claim a pattern is blocked that the hook does not block? Record any mismatch as a finding."
+          },
+          "success_criteria": [
+            "findings.md exists",
+            "SKILL.md claims vs hook behavior gap documented",
+            "Every language in the catalog was checked for syntax accuracy"
+          ],
+          "description": "No description",
+          "notes": "Deep-reviewed no-mocking-validation-gates skill. Findings in e2e-evidence/skill-review/no-mocking-validation-gates/findings.md. 3 HIGH issues (SKILL.md/catalog claim __mocks__/ blocked but no pattern matches; catalog claims *_test.py blocked but only test_*.py is; catalog claims Java/Kotlin/Rust test files blocked but no patterns exist for them), 5 MEDIUM (JS/Python/Swift/Go/Rust code-pattern sections overclaim — only a subset of patterns are in MOCK_PATTERNS: jest.fn/vi.fn/@patch/httptest.NewServer/func Test etc. all NOT detected — including a case-sensitivity bug where /func test.*\\(\\)/ matches lowercase while Go convention is TestXxx), 5 LOW (Rule 2 wording implies PreToolUse blocking but mock-detection is PostToolUse; minor wording issues). No CRITICAL defects. All 4 Related Skills cross-links verified. All 4 ALLOWLIST entries verified 1:1 with hook source. Empirical evidence: ran test-patterns.js against hooks/patterns.js with 28 file paths + 42 code patterns; transcript saved (74 lines). Recorded follow-up TODO to expand MOCK_PATTERNS (outside this task's scope — no hook source edits per spec)."
+        },
+        {
+          "id": "phase-1-subtask-4",
+          "name": "Review preflight skill",
+          "status": "pending",
+          "activeForm": "Reviewing preflight skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/preflight/SKILL.md",
+            "./skills/preflight/references/platform-checklists.md",
+            "./skills/preflight/references/auto-fix-actions.md"
+          ],
+          "steps": [
+            "Read SKILL.md; confirm report format, severity levels, and the 6 rules.",
+            "Open platform-checklists.md; for each row (Web/API/iOS/CLI/Fullstack): run the check command on this machine where safe (node --version, pnpm --version, xcrun --version); record actual output; flag any command that errors or gives misleading output.",
+            "Open auto-fix-actions.md; for each auto-fix: confirm command is idempotent and safe to run in the sandbox; flag any 'brew install' or 'sudo' that should be manual-only.",
+            "Verify the platform detection bash script in auto-fix-actions.md correctly handles the 5 platforms.",
+            "Write findings.md to e2e-evidence/skill-review/preflight/findings.md."
+          ],
+          "verification": {
+            "type": "command",
+            "description": "Execute at least the Web and API platform checklists from platform-checklists.md against this worktree; record output in findings.md."
+          },
+          "success_criteria": [
+            "findings.md exists",
+            "At least 10 checklist commands executed and outputs recorded",
+            "Auto-fix safety review performed for each row"
+          ],
+          "description": "No description"
+        },
+        {
+          "id": "phase-1-subtask-5",
+          "name": "Review e2e-validate skill (orchestrator)",
+          "status": "pending",
+          "activeForm": "Reviewing e2e-validate skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/e2e-validate/SKILL.md",
+            "./skills/e2e-validate/workflows/",
+            "./skills/e2e-validate/references/"
+          ],
+          "steps": [
+            "Read SKILL.md; list every workflow and reference cited.",
+            "Confirm every workflows/<name>.md and references/<name>.md file exists; flag missing ones.",
+            "Read each workflow file (plan.md, execute.md, etc.); verify commands, PASS criteria generation, and delegation to platform skills.",
+            "Read each platform reference file under references/; verify content matches the corresponding skills/<platform>-validation/SKILL.md (no contradictions).",
+            "Verify the orchestrator correctly sequences the 7 pipeline phases from CLAUDE.md.",
+            "Write findings.md to e2e-evidence/skill-review/e2e-validate/findings.md."
+          ],
+          "verification": {
+            "type": "manual",
+            "description": "Reviewer confirms every file link resolves and every cross-skill delegation is accurate."
+          },
+          "success_criteria": [
+            "findings.md exists",
+            "All 8 workflow files inspected",
+            "All 6 platform references cross-checked against their platform skill",
+            "Contradictions between orchestrator and delegated skills listed"
+          ],
+          "notes": "Largest skill — allocate the most reading time here.",
+          "description": "No description"
+        }
+      ],
+      "phase": 1
+    },
+    {
+      "id": "phase-2",
+      "name": "Deep-review 5 platform-routing skills",
+      "type": "investigation",
+      "parallel_safe": true,
+      "depends_on": [],
+      "description": "For each platform-routing skill, trace the numbered Steps 1..N; verify every command syntax; verify MCP tool names (Playwright MCP / Chrome DevTools MCP / iOS simulator MCP); verify PASS criteria templates and Common Failures troubleshooting tables. Each skill is standalone (no references/ dir), so the review fits in one subtask per skill.",
+      "subtasks": [
+        {
+          "id": "phase-2-subtask-1",
+          "name": "Review ios-validation skill",
+          "status": "pending",
+          "activeForm": "Reviewing ios-validation skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/ios-validation/SKILL.md"
+          ],
+          "steps": [
+            "Read all 9 Steps and PASS criteria template.",
+            "Verify every xcodebuild, xcrun simctl, and idb command: does xcrun simctl --help recognize the flags listed? Note: do NOT actually boot simulators unless a simulator is already present and safe.",
+            "Confirm Common Failures table still describes current Xcode 15/16 behavior.",
+            "Cross-check Related Skills section against ./skills/ listing.",
+            "Write findings.md to e2e-evidence/skill-review/ios-validation/findings.md."
+          ],
+          "verification": {
+            "type": "command",
+            "description": "Run at least xcodebuild -version and xcrun simctl list devices (read-only) and record output."
+          },
+          "success_criteria": [
+            "findings.md exists",
+            "Every Step 1..9 verified",
+            "PASS criteria template reviewed for completeness"
+          ],
+          "description": "No description"
+        },
+        {
+          "id": "phase-2-subtask-2",
+          "name": "Review web-validation skill",
+          "status": "pending",
+          "activeForm": "Reviewing web-validation skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/web-validation/SKILL.md"
+          ],
+          "steps": [
+            "Read all 8 Steps (dev server, health, navigation, console, network, form, responsive, routes).",
+            "Verify every Playwright MCP tool name (browser_navigate, browser_snapshot, browser_take_screenshot, browser_console_messages, browser_network_requests, browser_fill_form, browser_resize) matches current Playwright MCP server.",
+            "Verify every Chrome DevTools MCP tool name (navigate_page, take_snapshot, take_screenshot, click) matches current server.",
+            "Check dev-server detection script for pnpm/npm/yarn/manage.py/Gemfile — does it handle bun/deno/vite? Flag missing cases.",
+            "Check responsive viewport table — are the 4 viewports still canonical?",
+            "Write findings.md to e2e-evidence/skill-review/web-validation/findings.md."
+          ],
+          "verification": {
+            "type": "manual",
+            "description": "Reviewer traces all 8 steps; flags any MCP tool name that no longer exists in the current MCP server spec."
+          },
+          "success_criteria": [
+            "findings.md exists",
+            "Every MCP tool mentioned verified to exist in current server",
+            "Responsive viewport table reviewed"
+          ],
+          "description": "No description"
+        },
+        {
+          "id": "phase-2-subtask-3",
+          "name": "Review api-validation skill",
+          "status": "pending",
+          "activeForm": "Reviewing api-validation skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/api-validation/SKILL.md"
+          ],
+          "steps": [
+            "Read all 6 Steps (CRUD, auth, error paths, perf).",
+            "Verify every curl invocation: correct flags, jq filter syntax, and HTTP semantics.",
+            "Verify auth flow covers bearer/API-key/cookie cases.",
+            "Check that evidence capture instructions produce non-empty files.",
+            "Write findings.md to e2e-evidence/skill-review/api-validation/findings.md."
+          ],
+          "verification": {
+            "type": "command",
+            "description": "Run curl --version and jq --version and a sample curl to a public endpoint to confirm syntax works."
+          },
+          "success_criteria": [
+            "findings.md exists",
+            "All curl examples syntactically valid",
+            "jq filters verified"
+          ],
+          "description": "No description"
+        },
+        {
+          "id": "phase-2-subtask-4",
+          "name": "Review cli-validation skill",
+          "status": "pending",
+          "activeForm": "Reviewing cli-validation skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/cli-validation/SKILL.md"
+          ],
+          "steps": [
+            "Read all 8 Steps (build, help, version, exec, exit codes, stdin, stdout/stderr, evidence).",
+            "Verify build commands for Rust (cargo), Go (go build), Python (python -m), Node (npm/bin) still match current tooling.",
+            "Verify exit-code handling across platforms (macOS vs Linux differences).",
+            "Check that PASS criteria template covers all 8 steps.",
+            "Write findings.md to e2e-evidence/skill-review/cli-validation/findings.md."
+          ],
+          "verification": {
+            "type": "command",
+            "description": "Run cargo --version || true; go version || true; python3 --version to record tooling baseline."
+          },
+          "success_criteria": [
+            "findings.md exists",
+            "All build commands reviewed",
+            "Exit-code discussion verified for correctness"
+          ],
+          "description": "No description"
+        },
+        {
+          "id": "phase-2-subtask-5",
+          "name": "Review fullstack-validation skill",
+          "status": "pending",
+          "activeForm": "Reviewing fullstack-validation skill",
+          "parallel_safe": true,
+          "files_involved": [
+            "./skills/fullstack-validation/SKILL.md"
+          ],
+          "steps": [
+            "Read all Steps; confirm bottom-up ordering (DB -> API -> Frontend -> Integration).",
+            "Verify delegation to api-validation and web-validation is explicit and consistent.",
+            "Check DB readiness checks for PostgreSQL/MySQL/SQLite.",
+            "Confirm Common Failures covers cross-layer race conditions (e.g., frontend starts before API is ready).",
+            "Write findings.md to e2e-evidence/skill-review/fullstack-validation/findings.md."
+          ],
+          "verification": {
+            "type": "manual",
+            "description": "Reviewer traces one full bottom-up sequence; records any step that contradicts api-validation or web-validation."
+          },
+          "success_criteria": [
+            "findings.md exists",
+            "Bottom-up ordering verified",
+            "No contradictions with api-validation or web-validation"
+          ],
+          "description": "No description"
+        }
+      ],
+      "phase": 2
+    },
+    {
+      "id": "phase-3",
+      "name": "Synthesize consolidated review report",
+      "type": "integration",
+      "parallel_safe": false,
+      "depends_on": [
+        "phase-1",
+        "phase-2"
+      ],
+      "description": "Aggregate the 10 per-skill findings.md files into one summary that ranks findings by severity and proposes a fix plan.",
+      "subtasks": [
+        {
+          "id": "phase-3-subtask-1",
+          "name": "Write consolidated summary",
+          "status": "pending",
+          "activeForm": "Writing consolidated summary",
+          "parallel_safe": false,
+          "files_involved": [
+            "./e2e-evidence/skill-review/functional-validation/findings.md",
+            "./e2e-evidence/skill-review/gate-validation-discipline/findings.md",
+            "./e2e-evidence/skill-review/no-mocking-validation-gates/findings.md",
+            "./e2e-evidence/skill-review/preflight/findings.md",
+            "./e2e-evidence/skill-review/e2e-validate/findings.md",
+            "./e2e-evidence/skill-review/ios-validation/findings.md",
+            "./e2e-evidence/skill-review/web-validation/findings.md",
+            "./e2e-evidence/skill-review/api-validation/findings.md",
+            "./e2e-evidence/skill-review/cli-validation/findings.md",
+            "./e2e-evidence/skill-review/fullstack-validation/findings.md"
+          ],
+          "steps": [
+            "Read every per-skill findings.md.",
+            "Build a severity-ranked issue table: CRITICAL (instruction leads to false verdict), HIGH (stale reference or broken link), MEDIUM (missing content, unclear wording), LOW (nice-to-have improvement).",
+            "List fix recommendations grouped by file (one section per skill).",
+            "Write ./e2e-evidence/skill-review/summary.md."
+          ],
+          "verification": {
+            "type": "manual",
+            "description": "Summary covers all 10 skills and every issue in the per-skill findings."
+          },
+          "success_criteria": [
+            "summary.md exists",
+            "Every per-skill finding mapped into summary",
+            "Issue severity column filled"
+          ],
+          "description": "No description"
+        }
+      ],
+      "phase": 3
+    },
+    {
+      "id": "phase-4",
+      "name": "Apply fixes to SKILL.md and reference files",
+      "type": "implementation",
+      "parallel_safe": false,
+      "depends_on": [
+        "phase-3"
+      ],
+      "description": "Apply every CRITICAL/HIGH fix surfaced by the synthesis. MEDIUM/LOW fixes applied if time permits; otherwise logged for follow-up. Every edit recorded in fixes-applied.md with rationale and cited evidence (source line in findings).",
+      "subtasks": [
+        {
+          "id": "phase-4-subtask-1",
+          "name": "Apply fixes in priority order",
+          "status": "pending",
+          "activeForm": "Applying fixes in priority order",
+          "parallel_safe": false,
+          "files_involved": [
+            "./skills/ (all 10 target skills and their references/workflows)"
+          ],
+          "steps": [
+            "For each CRITICAL issue from summary.md, edit the affected file with the Edit tool; record the change in fixes-applied.md with before/after excerpts.",
+            "Repeat for HIGH issues.",
+            "For MEDIUM/LOW issues, apply if quick; otherwise note as deferred in fixes-applied.md.",
+            "If a reference file is completely stale, rewrite its content rather than deleting it.",
+            "NEVER edit commands/, agents/, rules/, hooks/ source — if a SKILL.md references a nonexistent command/hook, fix the SKILL.md, not the missing asset."
+          ],
+          "verification": {
+            "type": "manual",
+            "description": "Every CRITICAL/HIGH issue from summary.md has a matching entry in fixes-applied.md with a commit-ready diff description."
+          },
+          "success_criteria": [
+            "fixes-applied.md complete",
+            "No test files, mocks, or stubs created (Iron Rule preserved)",
+            "YAML frontmatter intact in every SKILL.md after edits"
+          ],
+          "description": "No description"
+        }
+      ],
+      "phase": 4
+    },
+    {
+      "id": "phase-5",
+      "name": "Re-validate fixed skills",
+      "type": "integration",
+      "parallel_safe": false,
+      "depends_on": [
+        "phase-4"
+      ],
+      "description": "For every skill with applied fixes, re-read the now-updated SKILL.md and re-trace the instruction that was broken. Confirm the fix actually resolves the issue without regressing another claim.",
+      "subtasks": [
+        {
+          "id": "phase-5-subtask-1",
+          "name": "Re-trace fixed instructions",
+          "status": "pending",
+          "activeForm": "Re-tracing fixed instructions",
+          "parallel_safe": false,
+          "files_involved": [
+            "./e2e-evidence/skill-review/fixes-applied.md",
+            "./skills/ (updated skills)"
+          ],
+          "steps": [
+            "For each row in fixes-applied.md, re-open the affected file and confirm the new wording/command is correct.",
+            "Run any check-command that was failing before (where safe); confirm new output matches the claim.",
+            "Update summary.md with a 'Resolved' column stating which issues are closed.",
+            "Finalize e2e-evidence/skill-review/summary.md."
+          ],
+          "verification": {
+            "type": "manual",
+            "description": "All CRITICAL and HIGH rows in summary.md have Resolved=Yes or a deferred explanation."
+          },
+          "success_criteria": [
+            "summary.md updated with resolution status for every issue",
+            "No regressions introduced by the fix phase"
+          ],
+          "description": "No description"
+        }
+      ],
+      "phase": 5
+    }
+  ],
+  "verification_strategy": {
+    "risk_level": "medium",
+    "verification_rounds": 3,
+    "evidence_requirements": [
+      "Per-skill findings.md (10 files)",
+      "Consolidated summary.md",
+      "fixes-applied.md with before/after excerpts for every edit",
+      "Command transcripts under e2e-evidence/skill-review/<skill>/ (e.g., node-version.txt, xcrun-simctl-list.txt)"
+    ],
+    "verification_types_expected": [
+      "manual",
+      "command"
+    ],
+    "gate_checks": [
+      "gate-validation-discipline: every claim in this plan's fixes-applied.md must cite evidence (a line from findings.md).",
+      "no-mocking-validation-gates: no test files, mocks, or stubs created at any point.",
+      "preflight: before Phase 4 fixes, preflight report captured (node/xcode/tooling versions)."
+    ],
+    "notes": "Risk is medium (not high) because we are editing Markdown, not code. But the downstream impact on every /validate run is significant, so discipline around evidence citation is mandatory."
+  },
+  "qa_acceptance": {
+    "criteria": [
+      "All 10 priority skills reviewed (findings.md exists for each).",
+      "Every reference/workflow file cited by those skills was opened and verified to exist.",
+      "Every CRITICAL and HIGH issue in summary.md has a matching fix row in fixes-applied.md or a documented deferral.",
+      "No SKILL.md YAML frontmatter was broken.",
+      "No files outside ./skills/ and ./e2e-evidence/skill-review/ were modified (except this spec dir).",
+      "Iron Rule preserved: no test files, mocks, or stubs created."
+    ],
+    "evidence_bundle_path": "./e2e-evidence/skill-review/",
+    "required_files": [
+      "./e2e-evidence/skill-review/functional-validation/findings.md",
+      "./e2e-evidence/skill-review/gate-validation-discipline/findings.md",
+      "./e2e-evidence/skill-review/no-mocking-validation-gates/findings.md",
+      "./e2e-evidence/skill-review/preflight/findings.md",
+      "./e2e-evidence/skill-review/e2e-validate/findings.md",
+      "./e2e-evidence/skill-review/ios-validation/findings.md",
+      "./e2e-evidence/skill-review/web-validation/findings.md",
+      "./e2e-evidence/skill-review/api-validation/findings.md",
+      "./e2e-evidence/skill-review/cli-validation/findings.md",
+      "./e2e-evidence/skill-review/fullstack-validation/findings.md",
+      "./e2e-evidence/skill-review/summary.md",
+      "./e2e-evidence/skill-review/fixes-applied.md"
+    ]
+  },
+  "qa_sign_off": {
+    "status": "pending",
+    "tests_passed": "n/a (markdown review task; verification is manual + command transcripts)",
+    "issues": ""
+  },
+  "recovery_state": {
+    "phase": "planned",
+    "last_completed_subtask": null,
+    "next_subtask": "phase-1-subtask-1"
+  },
+  "last_updated": "2026-04-17T05:39:35.176619+00:00"
+}
