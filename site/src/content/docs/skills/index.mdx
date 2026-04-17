@@ -1,0 +1,137 @@
+---
+title: Skills
+description: 41 ValidationForge skills across 7 categories — platform validation, quality gates, design, analysis, specialized, operational, and Forge orchestration.
+---
+
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+ValidationForge ships **41 skills** across **7 categories**. Every skill
+uses Claude Code `SKILL.md` frontmatter so Claude Code (and OpenCode)
+can auto-discover it at session start. Ten of the most important skills
+have full documentation pages on this site; the remaining 31 link out
+to their `SKILL.md` source in the GitHub repository.
+
+<Aside type="tip" title="Ten skills have detail pages">
+  Skills in **bold with a linked name** have a full documentation page
+  on this site. The rest link to their `SKILL.md` in the GitHub repo —
+  the same file Claude Code reads at discovery time, so the in-repo
+  source is the canonical reference.
+</Aside>
+
+## Platform Validation (11)
+
+| #  | Skill                                                                                                                                              | Description                                                                                                                                                                                                                      |
+| -- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1  | **[`ios-validation`](/skills/ios-validation/)**                                                                                                    | iOS/macOS platform validation through Xcode build, simulator launch, and real device interaction via simctl and idb. Captures screenshots, video, and accessibility tree as evidence.                                            |
+| 2  | [`ios-validation-gate`](https://github.com/krzemienski/validationforge/blob/main/skills/ios-validation-gate/SKILL.md)                               | Three-gate iOS validation — Simulator, Backend, Analysis — all must PASS. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/ios-validation-gate/SKILL.md))                                  |
+| 3  | [`ios-validation-runner`](https://github.com/krzemienski/validationforge/blob/main/skills/ios-validation-runner/SKILL.md)                           | Five-phase iOS validation with video recording, log streaming, and evidence collection. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/ios-validation-runner/SKILL.md))                  |
+| 4  | [`ios-simulator-control`](https://github.com/krzemienski/validationforge/blob/main/skills/ios-simulator-control/SKILL.md)                           | iOS Simulator lifecycle management — boot, install, launch, screenshot, logs, reset. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/ios-simulator-control/SKILL.md))                     |
+| 5  | **[`playwright-validation`](/skills/playwright-validation/)**                                                                                      | Browser-based validation using Playwright MCP — real browser interaction, evidence capture.                                                                                                                                       |
+| 6  | **[`web-validation`](/skills/web-validation/)**                                                                                                    | Web platform validation through browser automation (Playwright MCP or Chrome DevTools MCP). Captures screenshots, console logs, network responses, and DOM snapshots as evidence.                                                 |
+| 7  | [`web-testing`](https://github.com/krzemienski/validationforge/blob/main/skills/web-testing/SKILL.md)                                               | Comprehensive web validation strategy — integration, E2E, accessibility, performance, security. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/web-testing/SKILL.md))                    |
+| 8  | [`chrome-devtools`](https://github.com/krzemienski/validationforge/blob/main/skills/chrome-devtools/SKILL.md)                                       | Chrome DevTools MCP integration for deep browser inspection and evidence capture. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/chrome-devtools/SKILL.md))                              |
+| 9  | **[`api-validation`](/skills/api-validation/)**                                                                                                    | API platform validation through direct HTTP requests (curl). Captures full response bodies, headers, and status codes. Tests CRUD operations, authentication flows, error responses, pagination, and rate limiting.               |
+| 10 | [`cli-validation`](https://github.com/krzemienski/validationforge/blob/main/skills/cli-validation/SKILL.md)                                         | CLI platform validation through direct binary execution. Captures stdout, stderr, exit codes, and pipe behavior as evidence. Validates happy paths, error handling, and output format correctness. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/cli-validation/SKILL.md)) |
+| 11 | [`fullstack-validation`](https://github.com/krzemienski/validationforge/blob/main/skills/fullstack-validation/SKILL.md)                             | Fullstack validation using strict bottom-up approach: Database → API → Frontend. Validates each layer independently, then tests integration across the entire stack. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/fullstack-validation/SKILL.md))                           |
+
+## Quality Gates (6)
+
+| #  | Skill                                                                                                                                              | Description                                                                                                                                                                                                                                               |
+| -- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 12 | **[`functional-validation`](/skills/functional-validation/)**                                                                                      | Enforces end-user perspective validation through real system execution. Never write mocks or test files. Validate via simulator, browser, CLI, or cURL. Covers iOS, Web, API, CLI, and Full-Stack with evidence-based PASS/FAIL.                           |
+| 13 | **[`gate-validation-discipline`](/skills/gate-validation-discipline/)**                                                                            | Enforces evidence-based validation before marking any gate, task, or checkpoint complete. Requires personal examination of evidence, specific proof citations, and evidence-to-criteria matching.                                                         |
+| 14 | **[`no-mocking-validation-gates`](/skills/no-mocking-validation-gates/)**                                                                          | Enforces the Iron Rule: never create mocks, stubs, test doubles, or test files. Detects mock-creation intent and redirects to real system validation. Works with pre-tool-use hooks to block test file creation.                                           |
+| 15 | [`build-quality-gates`](https://github.com/krzemienski/validationforge/blob/main/skills/build-quality-gates/SKILL.md)                               | Multi-stage build quality enforcement — compile, lint, type-check, bundle analysis. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/build-quality-gates/SKILL.md))                                                 |
+| 16 | [`verification-before-completion`](https://github.com/krzemienski/validationforge/blob/main/skills/verification-before-completion/SKILL.md)         | Prevents premature completion claims by requiring personally examined evidence, specific citations, and criteria matching before marking any task complete. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/verification-before-completion/SKILL.md)) |
+| 17 | **[`preflight`](/skills/preflight/)**                                                                                                              | Pre-execution checklist before starting any validation. Ensures prerequisites are met: servers running, databases seeded, tools available. Auto-fixes common failures. Saves preflight report to `e2e-evidence/`.                                          |
+
+## Design Validation (4)
+
+| #  | Skill                                                                                                                                              | Description                                                                                                                                                                                                         |
+| -- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 18 | [`design-validation`](https://github.com/krzemienski/validationforge/blob/main/skills/design-validation/SKILL.md)                                   | Validate implementation fidelity against design specifications and Stitch-generated references. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/design-validation/SKILL.md)) |
+| 19 | [`design-token-audit`](https://github.com/krzemienski/validationforge/blob/main/skills/design-token-audit/SKILL.md)                                 | Verify CSS and Tailwind tokens match the project's design system specification. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/design-token-audit/SKILL.md))               |
+| 20 | [`stitch-integration`](https://github.com/krzemienski/validationforge/blob/main/skills/stitch-integration/SKILL.md)                                 | Stitch MCP workflow for design generation, iteration, and design-to-code validation. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/stitch-integration/SKILL.md))          |
+| 21 | [`visual-inspection`](https://github.com/krzemienski/validationforge/blob/main/skills/visual-inspection/SKILL.md)                                   | Evidence-based visual inspection of running UIs — captures what IS, not what SHOULD BE. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/visual-inspection/SKILL.md))        |
+
+## Analysis & Research (3)
+
+| #  | Skill                                                                                                                                              | Description                                                                                                                                                                                               |
+| -- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 22 | [`sequential-analysis`](https://github.com/krzemienski/validationforge/blob/main/skills/sequential-analysis/SKILL.md)                               | Systematic root cause analysis for validation failures using step-by-step reasoning. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/sequential-analysis/SKILL.md)) |
+| 23 | [`research-validation`](https://github.com/krzemienski/validationforge/blob/main/skills/research-validation/SKILL.md)                               | Research standards, best practices, and tools before designing validation strategies. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/research-validation/SKILL.md)) |
+| 24 | [`retrospective-validation`](https://github.com/krzemienski/validationforge/blob/main/skills/retrospective-validation/SKILL.md)                     | Validate methodologies and approaches using historical evidence and past results. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/retrospective-validation/SKILL.md)) |
+
+## Specialized (6)
+
+| #  | Skill                                                                                                                                              | Description                                                                                                                                                                                                                                |
+| -- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 25 | [`accessibility-audit`](https://github.com/krzemienski/validationforge/blob/main/skills/accessibility-audit/SKILL.md)                               | Deep WCAG 2.1 AA accessibility audit with Lighthouse, keyboard navigation, and screen reader validation. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/accessibility-audit/SKILL.md))             |
+| 26 | [`responsive-validation`](https://github.com/krzemienski/validationforge/blob/main/skills/responsive-validation/SKILL.md)                           | Systematic viewport matrix testing with device-specific validation checks. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/responsive-validation/SKILL.md))                                        |
+| 27 | [`parallel-validation`](https://github.com/krzemienski/validationforge/blob/main/skills/parallel-validation/SKILL.md)                               | Orchestrate multiple validation agents in parallel across independent journeys or platforms. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/parallel-validation/SKILL.md))                         |
+| 28 | [`e2e-testing`](https://github.com/krzemienski/validationforge/blob/main/skills/e2e-testing/SKILL.md)                                               | End-to-end validation patterns — journey design, evidence management, flaky flow handling. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/e2e-testing/SKILL.md))                                  |
+| 29 | **[`e2e-validate`](/skills/e2e-validate/)**                                                                                                        | Full end-to-end validation orchestrator. Detects platform, maps user journeys, defines PASS criteria, captures evidence, writes PASS/FAIL verdicts. Zero mocks. Supports iOS, web, API, CLI, and fullstack projects.                        |
+| 30 | [`create-validation-plan`](https://github.com/krzemienski/validationforge/blob/main/skills/create-validation-plan/SKILL.md)                         | Generates a structured validation plan with PASS criteria for every user journey before any evidence is captured. Plans define what success looks like upfront. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/create-validation-plan/SKILL.md)) |
+
+## Operational (5)
+
+| #  | Skill                                                                                                                                              | Description                                                                                                                                                                                                                                                                    |
+| -- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 31 | [`baseline-quality-assessment`](https://github.com/krzemienski/validationforge/blob/main/skills/baseline-quality-assessment/SKILL.md)               | Establishes a quality baseline before making changes. Captures current state evidence so post-change validation can prove improvement without regression. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/baseline-quality-assessment/SKILL.md)) |
+| 32 | [`condition-based-waiting`](https://github.com/krzemienski/validationforge/blob/main/skills/condition-based-waiting/SKILL.md)                       | Smart waiting strategies for async operations during validation. Waits for specific conditions rather than arbitrary sleep durations. Every wait has a timeout, a condition, and a failure path. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/condition-based-waiting/SKILL.md)) |
+| 33 | [`error-recovery`](https://github.com/krzemienski/validationforge/blob/main/skills/error-recovery/SKILL.md)                                         | Structured 3-strike error recovery during validation. When validation fails, diagnoses root cause, applies fix, and re-validates. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/error-recovery/SKILL.md))                             |
+| 34 | **[`production-readiness-audit`](/skills/production-readiness-audit/)**                                                                            | Systematic audit of application readiness for production deployment.                                                                                                                                                                                                           |
+| 35 | [`full-functional-audit`](https://github.com/krzemienski/validationforge/blob/main/skills/full-functional-audit/SKILL.md)                           | Read-only validation audit that captures evidence and writes findings without making any code changes. Produces a severity-classified audit report. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/full-functional-audit/SKILL.md)) |
+
+## Forge Orchestration (6)
+
+| #  | Skill                                                                                                                                              | Description                                                                                                                                                                                                                       |
+| -- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 36 | [`forge-setup`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-setup/SKILL.md)                                               | Initialize ValidationForge for a project. Detects platforms, scaffolds directories, installs enforcement hooks, and configures validation posture. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/forge-setup/SKILL.md))       |
+| 37 | [`forge-plan`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-plan/SKILL.md)                                                 | Generate a validation plan with journey discovery, PASS criteria, and evidence requirements. Supports quick, standard, and consensus planning modes. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/forge-plan/SKILL.md))     |
+| 38 | [`forge-execute`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-execute/SKILL.md)                                           | Autonomous validation execution loop. Runs validation journeys against the real system, captures evidence, and fixes failures with re-validation. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/forge-execute/SKILL.md))     |
+| 39 | [`forge-team`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-team/SKILL.md)                                                 | Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/forge-team/SKILL.md))                       |
+| 40 | [`forge-benchmark`](https://github.com/krzemienski/validationforge/blob/main/skills/forge-benchmark/SKILL.md)                                       | Measure validation posture across five dimensions. Track trends over time and compare against baseline targets. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/forge-benchmark/SKILL.md))                                       |
+| 41 | [`validate-audit-benchmarks`](https://github.com/krzemienski/validationforge/blob/main/skills/validate-audit-benchmarks/SKILL.md)                   | Run automated benchmark suite to score hook correctness, skill/command structural integrity, and aggregate quality metrics. ([See SKILL.md in repo](https://github.com/krzemienski/validationforge/blob/main/skills/validate-audit-benchmarks/SKILL.md))                 |
+
+## Why Only Ten Detail Pages?
+
+The ten skills with dedicated pages were chosen because they cover the
+ValidationForge story end-to-end: the three Iron-Rule quality gates
+(`functional-validation`, `gate-validation-discipline`,
+`no-mocking-validation-gates`), the pre-flight discipline (`preflight`),
+every supported platform (`web-validation`, `api-validation`,
+`ios-validation`, `playwright-validation`), the end-to-end orchestrator
+(`e2e-validate`), and the shipping-decision checklist
+(`production-readiness-audit`).
+
+The other **31 skills are fully functional and discoverable by Claude
+Code** — they are specialized helpers (iOS simulator control, CI design
+token audits, responsive-matrix sweeps, etc.) whose `SKILL.md` in the
+repo is the canonical reference. Each row above links to the exact
+`skills/<name>/SKILL.md` file on GitHub.
+
+## Related Pages
+
+<CardGrid>
+  <LinkCard
+    title="Getting Started"
+    description="Install ValidationForge, run /vf-setup, and ship your first evidence-backed verdict."
+    href="/getting-started/"
+  />
+  <LinkCard
+    title="Commands"
+    description="The 15 slash commands across the Validation and Forge families."
+    href="/commands/"
+  />
+  <LinkCard
+    title="Configuration"
+    description="The three enforcement profiles — strict, standard, and permissive — rule-by-rule."
+    href="/configuration/"
+  />
+  <LinkCard
+    title="Integrations"
+    description="Claude Code plugin, OpenCode plugin, and CI/CD usage."
+    href="/integrations/"
+  />
+</CardGrid>
