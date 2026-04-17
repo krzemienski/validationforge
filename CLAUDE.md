@@ -201,3 +201,15 @@ consensus-engine, consensus-synthesis, consensus-disagreement-analysis
 | benchmarking | Metric collection, integrity, comparative analysis |
 | forge-execution | Phase gates, fix loop discipline, state persistence |
 | forge-team-orchestration | Validator assignment, evidence ownership, verdict synthesis |
+
+### Integration Guides (3)
+
+VF is complementary to the other leading Claude Code plugins — "orchestrate with OMC,
+build with Superpowers, validate with VF." See the [Integrations hub](./docs/integrations/README.md)
+for positioning and a full index.
+
+| Guide | Covers | Location |
+|-------|--------|----------|
+| VF + OMC | Multi-agent orchestration → validation handoff | `docs/integrations/vf-with-omc.md` |
+| VF + ECC | Code-quality gates → runtime validation | `docs/integrations/vf-with-ecc.md` |
+| VF + Superpowers | TDD methodology → real-system validation | `docs/integrations/vf-with-superpowers.md` |

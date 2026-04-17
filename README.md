@@ -46,6 +46,18 @@ Unit tests verify code in isolation with mocks. Mocks drift from reality. Valida
 
 These are design scenarios where mock-based testing is structurally blind. ValidationForge targets exactly these gaps by validating against live systems.
 
+## Works With Other Plugins
+
+ValidationForge is designed to complement other Claude Code plugins, not replace them.
+
+| Plugin | What it does | Integration Guide |
+|--------|--------------|-------------------|
+| **oh-my-claudecode (OMC)** | Multi-agent orchestration and execution modes (ralph, autopilot, team) | [vf-with-omc.md](./docs/integrations/vf-with-omc.md) |
+| **everything-claude-code (ECC)** | Multi-language rules, TDD workflow, security review | [vf-with-ecc.md](./docs/integrations/vf-with-ecc.md) |
+| **Superpowers** | Slash command framework and extensibility primitives | [vf-with-superpowers.md](./docs/integrations/vf-with-superpowers.md) |
+
+Use OMC or ECC to **build** features with agent orchestration and language-specific rules; use ValidationForge to **verify** those features actually work through real system interaction and evidence-backed verdicts.
+
 ## Installation
 
 > **Important:** After installation, **restart Claude Code** before using ValidationForge. Plugins are loaded at session startup — hooks, skills, and commands will not be active in the session where you ran the installer.
@@ -263,10 +275,11 @@ Designed grade thresholds (pending empirical calibration): A (90+), B (80–89),
 | Shell Scripts | 17 | `scripts/*.sh` + `scripts/benchmark/*.sh` |
 | OC Plugin Files | 2 | `.opencode/plugins/validationforge/{index.ts,patterns.ts}` |
 | Config Profiles | 3 | `config/*.json` |
-| Report Templates | 5 | `templates/*.md` |
+| Report Templates | 7 | `templates/*.md` |
+| Integration Guides | 3 | `docs/integrations/vf-with-{omc,ecc,superpowers}.md` |
 | Installer | 1 | `install.sh` |
 
-Full indexes: [SKILLS.md](./SKILLS.md) | [COMMANDS.md](./COMMANDS.md) | [ARCHITECTURE.md](./ARCHITECTURE.md)
+Full indexes: [SKILLS.md](./SKILLS.md) | [COMMANDS.md](./COMMANDS.md) | [ARCHITECTURE.md](./ARCHITECTURE.md) | [Integrations Hub](./docs/integrations/README.md)
 
 ## File Structure
 
@@ -286,8 +299,9 @@ validationforge/
 +-- agents/                           7 specialist agents (incl. consensus-validator, consensus-synthesizer)
 +-- rules/                            8 enforcement rules
 +-- config/                           3 enforcement profiles
-+-- templates/                        5 report templates
-+-- scripts/                          11 core + 6 benchmark shell scripts
++-- templates/                        7 report templates
++-- scripts/                          core + benchmark shell scripts
++-- docs/integrations/                3 integration guides + hub (OMC, ECC, Superpowers)
 +-- install.sh                        Global installer (curl-pipe safe)
 +-- CLAUDE.md                         Master reference document
 +-- README.md                         This file
