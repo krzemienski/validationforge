@@ -1,0 +1,24 @@
+=== MERGE 5 (of 7): auto-claude/019-consensus-engine ===
+Date: 2026-04-17T11:27:03Z
+
+--- main HEAD pre-merge ---
+38e98d4 merge(015): documentation site (Astro Starlight)
+
+--- branch commits (tail) ---
+cbe2a01 fix: Register consensus primitives in .opencode/ (qa-requested)
+7507e2a auto-claude: subtask-7-4 - Write a short verification summary at e2e-evidence
+984c285 auto-claude: subtask-7-3 - Dogfood dry-run: execute /validate-consensus in ORCHESTRATION mode
+ec44b1e auto-claude: subtask-7-2 - Cross-reference linting: verify every primitive re
+ba6b6a3 auto-claude: subtask-7-1 - Run structural benchmark scripts to verify new skills and command
+5823cd4 auto-claude: subtask-6-3 - Update README.md and CLAUDE.md for consensus engine
+c874aff auto-claude: subtask-6-2 - Update ARCHITECTURE.md: (1) bump the Inventory tab
+6735e88 auto-claude: subtask-6-1 - Update SKILLS.md and COMMANDS.md for consensus engine
+b401965 auto-claude: subtask-5-1 - Create scripts/consensus-aggregate.sh. Read-only evidence aggregator for the CONSENSUS engine.
+48f6df3 auto-claude: subtask-4-2 - Create templates/consensus-report.md — the unified
+
+--- expected conflict files (touching inventory) ---
+ ARCHITECTURE.md                                    |  56 +-
+ CLAUDE.md                                          |  15 +-
+ COMMANDS.md                                        |  20 +-
+ README.md                                          |  18 +-
+ SKILLS.md                                          |  10 +-

@@ -1,0 +1,14 @@
+Auto-merging site/astro.config.mjs
+CONFLICT (add/add): Merge conflict in site/astro.config.mjs
+Auto-merging site/package-lock.json
+CONFLICT (add/add): Merge conflict in site/package-lock.json
+Auto-merging site/package.json
+CONFLICT (add/add): Merge conflict in site/package.json
+Auto-merging site/src/content/docs/index.mdx
+CONFLICT (add/add): Merge conflict in site/src/content/docs/index.mdx
+Auto-merging site/tsconfig.json
+CONFLICT (add/add): Merge conflict in site/tsconfig.json
+Automatic merge failed; fix conflicts and then commit the result.
+38e98d4 merge(015): documentation site (Astro Starlight)
+4ae8fb9 merge(001): e2e-pipeline-verification Phase 1 scaffold + harness
+a73d9d9 chore: archive skill-grading reports + 2026-04-17 benchmark

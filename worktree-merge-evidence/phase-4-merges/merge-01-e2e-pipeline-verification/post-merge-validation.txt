@@ -1,0 +1,27 @@
+=== POST-MERGE VALIDATION: 001 ===
+Date: 2026-04-17T11:23:38Z
+
+--- git log (last 3) ---
+4ae8fb9 merge(001): e2e-pipeline-verification Phase 1 scaffold + harness
+a73d9d9 chore: archive skill-grading reports + 2026-04-17 benchmark
+83c67b6 feat(skills): close last benchmark-identified gap + verify all fixes
+
+--- CRITERION 1: scripts/e2e-pipeline-check.sh exists + bash -n clean ---
+-rwxr-xr-x@ 1 nick  staff  7594 Apr 17 07:23 scripts/e2e-pipeline-check.sh
+bash -n: PASS
+
+--- CRITERION 2: scripts/verify-setup.sh bash -n clean ---
+bash -n: PASS
+
+--- CRITERION 3: run-book.md exists ---
+-rw-r--r--@ 1 nick  staff  11237 Apr 17 07:23 e2e-evidence/pipeline-verification/run-book.md
+
+--- CRITERION 4: scripts/ count delta ---
+Total scripts/:       30
+
+--- HANDOFF.md present? ---
+# Subtask 2.2 Handoff — Run `/validate-ci --platform web` Manually
+
+**Status:** BLOCKED inside auto-claude sandbox (re-confirmed on second attempt).
+Handoff required to a live Claude Code session running on the host with full
+permissions.

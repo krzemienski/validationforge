@@ -1,0 +1,13 @@
+Auto-merging CLAUDE.md
+Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md
+Auto-merging docs/README.md
+Auto-merging docs/integrations/README.md
+CONFLICT (add/add): Merge conflict in docs/integrations/README.md
+Auto-merging docs/integrations/vf-with-ecc.md
+CONFLICT (add/add): Merge conflict in docs/integrations/vf-with-ecc.md
+Auto-merging docs/integrations/vf-with-omc.md
+CONFLICT (add/add): Merge conflict in docs/integrations/vf-with-omc.md
+Auto-merging docs/integrations/vf-with-superpowers.md
+CONFLICT (add/add): Merge conflict in docs/integrations/vf-with-superpowers.md
+Automatic merge failed; fix conflicts and then commit the result.

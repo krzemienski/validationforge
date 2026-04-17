@@ -1,0 +1,31 @@
+=== POST-MERGE 015 VALIDATION ===
+
+--- CRITERION 1: npm ci succeeded (per task completion notification, exit 0) ---
+427 packages installed, 5 moderate vulns (informational)
+
+--- CRITERION 2: npm run build produced ≥33 pages ---
+37 pages built in 3.29s (exceeds the 33-page threshold from pre-merge testing)
+
+--- CRITERION 3: sample content file exists ---
+-rw-r--r--@ 1 nick  staff  3685 Apr 17 07:24 site/src/content/docs/index.mdx
+---
+title: ValidationForge
+description: No-mock functional validation for Claude Code and OpenCode. Ship verified code, not "it compiled" code — enforced through hooks, skills, and evidence-backed verdicts.
+template: splash
+hero:
+
+--- FUNCTIONAL CHECK: sample built page content ---
+1
+Ship verified code
+<h1 id="_top" class="astro-j6tvhyss">functional-validation</h1>
+<h1 id="functional-validation-protocol">Functional Validation Protocol</h1>
+
+--- FUNCTIONAL CHECK: search index built ---
+total 1320
+drwxr-xr-x@ 17 nick  staff     544 Apr 17 07:25 .
+drwxr-xr-x@ 19 nick  staff     608 Apr 17 07:25 ..
+drwxr-xr-x@ 37 nick  staff    1184 Apr 17 07:25 fragment
+drwxr-xr-x@  5 nick  staff     160 Apr 17 07:25 index
+
+--- FUNCTIONAL CHECK: sitemap generated ---
+<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><sitemap><loc>https://validationforge.dev/sitemap-0.xml</loc></sitemap></sitemapindex>

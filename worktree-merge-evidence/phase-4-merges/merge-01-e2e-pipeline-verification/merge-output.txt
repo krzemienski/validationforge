@@ -1,0 +1,33 @@
+Merge made by the 'ort' strategy.
+ build-progress.txt                                 | 501 +++++++++++++++++++++
+ .../pipeline-verification/api-fixture-decision.md  | 225 +++++++++
+ e2e-evidence/pipeline-verification/api/.gitkeep    |   0
+ e2e-evidence/pipeline-verification/run-book.md     | 315 +++++++++++++
+ e2e-evidence/pipeline-verification/web/.gitkeep    |   0
+ .../web/step-2.1-curl-head.txt                     |  15 +
+ .../web/step-2.1-evidence-manifest.md              |  39 ++
+ .../web/step-2.1-health-check.txt                  |   1 +
+ .../pipeline-verification/web/step-2.1-listen.txt  |   2 +
+ .../pipeline-verification/web/step-2.2-HANDOFF.md  | 127 ++++++
+ .../web/step-2.2-claude-cli-blocked-reattempt.txt  |  65 +++
+ .../web/step-2.2-claude-cli-blocked.txt            |  48 ++
+ .../web/step-2.2-fixture-probe-reattempt.txt       |  23 +
+ .../web/step-2.2-fixture-probe.txt                 |  17 +
+ scripts/e2e-pipeline-check.sh                      | 215 +++++++++
+ scripts/verify-setup.sh                            |  56 ++-
+ 16 files changed, 1648 insertions(+), 1 deletion(-)
+ create mode 100644 build-progress.txt
+ create mode 100644 e2e-evidence/pipeline-verification/api-fixture-decision.md
+ create mode 100644 e2e-evidence/pipeline-verification/api/.gitkeep
+ create mode 100644 e2e-evidence/pipeline-verification/run-book.md
+ create mode 100644 e2e-evidence/pipeline-verification/web/.gitkeep
+ create mode 100644 e2e-evidence/pipeline-verification/web/step-2.1-curl-head.txt
+ create mode 100644 e2e-evidence/pipeline-verification/web/step-2.1-evidence-manifest.md
+ create mode 100644 e2e-evidence/pipeline-verification/web/step-2.1-health-check.txt
+ create mode 100644 e2e-evidence/pipeline-verification/web/step-2.1-listen.txt
+ create mode 100644 e2e-evidence/pipeline-verification/web/step-2.2-HANDOFF.md
+ create mode 100644 e2e-evidence/pipeline-verification/web/step-2.2-claude-cli-blocked-reattempt.txt
+ create mode 100644 e2e-evidence/pipeline-verification/web/step-2.2-claude-cli-blocked.txt
+ create mode 100644 e2e-evidence/pipeline-verification/web/step-2.2-fixture-probe-reattempt.txt
+ create mode 100644 e2e-evidence/pipeline-verification/web/step-2.2-fixture-probe.txt
+ create mode 100755 scripts/e2e-pipeline-check.sh

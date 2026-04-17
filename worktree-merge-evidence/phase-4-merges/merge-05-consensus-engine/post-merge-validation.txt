@@ -1,0 +1,46 @@
+=== POST-MERGE 019 VALIDATION ===
+
+--- CRITERION 1: 3 new consensus skills present ---
+-rw-r--r--@ 1 nick  staff  10365 Apr 17 07:27 skills/consensus-engine/SKILL.md
+  ✓ consensus-engine
+-rw-r--r--@ 1 nick  staff  13408 Apr 17 07:27 skills/consensus-synthesis/SKILL.md
+  ✓ consensus-synthesis
+-rw-r--r--@ 1 nick  staff  12980 Apr 17 07:27 skills/consensus-disagreement-analysis/SKILL.md
+  ✓ consensus-disagreement-analysis
+
+--- CRITERION 2: SKILL.md YAML frontmatter parses ---
+  ✓ consensus-engine: name=consensus-engine...
+  ✓ consensus-synthesis: name=consensus-synthesis...
+  ✓ consensus-disagreement-analysis: name=consensus-disagreement-analysis...
+
+--- CRITERION 3: /validate-consensus command ---
+-rw-r--r--@ 1 nick  staff  15568 Apr 17 07:27 commands/validate-consensus.md
+---
+name: validate-consensus
+description: Spawn N independent validators to assess the same feature and synthesize a unified consensus verdict with confidence scoring.
+triggers:
+  - "validate consensus"
+  - "consensus validation"
+  - "multi-reviewer validate"
+  - "unanimous validate"
+
+--- CRITERION 4: consensus rule present ---
+-rw-r--r--@ 1 nick  staff  10263 Apr 17 07:27 rules/consensus-engine.md
+
+--- CRITERION 5: 2 new agents present ---
+-rw-r--r--@ 1 nick  staff  15430 Apr 17 07:27 agents/consensus-synthesizer.md
+-rw-r--r--@ 1 nick  staff   7486 Apr 17 07:27 agents/consensus-validator.md
+
+--- CRITERION 6: consensus-aggregate.sh bash -n ---
+-rwxr-xr-x@ 1 nick  staff  6603 Apr 17 07:27 scripts/consensus-aggregate.sh
+  bash -n PASS
+
+--- CRITERION 7: consensus-report.md template ---
+-rw-r--r--@ 1 nick  staff  9179 Apr 17 07:27 templates/consensus-report.md
+
+--- CRITERION 8: Inventory counts accurate ---
+### Commands (18)
+### Skills (51)
+> **51 skills | 18 commands | 7 registered hooks (+3 support .js) | 7 agents | 9 rules | 17 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
+Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 51 skills across 8 categories.
++-- skills/                           51 skills (SKILL.md frontmatter), incl. 3 consensus-engine skills

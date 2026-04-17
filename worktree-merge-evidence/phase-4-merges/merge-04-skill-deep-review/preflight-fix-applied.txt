@@ -1,0 +1,22 @@
+## Platform Detection Script
+
+```bash
+# Enable nullglob so unmatched *.xcodeproj / *.xcworkspace globs expand to
+# nothing instead of the literal pattern. Without this, quoted globs like
+# `[ -d "*.xcodeproj" ]` test for a directory literally named "*.xcodeproj"
+# and iOS projects go undetected.
+shopt -s nullglob
+xcode_projs=( *.xcodeproj *.xcworkspace )
+shopt -u nullglob
+
+if [ -f "Package.swift" ] || [ ${#xcode_projs[@]} -gt 0 ]; then
+  PLATFORM="ios"
+elif [ -f "next.config.js" ] || [ -f "next.config.ts" ] || [ -f "next.config.mjs" ]; then
+  PLATFORM="web"
+elif [ -f "package.json" ] && grep -q '"express"\|"fastify"\|"hono"\|"koa"' package.json 2>/dev/null; then
+  PLATFORM="api"
+elif [ -f "Cargo.toml" ] || [ -f "setup.py" ] || [ -f "pyproject.toml" ] || [ -f "go.mod" ]; then
+  PLATFORM="cli"
+elif [ -f "docker-compose.yml" ] || [ -f "docker-compose.yaml" ]; then
+  PLATFORM="fullstack"
+else

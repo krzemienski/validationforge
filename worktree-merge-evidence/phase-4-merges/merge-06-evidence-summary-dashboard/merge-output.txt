@@ -1,0 +1,8 @@
+Auto-merging ARCHITECTURE.md
+CONFLICT (content): Merge conflict in ARCHITECTURE.md
+Auto-merging CLAUDE.md
+CONFLICT (content): Merge conflict in CLAUDE.md
+Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md
+Auto-merging commands/validate.md
+Automatic merge failed; fix conflicts and then commit the result.

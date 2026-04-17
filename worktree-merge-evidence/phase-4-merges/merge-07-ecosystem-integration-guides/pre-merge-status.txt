@@ -1,0 +1,28 @@
+=== MERGE 7: auto-claude/013-ecosystem-integration-guides ===
+Date: 2026-04-17T11:32:48Z
+
+--- main HEAD ---
+2172a84 merge(012): evidence-summary-dashboard
+
+--- 013 commits ---
+02d11bf fix: Register integration guides in Inventory sections (qa-requested)
+e4f96da auto-claude: subtask-5-3 - Final verification pass: ensure docs/integrations/
+207da0a auto-claude: subtask-5-2 - Add Integration Guides entry to docs/README.md
+51f3d47 auto-claude: subtask-5-1 - Add a 'Works With Other Plugins' section to README
+828d31d auto-claude: subtask-4-4 - Add a configuration + coexistence section to vf-wi
+47d0dc4 auto-claude: subtask-4-3 - Add JWT refresh-token worked example to vf-with-superpowers guide
+fc98ee0 auto-claude: subtask-4-2 - Add a Mermaid workflow diagram to vf-with-superpow
+0772988 auto-claude: subtask-4-1 - Create docs/integrations/vf-with-superpowers.md wi
+7def199 auto-claude: subtask-3-4 - Add a configuration section to vf-with-ecc.md addr
+409c9f7 auto-claude: subtask-3-3 - Add Next.js API route worked example to vf-with-ecc.md
+
+--- diffstat ---
+ CLAUDE.md                                |  12 +
+ README.md                                |  16 +-
+ docs/README.md                           |   4 +
+ docs/integrations/.research-notes.md     | 271 ++++++++++++++
+ docs/integrations/README.md              |  36 ++
+ docs/integrations/vf-with-ecc.md         | 490 ++++++++++++++++++++++++
+ docs/integrations/vf-with-omc.md         | 465 +++++++++++++++++++++++
+ docs/integrations/vf-with-superpowers.md | 620 +++++++++++++++++++++++++++++++
+ 8 files changed, 1913 insertions(+), 1 deletion(-)

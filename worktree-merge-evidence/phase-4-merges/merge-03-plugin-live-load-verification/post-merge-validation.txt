@@ -1,0 +1,25 @@
+=== MERGE 3 (002) VALIDATION ===
+-rw-r--r--@ 1 nick  staff  10452 Apr 17 07:35 e2e-evidence/plugin-load-verification/VERDICT.md
+e2e-evidence/plugin-load-verification/phase-4/phase-4-session-limits.md
+
+--- phase evidence counts ---
+  phase-2/: 8 files
+  phase-3/: 4 files
+  phase-4/: 9 files
+
+--- VERDICT.md head ---
+# VERDICT: ValidationForge Plugin Live-Load Verification (task 002)
+
+**Date:** 2026-04-17
+**Branch:** auto-claude/002-plugin-live-load-verification
+**Target:** `/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0`
+**Verdict scope:** all 6 acceptance criteria from
+  `/Users/nick/Desktop/validationforge/.auto-claude/specs/002-plugin-live-load-verification/spec.md`
+**Executor:** subagent of a live Claude Code session; cannot spawn a second
+  `claude` CLI. Every item below marked `OFFLINE-PROVEN` is fully verified
+  via reproducible scripts in this worktree; every item marked
+  `NEEDS-OUTER-SESSION` is deferred — see
+  [phase-4/phase-4-session-limits.md](phase-4/phase-4-session-limits.md).
+
+---
+

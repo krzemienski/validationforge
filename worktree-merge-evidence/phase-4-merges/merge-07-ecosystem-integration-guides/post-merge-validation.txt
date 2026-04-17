@@ -1,0 +1,22 @@
+=== MERGE 7 VALIDATION ===
+--- docs/integrations/ files present ---
+README.md
+vf-with-ecc.md
+vf-with-omc.md
+vf-with-superpowers.md
+
+--- README.md Works With Other Plugins section ---
+## Works With Other Plugins
+
+ValidationForge is designed to complement other Claude Code plugins, not replace them.
+
+--- docs/README.md entry ---
+## Integration Guides
+
+
+--- file sizes ---
+      36 docs/integrations/README.md
+     490 docs/integrations/vf-with-ecc.md
+     465 docs/integrations/vf-with-omc.md
+     620 docs/integrations/vf-with-superpowers.md
+    1611 total

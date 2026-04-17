@@ -1,0 +1,8 @@
+=== MERGE 6 VALIDATION ===
+-rw-r--r--@ 1 nick  staff  8888 Apr 17 07:31 skills/evidence-dashboard/SKILL.md
+-rw-r--r--@ 1 nick  staff  9667 Apr 17 07:31 commands/validate-dashboard.md
+-rw-r--r--@ 1 nick  staff  13620 Apr 17 07:31 templates/dashboard.html.tmpl
+-rw-r--r--@ 1 nick  staff   1994 Apr 17 07:31 templates/dashboard.md.tmpl
+  generate-dashboard.sh bash -n: PASS
+  evidence-dashboard YAML: name=evidence-dashboard
+  inventory counts match disk: skills=52, commands=19 ✓

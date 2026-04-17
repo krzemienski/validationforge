@@ -1,0 +1,49 @@
+=== MERGE 1: auto-claude/001-end-to-end-pipeline-verification ===
+Date: 2026-04-17T11:23:01Z
+
+--- main status pre-merge ---
+On branch main
+Your branch is ahead of 'origin/audit/plugin-improvements' by 300 commits.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .auto-claude/specs/016-ai-powered-evidence-analysis/implementation_plan.json
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	worktree-merge-evidence/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+--- main HEAD ---
+a73d9d9 chore: archive skill-grading reports + 2026-04-17 benchmark
+
+--- branch commits ahead of main ---
+0ec3bc8 auto-claude: 2.2 (re-attempt) - block re-confirmed, evidence refreshed
+74fdb47 auto-claude: 2.2 - validate-ci --platform web (BLOCKED, handoff prepared)
+b4bec80 auto-claude: 2.1 - Start blog-series/site on localhost:3847
+b8f3a64 auto-claude: 1.4 - Create e2e-pipeline-check.sh harness
+e7c87e7 auto-claude: 1.3 - Scaffold evidence directories + run-book
+526e72e auto-claude: 1.2 - Identify Python API fixture (NO MOCKS)
+3458476 auto-claude: 1.1 - Verify plugin install state
+
+--- diffstat ---
+ build-progress.txt                                 | 501 +++++++++++++++++++++
+ .../pipeline-verification/api-fixture-decision.md  | 225 +++++++++
+ e2e-evidence/pipeline-verification/api/.gitkeep    |   0
+ e2e-evidence/pipeline-verification/run-book.md     | 315 +++++++++++++
+ e2e-evidence/pipeline-verification/web/.gitkeep    |   0
+ .../web/step-2.1-curl-head.txt                     |  15 +
+ .../web/step-2.1-evidence-manifest.md              |  39 ++
+ .../web/step-2.1-health-check.txt                  |   1 +
+ .../pipeline-verification/web/step-2.1-listen.txt  |   2 +
+ .../pipeline-verification/web/step-2.2-HANDOFF.md  | 127 ++++++
+ .../web/step-2.2-claude-cli-blocked-reattempt.txt  |  65 +++
+ .../web/step-2.2-claude-cli-blocked.txt            |  48 ++
+ .../web/step-2.2-fixture-probe-reattempt.txt       |  23 +
+ .../web/step-2.2-fixture-probe.txt                 |  17 +
+ scripts/e2e-pipeline-check.sh                      | 215 +++++++++
+ scripts/verify-setup.sh                            |  56 ++-
+ 16 files changed, 1648 insertions(+), 1 deletion(-)

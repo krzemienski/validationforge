@@ -1,0 +1,20 @@
+=== MERGE 6: auto-claude/012-evidence-summary-dashboard ===
+Date: 2026-04-17T11:31:33Z
+
+--- main HEAD ---
+33ec6e9 merge(019): consensus-engine (multi-agent disagreement analysis)
+
+--- 012 commits (tail) ---
+cfeb599 fix: Register evidence-dashboard skill and validate-dashboard command in .opencode/ (qa-requested)
+ea86cac auto-claude: subtask-5-3-benchmark-integration - Run aggregate benchmark
+b5eda7b auto-claude: subtask-5-2-historical-comparison - After subtask-5-1 has produced one .history/run-*.
+afdb29a auto-claude: subtask-5-1-real-run - Run scripts/generate-dashboard.sh against real e2e-evidence/
+bbe7930 auto-claude: subtask-4-3-readme-md - Update README.md: add /validate-dashboard to the c
+9cfa36d auto-claude: subtask-4-2-architecture-md - Update ARCHITECTURE.md inventory and document Evidence Dashboard
+3435119 auto-claude: subtask-4-1-claude-md - Update CLAUDE.md: (1) Add `/validate-dashboard` to Quick Start; (2) bump Commands 15→16 with validate-dashboard; (3) bump Skills 41→42 with evidence-dashboard in Operational (5→6)
+2420860 auto-claude: subtask-3-3-validate-wiring - Modify commands/validate.md: in the REPORT stage (
+
+--- diffstat hotspots ---
+ ARCHITECTURE.md                                    |  28 +-
+ CLAUDE.md                                          |  11 +-
+ README.md                                          |   3 +

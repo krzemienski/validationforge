@@ -1,0 +1,31 @@
+=== MERGE 2: auto-claude/015-documentation-site ===
+Date: 2026-04-17T11:23:50Z
+
+--- main HEAD pre-merge ---
+4ae8fb9 merge(001): e2e-pipeline-verification Phase 1 scaffold + harness
+
+--- branch commits ahead ---
+a0f6575 auto-claude: mark subtask-5-2 complete (OpenCode integration doc)
+bd177a6 auto-claude: subtask-5-2 - Author site/src/content/docs/integrations/opencode
+01e1279 auto-claude: subtask-5-1 - Author site/src/content/docs/integrations/claude-code.mdx
+bc8db45 auto-claude: subtask-4-2 - Author the 10 detailed skill pages by porting skil
+203a220 auto-claude: subtask-4-1 - Create site/src/content/docs/skills/index.mdx
+2dbcfd5 auto-claude: subtask-3-3 - Author 6 forge command pages
+f4c13b8 auto-claude: subtask-3-2 - Author 9 validation command pages under site/src/c
+b5d0f13 auto-claude: subtask-3-1 - Create site/src/content/docs/commands/index.mdx listing all 15 commands
+d29e5fb auto-claude: subtask-2-3 - Author site/src/content/docs/configuration.mdx doc
+0fd21e8 auto-claude: subtask-2-2 - Author getting-started.mdx with install tabs and vf-setup walkthrough
+d15422a auto-claude: subtask-2-1 - Expand site home page with hero, Iron Rule, comparison table, feature cards
+1f53889 auto-claude: subtask-1-3 - first production build passes (BUILD_OK)
+b3eb1ca auto-claude: subtask-1-2 - placeholder home page + content collection + public assets
+25c0335 auto-claude: subtask-1-1 - scaffold Astro Starlight site with pinned deps and placeholder sidebar
+
+--- diffstat tail ---
+ site/src/content/docs/skills/ios-validation.mdx    |  286 +
+ .../docs/skills/no-mocking-validation-gates.mdx    |  118 +
+ .../content/docs/skills/playwright-validation.mdx  |  274 +
+ site/src/content/docs/skills/preflight.mdx         |  129 +
+ .../docs/skills/production-readiness-audit.mdx     |  255 +
+ site/src/content/docs/skills/web-validation.mdx    |  252 +
+ site/tsconfig.json                                 |    8 +
+ 43 files changed, 14383 insertions(+)
