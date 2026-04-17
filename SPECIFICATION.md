@@ -120,13 +120,19 @@ The no-mock functional validation pipeline. Detects the project platform, genera
 
 #### Engine 2: CONSENSUS (Quality Gate)
 
-Multi-reviewer agreement gate. Three independent AI reviewers examine the same code from different perspectives. Unanimous agreement required for PASS.
+Multi-reviewer agreement gate. Independent AI validator agents examine the same code/evidence from different perspectives, a synthesis agent aggregates their verdicts via weighted voting and confidence scoring, and disagreements trigger a sequential-analysis pass to extract root-cause contradictions before escalation.
+
+> **Authoritative contract:** See [`rules/consensus-engine.md`](./rules/consensus-engine.md) — that rule file is the single source of truth for the CONSENSUS engine. The components listed below are the primitives that implement it.
 
 **Components:**
-- 3 independent reviewer agents (security, performance, correctness perspectives)
-- Unanimous voting protocol
-- Disagreement report with file:line citations
-- Escalation protocol for unresolvable disagreements
+- (a) [`agents/consensus-validator.md`](./agents/consensus-validator.md) — independent validator agents (≥2, configurable via `--validators N`), each producing an isolated PASS/FAIL verdict with evidence citations
+- (b) [`agents/consensus-synthesizer.md`](./agents/consensus-synthesizer.md) — synthesis agent that aggregates validator verdicts into a unified decision
+- (c) [`skills/consensus-engine/SKILL.md`](./skills/consensus-engine/SKILL.md) — orchestration protocol (spawn validators, collect verdicts, invoke synthesis)
+- (d) [`skills/consensus-synthesis/SKILL.md`](./skills/consensus-synthesis/SKILL.md) — voting/confidence logic (weighted voting, confidence thresholds, tie-breaking)
+- (e) [`skills/consensus-disagreement-analysis/SKILL.md`](./skills/consensus-disagreement-analysis/SKILL.md) — sequential-analysis invocation for disagreements, producing file:line citations of contradictions
+- (f) [`commands/validate-consensus.md`](./commands/validate-consensus.md) — user entry point (`/validate-consensus` with `--validators`, `--threshold`, `--profile` flags)
+- (g) [`rules/consensus-engine.md`](./rules/consensus-engine.md) — authoritative contract defining validator independence, voting protocol, escalation, and evidence ownership
+- (h) [`templates/consensus-report.md`](./templates/consensus-report.md) — unified report format for synthesized verdicts and disagreement analyses
 
 **Included in:** Pro, Team, Enterprise tiers
 
