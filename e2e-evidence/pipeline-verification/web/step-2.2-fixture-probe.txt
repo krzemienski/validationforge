@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+Vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+x-nextjs-cache: HIT
+x-nextjs-prerender: 1
+x-nextjs-prerender: 1
+x-nextjs-stale-time: 300
+X-Powered-By: Next.js
+Cache-Control: s-maxage=31536000
+ETag: "36r7h5coww1mt5"
+Content-Type: text/html; charset=utf-8
+Content-Length: 76249
+Date: Fri, 17 Apr 2026 06:11:36 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+---exit:0---
+2026-04-17T06:11:36Z
