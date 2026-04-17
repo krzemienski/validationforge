@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {"text": "Identifies Coverage as one of the two dimensions that dropped (from 95 to 70)", "passed": true, "evidence": "Heading line 12: '## Dimension 1: Coverage 95 -> 70 (weight 35%)'."},
+    {"text": "Identifies Evidence Quality as the other dropped dimension (from 100 to 60)", "passed": true, "evidence": "Heading line 25: '## Dimension 2: Evidence Quality 100 -> 60 (weight 30%)'."},
+    {"text": "Provides at least 2 plausible causes for the Coverage drop (e.g. journey subdirs deleted, evidence purged, new features without new journeys)", "passed": true, "evidence": "Lines 19-23 list 4 causes: journey subdirs deleted, plans/ emptied, partial validation run, evidence directory relocation."},
+    {"text": "Provides at least 2 plausible causes for the Evidence Quality drop (e.g. empty/junk files, missing verdict file, files < 10 bytes)", "passed": true, "evidence": "Lines 31-34 list 3 causes: verdict writer never ran, empty evidence files, evidence filename pattern drift."},
+    {"text": "Recommends inspecting e2e-evidence/ for empty or zero-byte files", "passed": true, "evidence": "Line 43: 'find e2e-evidence -type f -size 0 and -size -11c — list empty/under-10-byte files'."},
+    {"text": "Recommends re-running validation to regenerate fresh evidence with all original journeys", "passed": true, "evidence": "Line 50: 'Re-run the full multi-platform validation sweep so all platform journeys repopulate e2e-evidence/<platform>/'."},
+    {"text": "Mentions the verdict / report.md file and the +30 bonus it unlocks on Evidence Quality", "passed": true, "evidence": "Line 27: '30 if a *VERDICT* or report.md exists'. Line 53: 'Require the verdict-writer phase to run and emit e2e-evidence/report.md every run — this single file returns +30 to Evidence Quality'."},
+    {"text": "Projects recovery to Grade A (aggregate \u2265 90) after the recommended remediation", "passed": true, "evidence": "Line 57: 'projected score: ... -> back to 92+ (Grade A)'."}
+  ],
+  "summary": {"passed": 8, "failed": 0, "total": 8, "pass_rate": 1.0},
+  "claims": [
+    {"claim": "Snapshot does not explain *why* artifacts disappear — only scoring formulas", "type": "factual", "verified": true, "evidence": "Line 59-61 explicitly calls this out as a limitation of the snapshot. Confirmed by direct read of snapshot/SKILL.md."}
+  ],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Snapshot answered equivalently — same pass rate as improved version. The assertions capture necessary-but-not-sufficient behaviors. Differentiation would require a harder prompt (e.g. one demanding the script be run)."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "forge-benchmark",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just ran /validate-benchmark on my React project and got a score of 68/100 (Grade: D). The breakdown is: Coverage 50, Evidence Quality 80, Enforcement 60, Speed 95. What does this mean? What should I fix first?",
+      "expected_output": "Breakdown: You have low coverage (\u22642 journeys validated) and low enforcement (hooks not installed, maybe some test files present). Fix in this order: (1) Coverage first \u2014 you only validated login and home page. Add journeys for create, edit, delete, error cases. Each journey adds evidence quality and validates more features. (2) Enforcement \u2014 install missing hooks (.claude/hooks/), add rules files, remove any *.test.* or *.spec.* files from src/. (3) Evidence Quality is already good (80), so focus on quantity (more journeys) and discipline (hooks). Rerun benchmark in 1 week \u2014 target: 75+ grade (B range). Example: 5 journeys = 85 coverage, 100 evidence quality, 80 enforcement = 87 grade (B).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our team has been validating a fullstack app. Last week's benchmark was 92/100 (Grade: A). This week it's 76/100 (Grade: C). The breakdown: Coverage 70 (was 95), Evidence Quality 60 (was 100), others stable. What happened? Why did our score drop so much?",
+      "expected_output": "You've lost coverage (fewer journeys) and evidence quality (more empty/junk files). Likely causes: (1) Someone deleted journey directories from e2e-evidence/ without re-running validation. (2) New evidence files were captured but are mostly empty (zero-byte placeholders). (3) Validation wasn't re-run this week, so old evidence is considered stale. Action: (1) Re-run validation with all original journeys + any new ones. (2) Delete empty/junk files from e2e-evidence/. (3) Check if a verdict report was generated (bonus +30 on quality). Re-benchmark \u2014 should be back to 92+ if you've captured fresh evidence.",
+      "files": []
+    }
+  ]
+}

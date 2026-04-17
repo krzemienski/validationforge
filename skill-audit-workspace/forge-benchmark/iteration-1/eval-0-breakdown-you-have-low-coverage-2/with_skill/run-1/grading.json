@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies Coverage (score 50) as the lowest-scoring dimension",
+      "passed": true,
+      "evidence": "Line 9 table: 'Coverage (35%) | **50** | >80 | Only 1-2 journey subdirs under e2e-evidence/'. Explicitly flagged as lowest."
+    },
+    {
+      "text": "Recommends fixing Coverage before Enforcement (weight-adjusted priority)",
+      "passed": true,
+      "evidence": "Line 17: '**Coverage**: 50 pts × 0.35 = **17.5 aggregate points on the table** ← fix first'. Ranks by (100-score)*weight."
+    },
+    {
+      "text": "Recommends adding more journey subdirectories to e2e-evidence/ (e.g. CRUD, error cases)",
+      "passed": true,
+      "evidence": "Line 26: 'Add at least **5 journey subdirectories** under `e2e-evidence/` (e.g. `e2e-evidence/login/`, `/signup/`, `/checkout/`, `/dashboard/`, `/search/`)'."
+    },
+    {
+      "text": "Recommends installing hooks in .claude/hooks/ OR adding rules files in .claude/rules/ to raise Enforcement",
+      "passed": true,
+      "evidence": "Lines 39-40: 'Missing hooks → run `/vf-setup` (installs `.claude/hooks/`). Missing rules → copy the 8 rules from `.claude/rules/*.md`'."
+    },
+    {
+      "text": "Recommends removing *.test.* or *.spec.* files from src/ (or confirms none exist) to preserve the +20 Enforcement slot",
+      "passed": true,
+      "evidence": "Line 42: 'Test/mock files in `src/` → delete them (iron rule #2).'"
+    },
+    {
+      "text": "Notes that Speed (95) and Evidence Quality (80) do not require urgent work",
+      "passed": true,
+      "evidence": "Line 20: 'Speed: 5 × 0.10 = 0.5 points — leave alone'. Evidence Quality ranked 3rd with 6.0 points of headroom vs Coverage 17.5."
+    },
+    {
+      "text": "Projects an expected new grade of B or better (aggregate \u2265 80) after the recommended fixes",
+      "passed": true,
+      "evidence": "Line 53: 'New aggregate = `(95×35 + 100×30 + 100×25 + 95×10) / 100` = **97 → Grade A**'. Also line 55: 'Fix 1 + Fix 2 lands you at ~92 (A)'."
+    },
+    {
+      "text": "Answer references a concrete formula or dimension weight (Coverage 35%, Enforcement 25%) when explaining priority",
+      "passed": true,
+      "evidence": "Line 3 states the weighted aggregate formula verbatim; line 17 uses '× 0.35' (Coverage 35%) and '× 0.25' (Enforcement 25%) in the priority ranking."
+    }
+  ],
+  "summary": {"passed": 8, "failed": 0, "total": 8, "pass_rate": 1.0},
+  "claims": [
+    {"claim": "Bundled script at skills/forge-benchmark/scripts/score-project.sh runs the benchmark", "type": "process", "verified": true, "evidence": "Line 36 references it, and the bundled file exists as of Stage 1 (verified earlier in session)."},
+    {"claim": "Applying all three fixes projects aggregate 97 / Grade A", "type": "factual", "verified": true, "evidence": "Hand-compute (95*35+100*30+100*25+95*10)/100 = (3325+3000+2500+950)/100 = 97.75 → rounds to 97. Math holds."}
+  ],
+  "eval_feedback": {
+    "suggestions": [
+      {"reason": "Both with_skill and old_skill answers pass all 8 assertions — the assertions aren't discriminating for this prompt. The improvement's actual value-add (bundled script for diagnostic re-run) is only verifiable when the task requires running it. Consider a prompt like 'Here's my project path, run the benchmark and show me the output' to force use of the bundled script."}
+    ],
+    "overall": "Assertions are well-targeted but don't discriminate between snapshot and improved skill for interpretation-only prompts."
+  }
+}

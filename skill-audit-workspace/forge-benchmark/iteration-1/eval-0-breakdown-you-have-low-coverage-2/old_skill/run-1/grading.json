@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies Coverage (score 50) as the lowest-scoring dimension",
+      "passed": true,
+      "evidence": "Table at line 11: 'Coverage | 35% | 50 | 17.5 | >80' — score 50 is lowest across the four dimensions."
+    },
+    {
+      "text": "Recommends fixing Coverage before Enforcement (weight-adjusted priority)",
+      "passed": true,
+      "evidence": "Line 25: '### 1. FIX FIRST — Coverage (35% weight, +50 headroom)'. Enforcement is #2 at line 30."
+    },
+    {
+      "text": "Recommends adding more journey subdirectories to e2e-evidence/ (e.g. CRUD, error cases)",
+      "passed": true,
+      "evidence": "Lines 26-28: 'Add journey subdirectories under `e2e-evidence/`... Name them by user journey (e.g., `e2e-evidence/login-flow/`, `e2e-evidence/checkout/`, `e2e-evidence/search/`)'."
+    },
+    {
+      "text": "Recommends installing hooks in .claude/hooks/ OR adding rules files in .claude/rules/ to raise Enforcement",
+      "passed": true,
+      "evidence": "Lines 31-33: '`.claude/rules/*.md` exists → **+20**. `.vf/config.json` exists → **+10**. Verify `hooks/hooks.json` or `.claude/hooks/` exists → **+20**'."
+    },
+    {
+      "text": "Recommends removing *.test.* or *.spec.* files from src/ (or confirms none exist) to preserve the +20 Enforcement slot",
+      "passed": true,
+      "evidence": "Line 34: 'Confirm no `*.test.*` / `*.spec.*` in `src/` or `lib/` → **+20**'. Phrasing is 'confirm', which the assertion accepts."
+    },
+    {
+      "text": "Notes that Speed (95) and Evidence Quality (80) do not require urgent work",
+      "passed": true,
+      "evidence": "Line 43-44: '### 4. SKIP — Speed (10% weight, +5 headroom). Already 95. Not worth optimizing.' Evidence Quality ranked 3rd with small headroom."
+    },
+    {
+      "text": "Projects an expected new grade of B or better (aggregate \u2265 80) after the recommended fixes",
+      "passed": true,
+      "evidence": "Line 54: '**Projected aggregate:** `(85×35 + 100×30 + 100×25 + 95×10) / 100` = **93.0 → Grade A**'."
+    },
+    {
+      "text": "Answer references a concrete formula or dimension weight (Coverage 35%, Enforcement 25%) when explaining priority",
+      "passed": true,
+      "evidence": "Table at line 7-12 lists 'Weight' column with 35%, 30%, 25%, 10%. Section headings include '(35% weight, +50 headroom)', '(25% weight, +40 headroom)'."
+    }
+  ],
+  "summary": {"passed": 8, "failed": 0, "total": 8, "pass_rate": 1.0},
+  "claims": [
+    {"claim": "Projected aggregate of 93 reaches Grade A", "type": "factual", "verified": true, "evidence": "Hand-compute (85*35+100*30+100*25+95*10)/100 = (2975+3000+2500+950)/100 = 94.25 — slight rounding diff but both are Grade A."},
+    {"claim": "Coverage tier boundaries are 0/≤2/≤4/>4", "type": "factual", "verified": true, "evidence": "Matches the snapshot SKILL.md scoring section."}
+  ],
+  "eval_feedback": {
+    "suggestions": [
+      {"reason": "Snapshot version answered equivalently well — the pre-edit skill already contained sufficient rubric detail. This is a signal the pass-1 edit primarily added bundled-script convenience, not interpretive capability."}
+    ],
+    "overall": "Same pass rate as the improved version — assertions don't discriminate here."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "total_tokens": 125429,
+  "duration_ms": 69073,
+  "total_duration_seconds": 69.073,
+  "tool_uses": 5,
+  "agent_id": "a439ab3e42cce5366",
+  "task": "Eval-0 with snapshot baseline (forge-benchmark pre-edit)"
+}

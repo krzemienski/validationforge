@@ -1,0 +1,9 @@
+{
+  "skill_name": "forge-benchmark",
+  "changes_applied": [{"fix": "Rewrite description distinguishing from a single run + explaining each dimension", "implemented": true, "details": "New description makes explicit this measures posture/maturity, not a single run. Explains what each dimension actually measures. 7 YAML triggers (was 0)."}],
+  "changes_skipped": [{"fix": "Body", "reason": "Audit priority was high but this skill is still-design intent (README notes benchmarking not empirically verified). Descriptive fixes are appropriate until the script produces real scores."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/forge-benchmark/SKILL.md"],
+  "description_before": "Score validation posture on 4 dimensions: Coverage (35%), Evidence Quality (30%), Enforcement (25%), Speed (10%). A-F grade via scripts/benchmark/score-project.sh.",
+  "description_after": "Use to measure how mature a project's validation posture is — not whether a single validation run passed, but whether the team has built good validation habits. Scores across 4 weighted dimensions: Coverage (35% — what fraction of features have journeys), Evidence Quality (30% — are evidence files actually reviewed vs just captured), Enforcement (25% — are hooks/rules active), Speed (10% — time per validation run). Produces an A-F grade and per-dimension breakdown via scripts/benchmark/score-project.sh. Reach for it on phrases like 'benchmark our validation', 'validation maturity score', 'how good is our validation', 'posture report', or when tracking validation improvement over time."
+}

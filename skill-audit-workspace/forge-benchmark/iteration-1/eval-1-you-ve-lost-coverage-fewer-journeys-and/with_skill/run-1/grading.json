@@ -1,0 +1,21 @@
+{
+  "expectations": [
+    {"text": "Identifies Coverage as one of the two dimensions that dropped (from 95 to 70)", "passed": true, "evidence": "Heading line 10: '## Dimension 1 — Coverage: 95 → 70 (−25)'."},
+    {"text": "Identifies Evidence Quality as the other dropped dimension (from 100 to 60)", "passed": true, "evidence": "Heading line 27: '## Dimension 2 — Evidence Quality: 100 → 60 (−40)'."},
+    {"text": "Provides at least 2 plausible causes for the Coverage drop (e.g. journey subdirs deleted, evidence purged, new features without new journeys)", "passed": true, "evidence": "Lines 14-18 enumerate 3 causes: (1) evidence purged via /validate --clean, (2) new features shipped without new journeys, (3) journey subdirs became files."},
+    {"text": "Provides at least 2 plausible causes for the Evidence Quality drop (e.g. empty/junk files, missing verdict file, files < 10 bytes)", "passed": true, "evidence": "Lines 30-33: '1. Verdict file missing... 2. Empty/zero-byte evidence files... failed screenshots wrote 0 bytes'. Two distinct causes."},
+    {"text": "Recommends inspecting e2e-evidence/ for empty or zero-byte files", "passed": true, "evidence": "Line 38: 'find e2e-evidence -type f -size -11c ! -name \".gitkeep\"'. Also line 39: '-size 0'."},
+    {"text": "Recommends re-running validation to regenerate fresh evidence with all original journeys", "passed": true, "evidence": "Line 45: 'Re-capture empty files — replay the failed journey steps, overwriting zero-byte artifacts.' Line 46: 'Reinstate journey subdirs — add journey directories for any features validated-but-uncaptured'."},
+    {"text": "Mentions the verdict / report.md file and the +30 bonus it unlocks on Evidence Quality", "passed": true, "evidence": "Line 44: 'Restore verdicts — re-run verdict-writer against existing evidence to regenerate e2e-evidence/report.md (+30 Evidence instantly)'."},
+    {"text": "Projects recovery to Grade A (aggregate \u2265 90) after the recommended remediation", "passed": true, "evidence": "Line 42 heading: '## Remediation to return to 92+'."}
+  ],
+  "summary": {"passed": 8, "failed": 0, "total": 8, "pass_rate": 1.0},
+  "claims": [
+    {"claim": "Evidence score of 60 maps to 'verdict missing + 85% non-empty' OR 'verdict present + 43% non-empty'", "type": "factual", "verified": true, "evidence": "Math: 0.857*70=60 (scenario a) and 0.428*70+30=60 (scenario b). Both hold."},
+    {"claim": "Adding a cleanup guard (.vf/state/validation-in-progress.lock) prevents mid-run purges", "type": "process", "verified": true, "evidence": "Matches the Lock File Protocol in the ValidationForge evidence-management rules."}
+  ],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "No suggestions — the answer exceeds the assertion bar with tight algebra, multiple hypotheses, and a concrete investigative command list."
+  }
+}

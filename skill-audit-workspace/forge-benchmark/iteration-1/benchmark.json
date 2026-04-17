@@ -1,0 +1,296 @@
+{
+  "metadata": {
+    "skill_name": "forge-benchmark",
+    "skill_path": "/Users/nick/Desktop/validationforge/skills/forge-benchmark",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-04-17T10:18:11Z",
+    "evals_run": [
+      0,
+      1
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 69.073,
+        "tokens": 125429,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies Coverage (score 50) as the lowest-scoring dimension",
+          "passed": true,
+          "evidence": "Table at line 11: 'Coverage | 35% | 50 | 17.5 | >80' \u2014 score 50 is lowest across the four dimensions."
+        },
+        {
+          "text": "Recommends fixing Coverage before Enforcement (weight-adjusted priority)",
+          "passed": true,
+          "evidence": "Line 25: '### 1. FIX FIRST \u2014 Coverage (35% weight, +50 headroom)'. Enforcement is #2 at line 30."
+        },
+        {
+          "text": "Recommends adding more journey subdirectories to e2e-evidence/ (e.g. CRUD, error cases)",
+          "passed": true,
+          "evidence": "Lines 26-28: 'Add journey subdirectories under `e2e-evidence/`... Name them by user journey (e.g., `e2e-evidence/login-flow/`, `e2e-evidence/checkout/`, `e2e-evidence/search/`)'."
+        },
+        {
+          "text": "Recommends installing hooks in .claude/hooks/ OR adding rules files in .claude/rules/ to raise Enforcement",
+          "passed": true,
+          "evidence": "Lines 31-33: '`.claude/rules/*.md` exists \u2192 **+20**. `.vf/config.json` exists \u2192 **+10**. Verify `hooks/hooks.json` or `.claude/hooks/` exists \u2192 **+20**'."
+        },
+        {
+          "text": "Recommends removing *.test.* or *.spec.* files from src/ (or confirms none exist) to preserve the +20 Enforcement slot",
+          "passed": true,
+          "evidence": "Line 34: 'Confirm no `*.test.*` / `*.spec.*` in `src/` or `lib/` \u2192 **+20**'. Phrasing is 'confirm', which the assertion accepts."
+        },
+        {
+          "text": "Notes that Speed (95) and Evidence Quality (80) do not require urgent work",
+          "passed": true,
+          "evidence": "Line 43-44: '### 4. SKIP \u2014 Speed (10% weight, +5 headroom). Already 95. Not worth optimizing.' Evidence Quality ranked 3rd with small headroom."
+        },
+        {
+          "text": "Projects an expected new grade of B or better (aggregate \u2265 80) after the recommended fixes",
+          "passed": true,
+          "evidence": "Line 54: '**Projected aggregate:** `(85\u00d735 + 100\u00d730 + 100\u00d725 + 95\u00d710) / 100` = **93.0 \u2192 Grade A**'."
+        },
+        {
+          "text": "Answer references a concrete formula or dimension weight (Coverage 35%, Enforcement 25%) when explaining priority",
+          "passed": true,
+          "evidence": "Table at line 7-12 lists 'Weight' column with 35%, 30%, 25%, 10%. Section headings include '(35% weight, +50 headroom)', '(25% weight, +40 headroom)'."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 91.607,
+        "tokens": 125881,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies Coverage as one of the two dimensions that dropped (from 95 to 70)",
+          "passed": true,
+          "evidence": "Heading line 12: '## Dimension 1: Coverage 95 -> 70 (weight 35%)'."
+        },
+        {
+          "text": "Identifies Evidence Quality as the other dropped dimension (from 100 to 60)",
+          "passed": true,
+          "evidence": "Heading line 25: '## Dimension 2: Evidence Quality 100 -> 60 (weight 30%)'."
+        },
+        {
+          "text": "Provides at least 2 plausible causes for the Coverage drop (e.g. journey subdirs deleted, evidence purged, new features without new journeys)",
+          "passed": true,
+          "evidence": "Lines 19-23 list 4 causes: journey subdirs deleted, plans/ emptied, partial validation run, evidence directory relocation."
+        },
+        {
+          "text": "Provides at least 2 plausible causes for the Evidence Quality drop (e.g. empty/junk files, missing verdict file, files < 10 bytes)",
+          "passed": true,
+          "evidence": "Lines 31-34 list 3 causes: verdict writer never ran, empty evidence files, evidence filename pattern drift."
+        },
+        {
+          "text": "Recommends inspecting e2e-evidence/ for empty or zero-byte files",
+          "passed": true,
+          "evidence": "Line 43: 'find e2e-evidence -type f -size 0 and -size -11c \u2014 list empty/under-10-byte files'."
+        },
+        {
+          "text": "Recommends re-running validation to regenerate fresh evidence with all original journeys",
+          "passed": true,
+          "evidence": "Line 50: 'Re-run the full multi-platform validation sweep so all platform journeys repopulate e2e-evidence/<platform>/'."
+        },
+        {
+          "text": "Mentions the verdict / report.md file and the +30 bonus it unlocks on Evidence Quality",
+          "passed": true,
+          "evidence": "Line 27: '30 if a *VERDICT* or report.md exists'. Line 53: 'Require the verdict-writer phase to run and emit e2e-evidence/report.md every run \u2014 this single file returns +30 to Evidence Quality'."
+        },
+        {
+          "text": "Projects recovery to Grade A (aggregate \u2265 90) after the recommended remediation",
+          "passed": true,
+          "evidence": "Line 57: 'projected score: ... -> back to 92+ (Grade A)'."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 92.979,
+        "tokens": 133247,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies Coverage (score 50) as the lowest-scoring dimension",
+          "passed": true,
+          "evidence": "Line 9 table: 'Coverage (35%) | **50** | >80 | Only 1-2 journey subdirs under e2e-evidence/'. Explicitly flagged as lowest."
+        },
+        {
+          "text": "Recommends fixing Coverage before Enforcement (weight-adjusted priority)",
+          "passed": true,
+          "evidence": "Line 17: '**Coverage**: 50 pts \u00d7 0.35 = **17.5 aggregate points on the table** \u2190 fix first'. Ranks by (100-score)*weight."
+        },
+        {
+          "text": "Recommends adding more journey subdirectories to e2e-evidence/ (e.g. CRUD, error cases)",
+          "passed": true,
+          "evidence": "Line 26: 'Add at least **5 journey subdirectories** under `e2e-evidence/` (e.g. `e2e-evidence/login/`, `/signup/`, `/checkout/`, `/dashboard/`, `/search/`)'."
+        },
+        {
+          "text": "Recommends installing hooks in .claude/hooks/ OR adding rules files in .claude/rules/ to raise Enforcement",
+          "passed": true,
+          "evidence": "Lines 39-40: 'Missing hooks \u2192 run `/vf-setup` (installs `.claude/hooks/`). Missing rules \u2192 copy the 8 rules from `.claude/rules/*.md`'."
+        },
+        {
+          "text": "Recommends removing *.test.* or *.spec.* files from src/ (or confirms none exist) to preserve the +20 Enforcement slot",
+          "passed": true,
+          "evidence": "Line 42: 'Test/mock files in `src/` \u2192 delete them (iron rule #2).'"
+        },
+        {
+          "text": "Notes that Speed (95) and Evidence Quality (80) do not require urgent work",
+          "passed": true,
+          "evidence": "Line 20: 'Speed: 5 \u00d7 0.10 = 0.5 points \u2014 leave alone'. Evidence Quality ranked 3rd with 6.0 points of headroom vs Coverage 17.5."
+        },
+        {
+          "text": "Projects an expected new grade of B or better (aggregate \u2265 80) after the recommended fixes",
+          "passed": true,
+          "evidence": "Line 53: 'New aggregate = `(95\u00d735 + 100\u00d730 + 100\u00d725 + 95\u00d710) / 100` = **97 \u2192 Grade A**'. Also line 55: 'Fix 1 + Fix 2 lands you at ~92 (A)'."
+        },
+        {
+          "text": "Answer references a concrete formula or dimension weight (Coverage 35%, Enforcement 25%) when explaining priority",
+          "passed": true,
+          "evidence": "Line 3 states the weighted aggregate formula verbatim; line 17 uses '\u00d7 0.35' (Coverage 35%) and '\u00d7 0.25' (Enforcement 25%) in the priority ranking."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 77.618,
+        "tokens": 132007,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies Coverage as one of the two dimensions that dropped (from 95 to 70)",
+          "passed": true,
+          "evidence": "Heading line 10: '## Dimension 1 \u2014 Coverage: 95 \u2192 70 (\u221225)'."
+        },
+        {
+          "text": "Identifies Evidence Quality as the other dropped dimension (from 100 to 60)",
+          "passed": true,
+          "evidence": "Heading line 27: '## Dimension 2 \u2014 Evidence Quality: 100 \u2192 60 (\u221240)'."
+        },
+        {
+          "text": "Provides at least 2 plausible causes for the Coverage drop (e.g. journey subdirs deleted, evidence purged, new features without new journeys)",
+          "passed": true,
+          "evidence": "Lines 14-18 enumerate 3 causes: (1) evidence purged via /validate --clean, (2) new features shipped without new journeys, (3) journey subdirs became files."
+        },
+        {
+          "text": "Provides at least 2 plausible causes for the Evidence Quality drop (e.g. empty/junk files, missing verdict file, files < 10 bytes)",
+          "passed": true,
+          "evidence": "Lines 30-33: '1. Verdict file missing... 2. Empty/zero-byte evidence files... failed screenshots wrote 0 bytes'. Two distinct causes."
+        },
+        {
+          "text": "Recommends inspecting e2e-evidence/ for empty or zero-byte files",
+          "passed": true,
+          "evidence": "Line 38: 'find e2e-evidence -type f -size -11c ! -name \".gitkeep\"'. Also line 39: '-size 0'."
+        },
+        {
+          "text": "Recommends re-running validation to regenerate fresh evidence with all original journeys",
+          "passed": true,
+          "evidence": "Line 45: 'Re-capture empty files \u2014 replay the failed journey steps, overwriting zero-byte artifacts.' Line 46: 'Reinstate journey subdirs \u2014 add journey directories for any features validated-but-uncaptured'."
+        },
+        {
+          "text": "Mentions the verdict / report.md file and the +30 bonus it unlocks on Evidence Quality",
+          "passed": true,
+          "evidence": "Line 44: 'Restore verdicts \u2014 re-run verdict-writer against existing evidence to regenerate e2e-evidence/report.md (+30 Evidence instantly)'."
+        },
+        {
+          "text": "Projects recovery to Grade A (aggregate \u2265 90) after the recommended remediation",
+          "passed": true,
+          "evidence": "Line 42 heading: '## Remediation to return to 92+'."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "old_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 80.34,
+        "stddev": 15.9339,
+        "min": 69.073,
+        "max": 91.607
+      },
+      "tokens": {
+        "mean": 125655.0,
+        "stddev": 319.6123,
+        "min": 125429,
+        "max": 125881
+      }
+    },
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 85.2985,
+        "stddev": 10.8619,
+        "min": 77.618,
+        "max": 92.979
+      },
+      "tokens": {
+        "mean": 132627.0,
+        "stddev": 876.8124,
+        "min": 132007,
+        "max": 133247
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "-5.0",
+      "tokens": "-6972"
+    }
+  },
+  "notes": []
+}

@@ -1,0 +1,16 @@
+{
+  "eval_id": 0,
+  "eval_name": "breakdown-you-have-low-coverage-2",
+  "prompt": "I just ran /validate-benchmark on my React project and got a score of 68/100 (Grade: D). The breakdown is: Coverage 50, Evidence Quality 80, Enforcement 60, Speed 95. What does this mean? What should I fix first?",
+  "expected_output": "Breakdown: low coverage (\u22642 journeys) and low enforcement (hooks not installed, maybe test files present). Fix order: Coverage first, then Enforcement, then maintain current Evidence Quality. Target: 75+ (Grade B) after adding 3+ journeys and installing hooks.",
+  "assertions": [
+    "Identifies Coverage (score 50) as the lowest-scoring dimension",
+    "Recommends fixing Coverage before Enforcement (weight-adjusted priority)",
+    "Recommends adding more journey subdirectories to e2e-evidence/ (e.g. CRUD, error cases)",
+    "Recommends installing hooks in .claude/hooks/ OR adding rules files in .claude/rules/ to raise Enforcement",
+    "Recommends removing *.test.* or *.spec.* files from src/ (or confirms none exist) to preserve the +20 Enforcement slot",
+    "Notes that Speed (95) and Evidence Quality (80) do not require urgent work",
+    "Projects an expected new grade of B or better (aggregate \u2265 80) after the recommended fixes",
+    "Answer references a concrete formula or dimension weight (Coverage 35%, Enforcement 25%) when explaining priority"
+  ]
+}

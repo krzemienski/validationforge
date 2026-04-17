@@ -1,0 +1,16 @@
+{
+  "eval_id": 1,
+  "eval_name": "you-ve-lost-coverage-fewer-journeys-and",
+  "prompt": "Our team has been validating a fullstack app. Last week's benchmark was 92/100 (Grade: A). This week it's 76/100 (Grade: C). The breakdown: Coverage 70 (was 95), Evidence Quality 60 (was 100), others stable. What happened? Why did our score drop so much?",
+  "expected_output": "Coverage and Evidence Quality both dropped. Likely causes: journey subdirectories deleted, new evidence files are empty placeholders, validation not re-run, verdict report missing (loses +30 bonus). Action: re-run validation, delete empty files, regenerate verdict. Expected recovery: 92+ (Grade A).",
+  "assertions": [
+    "Identifies Coverage as one of the two dimensions that dropped (from 95 to 70)",
+    "Identifies Evidence Quality as the other dropped dimension (from 100 to 60)",
+    "Provides at least 2 plausible causes for the Coverage drop (e.g. journey subdirs deleted, evidence purged, new features without new journeys)",
+    "Provides at least 2 plausible causes for the Evidence Quality drop (e.g. empty/junk files, missing verdict file, files < 10 bytes)",
+    "Recommends inspecting e2e-evidence/ for empty or zero-byte files",
+    "Recommends re-running validation to regenerate fresh evidence with all original journeys",
+    "Mentions the verdict / report.md file and the +30 bonus it unlocks on Evidence Quality",
+    "Projects recovery to Grade A (aggregate \u2265 90) after the recommended remediation"
+  ]
+}

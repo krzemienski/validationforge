@@ -1,0 +1,8 @@
+{
+  "total_tokens": 132007,
+  "duration_ms": 77618,
+  "total_duration_seconds": 77.618,
+  "tool_uses": 7,
+  "agent_id": "a80d7a99469304691",
+  "task": "Eval-1 with improved skill (forge-benchmark post-edit)"
+}
