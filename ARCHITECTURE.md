@@ -6,12 +6,12 @@ Dual-platform enforcement architecture for Claude Code (CC) and OpenCode (OC). B
 
 | Primitive | Count | CC Location | OC Location |
 |-----------|------:|-------------|-------------|
-| Skills | 41 | `skills/*/SKILL.md` | (shared via symlink) |
-| Commands | 15 | `commands/*.md` | (shared via symlink) |
+| Skills | 42 | `skills/*/SKILL.md` | (shared via symlink) |
+| Commands | 16 | `commands/*.md` | (shared via symlink) |
 | Hooks | 8 | `hooks/*.js` + `hooks.json` | `.opencode/plugins/validationforge/index.ts` |
 | Agents | 5 | `agents/*.md` | (shared) |
 | Rules | 8 | `rules/*.md` | (shared) |
-| Shell Scripts | 8 | `scripts/` + `scripts/benchmark/` | (shared) |
+| Shell Scripts | 9 | `scripts/` + `scripts/benchmark/` | (shared) |
 | Config Profiles | 3 | `config/*.json` | (shared) |
 
 ---
@@ -297,9 +297,28 @@ e2e-validate
 
 ---
 
+## Evidence Dashboard
+
+A post-validation reporting layer that turns raw `e2e-evidence/` artifacts into a navigable summary without re-running validation.
+
+```
+e2e-evidence/              scripts/generate-dashboard.sh        e2e-evidence/
+  <journey>/step-*.png  -> (read-only scan, quality scoring) -> dashboard.md
+  <journey>/*.json                                              dashboard.html
+  report.md                                                     .history/<ts>.json
+```
+
+- **Inputs:** the `e2e-evidence/` contract (per-journey dirs, `step-NN-*.{png,json,txt}`, optional `report.md`).
+- **Outputs:** `e2e-evidence/dashboard.md` (markdown summary), `e2e-evidence/dashboard.html` (standalone HTML with inline thumbnails), and an append-only snapshot in `e2e-evidence/.history/<timestamp>.json` for trend comparisons.
+- **Invocation:** runs automatically at the end of `/validate` (post-VERDICT), and manually via `/validate-dashboard` against any existing evidence tree.
+- **Quality score:** each journey is scored using the same rubric as `/validate-benchmark` (coverage, evidence quality, enforcement, speed — see the `benchmarking` rule); the dashboard surfaces per-journey scores and a rolled-up project grade.
+- **Read-only:** the script never mutates journey evidence; it only writes under `e2e-evidence/dashboard.*` and `e2e-evidence/.history/`.
+
+---
+
 ## Shell Scripts
 
-### Core Scripts (4)
+### Core Scripts (5)
 
 | Script | Purpose |
 |--------|---------|
@@ -307,6 +326,7 @@ e2e-validate
 | `scripts/health-check.sh` | Polls a service endpoint until healthy or timeout |
 | `scripts/evidence-collector.sh` | Creates and validates `e2e-evidence/` directory structure |
 | `scripts/sync-opencode.sh` | Symlinks skills and commands into `.opencode/` for OC compatibility |
+| `scripts/generate-dashboard.sh` | Renders `e2e-evidence/` into `dashboard.md` + `dashboard.html` with quality scores; appends snapshot to `.history/` |
 
 ### Benchmark Scripts (4)
 
