@@ -34,7 +34,7 @@ export default defineConfig({
         },
         {
           label: 'Commands',
-          items: [],
+          autogenerate: { directory: 'commands' },
         },
         {
           label: 'Skills',

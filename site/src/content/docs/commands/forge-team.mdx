@@ -1,0 +1,38 @@
+---
+title: /forge-team
+description: Multi-agent parallel validation across platforms — spawn web, API, iOS, and design validators with exclusive evidence ownership.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Spawn platform-specific validators for parallel validation.
+
+<Aside type="note" title="Allowed tools">
+  `/forge-team` runs with restricted Claude Code tool access:
+  **Read, Write, Bash, Glob, Grep, Agent**.
+
+  Forge commands declare `allowed-tools` in their source frontmatter so
+  skills and agents can invoke them under a constrained permission set.
+</Aside>
+
+## Architecture
+
+```
+Lead (you)
+├── Web Validator    → e2e-evidence/web/
+├── API Validator    → e2e-evidence/api/
+├── iOS Validator    → e2e-evidence/ios/
+├── Design Validator → e2e-evidence/design/
+└── Verdict Writer   → e2e-evidence/report.md
+```
+
+Each validator exclusively owns its evidence directory.
+
+## Usage
+
+```
+/forge-team                     # Auto-detect platforms, spawn validators
+/forge-team --web --api         # Specific platforms only
+```
+
+Invoke the `forge-team` skill to execute.
