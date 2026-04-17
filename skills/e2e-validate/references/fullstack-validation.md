@@ -177,7 +177,7 @@ browser_console_messages level="error"
 # Expected: zero errors
 
 # Check network for failed requests
-browser_network_requests includeStatic=false
+browser_network_requests static=false
 # Expected: all API calls return 2xx
 ```
 
