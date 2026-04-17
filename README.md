@@ -31,6 +31,18 @@ Unit tests verify code in isolation with mocks. Mocks drift from reality. Valida
 
 These are design scenarios where mock-based testing is structurally blind. ValidationForge targets exactly these gaps by validating against live systems.
 
+## Works With Other Plugins
+
+ValidationForge is designed to complement other Claude Code plugins, not replace them.
+
+| Plugin | What it does | Integration Guide |
+|--------|--------------|-------------------|
+| **oh-my-claudecode (OMC)** | Multi-agent orchestration and execution modes (ralph, autopilot, team) | [vf-with-omc.md](./docs/integrations/vf-with-omc.md) |
+| **everything-claude-code (ECC)** | Multi-language rules, TDD workflow, security review | [vf-with-ecc.md](./docs/integrations/vf-with-ecc.md) |
+| **Superpowers** | Slash command framework and extensibility primitives | [vf-with-superpowers.md](./docs/integrations/vf-with-superpowers.md) |
+
+Use OMC or ECC to **build** features with agent orchestration and language-specific rules; use ValidationForge to **verify** those features actually work through real system interaction and evidence-backed verdicts.
+
 ## Installation
 
 > **Note:** The GitHub repository (`https://github.com/krzemienski/validationforge`) may not be publicly published yet. If the curl/clone methods below fail with a 404, use the local symlink method instead.
