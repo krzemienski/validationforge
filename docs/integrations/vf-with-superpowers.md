@@ -279,14 +279,14 @@ The conflict is not that one is wrong; it is that each skill answers the same qu
 
 If your project's CLAUDE.md is ambiguous, add an explicit `## Validation Phase` section that hands the floor to VF once `/validate` is invoked. Mandatory-skill semantics mean Claude *must* use the relevant skill — making which-is-relevant unambiguous is the only work required.
 
-## Worked Example
+## Worked Example — JWT refresh-token endpoint
 
-Feature: add a `POST /api/password-reset` endpoint that takes `{email}` and returns 202 Accepted whether or not the email exists (to avoid user enumeration), then enqueues a reset-link job. Superpowers drives the brainstorm-plan-execute TDD loop; VF proves the endpoint's runtime behavior against the real server.
+Feature: add a `POST /api/auth/refresh` endpoint that accepts a refresh token, validates it, rotates it (invalidates the old token, issues a new one), and returns a fresh 15-minute access token. Replay of a used refresh token revokes the entire token family. This scenario is drawn directly from the [README's unit-tests-vs-ValidationForge matrix](../../README.md#why-not-unit-tests) — specifically the row *"JWT expiry reduced to 15 min — Unit Tests: PASS (mock time, never wait). ValidationForge: FAIL (real token expires, refresh fails)"*. Superpowers drives the `brainstorm → write-plan → execute-plan` TDD loop; VF then proves the endpoint's runtime behavior against a real server with a real wall clock.
 
 ### Phase 1 — Superpowers brainstorms, plans, and executes
 
 ```bash
-/brainstorm "POST /api/password-reset: always return 202 for user-enumeration safety, enqueue reset-link job."
+/brainstorm 'JWT refresh flow: accept refresh token, rotate it, issue 15-min access token, reject expired or reused refresh tokens.'
 /write-plan
 /execute-plan
 ```
@@ -295,16 +295,19 @@ Illustrative session output — Superpowers' `/brainstorm`:
 
 ```text
 # Illustrative session output — Superpowers /brainstorm
-[brainstorm] Clarifying question 1: How should the handler behave when the email format is invalid?
-[brainstorm]   Proposed: return 202 anyway (refuse to leak validity signal). Alternative: 400 with generic message.
-[brainstorm]   Decision: 202 always, per user-enumeration threat model.
-[brainstorm] Clarifying question 2: What should the rate limit be to prevent spray attacks?
-[brainstorm]   Proposed: 5 requests per IP per 10 minutes, 429 on exceed.
+[brainstorm] Clarifying question 1: Should a replayed (already-used) refresh token invalidate the entire token family?
+[brainstorm]   Proposed: yes — replay is a strong theft signal; revoke all descendants under the same parent_jti.
 [brainstorm]   Decision: accepted.
+[brainstorm] Clarifying question 2: Access token TTL?
+[brainstorm]   Proposed: 15 minutes (matches OWASP JWT guidance; bounds the blast radius of a compromised token).
+[brainstorm]   Decision: accepted — 15m access, 30-day refresh.
+[brainstorm] Clarifying question 3: Should the refresh-token store be a per-user list or a revocable family graph?
+[brainstorm]   Decision: family graph (parent_jti pointer) so replay detection can cascade down descendants.
 [brainstorm] Design summary:
-  - POST /api/password-reset {email} → 202 (always, even on unknown email or invalid format).
-  - 429 on rate-limit breach (5/10min/IP).
-  - Enqueue ResetLinkJob({email, requestedAt}) only if user exists (silent no-op otherwise).
+  - POST /api/auth/refresh {refresh_token}
+  - Valid, unused refresh → 200 {access_token (exp=+900s), refresh_token (exp=+30d)}; mark old refresh used.
+  - Valid, reused refresh → revoke entire token family; return 401 generic message.
+  - Expired/invalid refresh → 401 generic message (no enumeration signal).
 [brainstorm] Review: APPROVED. Handing off to /write-plan.
 ```
 
@@ -312,32 +315,35 @@ Illustrative session output — Superpowers' `/write-plan`:
 
 ```text
 # Illustrative session output — Superpowers /write-plan
-[write-plan] Task 1 — Add Zod schema for password-reset body (src/schemas/password-reset.ts).
-[write-plan] Task 2 — Add rate-limit middleware binding (src/middleware/rate-limit.ts).
-[write-plan] Task 3 — Add handler (src/routes/password-reset.ts): always 202, enqueue job if user exists.
-[write-plan] Task 4 — Wire route into src/app.ts.
+[write-plan] Task 1 — Refresh-token store + family graph (src/auth/refresh-store.ts).
+[write-plan] Task 2 — JWT signer/verifier with 15m access TTL, 30d refresh TTL (src/auth/jwt.ts).
+[write-plan] Task 3 — Rotate + replay-detect logic (src/auth/rotate.ts).
+[write-plan] Task 4 — Handler: validate → rotate → respond (src/routes/auth/refresh.ts).
+[write-plan] Task 5 — Wire route into src/app.ts.
 [write-plan] Tasks sized 2–5 min each, exact file paths + complete code + verification per task.
-[write-plan] Plan written to .superpowers/plans/password-reset.md.
+[write-plan] Plan written to .superpowers/plans/jwt-refresh.md.
 ```
 
-Illustrative session output — Superpowers' `/execute-plan` with subagent-driven RED/GREEN:
+Illustrative session output — Superpowers' `/execute-plan` with subagent-driven RED/GREEN (the "green TDD output"):
 
 ```text
 # Illustrative session output — Superpowers /execute-plan
-[execute-plan][subagent-1/task-1] RED: wrote tests/schemas/password-reset.spec.ts (5 cases, all failing).
-[execute-plan][subagent-1/task-1] GREEN: wrote src/schemas/password-reset.ts; 5/5 cases pass.
+[execute-plan][subagent-1/task-1] RED: wrote tests/auth/refresh-store.spec.ts (7 cases, all failing).
+[execute-plan][subagent-1/task-1] GREEN: implemented src/auth/refresh-store.ts; 7/7 pass.
 [execute-plan][review/spec-compliance][task-1] PASS.
 [execute-plan][review/code-quality][task-1]    PASS.
-[execute-plan][subagent-2/task-2] RED: wrote tests/middleware/rate-limit.spec.ts (3 cases, all failing).
-[execute-plan][subagent-2/task-2] GREEN: 3/3 cases pass.
-[execute-plan][subagent-3/task-3] RED: wrote tests/routes/password-reset.spec.ts (6 cases, all failing).
-[execute-plan][subagent-3/task-3] GREEN: handler returns 202 always, enqueues only on known user. 6/6 pass.
-[execute-plan][subagent-4/task-4] RED: wrote tests/app.spec.ts (1 case mounts the new route, fails).
-[execute-plan][subagent-4/task-4] GREEN: wired app.post('/api/password-reset', ...); 1/1 pass.
-[execute-plan] All 4 tasks GREEN. Two-stage review: PASS. Handing off.
+[execute-plan][subagent-2/task-2] RED: wrote tests/auth/jwt.spec.ts (6 cases — includes a time-mocked 15m-expiry case using jest.useFakeTimers()).
+[execute-plan][subagent-2/task-2] GREEN: 6/6 pass. Access-token exp asserted at issuedAt + 900s against the mocked clock.
+[execute-plan][subagent-3/task-3] RED: wrote tests/auth/rotate.spec.ts (8 cases including replay detection + family-cascade revocation).
+[execute-plan][subagent-3/task-3] GREEN: 8/8 pass. Cascade verified against the in-memory store.
+[execute-plan][subagent-4/task-4] RED: wrote tests/routes/auth/refresh.spec.ts (5 cases).
+[execute-plan][subagent-4/task-4] GREEN: handler returns 200+{access,refresh} on happy path, 401 on replay/expiry. 5/5 pass.
+[execute-plan][subagent-5/task-5] RED: wrote tests/app.spec.ts (1 case mounts /api/auth/refresh; fails).
+[execute-plan][subagent-5/task-5] GREEN: wired app.post('/api/auth/refresh', ...); 1/1 pass.
+[execute-plan] All 5 tasks GREEN. Two-stage review: PASS. Handing off.
 ```
 
-Superpowers has now produced compile-clean code with 15 unit tests green across 4 files, plus two-stage review sign-off. **It has not booted the server, hit `/api/password-reset` once, or verified that the rate limiter actually rate-limits under real load.** Every test mocks the enqueue call, the database lookup, and the express request/response pair. Every test passes. That is the slice of the work VF is designed to challenge.
+Superpowers has now produced compile-clean code with 27 unit tests green across 5 files, plus two-stage review sign-off. **It has not issued a real JWT, waited 15 real minutes, or verified that a wall-clock-expired token is actually rejected by the live endpoint.** The time-mocked tests in `jwt.spec.ts` fast-forward the clock inside the test process and assert directly on `decoded.exp`; they never observe what the running server does when a real token's `exp` claim lands in the past on a real clock. That gap is the slice of the work VF is designed to challenge.
 
 ### Phase 2 — VF proves the endpoint behaves correctly under real conditions
 
@@ -349,33 +355,84 @@ Illustrative session output — VF's `/validate`:
 
 ```text
 # Illustrative session output — /validate --platform api
-[validate][phase 0 research]   Loaded api-validation skill, OWASP user-enumeration guidance.
+[validate][phase 0 research]   Loaded api-validation skill, OWASP JWT guidance, condition-based-waiting.
 [validate][phase 1 plan]       Journeys drafted:
-                                 - reset-unknown-email-returns-202
-                                 - reset-known-email-returns-202-and-enqueues
-                                 - reset-invalid-email-still-returns-202
-                                 - reset-rate-limit-after-5-requests-returns-429
-                                 - reset-timing-no-leak-between-known-and-unknown
+                                 - refresh-happy-path-returns-new-access-and-refresh
+                                 - refresh-rotates-old-token-single-use
+                                 - refresh-replay-revokes-family
+                                 - access-token-rejected-after-real-15m-wait
+                                 - refresh-expired-after-30d-returns-401
 [validate][phase 2 preflight]  pnpm build → success. pnpm dev → listening on :3000. /health → 200 OK.
 [validate][phase 3 execute]    Running 5 journeys against http://localhost:3000 ...
-  ✓ reset-unknown-email-returns-202           POST {"email":"nobody@example.com"} → 202 Accepted.
-  ✓ reset-known-email-returns-202-and-enqueues POST {"email":"alice@example.com"} → 202; queue inspection shows 1 job.
-  ✓ reset-invalid-email-still-returns-202     POST {"email":"not-an-email"} → 202 (no leak via 400).
-  ✗ reset-rate-limit-after-5-requests-returns-429
-      Expected: 6th request from the same IP within 10m → 429 Too Many Requests.
-      Observed: 6th request returned 202 (rate limiter not wired into the route).
-      Root cause: middleware exists but src/app.ts mounts /api/password-reset before app.use(rateLimit).
-      Evidence: e2e-evidence/reset-rate-limit-after-5-requests-returns-429/step-06-response-202.json
-  ✓ reset-timing-no-leak-between-known-and-unknown  Δmean < 2ms (1000 samples).
-[validate][phase 4 analyze]    FAIL root-caused: middleware mount order.
+  ✓ refresh-happy-path-returns-new-access-and-refresh
+      POST /api/auth/refresh → 200; decoded access_token.exp = iat + 900s. ✓
+  ✓ refresh-rotates-old-token-single-use
+      Old refresh token, 2nd use → 401 (single-use enforced).
+  ✓ refresh-replay-revokes-family
+      Replay of old token → 401; subsequent children under the same parent_jti also 401.
+  ✗ access-token-rejected-after-real-15m-wait
+      Journey waited 15m 1s (real wall clock via condition-based-waiting), then GET /api/me with the issued access token.
+      Expected: 401 Unauthorized (token has expired).
+      Observed: 200 OK with user payload.
+      Root cause: src/auth/jwt.ts signs with exp = iat + 900, but the verifier in src/auth/verify.ts calls
+        jsonwebtoken.verify(token, secret, { ignoreExpiration: true }) — a copy-paste from a dev-tools config.
+        The time-mocked unit tests passed because they inspected decoded.exp directly; they never exercised
+        the verifier's ignoreExpiration branch.
+      Evidence:
+        e2e-evidence/access-token-rejected-after-real-15m-wait/step-01-issue-token.json
+        e2e-evidence/access-token-rejected-after-real-15m-wait/step-02-15m-wait-timestamp.txt
+        e2e-evidence/access-token-rejected-after-real-15m-wait/step-03-use-expired-token-200.json
+  ✓ refresh-expired-after-30d-returns-401
+      (Fixture refresh token with exp 31 days in the past.) → 401.
+[validate][phase 4 analyze]    FAIL root-caused: jsonwebtoken.verify called with ignoreExpiration: true.
 [validate][phase 5 verdict]    4/5 PASS, 1/5 FAIL. Writing e2e-evidence/report.md.
 ```
 
-This is the exact class of defect Superpowers' tests could not detect: the unit test for `rate-limit.ts` mocked the request/response pair, so it never crossed the express middleware stack. The bug lives in the *composition* of two modules that were each individually green. VF, hitting the real express process from a real client, catches the miscomposition. `/validate-sweep` then edits `src/app.ts` to mount the rate limiter before the route, re-runs the journey, and writes fresh evidence under `e2e-evidence/attempt-2/reset-rate-limit-after-5-requests-returns-429/`.
+> **README callout — "JWT expiry reduced to 15 min."**
+>
+> The README's unit-tests-vs-ValidationForge matrix lists this row exactly: *"JWT expiry reduced to 15 min — Unit Tests: PASS (mock time, never wait). ValidationForge: FAIL (real token expires, refresh fails)."* The run above is that row in practice. Superpowers' `jwt.spec.ts` stubbed the clock with `jest.useFakeTimers()` and asserted on `decoded.exp`; it never routed a real token through the actual verifier path. VF hit the real endpoint with a real clock, waited the real 15 minutes (VF's `condition-based-waiting` skill), and caught the `ignoreExpiration: true` misconfiguration the time-mocked unit tests were structurally blind to. This is the structural gap the pairing exists to close: Superpowers proves the logic; VF proves the wall-clock behavior.
+
+`/validate-sweep` then removes `ignoreExpiration: true` from the verifier, re-runs the journey against the live server, captures fresh evidence under `e2e-evidence/attempt-2/access-token-rejected-after-real-15m-wait/` (Iron Rule 7 — no reused evidence across attempts), and returns PASS.
+
+### Sample evidence tree
+
+```text
+e2e-evidence/
+├── refresh-happy-path-returns-new-access-and-refresh/
+│   ├── step-01-request.json
+│   ├── step-02-response-200.json
+│   ├── step-03-decoded-access-exp.txt        # exp = iat + 900s
+│   └── evidence-inventory.txt
+├── refresh-rotates-old-token-single-use/
+│   ├── step-01-first-refresh-200.json
+│   ├── step-02-second-refresh-401.json
+│   └── evidence-inventory.txt
+├── refresh-replay-revokes-family/
+│   ├── step-01-parent-refresh-200.json
+│   ├── step-02-replay-401.json
+│   ├── step-03-child-of-parent-jti-401.json
+│   └── evidence-inventory.txt
+├── access-token-rejected-after-real-15m-wait/
+│   ├── step-01-issue-token.json              # captured at t=0
+│   ├── step-02-15m-wait-timestamp.txt        # t=900s marker (real wall clock)
+│   ├── step-03-use-expired-token-200.json    # FAIL evidence — body + headers
+│   └── evidence-inventory.txt
+├── refresh-expired-after-30d-returns-401/
+│   ├── step-01-fixture-token-31d-old.json
+│   ├── step-02-response-401.json
+│   └── evidence-inventory.txt
+├── attempt-2/                                # Fresh evidence after /validate-sweep (Iron Rule 7)
+│   └── access-token-rejected-after-real-15m-wait/
+│       ├── step-01-issue-token.json
+│       ├── step-02-15m-wait-timestamp.txt
+│       ├── step-03-use-expired-token-401.json   # PASS after fix
+│       └── evidence-inventory.txt
+└── report.md                                 # 5/5 PASS after sweep; attempt-1 FAIL + attempt-2 PASS cited
+```
 
 ### Phase 3 — Ship
 
-Once the sweep's second attempt returns PASS on the rate-limit journey, `report.md` shows all 5/5 PASS and the production-readiness audit runs. Superpowers' 15 unit tests live under `tests/` as the unit-layer safety net; VF's 5 journey verdicts live under `e2e-evidence/` as the system-layer proof. Both layers ship together.
+Once the sweep's second attempt returns PASS on the real-wait journey, `report.md` shows all 5/5 PASS and the production-readiness audit runs. Superpowers' 27 unit tests live under `tests/` as the unit-layer safety net; VF's 5 journey verdicts live under `e2e-evidence/` as the system-layer proof. Both layers ship together — and the one defect that only surfaced when a real token met a real clock is now caught in regression on every future `/validate` run.
 
 ## Evidence of Coexistence
 
