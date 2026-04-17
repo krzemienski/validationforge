@@ -1,0 +1,29 @@
+Fix A — preflight iOS-detection glob quoting fix — empirical verification
+=========================================================================
+File edited: skills/preflight/references/auto-fix-actions.md
+Date: 2026-04-17
+
+Original broken code:
+  if [ -f "Package.swift" ] || [ -d "*.xcodeproj" ] || [ -d "*.xcworkspace" ]; then
+    PLATFORM="ios"
+
+Root cause: quoted globs `"*.xcodeproj"` cause bash to test for a directory
+literally named `*.xcodeproj` (asterisk included) — never matches real
+projects where the directory name is e.g. `MyApp.xcodeproj`.
+
+Fixed code (uses nullglob + array count):
+  shopt -s nullglob
+  xcode_projs=( *.xcodeproj *.xcworkspace )
+  shopt -u nullglob
+  if [ -f "Package.swift" ] || [ ${#xcode_projs[@]} -gt 0 ]; then
+    PLATFORM="ios"
+
+Empirical test results (synthetic fixtures in /tmp):
+  TEST 1 — dir with MyApp.xcodeproj            : PASS (reports 'ios')
+  TEST 2 — dir with MyApp.xcworkspace          : PASS (reports 'ios')
+  TEST 3 — dir with Package.swift (SPM only)   : PASS (reports 'ios')
+  TEST 4 — empty dir (no iOS markers)          : PASS (reports 'unknown' — no false positive)
+  TEST 5 — old buggy form against MyApp.xcodeproj: confirms 'unknown' (original bug reproduced)
+
+All tests passed. Fix resolves preflight/findings.md C1 CRITICAL issue.
+No regressions: non-iOS branches (web/api/cli/fullstack/unknown) unchanged.

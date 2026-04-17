@@ -29,7 +29,15 @@ When a preflight check fails, attempt automatic resolution before reporting BLOC
 ## Platform Detection Script
 
 ```bash
-if [ -f "Package.swift" ] || [ -d "*.xcodeproj" ] || [ -d "*.xcworkspace" ]; then
+# Enable nullglob so unmatched *.xcodeproj / *.xcworkspace globs expand to
+# nothing instead of the literal pattern. Without this, quoted globs like
+# `[ -d "*.xcodeproj" ]` test for a directory literally named "*.xcodeproj"
+# and iOS projects go undetected.
+shopt -s nullglob
+xcode_projs=( *.xcodeproj *.xcworkspace )
+shopt -u nullglob
+
+if [ -f "Package.swift" ] || [ ${#xcode_projs[@]} -gt 0 ]; then
   PLATFORM="ios"
 elif [ -f "next.config.js" ] || [ -f "next.config.ts" ] || [ -f "next.config.mjs" ]; then
   PLATFORM="web"
@@ -44,6 +52,11 @@ else
 fi
 echo "Detected platform: $PLATFORM"
 ```
+
+Note: this bash must run as `bash` (not `sh`/`dash`) because `shopt` is a
+bash builtin and array syntax `( ... )` requires bash. The reference script
+for programmatic detection is `./scripts/detect-platform.sh`, which uses
+`find -maxdepth` for POSIX-compatible platform discovery.
 
 ## Evidence Directory Setup
 
