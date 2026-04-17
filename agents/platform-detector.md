@@ -1,4 +1,5 @@
 ---
+name: platform-detector
 description: Analyzes a project's codebase to determine its platform type for validation routing
 capabilities: ["platform-detection", "codebase-analysis", "confidence-scoring"]
 ---

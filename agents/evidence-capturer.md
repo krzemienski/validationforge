@@ -1,4 +1,5 @@
 ---
+name: evidence-capturer
 description: Captures concrete validation evidence from real running systems
 capabilities: ["evidence-capture", "screenshot-collection", "api-response-logging", "evidence-organization", "ai-evidence-analysis"]
 ---

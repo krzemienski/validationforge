@@ -1,4 +1,5 @@
 ---
+name: sweep-controller
 description: Controls autonomous fix-and-revalidate loops until all journeys pass or max attempts exhausted
 capabilities: ["fix-loop-control", "root-cause-analysis", "revalidation", "progress-tracking"]
 ---

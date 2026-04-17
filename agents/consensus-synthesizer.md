@@ -1,4 +1,5 @@
 ---
+name: consensus-synthesizer
 description: Reads all validator reports, applies consensus-synthesis voting rules, handles disagreements via consensus-disagreement-analysis, produces the unified consensus verdict.
 capabilities: ["cross-validator-synthesis", "vote-tabulation", "disagreement-resolution", "unified-report"]
 ---

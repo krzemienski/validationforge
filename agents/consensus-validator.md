@@ -1,4 +1,5 @@
 ---
+name: consensus-validator
 description: Independent validator that assesses a feature against PASS criteria with its own evidence, unaware of other validators verdicts.
 capabilities: ["independent-assessment", "evidence-capture", "per-validator-verdict", "real-system-interaction"]
 ---

@@ -42,13 +42,13 @@ process.stdin.on('end', () => {
 
     if (!filePath) process.exit(0);
 
-    for (const allow of ALLOWLIST) {
-      if (allow.test(filePath)) process.exit(0);
-    }
+    // Allowlist short-circuit (review finding L4 — single .some() instead
+    // of a for-loop keeps the happy path obvious and avoids the visual
+    // hiccup of an early `process.exit()` inside a for-of body).
+    if (ALLOWLIST.some(re => re.test(filePath))) process.exit(0);
 
-    for (const pattern of TEST_PATTERNS) {
-      if (!pattern.test(filePath)) continue;
-
+    const matched = TEST_PATTERNS.find(re => re.test(filePath));
+    if (matched) {
       if (state === 'warn' || !ruleEnabled(profile, 'block_test_files')) {
         // warn or rule disabled → advisory only, let the write proceed
         process.stderr.write(
@@ -76,6 +76,7 @@ process.stdin.on('end', () => {
       process.exit(0);
     }
 
+    // No match → silent pass-through.
     process.exit(0);
   } catch (e) {
     process.stderr.write(`[ValidationForge] block-test-files hook error: ${e.message}\n`);

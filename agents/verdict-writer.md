@@ -1,4 +1,5 @@
 ---
+name: verdict-writer
 description: Writes structured PASS/FAIL verdicts based on evidence review
 capabilities: ["evidence-review", "verdict-writing", "root-cause-analysis", "report-generation", "ai-analysis-integration"]
 ---

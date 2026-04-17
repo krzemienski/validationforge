@@ -1,4 +1,5 @@
 ---
+name: validation-lead
 description: Orchestrates multi-agent validation teams with journey decomposition and evidence aggregation
 capabilities: ["team-orchestration", "journey-decomposition", "evidence-aggregation", "verdict-coordination"]
 ---
