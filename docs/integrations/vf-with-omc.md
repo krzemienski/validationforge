@@ -1,6 +1,6 @@
 # Using ValidationForge with oh-my-claudecode (OMC)
 
-OMC excels at multi-agent orchestration and execution loops. VF excels at evidence-based validation. Together they form a build-then-prove workflow: OMC's ralph, autopilot, ultrawork, and team modes coordinate N specialized agents to ship a feature, and ValidationForge then proves that the shipped artifact actually behaves correctly against the real system — with screenshots, API bodies, and logs to back every PASS or FAIL.
+OMC excels at multi-agent orchestration and execution loops. VF excels at evidence-based validation. Together they form a build-then-prove workflow: OMC's ralph, autopilot, ultrawork, and team modes coordinate N specialized agents to ship a feature, and ValidationForge then proves that the shipped artifact actually behaves correctly against the real system — with screenshots, API bodies, and logs to back every PASS or FAIL. For high-stakes features where a single validator isn't enough, VF's `/validate-consensus` spawns N independent validators and synthesizes them into a confidence-scored verdict — a natural fit when OMC's multi-agent build loop has just shipped a critical path.
 
 This guide shows how to pair the two plugins without stepping on each other's hooks, how to hand off cleanly from OMC's "report done" moment to VF's `/validate` or `/validate-sweep`, and how to resolve the small number of real conflicts (test-file gates, execution-loop overlap, rule precedence). It assumes OMC v4.7.7 or later and ValidationForge v1.x. Inventory numbers are as of April 2026.
 
@@ -209,6 +209,8 @@ If `report.md` is all PASS, the production-readiness audit runs and the feature 
 
 Sweep writes each attempt's evidence to `e2e-evidence/attempt-N/` so the trail of what was tried and what changed is preserved.
 
+After the sweep settles on PASS, run `/validate-dashboard` to render the evidence tree into a single HTML + markdown summary — handy when the PR reviewer of OMC's shipped code wants to see verdicts without crawling `e2e-evidence/` themselves. VF's `preflight` skill also now acts as a strict CLEAR / WARN / BLOCKED gate (Iron Rule 4): if OMC's verify stage reports done but the service won't boot, VF short-circuits to BLOCKED rather than fabricating a verdict.
+
 ## Expanded Worked Example — Shipping `POST /api/users`
 
 This second walkthrough goes deeper into the handoff for a realistic, second-service feature: adding a `POST /api/users` endpoint with email-uniqueness enforcement. It expands the previous example with full command invocations for both plugins, illustrative session transcripts, a complete evidence directory tree, and a sample final verdict. Every transcript below is marked as illustrative — it reconstructs documented OMC and VF behavior for readers and is not a live runtime capture, per the evidence-of-coexistence strategy for this guide.
@@ -384,15 +386,19 @@ OMC:
   ... (32 more)
 
 ValidationForge:
-  /vf-setup             Initialize ValidationForge
-  /validate             Full validation pipeline
-  /validate-plan        Plan only (no execution)
-  /validate-audit       Read-only audit
-  /validate-fix         Fix FAIL verdicts (3-strike)
-  /validate-sweep       Autonomous fix-and-revalidate loop
-  /validate-team        Multi-agent parallel platform validation
-  /validate-benchmark   Measure validation posture
-  ... (7 more)
+  /vf-setup                  Initialize ValidationForge
+  /validate                  Full validation pipeline
+  /validate-plan             Plan only (no execution)
+  /validate-audit            Read-only audit
+  /validate-fix              Fix FAIL verdicts (3-strike)
+  /validate-sweep            Autonomous fix-and-revalidate loop
+  /validate-team             Multi-agent parallel platform validation
+  /validate-team-dashboard   Aggregate team validation posture dashboard
+  /validate-consensus        Multi-agent CONSENSUS validation, confidence-scored
+  /validate-dashboard        HTML + markdown evidence summary after a run
+  /validate-benchmark        Measure validation posture
+  /validate-ci               Non-interactive CI/CD mode with exit codes
+  ... (1 more)
 ```
 
 ### Hook firings during a combined run
