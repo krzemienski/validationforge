@@ -1,0 +1,36 @@
+=== phase-4 subtasks 4-3 + 4-4 (live proxy): realistic hook invocations ===
+Date: 2026-04-17T11:27:31Z
+
+Installed plugin root: /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0
+(Using installed plugin hooks — these are the paths Claude Code actually invokes.)
+
+--- subtask-4-3 proxy: Write tool call for scratch/foo.test.ts ---
+Payload (matches Claude Code PreToolUse event shape):
+  {"tool_name":"Write","tool_input":{"file_path":"scratch/foo.test.ts","content":"export const x = 1;"}}
+Exit: 0
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: \"scratch/foo.test.ts\" matches a test/mock/stub file pattern.\nValidationForge Iron Rule: Never create test files, mock files, or stub files.\nInstead: Build and run the real system. Validate through actual user interfaces.\nRun /validate to start the correct validation workflow."}}
+Stderr:
+
+Parsed hookSpecificOutput:
+  hookEventName = PreToolUse PASS
+  permissionDecision = deny PASS
+  reason mentions "Iron Rule": PASS
+  reason quotes file path: PASS
+ASSERTION subtask-4-3: PASS
+
+--- subtask-4-4 proxy: TaskUpdate status=completed ---
+Payload: {"tool_name":"TaskUpdate","tool_input":{"status":"completed","task_id":"abc123","task_description":"finish the foo"}}
+Exit: 0
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"ValidationForge Evidence Gate:\n[ ] Did you PERSONALLY examine the evidence (not just receive a report)?\n[ ] Did you VIEW screenshots and confirm their CONTENT (not just existence)?\n[ ] Did you EXAMINE command output (not just exit codes)?\n[ ] Can you CITE specific evidence for each validation criterion?\n[ ] Would a skeptical reviewer agree this is complete?\n\nIf ANY checkbox is unchecked, run /validate --fix first."}}
+Stderr:
+
+Parsed hookSpecificOutput:
+  hookEventName = PreToolUse PASS
+  additionalContext present: PASS
+  mentions "PERSONALLY examine": PASS
+  5-item checklist: PASS
+ASSERTION subtask-4-4: PASS
+
+=== done ===
