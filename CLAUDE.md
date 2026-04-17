@@ -23,6 +23,7 @@ No-mock validation platform for Claude Code. Ship verified code, not "it compile
 /validate-team               # Multi-agent parallel platform validation
 /validate-sweep              # Autonomous fix-and-revalidate loop until PASS
 /validate-benchmark          # Measure validation posture (coverage, evidence, enforcement, speed)
+/validate-dashboard          # Generate evidence summary dashboard (HTML + markdown) after validation
 ```
 
 ## The 7-Phase Pipeline
@@ -121,15 +122,15 @@ History tracked in `.vf/benchmarks/`.
 
 ## Inventory
 
-### Commands (15)
+### Commands (16)
 
 **Validation Commands**
-vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-sweep, validate-benchmark
+vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-sweep, validate-benchmark, validate-dashboard
 
 **Forge Commands**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, forge-install-rules
 
-### Skills (41)
+### Skills (42)
 
 **Platform Validation (11)**
 ios-validation, ios-validation-gate, ios-validation-runner, ios-simulator-control, playwright-validation, web-validation, web-testing, chrome-devtools, api-validation, cli-validation, fullstack-validation
@@ -146,8 +147,8 @@ sequential-analysis, research-validation, retrospective-validation
 **Specialized (6)**
 accessibility-audit, responsive-validation, parallel-validation, e2e-testing, e2e-validate, create-validation-plan
 
-**Operational (5)**
-baseline-quality-assessment, condition-based-waiting, error-recovery, production-readiness-audit, full-functional-audit
+**Operational (6)**
+baseline-quality-assessment, condition-based-waiting, error-recovery, production-readiness-audit, full-functional-audit, evidence-dashboard
 
 **Forge Orchestration (6)**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, validate-audit-benchmarks
