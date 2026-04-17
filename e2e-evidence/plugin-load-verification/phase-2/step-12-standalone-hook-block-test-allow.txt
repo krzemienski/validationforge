@@ -1,0 +1,44 @@
+=== subtask-2-2: block-test-files.js ALLOWLIST path ===
+Date: 2026-04-17T11:24:01Z
+
+--- Case: e2e-evidence/journey/notes.test.md ---
+Input: {"tool_name":"Write","tool_input":{"file_path":"e2e-evidence/journey/notes.test.md"}}
+Exit: 0
+Stdout-bytes: 0
+Stdout-content:
+
+Stderr:
+
+ASSERTION: PASS (exit=0, empty stdout, allowlisted path)
+
+--- Case: .claude/skills/foo.spec.md ---
+Input: {"tool_name":"Write","tool_input":{"file_path":".claude/skills/foo.spec.md"}}
+Exit: 0
+Stdout-bytes: 0
+Stdout-content:
+
+Stderr:
+
+ASSERTION: PASS (exit=0, empty stdout, allowlisted path)
+
+--- Case: validation-evidence/test.ts ---
+Input: {"tool_name":"Write","tool_input":{"file_path":"validation-evidence/test.ts"}}
+Exit: 0
+Stdout-bytes: 0
+Stdout-content:
+
+Stderr:
+
+ASSERTION: PASS (exit=0, empty stdout, allowlisted path)
+
+--- Case: non-matching regular src/foo.ts ---
+Input: {"tool_name":"Write","tool_input":{"file_path":"src/foo.ts"}}
+Exit: 0
+Stdout-bytes: 0
+Stdout-content:
+
+Stderr:
+
+ASSERTION: PASS (exit=0, empty stdout, allowlisted path)
+
+=== done ===

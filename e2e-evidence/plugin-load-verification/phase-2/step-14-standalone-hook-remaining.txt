@@ -1,0 +1,113 @@
+=== subtask-2-4: remaining hooks ===
+Date: 2026-04-17T11:24:03Z
+
+### Hook: validation-not-compilation.js — Case: build-success ###
+Input: {"tool_name":"Bash","tool_input":{"command":"npm run build"},"tool_result":{"stdout":"webpack 5.x compiled successfully"}}
+Exit: 2 (expected: 2)
+Stdout:
+
+Stderr:
+[ValidationForge] validation-not-compilation: Build succeeded, but compilation is NOT validation.
+Run /validate to verify through real user interfaces.
+A successful build only proves syntax is correct, not that features work.
+
+ASSERTION: PASS
+
+### Hook: validation-not-compilation.js — Case: non-build-output ###
+Input: {"tool_name":"Bash","tool_input":{"command":"ls -la"},"tool_result":{"stdout":"drwxr-xr-x  4 user  staff"}}
+Exit: 0 (expected: 0)
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS
+
+### Hook: completion-claim-validator.js — Case: completion-claim-with-evidence-dir ###
+Input: {"tool_name":"Bash","tool_input":{"command":"echo done"},"tool_result":{"stdout":"all tests pass"}}
+Exit: 0 (expected: 0)
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS
+
+### Hook: completion-claim-validator.js — Case: non-completion-output ###
+Input: {"tool_name":"Bash","tool_input":{"command":"ls"},"tool_result":{"stdout":"file1 file2"}}
+Exit: 0 (expected: 0)
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS
+
+### Hook: validation-state-tracker.js — Case: playwright-command ###
+Input: {"tool_name":"Bash","tool_input":{"command":"npx playwright test"}}
+Exit: 2 (expected: 2)
+Stdout:
+
+Stderr:
+[ValidationForge] validation-state-tracker: Validation activity detected. Remember to capture evidence
+(screenshots, logs, responses) to e2e-evidence/ directory.
+
+ASSERTION: PASS
+
+### Hook: validation-state-tracker.js — Case: ls-command ###
+Input: {"tool_name":"Bash","tool_input":{"command":"ls -la"}}
+Exit: 0 (expected: 0)
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS
+
+### Hook: mock-detection.js — Case: jest-mock-content ###
+Input: {"tool_name":"Write","tool_input":{"file_path":"src/foo.js","content":"jest.mock(\"./bar\")"}}
+Exit: 2 (expected: 2)
+Stdout:
+
+Stderr:
+[ValidationForge] mock-detection: Mock/test pattern detected in code being written.
+ValidationForge Iron Rule: Never create mocks, stubs, or test harnesses.
+Fix the real system instead. Run /validate for proper validation.
+
+ASSERTION: PASS
+
+### Hook: mock-detection.js — Case: plain-content ###
+Input: {"tool_name":"Write","tool_input":{"file_path":"src/foo.js","content":"const x = 1;"}}
+Exit: 0 (expected: 0)
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS
+
+### Hook: evidence-quality-check.js — Case: empty-evidence ###
+Input: {"tool_name":"Write","tool_input":{"file_path":"e2e-evidence/foo/step-01.txt","content":""}}
+Exit: 2 (expected: 2)
+Stdout:
+
+Stderr:
+[ValidationForge] evidence-quality-check: Empty evidence file detected.
+0-byte files are INVALID evidence. Capture real content (screenshots, logs, API responses).
+
+ASSERTION: PASS
+
+### Hook: evidence-quality-check.js — Case: non-evidence-path ###
+Input: {"tool_name":"Write","tool_input":{"file_path":"src/foo.ts","content":""}}
+Exit: 0 (expected: 0)
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS
+
+### Hook: evidence-quality-check.js — Case: non-empty-evidence ###
+Input: {"tool_name":"Write","tool_input":{"file_path":"e2e-evidence/foo/step-01.txt","content":"real evidence content"}}
+Exit: 0 (expected: 0)
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS
+
+=== done ===
