@@ -93,7 +93,10 @@ Setup detects your platform, selects enforcement level, scaffolds `e2e-evidence/
 /validate-team               # Multi-agent parallel platform validation
 /validate-sweep              # Autonomous fix-and-revalidate loop until PASS
 /validate-benchmark          # Measure validation posture (coverage, evidence, speed)
+/validate-dashboard          # Generate evidence summary dashboard (HTML + markdown)
 ```
+
+The `/validate-dashboard` command aggregates the most recent validation run into a single, reviewable summary. It reads journey verdicts and evidence from `e2e-evidence/` and writes two artifacts: `e2e-evidence/dashboard.md` (plain-text summary suitable for PR comments and CI logs) and `e2e-evidence/dashboard.html` (a self-contained HTML page with clickable evidence links and per-journey PASS/FAIL badges). Run it after `/validate` to share validation results with reviewers.
 
 ### Forge Commands
 
