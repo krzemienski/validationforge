@@ -321,6 +321,8 @@ This is the exact class of defect ECC could not detect — compile clean, unit t
 
 Once `report.md` shows all PASS, the production-readiness audit runs and the feature ships. `e2e-evidence/` is the contract — ECC's unit test file (`tests/projects.spec.ts`) lives in the unit-test layer; VF's `e2e-evidence/create-project-missing-name/step-02-response-400.json` lives in the system-validation layer. Both layers are preserved; neither overwrites the other.
 
+For security-sensitive endpoints that ECC's `security-reviewer` flagged, add a second gate after `/validate` passes: run `/validate-consensus` to spawn N independent validators and synthesize their verdicts into a single confidence-scored CONSENSUS verdict — useful when ECC's language rules and unit tests are green but the team still wants cross-validator agreement before shipping. `/validate-dashboard` then renders the evidence tree into an HTML + markdown summary for the PR. VF's `preflight` skill is now a strict CLEAR / WARN / BLOCKED gate (Iron Rule 4); if the ECC-cleaned build compiles but the service fails to boot, VF short-circuits to BLOCKED instead of running journeys against a half-started process.
+
 ## Worked Example — Next.js API route: clear the build, then catch a field-name mismatch
 
 The previous example focused on an HTTP status-code contract bug. This one walks through a different class of defect that the README's comparison table calls out explicitly: **API field renamed (`users` → `data`) | unit tests PASS (mock returns old field) | VF FAIL (curl shows new field, frontend crashes)**. Unit tests mock the response shape, so they never notice the rename. Only a real-system validator, hitting the real endpoint and rendering the real page, catches the break.
@@ -428,14 +430,19 @@ ECC:
   ... (33 more)
 
 ValidationForge:
-  /vf-setup              Initialize ValidationForge
-  /validate              Full validation pipeline
-  /validate-plan         Plan only (no execution)
-  /validate-audit        Read-only audit with severity classification
-  /validate-fix          Fix FAIL verdicts (3-strike)
-  /validate-sweep        Autonomous fix-and-revalidate loop
-  /validate-benchmark    Measure validation posture
-  ... (8 more)
+  /vf-setup                  Initialize ValidationForge
+  /validate                  Full validation pipeline
+  /validate-plan             Plan only (no execution)
+  /validate-audit            Read-only audit with severity classification
+  /validate-fix              Fix FAIL verdicts (3-strike)
+  /validate-sweep            Autonomous fix-and-revalidate loop
+  /validate-team             Multi-agent parallel platform validation
+  /validate-team-dashboard   Aggregate team validation posture dashboard
+  /validate-consensus        Multi-agent CONSENSUS validation, confidence-scored
+  /validate-dashboard        HTML + markdown evidence summary after a run
+  /validate-benchmark        Measure validation posture
+  /validate-ci               Non-interactive CI/CD mode with exit codes
+  ... (1 more)
 ```
 
 ### Shared filesystem
