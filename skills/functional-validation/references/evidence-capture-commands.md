@@ -28,7 +28,8 @@ xcrun simctl spawn booted log show --last 5m --predicate \
   'subsystem == "com.example.MyApp"' > e2e-evidence/app-logs.txt
 
 # Accessibility tree (via idb)
-idb ui describe-all --udid booted > e2e-evidence/accessibility-tree.txt
+UDID=$(xcrun simctl list devices booted | grep -Eo '[0-9A-F-]{36}' | head -1)
+idb ui describe-all --udid "$UDID" > e2e-evidence/accessibility-tree.txt
 
 # Launch app and capture
 xcrun simctl launch booted com.example.MyApp
