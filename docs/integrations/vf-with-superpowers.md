@@ -34,7 +34,7 @@ graph TD
     WP -->|plan| EP["Superpowers /execute-plan<br/>(subagent-driven RED/GREEN loop)"]
     EP --> GATE{{"All tasks GREEN?<br/>Two-stage review PASS?"}}
     GATE -->|No: still RED or review fail| EP
-    GATE -->|Yes: GREEN across all tasks| BOUND[["Boundary:<br/>Superpowers stops at unit-tests-green.<br/>VF starts at real-system behavior."]]
+    GATE -->|Yes: GREEN across all tasks| BOUND[["Boundary:<br/>Superpowers stops at green tests.<br/>VF starts at green-system-behavior.<br/>(unit-tests-green → real-system-behavior)"]]
     BOUND -->|real-system handoff| VAL["VF /validate<br/>(real-system functional check:<br/>preflight → execute → verdict)"]
     VAL -->|report.md| D{PASS?}
     D -->|Yes| SHIP[SHIP]
