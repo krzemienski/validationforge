@@ -9,6 +9,7 @@ PLUGIN_CACHE_DIR="${HOME}/.claude/plugins/cache/validationforge"
 RULES_DIR="${HOME}/.claude/rules"
 CONFIG_FILE="${HOME}/.claude/.vf-config.json"
 INSTALLED_PLUGINS_FILE="${HOME}/.claude/installed_plugins.json"
+RULES_MANIFEST="${HOME}/.claude/.vf-rules-manifest.txt"
 
 info() { echo "[VF] $1"; }
 warn() { echo "[VF] WARNING: $1"; }
@@ -71,20 +72,42 @@ else
   warn "Plugin registry file not found: ${INSTALLED_PLUGINS_FILE}"
 fi
 
-# Remove vf-prefixed rules
+# Remove ONLY the rules we installed — consult the manifest written by
+# install.sh. Falls back to the vf-*.md glob only if the manifest is
+# missing, with a loud warning (review finding L2: the naive glob
+# destroyed user-authored files sharing the vf- prefix).
 vf_rules_found=0
-for rule_file in "${RULES_DIR}"/vf-*.md; do
-  if [ -f "$rule_file" ]; then
+if [ -f "$RULES_MANIFEST" ]; then
+  info "Removing rules listed in manifest: ${RULES_MANIFEST}..."
+  while IFS= read -r rule_target; do
+    [ -z "$rule_target" ] && continue
+    # Only remove if the file currently lives under RULES_DIR — defence
+    # against an edited manifest pointing at unexpected paths.
+    case "$rule_target" in
+      "${RULES_DIR}/"*) ;;
+      *) warn "Skipping manifest entry outside RULES_DIR: $rule_target"; continue ;;
+    esac
+    if [ -f "$rule_target" ]; then
+      rm -f "$rule_target"
+      vf_rules_found=$((vf_rules_found + 1))
+    fi
+  done < "$RULES_MANIFEST"
+  rm -f "$RULES_MANIFEST"
+else
+  warn "Rules manifest not found at ${RULES_MANIFEST}; falling back to vf-*.md glob (may remove user-authored files with the vf- prefix)."
+  shopt -s nullglob
+  for rule_file in "${RULES_DIR}"/vf-*.md; do
     rm -f "$rule_file"
     vf_rules_found=$((vf_rules_found + 1))
-  fi
-done
+  done
+  shopt -u nullglob
+fi
 
 if [ "$vf_rules_found" -gt 0 ]; then
   ok "${vf_rules_found} rule(s) removed from ${RULES_DIR}"
   removed=$((removed + 1))
 else
-  warn "No vf-*.md rules found in ${RULES_DIR}"
+  warn "No vf-prefixed rules found to remove in ${RULES_DIR}"
 fi
 
 # Remove config file
