@@ -1,0 +1,99 @@
+================================================================================
+STEP 09 — COMMANDS INVENTORY
+================================================================================
+Captured: 2026-04-17
+Working dir: .auto-claude/worktrees/tasks/002-plugin-live-load-verification
+Enumeration command: ls commands/*.md
+
+--------------------------------------------------------------------------------
+ON-DISK COUNT
+--------------------------------------------------------------------------------
+Expected (README.md, CLAUDE.md, task spec):  15
+Actual  (ls commands/*.md | wc -l):          15
+Status: PASS — counts match.
+
+Additional check: files with YAML frontmatter opener "---":
+  grep -l '^---' commands/*.md | wc -l  =>  15  (100%)
+
+--------------------------------------------------------------------------------
+ENUMERATED FILES (15)
+--------------------------------------------------------------------------------
+ 1. commands/forge-benchmark.md
+ 2. commands/forge-execute.md
+ 3. commands/forge-install-rules.md
+ 4. commands/forge-plan.md
+ 5. commands/forge-setup.md
+ 6. commands/forge-team.md
+ 7. commands/validate.md
+ 8. commands/validate-audit.md
+ 9. commands/validate-benchmark.md
+10. commands/validate-ci.md
+11. commands/validate-fix.md
+12. commands/validate-plan.md
+13. commands/validate-sweep.md
+14. commands/validate-team.md
+15. commands/vf-setup.md
+
+--------------------------------------------------------------------------------
+FRONTMATTER: name / description (from YAML headers)
+--------------------------------------------------------------------------------
+forge-benchmark.md
+  description: "Measure validation posture across 5 dimensions with trend tracking"
+forge-execute.md
+  description: "Run validation journeys against the real system with autonomous fix loop"
+forge-install-rules.md
+  description: "Install ValidationForge rules to .claude/rules/ for cross-session enforcement"
+forge-plan.md
+  description: "Generate a validation plan with journey discovery and PASS criteria"
+forge-setup.md
+  description: "Initialize ValidationForge for this project"
+forge-team.md
+  description: "Multi-agent parallel validation across platforms"
+validate.md
+  name: validate
+  description: Run full end-to-end validation — detect platform, map journeys, capture evidence, write verdicts.
+validate-audit.md
+  name: validate-audit
+  description: Read-only validation audit — captures evidence and classifies findings without modifying code.
+validate-benchmark.md
+  name: validate-benchmark
+  description: Benchmark validation coverage, speed, and evidence quality against baseline metrics
+validate-ci.md
+  name: validate-ci
+  description: Non-interactive CI/CD mode — auto-execute full validation pipeline with exit codes.
+validate-fix.md
+  name: validate-fix
+  description: Fix validation failures and re-validate until all journeys pass (3-strike limit).
+validate-plan.md
+  name: validate-plan
+  description: Analyze codebase and generate a validation plan with PASS criteria — no execution.
+validate-sweep.md
+  name: validate-sweep
+  description: Autonomous validation loop — detect, validate, fix, re-validate until PASS or max attempts
+validate-team.md
+  name: validate-team
+  description: Spawn coordinated validation agents across platforms with evidence handoff
+vf-setup.md
+  name: vf-setup
+  description: Setup and configure ValidationForge for a project or globally
+
+--------------------------------------------------------------------------------
+CROSS-REFERENCE: README.md & CLAUDE.md claims
+--------------------------------------------------------------------------------
+README.md banner line:
+  "41 skills | 15 commands | 7 hooks | 5 agents | 8 rules | 8 shell scripts | ..."
+  Commands claim: 15  —  MATCHES on-disk count.
+
+CLAUDE.md "Inventory → Commands (15)" section lists:
+  Validation Commands: vf-setup, validate, validate-plan, validate-audit,
+                       validate-fix, validate-ci, validate-team, validate-sweep,
+                       validate-benchmark  (9)
+  Forge Commands:      forge-setup, forge-plan, forge-execute, forge-team,
+                       forge-benchmark, forge-install-rules  (6)
+  Documented total: 9 + 6 = 15  —  MATCHES on-disk file list exactly.
+
+--------------------------------------------------------------------------------
+VERDICT
+--------------------------------------------------------------------------------
+PASS — 15 commands on disk, 15 claimed, 15 with YAML frontmatter openers.
+      No missing or extra files. Names align with CLAUDE.md inventory table.

@@ -1,0 +1,207 @@
+================================================================================
+STEP 10 — SKILLS INVENTORY (and agents, rules, hooks cross-check)
+================================================================================
+Captured: 2026-04-17
+Working dir: .auto-claude/worktrees/tasks/002-plugin-live-load-verification
+Enumeration commands:
+  find skills -mindepth 1 -maxdepth 1 -type d
+  find skills -mindepth 2 -maxdepth 2 -name SKILL.md
+
+--------------------------------------------------------------------------------
+ON-DISK COUNTS vs DOCUMENTED CLAIMS
+--------------------------------------------------------------------------------
+Primitive   On-disk  README    CLAUDE.md  Task spec   Result
+---------   -------  ------    ---------  ---------   ------
+skills      41       41        41         41          MATCH
+  SKILL.md   41       (each)   (each)    (each)      MATCH
+commands    15       15        15         15          MATCH
+hooks (.js) 8        7*        7*         8           MATCH (with note)
+agents      5        5         5          5           MATCH
+rules       8        8         8          8           MATCH
+
+* README.md and CLAUDE.md describe 7 hooks in their tables because patterns.js
+  is a shared helper/bridge module, not a hook itself. The task spec's "8 hook
+  files (7 hooks + patterns.js bridge)" framing is the precise on-disk view:
+  `ls hooks/*.js | wc -l` => 8, of which 7 are registered hooks and 1
+  (patterns.js) is the shared bridge. No mismatch; documentation phrasing only.
+
+--------------------------------------------------------------------------------
+SKILL STRUCTURAL CHECKS (41 dirs)
+--------------------------------------------------------------------------------
+Directories under skills/:                               41
+Directories containing a SKILL.md:                       41 (100%)
+SKILL.md files starting with YAML opener '---':          41 (100%)
+SKILL.md files with a 'name:' field:                     41 (100%)
+SKILL.md files with a 'description:' field:              41 (100%)
+Missing SKILL.md:                                        0
+Invalid frontmatter (no leading ---):                    0
+
+--------------------------------------------------------------------------------
+SKILLS LIST (41)
+--------------------------------------------------------------------------------
+Platform Validation (CLAUDE.md claims 11):
+   1. api-validation
+   2. chrome-devtools
+   3. cli-validation
+   4. fullstack-validation
+   5. ios-simulator-control
+   6. ios-validation
+   7. ios-validation-gate
+   8. ios-validation-runner
+   9. playwright-validation
+  10. web-testing
+  11. web-validation
+  => Count: 11  MATCH
+
+Quality Gates (CLAUDE.md claims 6):
+  12. build-quality-gates
+  13. functional-validation
+  14. gate-validation-discipline
+  15. no-mocking-validation-gates
+  16. preflight
+  17. verification-before-completion
+  => Count: 6  MATCH
+
+Design Validation (CLAUDE.md claims 4):
+  18. design-token-audit
+  19. design-validation
+  20. stitch-integration
+  21. visual-inspection
+  => Count: 4  MATCH
+
+Analysis & Research (CLAUDE.md claims 3):
+  22. research-validation
+  23. retrospective-validation
+  24. sequential-analysis
+  => Count: 3  MATCH
+
+Specialized (CLAUDE.md claims 6):
+  25. accessibility-audit
+  26. create-validation-plan
+  27. e2e-testing
+  28. e2e-validate
+  29. parallel-validation
+  30. responsive-validation
+  => Count: 6  MATCH
+
+Operational (CLAUDE.md claims 5):
+  31. baseline-quality-assessment
+  32. condition-based-waiting
+  33. error-recovery
+  34. full-functional-audit
+  35. production-readiness-audit
+  => Count: 5  MATCH
+
+Forge Orchestration (CLAUDE.md claims 6):
+  36. forge-benchmark
+  37. forge-execute
+  38. forge-plan
+  39. forge-setup
+  40. forge-team
+  41. validate-audit-benchmarks
+  => Count: 6  MATCH
+
+Category subtotal: 11+6+4+3+6+5+6 = 41  MATCHES grand total 41.
+
+--------------------------------------------------------------------------------
+SKILL FRONTMATTER NAMES (from each SKILL.md)
+--------------------------------------------------------------------------------
+accessibility-audit                name: accessibility-audit
+api-validation                     name: api-validation
+baseline-quality-assessment        name: baseline-quality-assessment
+build-quality-gates                name: build-quality-gates
+chrome-devtools                    name: chrome-devtools
+cli-validation                     name: cli-validation
+condition-based-waiting            name: condition-based-waiting
+create-validation-plan             name: create-validation-plan
+design-token-audit                 name: design-token-audit
+design-validation                  name: design-validation
+e2e-testing                        name: e2e-testing
+e2e-validate                       name: e2e-validate
+error-recovery                     name: error-recovery
+forge-benchmark                    name: forge-benchmark
+forge-execute                      name: forge-execute
+forge-plan                         name: forge-plan
+forge-setup                        name: forge-setup
+forge-team                         name: forge-team
+full-functional-audit              name: full-functional-audit
+fullstack-validation               name: fullstack-validation
+functional-validation              name: functional-validation
+gate-validation-discipline         name: gate-validation-discipline
+ios-simulator-control              name: ios-simulator-control
+ios-validation                     name: ios-validation
+ios-validation-gate                name: ios-validation-gate
+ios-validation-runner              name: ios-validation-runner
+no-mocking-validation-gates        name: no-mocking-validation-gates
+parallel-validation                name: parallel-validation
+playwright-validation              name: playwright-validation
+preflight                          name: preflight
+production-readiness-audit         name: production-readiness-audit
+research-validation                name: research-validation
+responsive-validation              name: responsive-validation
+retrospective-validation           name: retrospective-validation
+sequential-analysis                name: sequential-analysis
+stitch-integration                 name: stitch-integration
+validate-audit-benchmarks          name: validate-audit-benchmarks
+verification-before-completion     name: verification-before-completion
+visual-inspection                  name: visual-inspection
+web-testing                        name: web-testing
+web-validation                     name: web-validation
+
+All 41 directory names correspond 1:1 with SKILL.md frontmatter 'name:' values.
+
+--------------------------------------------------------------------------------
+HOOKS (cross-check with CLAUDE.md Hooks table)
+--------------------------------------------------------------------------------
+On disk (hooks/*.js): 8 files
+  hooks/block-test-files.js             [hook, listed in CLAUDE.md]
+  hooks/completion-claim-validator.js   [hook, listed in CLAUDE.md]
+  hooks/evidence-gate-reminder.js       [hook, listed in CLAUDE.md]
+  hooks/evidence-quality-check.js       [hook, listed in CLAUDE.md]
+  hooks/mock-detection.js               [hook, listed in CLAUDE.md]
+  hooks/patterns.js                     [shared bridge/helpers, NOT in table]
+  hooks/validation-not-compilation.js   [hook, listed in CLAUDE.md]
+  hooks/validation-state-tracker.js     [hook, listed in CLAUDE.md]
+
+Registered hooks: 7  (matches CLAUDE.md "Hooks (7)" table)
+Shared module:    1  (patterns.js — shared patterns/bridge used by hook scripts)
+Total .js files:  8  (matches task spec "8 hook files")
+Also present:     hooks/hooks.json (registry/manifest; not counted as a hook)
+
+--------------------------------------------------------------------------------
+AGENTS (CLAUDE.md Agents (5) table)
+--------------------------------------------------------------------------------
+On disk (agents/*.md): 5 files
+   1. agents/evidence-capturer.md
+   2. agents/platform-detector.md
+   3. agents/sweep-controller.md
+   4. agents/validation-lead.md
+   5. agents/verdict-writer.md
+Count: 5  MATCH (CLAUDE.md table lists exactly these 5).
+
+--------------------------------------------------------------------------------
+RULES (CLAUDE.md Rules (8) table)
+--------------------------------------------------------------------------------
+On disk (rules/*.md): 8 files
+   1. rules/benchmarking.md
+   2. rules/evidence-management.md
+   3. rules/execution-workflow.md
+   4. rules/forge-execution.md
+   5. rules/forge-team-orchestration.md
+   6. rules/platform-detection.md
+   7. rules/team-validation.md
+   8. rules/validation-discipline.md
+Count: 8  MATCH (CLAUDE.md table lists exactly these 8).
+
+--------------------------------------------------------------------------------
+SUMMARY VERDICT
+--------------------------------------------------------------------------------
+PASS — No mismatches against documented claims.
+  * 41 skill directories, each with a SKILL.md that begins with YAML '---'
+    and declares both name and description fields.
+  * 15 command markdown files, all with YAML frontmatter.
+  * 8 .js files under hooks/ (7 registered hooks + 1 shared patterns.js bridge).
+  * 5 agents and 8 rules, matching CLAUDE.md tables exactly.
+  * Only minor phrasing difference between README/CLAUDE.md ("7 hooks")
+    and task spec ("8 hook files"): both describe the same reality;
+    patterns.js is explicitly a shared bridge module, not a registered hook.
