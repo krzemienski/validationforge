@@ -1,7 +1,7 @@
 {
   "name": "validationforge",
   "version": "1.0.0",
-  "description": "No-mock validation platform for Claude Code. Ship verified code, not 'it compiled' code.",
+  "description": "No-mock validation platform for Claude Code. Ship verified code, not 'it compiled' code. Includes 52 skills, 19 commands, 7 enforcement hooks, 7 agents, and 9 rules.",
   "author": {
     "name": "Nick Krzemienski",
     "url": "https://github.com/krzemienski"
@@ -15,11 +15,8 @@
     "no-mock",
     "functional-testing",
     "evidence-based",
-    "quality-assurance"
-  ],
-  "commands": "./commands/",
-  "skills": "./skills/",
-  "agents": "./agents/",
-  "rules": "./rules/",
-  "hooks": "./hooks/"
+    "quality-assurance",
+    "hooks",
+    "agents"
+  ]
 }

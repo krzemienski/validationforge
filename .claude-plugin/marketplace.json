@@ -1,5 +1,6 @@
 {
   "name": "validationforge",
+  "description": "ValidationForge marketplace — no-mock functional validation for Claude Code. Hooks, skills, commands, and agents that ship verified code, not 'it compiled' code.",
   "owner": {
     "name": "Nick Krzemienski",
     "url": "https://github.com/krzemienski"
@@ -8,8 +9,24 @@
     {
       "name": "validationforge",
       "source": "./",
-      "description": "No-mock functional validation for Claude Code. Ship verified code, not 'it compiled' code.",
-      "version": "1.0.0"
+      "version": "1.0.0",
+      "description": "No-mock functional validation for Claude Code. 52 skills, 19 commands, 7 enforcement hooks, 7 agents, 9 rules. Block test files, capture evidence, write evidence-backed verdicts.",
+      "author": {
+        "name": "Nick Krzemienski",
+        "url": "https://github.com/krzemienski"
+      },
+      "homepage": "https://validationforge.dev",
+      "license": "MIT",
+      "keywords": [
+        "claude-code",
+        "validation",
+        "no-mock",
+        "functional-testing",
+        "evidence-based",
+        "quality-assurance",
+        "hooks",
+        "agents"
+      ]
     }
   ]
 }

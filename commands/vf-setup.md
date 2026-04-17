@@ -133,25 +133,38 @@ ENFORCEMENT_LEVEL="standard"   # replace with actual user selection
 
 Based on scope (local or global), copy rules from the ValidationForge plugin directory.
 
-First, resolve the plugin installation directory:
+First, resolve the plugin installation directory. ValidationForge supports two install paths:
+
+| Install method | Plugin location | Resolution variable |
+|----------------|-----------------|---------------------|
+| Marketplace (`/plugin install validationforge@validationforge`) | `~/.claude/plugins/cache/validationforge/validationforge/<version>/` | `${CLAUDE_PLUGIN_ROOT}` (set by Claude Code at hook/command load) |
+| `install.sh` / curl pipe | `~/.claude/plugins/validationforge/` | `installDir` field in `~/.claude/.vf-config.json` |
+
+Resolution order (most authoritative first):
 
 ```bash
-# Resolve plugin install directory from config written by install.sh
+# 1. CLAUDE_PLUGIN_ROOT — set by Claude Code when this command is invoked from a marketplace plugin
+# 2. installDir from ~/.claude/.vf-config.json — set by install.sh
+# 3. Default install.sh path — last-resort fallback
 CONFIG_FILE="$HOME/.claude/.vf-config.json"
 INSTALL_DIR=""
 
-if [ -f "$CONFIG_FILE" ]; then
+if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -d "$CLAUDE_PLUGIN_ROOT" ]; then
+  INSTALL_DIR="$CLAUDE_PLUGIN_ROOT"
+elif [ -f "$CONFIG_FILE" ]; then
   INSTALL_DIR=$(jq -r '.installDir // empty' "$CONFIG_FILE" 2>/dev/null)
 fi
 
-# Fall back to CLAUDE_PLUGIN_ROOT (set by Claude Code when loading plugins),
-# then to the default install path used by install.sh
-INSTALL_DIR="${INSTALL_DIR:-${CLAUDE_PLUGIN_ROOT:-${HOME}/.claude/plugins/validationforge}}"
+INSTALL_DIR="${INSTALL_DIR:-${HOME}/.claude/plugins/validationforge}"
 RULES_SOURCE="${INSTALL_DIR}/rules"
 
 if [ ! -d "$RULES_SOURCE" ]; then
   echo "ERROR: Rules source directory not found: $RULES_SOURCE"
-  echo "       Re-run the installer: curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash"
+  echo ""
+  echo "Re-install ValidationForge using one of:"
+  echo "  Marketplace:  /plugin marketplace add krzemienski/validationforge"
+  echo "                /plugin install validationforge@validationforge"
+  echo "  Install.sh:   curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash"
   exit 1
 fi
 ```

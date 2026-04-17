@@ -7,11 +7,11 @@ Dual-platform enforcement architecture for Claude Code (CC) and OpenCode (OC). B
 | Primitive | Count | CC Location | OC Location |
 |-----------|------:|-------------|-------------|
 | Skills | 52 | `skills/*/SKILL.md` | (shared via symlink) |
-| Commands | 16 | `commands/*.md` | (shared via symlink) |
-| Hooks | 8 | `hooks/*.js` + `hooks.json` | `.opencode/plugins/validationforge/index.ts` |
+| Commands | 19 | `commands/*.md` | (shared via symlink) |
+| Hooks | 7 registered | `hooks/*.js` + `hooks.json` | `.opencode/plugins/validationforge/index.ts` |
 | Agents | 7 | `agents/*.md` | (shared) |
-| Rules | 8 | `rules/*.md` | (shared) |
-| Shell Scripts | 9 | `scripts/` + `scripts/benchmark/` | (shared) |
+| Rules | 9 | `rules/*.md` | (shared) |
+| Shell Scripts | 26 | 20 in `scripts/` + 6 in `scripts/benchmark/` | (shared) |
 | Config Profiles | 3 | `config/*.json` | (shared) |
 
 > **Recently added:** `team-validation-dashboard` skill (aggregates multi-agent validation results into a unified dashboard view) and `/validate-team-dashboard` command.

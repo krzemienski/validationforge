@@ -2,7 +2,7 @@
 
 **No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
 
-> **52 skills | 19 commands | 7 registered hooks (+3 support .js) | 7 agents | 9 rules | 18 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
+> **52 skills | 19 commands | 7 registered hooks | 7 agents | 9 rules | 26 shell scripts (20 core + 6 benchmark) | Dual-platform: Claude Code plugin + OpenCode plugin**
 
 ## The Iron Rule
 
@@ -60,40 +60,60 @@ Use OMC or ECC to **build** features with agent orchestration and language-speci
 
 ## Installation
 
-> **Important:** After installation, **restart Claude Code** before using ValidationForge. Plugins are loaded at session startup — hooks, skills, and commands will not be active in the session where you ran the installer.
+ValidationForge installs as a Claude Code plugin via marketplace, curl installer, or by cloning into `.opencode/plugins/` for OpenCode.
 
-### npm (global)
+> **Important:** After installation, **restart Claude Code** before running `/vf-setup`. Plugins are loaded at session startup — hooks, skills, and commands are not active in the session where you installed them.
 
-```bash
-npm install -g validationforge
+### Claude Code — Marketplace (recommended)
+
+The canonical Claude Code install path. Three commands, then restart.
+
+```text
+# 1. Add the ValidationForge marketplace
+/plugin marketplace add krzemienski/validationforge
+
+# 2. Install the plugin
+/plugin install validationforge@validationforge
+
+# 3. Restart Claude Code (Cmd/Ctrl-Q, then reopen) so the plugin loads
+
+# 4. Initialize for the current project (interactive)
+/vf-setup
 ```
 
-Installs the `validationforge` CLI globally and makes all skills, commands, hooks, and agents available to Claude Code and OpenCode.
+What each step does:
 
-### Claude Code (install.sh)
+| Step | What it does |
+|------|-------------|
+| `marketplace add krzemienski/validationforge` | Registers the marketplace defined in `.claude-plugin/marketplace.json`. No files are written outside `~/.claude/`. |
+| `install validationforge@validationforge` | Caches the plugin to `~/.claude/plugins/cache/validationforge/validationforge/<version>/`, registers it in `~/.claude/installed_plugins.json`, and arms `hooks/hooks.json`. |
+| Restart | Claude Code re-scans plugins on session start; required for hooks, skills, agents, and commands to register. |
+| `/vf-setup` | Interactive wizard — detects your project platform, picks an enforcement level, copies rules to `.claude/rules/`, scaffolds `e2e-evidence/`, writes `~/.claude/.vf-config.json`. Re-run any time. |
+
+Updating: `/plugin update validationforge@validationforge` then restart. Uninstalling: `/plugin uninstall validationforge@validationforge`.
+
+### Claude Code — install.sh (curl)
+
+For users who prefer a shell installer (e.g. CI provisioning, headless setups):
 
 ```bash
 # Quick install via curl
-curl -sL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
 
 # Or manual clone from GitHub
 git clone --depth 1 https://github.com/krzemienski/validationforge ~/.claude/plugins/validationforge
 ```
 
-The installer clones the repo to `~/.claude/plugins/validationforge`, copies 8 rules to `~/.claude/rules/vf-*.md`, creates the `e2e-evidence/` directory (if inside a git repo), and saves config to `~/.claude/.vf-config.json`.
+The installer clones the repo to `~/.claude/plugins/validationforge`, symlinks the plugin cache so Claude Code's loader can find it, copies 9 rules to `~/.claude/rules/vf-*.md`, creates `e2e-evidence/` (when inside a git repo), and writes `~/.claude/.vf-config.json`. After installing, restart Claude Code and run `/vf-setup`.
 
-> **Note:** Restart Claude Code after installation to activate the plugin and load all skills, hooks, and commands.
-
-Environment variables: `VF_SOURCE` (override repo URL), `VF_INSTALL_DIR` (override install path, must be under `$HOME` or temp).
-
-After running any install method, restart Claude Code for the plugin to take effect.
+Environment variables: `VF_SOURCE` (override repo URL), `VF_INSTALL_DIR` (override install path; must be under `$HOME` or temp).
 
 ### OpenCode (opencode.json)
 
 > **Note:** The OpenCode plugin has not been verified in a live OpenCode session. See [Known Limitations](#known-limitations).
 
 ```bash
-# Clone into your project's .opencode/plugins/ directory (requires published GitHub repo)
+# Clone into your project's .opencode/plugins/ directory
 mkdir -p .opencode/plugins
 git clone --depth 1 https://github.com/krzemienski/validationforge .opencode/plugins/validationforge
 # Or symlink shared skills/commands
@@ -104,13 +124,30 @@ The OpenCode plugin (`index.ts`) registers `permission.ask`, `tool.execute.after
 
 ### Initialize for Your Project
 
-```bash
-/vf-setup                    # Interactive setup wizard
+After installing via any method above and restarting Claude Code, run `/vf-setup` in your project directory:
+
+```text
+/vf-setup                    # Interactive setup wizard (recommended)
 /vf-setup --strict           # Skip prompts, use strict enforcement
+/vf-setup --standard         # Skip prompts, use standard enforcement
 /vf-setup --permissive       # Skip prompts, use permissive enforcement
+/vf-setup --global           # Install rules to ~/.claude/ for all projects
+/vf-setup --force            # Re-run even if already configured
 ```
 
-Setup detects your platform, selects enforcement level, scaffolds `e2e-evidence/`, installs rules to `.claude/rules/vf-*`, and verifies MCP server availability.
+`/vf-setup` resolves the plugin install dir from `${CLAUDE_PLUGIN_ROOT}` first (set by Claude Code for marketplace installs) and falls back to the `installDir` recorded in `~/.claude/.vf-config.json` (written by `install.sh`). Either install path produces the same project layout: rules in `.claude/rules/`, evidence in `e2e-evidence/`, active enforcement profile in `.vf/active-config.json`.
+
+### Uninstall
+
+```bash
+# Marketplace install
+/plugin uninstall validationforge@validationforge
+
+# install.sh install
+bash uninstall.sh
+```
+
+Both remove the plugin and rules. Your project's `e2e-evidence/` directory is preserved.
 
 ### Uninstall
 
@@ -271,8 +308,8 @@ Designed grade thresholds (pending empirical calibration): A (90+), B (80–89),
 | Commands | 19 | `commands/*.md` |
 | CC Hooks | 7 registered + 3 support .js | `hooks/*.js` + `hooks/hooks.json` |
 | Agents | 7 | `agents/*.md` |
-| Rules | 8 | `rules/*.md` |
-| Shell Scripts | 17 | `scripts/*.sh` + `scripts/benchmark/*.sh` |
+| Rules | 9 | `rules/*.md` |
+| Shell Scripts | 26 | 20 in `scripts/*.sh` + 6 in `scripts/benchmark/*.sh` |
 | OC Plugin Files | 2 | `.opencode/plugins/validationforge/{index.ts,patterns.ts}` |
 | Config Profiles | 3 | `config/*.json` |
 | Report Templates | 7 | `templates/*.md` |
