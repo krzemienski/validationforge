@@ -1,5 +1,7 @@
 # Deep Link Testing
 
+*Loaded by `react-native-validation` when executing Step 6 (Deep Link Testing) and you need the iOS `simctl openurl` and Android `adb shell am start` invocations for custom-scheme and universal-link routing.*
+
 Exercise app routing via custom URL schemes and universal/app links on both iOS and Android.
 
 ## iOS Deep Links

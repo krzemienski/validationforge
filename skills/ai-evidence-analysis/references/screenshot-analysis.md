@@ -1,5 +1,7 @@
 # Screenshot Analysis Reference
 
+*Loaded by `ai-evidence-analysis` when analyzing screenshot evidence (`.png`/`.jpg`/`.webp`) and you need the vision-model prompt template, the `ScreenshotAnalysisResult` schema (PageLoadResult, ElementCheck, Finding), and PASS/WARN/FAIL example outputs.*
+
 Vision model prompt templates, output schema definitions, and example analysis
 output for AI-powered screenshot evidence analysis.
 

@@ -1,5 +1,7 @@
 # Authentication and Admin Testing (Steps 8–9)
 
+*Loaded by `django-validation` when executing Step 7 (Authentication Testing) and Step 8 (Django Admin Check) and you need the token/JWT login curl snippets, the unauthenticated 401/403 probe, and the Django admin + superuser-seed commands.*
+
 Supports **Step 7/8 (Authentication Testing)** and **Step 8/9 (Django Admin
 Check)**. Teaches the pattern: obtain a token via login, confirm unauthenticated
 requests are rejected, and verify the admin panel is reachable (Django only).

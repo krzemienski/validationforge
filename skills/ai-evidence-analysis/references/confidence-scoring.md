@@ -1,5 +1,7 @@
 # Confidence Scoring Reference
 
+*Loaded by `ai-evidence-analysis` when assigning or calibrating a confidence score (per-item or journey-level) and you need the 0-100 four-tier rubric, per-evidence-type adjustment tables, and the weighted-aggregation + floor-rule formula.*
+
 Scoring rubric (0-100), per-evidence-type criteria, and journey-level aggregation rules
 for AI-powered evidence analysis confidence scores (0–100).
 

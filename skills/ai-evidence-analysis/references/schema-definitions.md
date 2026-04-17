@@ -1,6 +1,6 @@
 # Schema Definitions
 
-This file is loaded by the `ai-evidence-analysis` skill when you need the full field reference for `AnalysisResult` output — field types, confidence-to-verdict mapping, and the `Finding` sub-schema. Load this when writing or validating the JSON output of an analysis run.
+*Loaded by `ai-evidence-analysis` when writing or validating the JSON output of an analysis run and you need the full `AnalysisResult` field reference, confidence-to-verdict mapping table, and the `Finding` sub-schema.*
 
 ## Analysis Output Schema
 

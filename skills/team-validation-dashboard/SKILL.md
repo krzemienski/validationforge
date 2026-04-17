@@ -25,8 +25,10 @@ Aggregate team validation posture into a shared dashboard. Shows coverage, postu
 
 ## Architecture
 
+Scripts live at the ValidationForge repo root under `scripts/` — not in the skill directory. Invoke them via `bash scripts/<name>.sh` from the project root.
+
 ```
-team-validation-dashboard
+<repo-root>/scripts/
 ├── collect-team-metrics.sh  → .vf/team/snapshot.json
 ├── team-dashboard.sh        → .vf/team/dashboard.md + terminal table
 └── assign-ownership.sh      → .vf/team/ownership.json
@@ -44,6 +46,12 @@ team-validation-dashboard
 | Regressions | regressions | Count of regressions found |
 
 Score colors: Green (80–100), Yellow (60–79), Red (0–59).
+
+### Why these thresholds
+
+- **Why 60 = critical:** Below this, more than 40% of the team's posture is regressing or unmeasured — too noisy to act on without intervention. A project here needs a dedicated validation run, not a dashboard note.
+- **Why 80 = healthy:** Matches the CI gate threshold in `.vf/config.json` (`benchmark.min_aggregate: 80`). A project ≥ 80 passes the same bar CI would enforce, so no extra attention is warranted.
+- **60–79 (yellow):** Not broken, but drifting. Review at the next weekly/quarterly cycle before it crosses into critical.
 
 ## Data Availability Note
 

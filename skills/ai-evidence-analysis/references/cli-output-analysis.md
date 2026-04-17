@@ -1,5 +1,7 @@
 # CLI Output Analysis Reference
 
+*Loaded by `ai-evidence-analysis` when analyzing CLI output evidence (`.txt`/`.log`) and you need the LLM prompt template covering error indicators/success markers/unexpected warnings, the `CliOutputAnalysisResult` schema, and PASS/WARN/FAIL example outputs plus the common-error keyword reference table.*
+
 LLM prompt templates, output schema definitions, and example analysis output for
 AI-powered CLI evidence analysis.
 

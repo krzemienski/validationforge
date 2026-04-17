@@ -1,5 +1,7 @@
 # Endpoint and CRUD Testing (Steps 6–7)
 
+*Loaded by `django-validation` when executing Step 6 (Endpoint Testing with curl) and you need the per-verb curl invocations (GET list/detail, POST create, PUT update, DELETE) with resource-ID chaining and tee-to-evidence patterns.*
+
 Supports **Step 6 (Endpoint Testing with curl)** covering GET list/detail, POST
 create, PUT update, and DELETE flows. Teaches the pattern: hit each REST verb
 with `curl`, pipe the response to a named evidence file, and capture the HTTP

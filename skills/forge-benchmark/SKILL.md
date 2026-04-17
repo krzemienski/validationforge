@@ -1,6 +1,6 @@
 ---
 name: forge-benchmark
-description: "Use to measure how mature a project's validation posture is — not whether a single validation run passed, but whether the team has built good validation habits. Scores across 4 weighted dimensions: Coverage (35% — what fraction of features have journeys), Evidence Quality (30% — are evidence files actually reviewed vs just captured), Enforcement (25% — are hooks/rules active), Speed (10% — time per validation run). Produces an A-F grade and per-dimension breakdown via scripts/benchmark/score-project.sh. Reach for it on phrases like 'benchmark our validation', 'validation maturity score', 'how good is our validation', 'posture report', or when tracking validation improvement over time."
+description: "Use to measure how mature a project's validation posture is — not whether a single validation run passed, but whether the team has built good validation habits. Scores across 4 weighted dimensions: Coverage (35% — what fraction of features have journeys), Evidence Quality (30% — are evidence files actually reviewed vs just captured), Enforcement (25% — are hooks/rules active), Speed (10% — time per validation run). Produces an A-F grade and per-dimension breakdown via the bundled scripts/score-project.sh. Reach for it on phrases like 'benchmark our validation', 'validation maturity score', 'how good is our validation', 'posture report', or when tracking validation improvement over time."
 triggers:
   - "benchmark validation"
   - "validation score"

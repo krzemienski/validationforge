@@ -1,5 +1,7 @@
 # Log Streaming
 
+*Loaded by `react-native-validation` when executing Step 5 (Log Streaming) and you need the log-capture one-liners for iOS `simctl spawn log stream`, Android `adb logcat` filters, and Metro output grepping.*
+
 Capture iOS, Android, and Metro bundler logs during validation to detect JS errors, native errors, and bundler issues.
 
 ## iOS App Logs (React Native)

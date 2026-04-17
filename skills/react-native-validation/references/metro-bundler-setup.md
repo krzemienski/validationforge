@@ -1,5 +1,7 @@
 # Metro Bundler Setup
 
+*Loaded by `react-native-validation` when executing Steps 1-3 (Metro startup, React Native CLI build, Expo CLI build) and you need the full bash invocations with flags, tee-to-evidence patterns, and expected-output grep strings.*
+
 Detailed commands for starting Metro and building the app via React Native CLI or Expo CLI.
 
 ## Step 1: Metro Startup

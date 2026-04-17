@@ -1,0 +1,122 @@
+{
+  "stage": "stage-3-polish",
+  "date": "2026-04-17",
+  "scope": "pointer prose + reference-file headers for 4 skills",
+  "skills": {
+    "react-native-validation": {
+      "skill_md_line_count": 138,
+      "pointer_upgrades": {
+        "count": 7,
+        "steps_upgraded": [
+          "Step 1 Metro Startup",
+          "Step 2 Build and Launch (React Native CLI)",
+          "Step 3 Build and Launch (Expo CLI)",
+          "Step 4 Screenshot Capture",
+          "Step 5 Log Streaming",
+          "Step 6 Deep Link Testing",
+          "Step 7 Crash Detection"
+        ],
+        "pattern": "Replaced bare 'See references/X.md.' with 'For the full <specific content>, see references/X.md — load this <when>; skip <conditions>.'"
+      },
+      "reference_headers_added": [
+        "crash-detection.md",
+        "deeplink-testing.md",
+        "log-streaming.md",
+        "metro-bundler-setup.md",
+        "screenshot-capture.md"
+      ],
+      "orphan_refs_resolved": 0
+    },
+    "django-validation": {
+      "skill_md_line_count": 145,
+      "pointer_upgrades": {
+        "count": 8,
+        "steps_upgraded": [
+          "Step 1 Install Dependencies",
+          "Step 2 Django System Check",
+          "Step 3 Migration Status",
+          "Step 4 Start the Server",
+          "Step 5 Health and Root Endpoint Check",
+          "Step 6 Endpoint Testing with curl",
+          "Step 7 Authentication Testing",
+          "Step 8 Django Admin Check"
+        ],
+        "pattern": "Replaced terse '> Full bash + evidence pattern: ref.md' blockquotes with rich pointers (when-to-load + what-it-contains + skip-conditions)."
+      },
+      "reference_headers_added": [
+        "auth-admin-testing.md",
+        "endpoint-testing-crud.md",
+        "server-startup.md",
+        "setup-validation.md"
+      ],
+      "orphan_refs_resolved": 0
+    },
+    "flutter-validation": {
+      "skill_md_line_count": 229,
+      "pointer_upgrades": {
+        "count": 6,
+        "steps_upgraded": [
+          "Step 2 Build -> build-variants.md",
+          "Step 3 Run on Device -> device-and-run.md",
+          "Step 4 Screenshot Capture -> flutter-logs-crashes.md",
+          "Step 5 Log Streaming -> flutter-logs-crashes.md",
+          "Step 6 Widget Tree Inspection -> flutter-logs-crashes.md",
+          "Step 7 Crash Detection -> flutter-logs-crashes.md"
+        ],
+        "pattern": "Replaced inline fragments ('Platform alternatives (iOS simctl, Android adb) in ref.md.') with rich pointers describing exact content and load-condition."
+      },
+      "reference_headers_added": [
+        "build-variants.md",
+        "device-and-run.md",
+        "flutter-logs-crashes.md"
+      ],
+      "orphan_refs_resolved": 0
+    },
+    "ai-evidence-analysis": {
+      "skill_md_line_count": 245,
+      "pointer_upgrades": {
+        "count": 2,
+        "steps_upgraded": [
+          "Analysis Output schema pointer (schema-definitions.md)",
+          "Steps 1-3 protocol pointer (analysis-protocol.md)"
+        ],
+        "pattern": "Upgraded both existing pointers with 'load when / skip when' framing. Remaining pointers added via orphan-ref resolution below."
+      },
+      "reference_headers_added": [
+        "analysis-protocol.md",
+        "api-response-analysis.md",
+        "cli-output-analysis.md",
+        "confidence-scoring.md",
+        "schema-definitions.md",
+        "screenshot-analysis.md"
+      ],
+      "orphan_refs_resolved": 4,
+      "orphan_refs_fix": {
+        "subsection_added": "Per-evidence-type playbooks",
+        "location": "After 'Steps 1-3: Discover, Classify, Analyze' subsection, before 'Step 4: Save Analysis Results'",
+        "newly_linked_refs": [
+          "references/screenshot-analysis.md",
+          "references/api-response-analysis.md",
+          "references/cli-output-analysis.md",
+          "references/confidence-scoring.md"
+        ],
+        "pattern": "Bulleted list; each bullet names the ref, states the evidence type that triggers loading, and describes what structure/tables/examples it adds on top of the base analysis-protocol.md."
+      }
+    }
+  },
+  "verification": {
+    "reference_headers_all_have_one_loaded_by_line": true,
+    "yaml_frontmatter_all_4_skills_intact": true,
+    "total_reference_files_updated": 18,
+    "total_skill_md_files_updated": 4,
+    "head_5_of_each_reference_shows_italicized_loaded_by": true,
+    "grep_c_loaded_by_equals_1_for_every_reference": true
+  },
+  "rules_followed": [
+    "Line 1 H1 matches file purpose; line 3 italicized 'Loaded by <skill-name> when <specific condition>' sentence",
+    "All existing content preserved verbatim below the new header block",
+    "Pointer upgrades describe exact content + load-condition + skip-condition",
+    "Orphan refs resolved via a single grouped subsection placed between protocol overview and Step 4",
+    "No code changes to scripts/; YAML frontmatter untouched on all 4 SKILL.md"
+  ]
+}

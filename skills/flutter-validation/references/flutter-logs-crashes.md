@@ -1,5 +1,7 @@
 # Flutter Screenshots, Logs, Widget Tree, and Crashes
 
+*Loaded by `flutter-validation` when executing Steps 4-7 (Screenshot Capture, Log Streaming, Widget Tree Inspection, Crash Detection) and you need platform-specific alternatives — `xcrun simctl`, `adb logcat flutter:V`, `adb shell uiautomator dump`, and iOS DiagnosticReports scans.*
+
 Platform-specific capture commands for iOS + Android. Use during and after `flutter run`.
 
 ## Screenshot Capture

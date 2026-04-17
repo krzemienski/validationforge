@@ -75,7 +75,9 @@ fi
 
 ## Step 2: Build
 
-Pick the target platform and mode, then run the matching command. Full command matrix (Android APK/AAB, iOS debug/release, Web) in `references/build-variants.md`.
+Pick the target platform and mode, then run the matching command.
+
+> For the full command matrix (Android APK debug/release, Android AAB, iOS debug-simulator/release-device, Web) with the "Build complete" / "Built build/" grep assertion, see `references/build-variants.md` — load it before Step 2 if you're building anything other than Android debug APK; the matrix covers every flag combination.
 
 ```bash
 # Example: Android debug APK
@@ -103,7 +105,9 @@ FLUTTER_PID=$!
 sleep 10   # Wait for app to fully launch
 ```
 
-To target a specific device, use `flutter devices` to list IDs, then `flutter run -d DEVICE_ID`. Device selection guidance (simulator vs emulator vs physical) is in `references/device-and-run.md`.
+To target a specific device, use `flutter devices` to list IDs, then `flutter run -d DEVICE_ID`.
+
+> For device-selection guidance (iOS simulator vs Android emulator vs physical device) and the release-mode (`--release`) launch pattern, see `references/device-and-run.md` — load it during Step 3 if you need to target a specific device or validate in release mode; skip if running on the default debug simulator.
 
 Verify the app launched:
 ```bash
@@ -130,7 +134,7 @@ flutter screenshot --out e2e-evidence/flutter-02-main-view.png -d DEVICE_ID
 flutter screenshot --out e2e-evidence/flutter-03-interaction-result.png -d DEVICE_ID
 ```
 
-Platform alternatives (iOS simctl, Android adb) in `references/flutter-logs-crashes.md`.
+> For platform-specific screenshot alternatives when `flutter screenshot` fails — `xcrun simctl io booted screenshot` for iOS, `adb shell screencap -p` + `adb pull` for Android — see `references/flutter-logs-crashes.md` — load it during Step 4 only if `flutter screenshot` errors out or the device doesn't respond; the reference also covers Steps 5-7.
 
 ## Step 5: Log Streaming
 
@@ -153,11 +157,13 @@ else
 fi
 ```
 
-Platform-specific alternatives (`adb logcat flutter:V`, `xcrun simctl spawn booted log stream`) in `references/flutter-logs-crashes.md`.
+> For platform-specific log alternatives — `adb logcat flutter:V *:S` (Android), `xcrun simctl spawn booted log stream --predicate 'process == "Runner"'` (iOS), plus the error-keyword grep — see `references/flutter-logs-crashes.md` — load this during Step 5 if `flutter logs` isn't capturing what you need (e.g. filtered to a process or tag).
 
 ## Step 6: Widget Tree Inspection
 
-Capture the widget tree for structural validation (debug mode only). Press `w` in the `flutter run` console to dump the widget hierarchy, or use `adb shell uiautomator dump` for an accessibility-tree equivalent. Commands in `references/flutter-logs-crashes.md`.
+Capture the widget tree for structural validation (debug mode only). Press `w` in the `flutter run` console to dump the widget hierarchy, or use `adb shell uiautomator dump` for an accessibility-tree equivalent.
+
+> For the `flutter run --debug` widget-tree dump flow plus the `adb shell uiautomator dump /sdcard/ui-dump.xml` + `adb pull` sequence, see `references/flutter-logs-crashes.md` — load it during Step 6 if structural UI validation is part of this journey; skip for pure visual validation.
 
 ## Step 7: Crash Detection
 
@@ -171,7 +177,7 @@ else
 fi
 ```
 
-Platform crash log locations (Android `AndroidRuntime:E` logcat, iOS `~/Library/Logs/DiagnosticReports/Runner*.ips`) and their check commands are in `references/flutter-logs-crashes.md`.
+> For the Android `adb logcat -d -s AndroidRuntime:E` FATAL-EXCEPTION check and the iOS `~/Library/Logs/DiagnosticReports/Runner*.ips` `find -newer` snippet, see `references/flutter-logs-crashes.md` — load this at the end of the run when triaging for native-layer crashes; the inline `flutter run` grep above catches only Dart-side errors.
 
 ## Step 8: Stop the App
 

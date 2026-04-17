@@ -1,5 +1,7 @@
 # Server Startup and Health Check (Steps 4–5)
 
+*Loaded by `django-validation` when executing Steps 4-5 (Start the Server, Health and Root Endpoint Check) and you need the Django `manage.py runserver` and Flask `flask run`/gunicorn variants plus the curl health-probe commands.*
+
 Supports **Step 4 (Start the Server)** and **Step 5 (Health and Root Endpoint
 Check)**. Teaches the pattern: boot the dev server in the background, wait
 briefly, then confirm it's accepting connections with a quick `curl`. Django

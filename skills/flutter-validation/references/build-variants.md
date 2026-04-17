@@ -1,5 +1,7 @@
 # Flutter Build Variants
 
+*Loaded by `flutter-validation` when executing Step 2 (Build) and you need the full command matrix for Android APK/AAB, iOS debug/release/simulator, and Web targets with success-marker grep patterns.*
+
 Detailed build commands for each target platform and build mode. Use after `flutter pub get` succeeds.
 
 ## Install Dependencies

@@ -1,6 +1,6 @@
 # Analysis Protocol
 
-This file is loaded by the `ai-evidence-analysis` skill when you need the step-by-step analysis procedure — evidence discovery, type classification, and per-type model prompts. Load this when executing Steps 1-3 of an analysis run.
+*Loaded by `ai-evidence-analysis` when executing Steps 1-3 of an analysis run and you need the evidence-discovery `find` snippet, the extension + magic-byte classification logic, and the per-type model prompts (screenshot / api-response / cli-output).*
 
 ## Step 1: Discover Evidence
 

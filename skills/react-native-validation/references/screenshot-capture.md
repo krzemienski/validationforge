@@ -1,5 +1,7 @@
 # Screenshot Capture
 
+*Loaded by `react-native-validation` when executing Step 4 (Screenshot Capture) and you need the iOS simctl and Android adb screenshot commands with sequential naming conventions.*
+
 Platform-specific commands for capturing simulator/emulator screenshots at each validation checkpoint.
 
 ## iOS Simulator Screenshots

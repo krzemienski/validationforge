@@ -1,5 +1,7 @@
 # Crash Detection
 
+*Loaded by `react-native-validation` when executing Step 7 (Crash Detection) and you need the iOS DiagnosticReports find snippet, Android logcat FATAL grep, and Metro Red-Screen-of-Death JS error patterns.*
+
 Post-run checks for native crashes (iOS DiagnosticReports, Android logcat FATAL) and JavaScript runtime errors (Metro Red Screen of Death).
 
 ## iOS Crash Detection

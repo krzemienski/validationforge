@@ -74,7 +74,7 @@ Bad patterns that show up when this skill is misused:
 
 Every evidence item analyzed produces an `AnalysisResult` JSON object containing `evidence_file`, `evidence_type`, a 0–100 `confidence` score, a `verdict_label` (PASS/WARN/FAIL), a list of `findings` with severity, a 1–3 sentence `summary`, and an `analyzed_at` timestamp. Verdict labels are derived from confidence thresholds and finding severity — a CRITICAL finding forces FAIL regardless of score.
 
-> For the full field-by-field schema, confidence-to-verdict mapping table, and `Finding` sub-schema, see `references/schema-definitions.md`. Load that file when writing the JSON output or validating an existing analysis file.
+> For the full field-by-field `AnalysisResult` schema, confidence-to-verdict mapping table, and `Finding` sub-schema, see `references/schema-definitions.md` — load this whenever you are about to write an `ai-analysis-*.json` file or validate an existing one; skip if you're only reading results a previous run produced.
 
 ## Analysis Protocol
 
@@ -84,7 +84,16 @@ The analysis pipeline has five sequential steps. Steps 1–3 (discover, classify
 
 **Fast path**: `bash scripts/detect-evidence-type.sh --evidence-dir=e2e-evidence --write-tsv` produces `e2e-evidence/_classified.tsv` that pre-classifies every evidence file by category. Read that TSV to skip inline extension/content heuristics; fall back to the reference-file heuristics only when the script is unavailable.
 
-> For Steps 1–3 detail (the `find` discovery snippet, the extension + magic-byte classification branches, and the exact model prompts for screenshot / api-response / cli-output analysis), see `references/analysis-protocol.md`. Load that file when you're about to invoke a model on an evidence item.
+> For the full Steps 1-3 procedure (the `find` discovery snippet, the extension + magic-byte classification branches, and the base per-type model prompts), see `references/analysis-protocol.md` — load this before running Step 1; it covers the classification fallback logic you need when the TSV fast-path script is not available.
+
+### Per-evidence-type playbooks
+
+Load the matching playbook reference before invoking a model on any item — each file has the exact prompt template, full output schema, per-severity scoring adjustments, and PASS/WARN/FAIL example outputs for its type.
+
+- **`references/screenshot-analysis.md`** — load this when analyzing screenshot evidence (`.png`/`.jpg`/`.webp`); it adds the page-load-complete + expected-elements + visual-regressions structure on top of the base protocol.
+- **`references/api-response-analysis.md`** — load this when analyzing API response evidence (`.json`); it adds schema-compliance + error-handling + edge-case + sensitive-data-leak structure, including the CRITICAL-on-leak rule.
+- **`references/cli-output-analysis.md`** — load this when analyzing CLI output evidence (`.txt`/`.log`); it adds error-indicator + success-marker + unexpected-warning structure plus the common-error keyword reference table.
+- **`references/confidence-scoring.md`** — load this whenever you need to assign or sanity-check a confidence score, or when aggregating per-item scores into a journey-level score; it has the 0-100 four-tier rubric, per-type adjustment tables, floor rules, and the weighted-aggregation formula.
 
 ### Step 4: Save Analysis Results
 

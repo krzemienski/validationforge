@@ -38,21 +38,21 @@ If using a virtual environment, activate it before starting the protocol. See
 Install packages from `requirements.txt` (or via `pip-tools`) and capture the
 pip log as evidence, grepping for a success marker.
 
-> Full bash + evidence pattern: `references/setup-validation.md`
+> For the full `pip install`/`pip-sync` + tee + success-marker grep snippet plus the virtualenv bootstrap, see `references/setup-validation.md` — load this before Step 1 if you need the exact commands or the `Successfully installed` grep pattern; the same reference also covers Steps 2 and 3.
 
 ### Step 2: Django System Check
 
 Run `python manage.py check` to catch configuration errors before booting the
 server. For deployment readiness, add `--deploy`.
 
-> Full bash + evidence pattern: `references/setup-validation.md`
+> For the `manage.py check` bash block with the "System check identified no issues" grep and the `--deploy` variant, see `references/setup-validation.md` — load it before Step 2 if you need the exact invocation; skip if `manage.py check` is already in muscle memory.
 
 ### Step 3: Migration Status
 
 Confirm all database migrations are applied via `showmigrations`, then run
 `migrate` for any outstanding items.
 
-> Full bash + evidence pattern: `references/setup-validation.md`
+> For the `showmigrations` + unapplied-`[ ]` grep + `migrate` fallback sequence, see `references/setup-validation.md` — load it before Step 3 if you need the exact grep pattern for detecting pending migrations.
 
 ### Step 4: Start the Server
 
@@ -60,14 +60,14 @@ Boot the dev server in the background and wait briefly before probing it.
 Django uses `manage.py runserver`; Flask uses `flask run` or `gunicorn` with
 `FLASK_APP` / `FLASK_ENV` env vars.
 
-> Django and Flask variants: `references/server-startup.md`
+> For the Django `runserver` and Flask `flask run`/gunicorn bash blocks (with `&`, `SERVER_PID`, sleep, and curl-readiness probe), see `references/server-startup.md` — load it before Step 4; skip only if you're running a framework already covered by your own startup script.
 
 ### Step 5: Health and Root Endpoint Check
 
 `curl` the root, API root, and/or custom `/health/` endpoint; capture response
 bodies and HTTP status codes.
 
-> Full bash + curl patterns: `references/server-startup.md`
+> For the `curl -w HTTP_STATUS:%{http_code}` patterns for root, DRF API root, and custom `/health/` endpoints, see `references/server-startup.md` — load it during Step 5 if you need the exact curl flags for status + body capture.
 
 ### Step 6: Endpoint Testing with curl
 
@@ -75,7 +75,7 @@ Exercise GET list, POST create, GET detail, PUT update, and DELETE flows for
 at least one primary resource. Chain the created resource ID through subsequent
 requests, and verify DELETE is persistent by re-reading and expecting 404.
 
-> Full curl patterns per verb: `references/endpoint-testing-crud.md`
+> For the per-verb curl invocations (list / create / detail / update / delete) with tee-to-JSON and the Python one-liner to extract the created resource ID, see `references/endpoint-testing-crud.md` — load this before Step 6 every time; the resource-ID chaining pattern is non-obvious and easy to break.
 
 ### Step 7: Authentication Testing
 
@@ -83,14 +83,14 @@ Obtain a DRF token or JWT access token from the login endpoint, store it in an
 env var, and confirm unauthenticated requests to protected routes return 401
 or 403.
 
-> Full auth bash patterns: `references/auth-admin-testing.md`
+> For the DRF token login, simplejwt access-token capture, and the unauthenticated-401/403 probe, see `references/auth-admin-testing.md` — load it during Step 7; skip if auth is outside this journey's scope.
 
 ### Step 8: Django Admin Check
 
 Confirm `/admin/` returns 200 or a 302 login redirect. If needed, pre-seed a
 superuser via `manage.py shell`.
 
-> Full admin check + superuser snippet: `references/auth-admin-testing.md`
+> For the admin-200/302 curl check plus the `manage.py shell` superuser-seeding one-liner, see `references/auth-admin-testing.md` — load it during Step 8 if you're validating Django admin; skip for Flask/FastAPI.
 
 ### Step 9: Stop the Server
 

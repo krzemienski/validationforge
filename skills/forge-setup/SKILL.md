@@ -27,15 +27,19 @@ Run this once per project before any other ValidationForge command. If `.validat
 
 Scan the project root for platform indicators:
 
-| Platform | Indicators | Validation Tools |
-|----------|-----------|-----------------|
-| iOS | .xcodeproj, .swift, Package.swift | Xcode build, simctl, idb |
-| Web | package.json + react/next/vue/svelte | Playwright, Chrome DevTools |
-| API | Express/Fastify routes, OpenAPI spec | curl, httpie, API snapshots |
-| CLI | bin entries, argument parsers | Direct invocation, exit codes |
-| Design | DESIGN.md, Stitch project, Figma | Visual diff, token audit |
+| Platform | Signals | Validation tool(s) |
+|----------|---------|--------------------|
+| iOS | .xcodeproj, .xcworkspace, Package.swift, .swift files | xcrun simctl, Xcode MCP, idb |
+| react-native | package.json with `react-native` dep, metro.config.js, app.json | Expo CLI, Metro bundler, device/simulator |
+| flutter | pubspec.yaml, lib/main.dart, .dart files | flutter run, flutter test, device/simulator |
+| cli | Cargo.toml [[bin]], go.mod + main.go, package.json "bin" | Direct invocation, exit codes |
+| api | Backend routes WITHOUT frontend templates, OpenAPI spec | curl, httpie, API snapshots |
+| web | Frontend framework (react/next/vue/svelte) WITHOUT backend routes | Playwright, Chrome DevTools |
+| django | requirements.txt + (manage.py OR wsgi.py OR flask import) | python manage.py, pytest, curl |
+| fullstack | Frontend AND backend in same project | All tools, bottom-up (DB → API → UI) |
+| generic | None of the above | Adaptive entry point discovery |
 
-Multiple platforms can coexist (fullstack detection).
+Detection is priority-ordered: first match wins (iOS > react-native > flutter > cli > api > web > django > fullstack > generic). Multiple platforms can coexist — fullstack wins when both frontend and backend are present.
 
 ### Phase 2: Enforcement Configuration
 

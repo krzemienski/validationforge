@@ -1,5 +1,7 @@
 # API Response Analysis Reference
 
+*Loaded by `ai-evidence-analysis` when analyzing API response evidence (`.json`) and you need the LLM prompt template covering schema compliance/error handling/edge cases, the `ApiResponseAnalysisResult` schema, and PASS/WARN/FAIL example outputs including stack-trace leak detection.*
+
 LLM prompt templates, output schema definitions, and example analysis output for
 AI-powered API response evidence analysis.
 

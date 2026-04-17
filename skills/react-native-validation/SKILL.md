@@ -48,54 +48,54 @@ adb wait-for-device
 Each step has bash commands in its reference file. Follow in order; do not skip.
 
 ### Step 1: Metro Startup
-See `references/metro-bundler-setup.md`.
 Start Metro with `--reset-cache`, pipe output to `e2e-evidence/rn-metro.txt`, and
 confirm `packager-status:running`.
+For the full background-Metro + Expo-alternative + `curl /status` probe sequence with flags and expected output, see `references/metro-bundler-setup.md` — load this before Step 1 if you need the exact commands; skip if you already know Metro startup by heart.
 **Expected outcome:** Metro process running on port 8081, `curl
 http://localhost:8081/status` returns `packager-status:running`.
 
 ### Step 2: Build and Launch (React Native CLI)
-See `references/metro-bundler-setup.md`.
 For bare RN projects: `npx react-native run-ios` or `run-android`, tee build
 output, grep for `BUILD SUCCEEDED` / `BUILD SUCCESSFUL`.
+For the full iOS + Android bash blocks with simulator flags and grep assertions, see `references/metro-bundler-setup.md` (same file as Step 1) — load it before Step 2 if you need the exact `run-ios`/`run-android` invocations.
 **Expected outcome:** Build output contains the success string; app is installed
 and launched on the target simulator/emulator.
 
 ### Step 3: Build and Launch (Expo CLI)
-See `references/metro-bundler-setup.md`.
 For Expo-managed projects: `npx expo run:ios` / `run:android` for native builds,
 or `npx expo start --ios` for Expo Go without a native build.
+For the full Expo native-build + Expo Go dev-client command sequence, see `references/metro-bundler-setup.md` — load it before Step 3 if you're on an Expo project and need the exact commands; skip if using bare RN CLI only.
 **Expected outcome:** Build output contains `Installed` / `BUILD SUCCEEDED` /
 `BUILD SUCCESSFUL`, or Expo Go loads the bundle successfully.
 
 ### Step 4: Screenshot Capture
-See `references/screenshot-capture.md`.
 Capture screenshots at every key validation state — launch, main view,
 navigation, each feature screen — using `xcrun simctl io booted screenshot` on
 iOS and `adb exec-out screencap -p` on Android, with sequential naming.
+For the iOS simctl + Android adb screenshot commands with the sequential naming convention, see `references/screenshot-capture.md` — load this during Step 4 if you need the exact capture one-liners or a reminder of the `rn-{platform}-NN-*.png` filename pattern.
 **Expected outcome:** PNG files written to `e2e-evidence/rn-{ios,android}-NN-*.png`,
 each >0 bytes, each describable by what is visible on screen.
 
 ### Step 5: Log Streaming
-See `references/log-streaming.md`.
 Stream iOS device logs with `xcrun simctl spawn booted log stream`, Android
 logs with `adb logcat`, and grep Metro output for errors/warnings.
+For the iOS log-stream predicate filters, Android logcat tag filters, and Metro error-grep one-liner, see `references/log-streaming.md` — load it during Step 5 if you need the exact `--predicate` strings and tag arguments; skip if you're already comfortable with simctl/adb log syntax.
 **Expected outcome:** Log files captured for iOS, Android, and Metro; no
 error-level entries related to the app under test.
 
 ### Step 6: Deep Link Testing
-See `references/deeplink-testing.md`.
 Exercise custom-scheme deep links with `xcrun simctl openurl` (iOS) and `adb
 shell am start -a android.intent.action.VIEW` (Android). Loop through every
 app route. Also verify universal/app links over `https://`.
+For the deep-link loop scripts, universal/app-link HTTPS variants, and post-openurl screenshot capture, see `references/deeplink-testing.md` — load it during Step 6 if the app has deep links to validate; skip if the app has no custom scheme.
 **Expected outcome:** Each deep link navigates to the correct screen; a
 post-openurl screenshot shows the expected destination.
 
 ### Step 7: Crash Detection
-See `references/crash-detection.md`.
 Scan `~/Library/Logs/DiagnosticReports/*.ips` for new iOS crashes, grep
 `adb logcat -d` for `FATAL`/`AndroidRuntime`, and scan Metro output for
 Red-Screen-of-Death JS errors (`Invariant Violation`, `TypeError`, etc.).
+For the DiagnosticReports `find -newer` snippet, the Android FATAL/AndroidRuntime grep, and the full JS error pattern list, see `references/crash-detection.md` — load this at the end of the run when triaging for crashes.
 **Expected outcome:** No new iOS crash logs, no Android FATAL entries, no
 JS runtime errors in Metro output.
 

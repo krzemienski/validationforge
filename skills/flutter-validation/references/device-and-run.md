@@ -1,5 +1,7 @@
 # Flutter Device Targeting and Run
 
+*Loaded by `flutter-validation` when executing Step 3 (Run on Device) and you need device-selection guidance (simulator vs emulator vs physical), `flutter devices`/`-d DEVICE_ID` invocations, and release-mode launch patterns.*
+
 How to select a target device (simulator, emulator, physical) and launch the app.
 
 ## Launch on Default Device

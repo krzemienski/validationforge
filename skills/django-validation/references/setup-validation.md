@@ -1,5 +1,7 @@
 # Setup Validation (Steps 1–3)
 
+*Loaded by `django-validation` when executing Steps 1-3 (Install Dependencies, Django System Check, Migration Status) and you need the full pip/manage.py invocations with tee-to-evidence patterns and virtualenv bootstrap.*
+
 Supports **Step 1 (Install Dependencies)**, **Step 2 (Django System Check)**, and
 **Step 3 (Migration Status)**. Teaches the pattern: run each setup command with
 `tee` to capture output as evidence, then grep the output file for a known-good
