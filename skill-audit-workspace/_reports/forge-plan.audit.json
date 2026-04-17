@@ -1,0 +1,83 @@
+{
+  "skill_name": "forge-plan",
+  "path": "/Users/nick/Desktop/validationforge/skills/forge-plan/SKILL.md",
+  "skill_md_line_count": 94,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Create validation plan: discover journeys, define PASS criteria per step, specify evidence types. Modes: quick, standard, consensus (critical/multi-team). Use before /validate.",
+    "length_words": 22,
+    "issues": [
+      "TRIGGER AMBIGUITY: 'Use before /validate' — but /validate is a command, not a state. Should say 'before running any validate-* commands'",
+      "UNDERSPECIFIC: 'consensus (critical/multi-team)' parenthetical is unclear; 'critical' is not explained in description",
+      "MISSING WHEN: No hint about project size or team size triggers for mode selection"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Consensus mode (lines 41-55) describes 3 parallel perspectives but lacks: (1) how to resolve conflicts ('most comprehensive wins' is vague), (2) actual merge algorithm, (3) success criteria for consensus. It's a sketch, not actionable guidance.",
+        "location": "Lines 41-55 under Consensus Mode"
+      },
+      {
+        "severity": "med",
+        "description": "Gap Filling (line 39) mentioned as part of Standard mode but not detailed. What gap-filling heuristic? Coverage percentage target? Risk weighting?",
+        "location": "Line 39"
+      },
+      {
+        "severity": "med",
+        "description": "Evidence Requirements section (lines 86-92) good but lacks the INVERSE: what NOT to do. 'Never accept it works as a PASS criterion' is stated, but no prohibition on vague evidence types (e.g., 'verify response' without showing response body format).",
+        "location": "Lines 86-92"
+      },
+      {
+        "severity": "low",
+        "description": "Plan Output Format (lines 57-84) shows template but doesn't clarify: is this output written to a file? Loaded by forge-execute? Both? Output destination must be explicit.",
+        "location": "Lines 57-84"
+      },
+      {
+        "severity": "low",
+        "description": "Risk level (HIGH/MEDIUM/LOW in template) defined nowhere. What makes auth HIGH-risk vs settings LOW-risk? Needs a risk rubric.",
+        "location": "Line 78 in template"
+      }
+    ],
+    "strengths": [
+      "Clear mode distinction (quick/standard/consensus) with explicit use cases and preconditions",
+      "Discovery step (lines 27-35) breaks down per-platform feature mapping (Web: routes, forms; API: endpoints, schemas; iOS: view controllers)",
+      "Evidence Requirements section (lines 86-92) is firm: forbids 'it works' and requires specific proof (status code, body structure, specific fields)",
+      "Coverage Analysis (lines 36-39) introduces the concept of uncovered features and high-risk areas"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "forge-plan.sh (detect platform, discover features, generate journeys, write validation-plan.md), consensus-merge.sh (merge 3 perspectives, deduplicate, conflict resolve)",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Expand Consensus Mode with explicit merge algorithm: (1) collect journeys from 3 perspectives, (2) group by feature area, (3) for each group, select journey with most steps or highest risk, (4) verify merged plan covers all 3 perspectives. Add example: User Advocate wants 'password reset UX', Security wants 'password reset rate-limiting', QA wants 'password reset with expired token'—merge into single journey with all 3 aspects.",
+    "Add risk classification rubric: HIGH = auth, payment, data mutation; MEDIUM = user-facing workflows, API contracts; LOW = secondary features, cosmetic UI. Explain why risk drives validation priority.",
+    "Clarify Gap Filling strategy: After discovery, identify uncovered features. For each gap, generate minimal 3-step journey. Target 100% feature coverage (or justify exceptions).",
+    "Specify output destination and consumption: 'Write plan to e2e-evidence/validation-plan.md. Include metadata: platforms, mode, generated timestamp. forge-execute reads this file during Phase 0.'",
+    "Replace 'it works as PASS criterion' prohibition with explicit checklist: PASS criterion must include (1) expected value/state, (2) evidence type to prove it, (3) what to look for in evidence (e.g., 'JWT field present in response body' not just '200 OK')"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "New fullstack project: React frontend, Node API, PostgreSQL. 3 users: me (lead), Alice (frontend spec), Bob (API spec). We disagree on what 'signup complete' means. Use consensus mode to generate plan.",
+      "expected_output": "Runs 3 parallel analyses: Alice focuses on form UX (email validation, error messages, redirect to dashboard); Bob focuses on API (create user record, return JWT, check DB insert); I focus on integration (form → API → DB → frontend shows user name). Merges into single 'signup journey' with 7 steps covering all 3 perspectives. Writes to e2e-evidence/validation-plan.md. Mode: consensus."
+    },
+    {
+      "id": 2,
+      "prompt": "Express API with 12 endpoints. I can't validate all of them in one cycle. How do I prioritize journeys in the plan?",
+      "expected_output": "Directs to risk classification: auth endpoints (login, refresh token) = HIGH → must validate; payment endpoints = HIGH → must validate; CRUD for secondary resources = MEDIUM → validate sample. Generates quick mode plan: 4-5 critical journeys covering auth + payments. Identifies gaps: 'CRUD for Orders' marked MEDIUM, deferred to next cycle. Justifies priorities in plan header."
+    },
+    {
+      "id": 3,
+      "prompt": "Running forge-plan on a CLI tool (no web/API). Help me discover journeys for './cli deploy --env prod' without accidentally deploying to production.",
+      "expected_output": "Detects CLI platform. Discovers 'deploy with --help', 'deploy --dry-run to staging', 'deploy with invalid env flag'. Generates 5 journeys: help text, dry-run success, invalid flag error, missing credentials, success with mock env. All journeys use isolated/mock environments—no production risk. Specifies evidence: stdout capture, exit codes, error text. Writes plan to e2e-evidence/validation-plan.md."
+    }
+  ]
+}

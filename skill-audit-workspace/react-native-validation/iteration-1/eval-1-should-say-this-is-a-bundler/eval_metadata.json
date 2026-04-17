@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "should-say-this-is-a-bundler",
+  "prompt": "Metro starts but the app shows a Red Screen of Death: 'Cannot find module RNGestureHandler'. How do I capture this as evidence and what verdict?",
+  "expected_output": "Should say: 'This is a bundler error (missing dependency). Capture: Metro output showing the error, screenshot of the red screen, evidence-inventory.txt documenting the error. Verdict: FAIL. Fix: npm install react-native-gesture-handler (or missing module). Re-run Metro and validation.'",
+  "assertions": []
+}

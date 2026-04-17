@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "follow-step-1-confirm-binary-exists",
+  "prompt": "I've built a Rust CLI at ~/proj/fingerd that parses nginx access logs and validates IPv4 ranges. Binary is at ~/proj/fingerd/target/release/fingerd. I need to verify it handles --help, invalid IP arguments, stdin piping, and exit codes correctly for production. Where do I start?",
+  "expected_output": "Follow Step 1 (confirm binary exists), Step 2 (--help output), Step 3 (--version), Step 4 (happy path with valid IP), Step 5 (error cases: bad IP, no args). Capture all outputs to e2e-evidence/. Then verify exit codes (0 for success, 1 for errors) and test stdin piping with `echo 'ip_list' | fingerd`. Expect evidence files: cli-help.txt, cli-version.txt, cli-happy-path.txt, cli-error-*.txt, cli-exit-codes.txt, cli-stdin.txt.",
+  "assertions": []
+}

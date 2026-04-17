@@ -1,0 +1,9 @@
+{
+  "skill_name": "ios-simulator-control",
+  "changes_applied": [{"fix": "Rewrite description framing as primitive layer + specific command triggers", "implemented": true, "details": "New description positions this as 'the primitives layer that ios-validation / ios-validation-gate / ios-validation-runner all build on'. Adds concrete command triggers (simctl command, idb command, trigger deep link)."}],
+  "changes_skipped": [{"fix": "Body", "reason": "Already well-organized command reference."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/ios-simulator-control/SKILL.md"],
+  "description_before": "iOS Simulator commands: boot, install, launch, screenshot, video, logs, deep links, permissions, location, crash detection. Reference for evidence capture. Used with all iOS validation skills.",
+  "description_after": "Use as the command reference for every iOS Simulator operation — boot/shutdown, install/uninstall apps, launch, screenshot, screen recording, log streaming, deep-link triggering, permission grants, location injection, crash log retrieval. This is the primitives layer that ios-validation / ios-validation-gate / ios-validation-runner all build on. Reach for it whenever you need to do something specific to the simulator and don't remember the exact simctl/idb invocation, or on phrases like 'boot simulator', 'simctl command', 'simulator screenshot', 'trigger deep link', 'record simulator video', 'grant camera permission'."
+}

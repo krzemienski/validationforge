@@ -1,0 +1,17 @@
+{
+  "skill_name": "build-quality-gates",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a Next.js project (package.json + next.config.js). I want to run all 4 build quality gates before I deploy. What are the exact commands I should run, and what should PASS vs FAIL?",
+      "expected_output": "Gate 1 (Compile): `npm run build` \u2192 should output 'Build successful' + artifacts in .next/. FAIL if exit code is non-zero. Gate 2 (Lint): `npx eslint .` \u2192 should output zero errors. FAIL if any ERROR lines. Gate 3 (Type-check): `npx tsc --noEmit` \u2192 zero type errors. FAIL if any TS errors. Gate 4 (Bundle): `du -sh .next/` \u2192 should be <500MB or your baseline +20%. FAIL if bundle grew >20%. All PASS = good to deploy. But still need functional testing.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My linter is reporting 50 warnings (mostly unused imports). The compiler still succeeds. Is this a FAIL?",
+      "expected_output": "No, not a FAIL, but needs investigation. Unused imports are benign warnings if auto-fixable. Run `eslint --fix` to remove them automatically, then re-run linter. If warnings are security-related (e.g., unsafe function usage), then it's a FAIL. Document any warnings that remain after fix attempts.",
+      "files": []
+    }
+  ]
+}

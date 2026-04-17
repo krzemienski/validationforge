@@ -1,0 +1,91 @@
+{
+  "skill_name": "design-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/design-validation/SKILL.md",
+  "skill_md_line_count": 219,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Compare implementation screenshots against design refs (Stitch, DESIGN.md, Figma). Scores colors, typography, spacing, layout, interactions across 5 categories. Use after UI implementation.",
+    "length_words": 21,
+    "issues": [
+      "Too short (21 words, target 30-80). Feature-focused, not problem-focused.",
+      "Missing 'when' context in description. When would a user invoke this? (After implementing UI, before release, after CSS refactoring.)",
+      "Missing rationale: why design fidelity validation? (Ensures UI matches design intent, catches visual drift, maintains brand consistency.)"
+    ],
+    "triggering_assessment": "under-triggers"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Phase 1: Gather Reference (lines 34-59) shows three sources (Stitch, DESIGN.md, external) but doesn't explain how to choose one or handle multiple. If both Stitch AND DESIGN.md exist, which is source of truth? No precedence documented.",
+        "location": "Phase 1: Gather Reference, lines 34-59"
+      },
+      {
+        "severity": "high",
+        "description": "Phase 2: Capture Implementation (lines 61-83) references 'Playwright MCP or Chrome DevTools MCP' tools that are never defined or linked. Assumes knowledge of MCP (Model Context Protocol?). No example of actual tool commands.",
+        "location": "Phase 2: Capture, lines 61-83"
+      },
+      {
+        "severity": "med",
+        "description": "Fidelity Categories table (lines 89-95) assigns weights (Colors 25%, Typography 20%, etc.) but doesn't explain how these weights were chosen or if they're configurable. Different projects may weight layout (40%) and interactions (5%) differently.",
+        "location": "Fidelity Categories, lines 89-95"
+      },
+      {
+        "severity": "med",
+        "description": "Comparison Checklist (lines 109-143) is checkbox format, not guidance. Doesn't teach HOW to compare or what constitutes 'matches'. E.g., 'Font sizes scale correctly across hierarchy' is vague—what's the expected ratio between h1 and h2?",
+        "location": "Comparison Checklist, lines 109-143"
+      },
+      {
+        "severity": "med",
+        "description": "Verdict Rules (lines 153-160) use score thresholds (>85 PASS, 70-85 CONDITIONAL, <70 FAIL) and 'Any category <50 forces FAIL' rule. But if Layout scores 45/100 and overall is 72%, which verdict wins? Contradiction.",
+        "location": "Verdict Rules, lines 153-160"
+      },
+      {
+        "severity": "low",
+        "description": "Integration section (lines 213-219) mentions 'stitch-integration', 'design-token-audit', 'visual-inspection', 'responsive-validation' skills but doesn't explain how these coordinate. Is this a sequence (design-token-audit THEN design-validation)? Or parallel?",
+        "location": "Integration, lines 213-219"
+      }
+    ],
+    "strengths": [
+      "3-phase structure is clear: Reference → Capture → Compare. Each phase produces auditable artifacts (reference images, implementation screenshots, comparison analysis).",
+      "Multiple reference sources (Stitch, DESIGN.md, external) offer flexibility. MCPs provide real-world integration points.",
+      "Fidelity Categories are well-defined: Colors, Typography, Spacing, Layout, Interactions. 5 categories cover the main visual dimensions.",
+      "Scoring rubric (lines 101-107) is concrete: 90-100 = pixel-perfect, 75-89 = minor deviations, etc. Helps calibrate scoring.",
+      "Evidence structure (lines 162-182) is explicit: reference/, implementation/, comparison/ subdirs + report.md. Auditable artifact hierarchy.",
+      "Report template (lines 184-211) is comprehensive: fidelity scores by category, deviations found with evidence references, verdict justification."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "Bundled script (design-validation.sh) could automate Phase 2: take browser screenshots at design viewport sizes, extract computed styles (via DevTools API), save to implementation/ directory. Would reduce manual clicking.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Expand description: 'Validate that an implemented UI visually matches its design specification. Compare reference designs (Stitch, DESIGN.md, Figma) against live browser renders. Scores fidelity across 5 categories (colors, typography, spacing, layout, interactions) and detects visual drift. Use after implementing UI components and before release.'",
+    "In Phase 1, add 'Source Precedence': 'If multiple sources exist (Stitch + DESIGN.md), use Stitch as primary (more up-to-date). If Stitch is unavailable, use DESIGN.md. Document which source was chosen in reference/source.md.'",
+    "In Phase 2, add concrete MCP examples: 'Using Playwright MCP: `browser_screenshot('homepage-desktop', '1440px')`. Using Chrome DevTools: extract computed styles via `browser_get_computed_styles('.card')`. Save all outputs to implementation/ directory with timestamps.'",
+    "In Fidelity Categories, add 'Weight Justification' or allow customization: 'Default weights (Colors 25%, Typography 20%, Spacing 20%, Layout 25%, Interactions 10%) suit most projects. For design-system-heavy projects, consider Colors 30%, Typography 25%. Weights should sum to 100%.'",
+    "In Verdict Rules, clarify precedence: 'If overall score >= 85 but any single category < 50, verdict = FAIL (category severity overrides). Otherwise, overall score determines verdict (>85 PASS, 70-85 CONDITIONAL, <70 FAIL). Document the rule choice in report.'",
+    "In Comparison Checklist, add ratios and guidance: 'Font sizes scale correctly: h1 > h2 > body by at least 1.2x (or project's defined scale). Check computed font-size values in implementation/ match design expectations.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a React component library. DESIGN.md shows Figma mockups for a Button (blue background, white text, 12px padding). I implemented it as a Tailwind Button. How do I validate design fidelity?",
+      "expected_output": "Phase 1: Extract reference from DESIGN.md (Button spec: Tailwind 'bg-blue-600 text-white px-3 py-2', expected color #2563EB, text Helvetica 12px). Save to reference/button-spec.md. Phase 2: Render live button in a test page at design viewport (e.g., 1440px), screenshot to implementation/button-screenshot.png. Extract computed styles (bg color, text color, padding) via browser tools. Phase 3: Compare: Check if computed background color matches #2563EB (PASS/FAIL), text color matches white (PASS/FAIL), padding matches 12px (PASS/FAIL). Score by category (Colors 100%, Typography 95%, etc.). Overall score determines verdict. If score >85, PASS and Button is production-ready."
+    },
+    {
+      "id": 2,
+      "prompt": "I have both a DESIGN.md and a Stitch project for the same UI. They show slightly different colors. Which should I use as the source of truth?",
+      "expected_output": "Stitch is the preferred source (line 36: 'preferred'). Stitch is more up-to-date and auditable. Use Stitch as primary reference, document in reference/source.md. If Stitch colors differ from DESIGN.md, that indicates DESIGN.md is stale. After validation, update DESIGN.md to match Stitch to keep specs in sync. Document the discrepancy in the report under 'Deviations Found'."
+    },
+    {
+      "id": 3,
+      "prompt": "I scored Colors 90/100, Typography 88/100, Spacing 70/100, Layout 85/100, Interactions 80/100. What's the overall verdict?",
+      "expected_output": "Calculate overall: (90 × 0.25) + (88 × 0.20) + (70 × 0.20) + (85 × 0.25) + (80 × 0.10) = 22.5 + 17.6 + 14 + 21.25 + 8 = 83.35. Score 83.35 falls in 70-85 range → verdict = CONDITIONAL. However, check line 160: 'Any category <50 forces FAIL'. No category is <50, so CONDITIONAL stands. Document issues: Spacing at 70 needs attention (10 points below target). Recommend fixes to spacing (padding, margins, gaps) before shipping."
+    }
+  ]
+}

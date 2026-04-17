@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "user-runs-bash-scripts-benchmark-test-ho",
+  "prompt": "I modified three hooks last week and want to verify I didn't introduce regressions before cutting the next release. Run the benchmark suite and compare against the last baseline.",
+  "expected_output": "User runs bash scripts/benchmark/test-hooks.sh and gets exit code 0 if all hooks pass functional tests. Runs aggregate-results.sh which outputs new score, compares hook_score against previous baseline in audit-artifacts/benchmark-baseline.json. If regressed, reports which hook(s) failed.",
+  "assertions": []
+}

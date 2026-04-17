@@ -1,0 +1,9 @@
+{
+  "skill_name": "web-testing",
+  "changes_applied": [{"fix": "Rewrite description as layer-selection strategy + triggers", "implemented": true, "details": "Clarifies this is the STRATEGY layer — deciding WHICH layers apply, not how to run them. Pairs with web-validation (execution), accessibility-audit, chrome-devtools. 3 new triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "217 lines, strategic content."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/web-testing/SKILL.md"],
+  "description_before": "5-layer web validation: integration (APIs), E2E (journeys), accessibility (WCAG), performance (Core Web Vitals), security (OWASP). Decide which layers a feature needs. Real systems only—no mocks.",
+  "description_after": "Use when you need to decide WHICH web validation layers apply to a given feature — not all features need all 5 layers, and running every layer on every feature wastes hours. Maps each of 5 layers (integration, E2E journeys, accessibility/WCAG, performance/Core Web Vitals, security/OWASP) to the features that actually need them. Pairs with web-validation (which executes the chosen layers) and specific skills per layer (accessibility-audit, chrome-devtools for performance). Reach for it on phrases like 'web testing strategy', 'which layers do I need', 'how should I validate this feature', 'do I need an a11y audit for this', or when planning the scope of a web validation effort."
+}

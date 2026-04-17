@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "get-token-token-curl-s-x-post",
+  "prompt": "Our API uses JWT tokens. The login endpoint returns {\"access_token\": \"...\"}. How do I test that auth is working correctly \u2014 both valid tokens and invalid/missing tokens?",
+  "expected_output": "Get token: TOKEN=$(curl -s -X POST http://localhost:3000/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"...\",\"password\":\"...\"}' | jq -r '.access_token'). Test valid: curl -H \"Authorization: Bearer $TOKEN\" http://localhost:3000/api/protected (expect 200). Test invalid: curl -H 'Authorization: Bearer invalid.token' http://localhost:3000/api/protected (expect 401). Test missing: curl http://localhost:3000/api/protected (expect 401).",
+  "assertions": []
+}

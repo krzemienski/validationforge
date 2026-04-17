@@ -1,0 +1,17 @@
+{
+  "skill_name": "forge-plan",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "New fullstack project: React frontend, Node API, PostgreSQL. 3 users: me (lead), Alice (frontend spec), Bob (API spec). We disagree on what 'signup complete' means. Use consensus mode to generate plan.",
+      "expected_output": "Runs 3 parallel analyses: Alice focuses on form UX (email validation, error messages, redirect to dashboard); Bob focuses on API (create user record, return JWT, check DB insert); I focus on integration (form \u2192 API \u2192 DB \u2192 frontend shows user name). Merges into single 'signup journey' with 7 steps covering all 3 perspectives. Writes to e2e-evidence/validation-plan.md. Mode: consensus.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Express API with 12 endpoints. I can't validate all of them in one cycle. How do I prioritize journeys in the plan?",
+      "expected_output": "Directs to risk classification: auth endpoints (login, refresh token) = HIGH \u2192 must validate; payment endpoints = HIGH \u2192 must validate; CRUD for secondary resources = MEDIUM \u2192 validate sample. Generates quick mode plan: 4-5 critical journeys covering auth + payments. Identifies gaps: 'CRUD for Orders' marked MEDIUM, deferred to next cycle. Justifies priorities in plan header.",
+      "files": []
+    }
+  ]
+}

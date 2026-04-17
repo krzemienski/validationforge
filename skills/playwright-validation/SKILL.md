@@ -1,11 +1,14 @@
 ---
 name: playwright-validation
-description: "Validate web features via real browser interaction: screenshots, DOM snapshots, form testing, responsive layouts, console/network error detection. Use for feature verification and evidence capture."
+description: "Use for web feature validation via Playwright MCP — real browser interactions, cross-browser support (Chromium/Firefox/WebKit), screenshot + DOM snapshot evidence capture, form testing, responsive layouts, console/network error detection. Reach for it when you've picked Playwright as your browser tool (vs Chrome DevTools MCP), or on phrases like 'Playwright validation', 'validate with Playwright', 'browser feature test', 'cross-browser check', 'take DOM snapshot', 'browser automation for validation'. For performance-focused Chrome inspection use chrome-devtools; for the overall web-validation flow use web-validation."
 triggers:
   - "playwright validation"
   - "browser validation"
   - "web browser test"
   - "playwright verify"
+  - "cross-browser check"
+  - "take DOM snapshot"
+  - "browser automation for validation"
 context_priority: reference
 ---
 

@@ -1,0 +1,17 @@
+{
+  "skill_name": "condition-based-waiting",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a fullstack app: Docker Postgres at localhost:5432, Node API at localhost:8080/health, React dev server at localhost:3000. Currently using 'sleep 60' before running tests. How do I replace that with condition-based waits?",
+      "expected_output": "Use strategy #7 (Database Ready): wait_for_database 'postgres://localhost:5432/mydb' 30. Then strategy #1 (HTTP Health): wait_for_health 'http://localhost:8080/health' 30. Then strategy #1 again for frontend: wait_for_health 'http://localhost:3000' 30. Chain them in order: DB \u2192 API \u2192 Frontend. Each waits up to 30s but returns as soon as ready. Total time: 1s (if all fast) instead of 60s. Capture evidence: which services took how long to be ready.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "iOS validation: I'm waiting for simulator to boot before running app tests. Currently using 'sleep 30'. Simulator sometimes boots in 5s on warm start, sometimes 40s on first boot. How do I handle both?",
+      "expected_output": "Use strategy #6 (iOS Simulator Boot): wait_for_simulator 'iPhone 16' 90 (timeout 90s for cold boot). Function polls `xcrun simctl list devices` until device is 'Booted'. Returns immediately on warm start (5s), waits up to 90s on cold start. After simulator is ready, use wait_for_process to verify the app launches (strategy #4). Avoids hardcoding 30s which is too short for cold or too long for warm.",
+      "files": []
+    }
+  ]
+}

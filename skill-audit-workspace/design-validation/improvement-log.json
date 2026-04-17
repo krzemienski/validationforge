@@ -1,0 +1,15 @@
+{
+  "skill_name": "design-validation",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with sources + pairing with design-token-audit + triggers",
+      "implemented": true,
+      "details": "New description explicitly pairs with design-token-audit (code tokens vs rendered output). Names all 5 categories inline. 3 new YAML triggers including 'visual regression' and 'design QA'."
+    }
+  ],
+  "changes_skipped": [{"fix": "Body", "reason": "Well-structured; description was primary gap."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/design-validation/SKILL.md"],
+  "description_before": "Compare implementation screenshots against design refs (Stitch, DESIGN.md, Figma). Scores colors, typography, spacing, layout, interactions across 5 categories. Use after UI implementation.",
+  "description_after": "Use after implementing a UI from a design spec to measure how closely the built version matches the reference. Compares a browser/device screenshot against the design source (Stitch MCP export, Figma image, or inline DESIGN.md mockup) across five categories: colors, typography, spacing, layout, interactions. Produces a weighted fidelity score and flags the specific mismatches. Pairs with design-token-audit (which checks the code-level tokens) — this skill checks the rendered output. Reach for it on phrases like 'does it match the design', 'design fidelity', 'visual regression', 'compare to mockup', 'design QA', or before shipping anything where the visual match is part of the acceptance criteria."
+}

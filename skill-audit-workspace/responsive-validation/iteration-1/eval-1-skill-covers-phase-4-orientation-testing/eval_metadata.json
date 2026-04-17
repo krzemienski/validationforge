@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "skill-covers-phase-4-orientation-testing",
+  "prompt": "Users report layout 'shifts' on iPad when rotating between portrait and landscape. Sometimes text disappears. How do I systematically test orientation changes?",
+  "expected_output": "Skill covers Phase 4 orientation testing: portrait and landscape captures at iPad viewports (768x1024 and 1024x768). Checks content reflow, navigation state consistency, no critical content cut off. Highlights safe area inset handling for notch-equipped devices. Produces evidence comparing before/after rotation.",
+  "assertions": []
+}

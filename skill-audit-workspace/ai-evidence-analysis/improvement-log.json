@@ -1,0 +1,47 @@
+{
+  "skill_name": "ai-evidence-analysis",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with pipeline position + triggers",
+      "implemented": true,
+      "details": "New description specifies phase 3.5 (between capture and verdict writing), names the 3 evidence types supported, names who invokes it (verdict-writer agent), and gives concrete trigger phrases. Added 2 new YAML triggers: 'review my evidence', 'score the screenshots'."
+    },
+    {
+      "fix": "Promote disable/offline instructions to top of skill",
+      "implemented": true,
+      "details": "The 3 disable methods (env var, config, offline auto-skip) were buried 276+ lines deep in the file. Consolidated into a single 'How to disable' section placed right after 'When to Use'. Users who don't want AI analysis can see how to turn it off without reading the entire protocol."
+    },
+    {
+      "fix": "Add 'Common mistakes' section up front (moved from end + expanded)",
+      "implemented": true,
+      "details": "Audit flagged that anti-patterns lived at the end after 200+ lines of detail. New 'Common mistakes' section placed after 'How to disable' with 4 concrete misuse patterns: treating confidence as verdict, analyzing invalid evidence, findings-list inflation, uncapped CI costs. Gives the model the guardrails early instead of after wading through protocol."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Split into minimal SKILL.md (<120 lines) + new references/analysis-protocol.md",
+      "reason": "The highest-impact audit recommendation — body is legitimately bloated at 354 lines. But splitting requires fabricating a new 200+ line reference file by carefully moving content without breaking semantics. That's substantial content engineering better suited to a focused subagent pass. Bumped priority for follow-up."
+    },
+    {
+      "fix": "Move evidence classification logic (lines 124-152) into scripts/detect-evidence-type.sh",
+      "reason": "Requires writing + testing a shell script with xxd/python JSON detection and safe fallbacks. Out of in-session scope; marked for follow-up when subagent capacity returns."
+    },
+    {
+      "fix": "Collapse schema documentation (lines 52-84)",
+      "reason": "The schema table is useful for agents consuming AnalysisResult output programmatically. Collapsing to 'see schema.json' moves complexity elsewhere without reducing it. Net negative for an orchestrator-facing skill."
+    },
+    {
+      "fix": "Create references/quick-start-example.md",
+      "reason": "Would require fabricating an end-to-end example from scratch. Better done with real evidence from a test run, which requires subagent capacity."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/ai-evidence-analysis/SKILL.md"
+  ],
+  "description_before": "AI-augmented evidence review: vision models analyze screenshots, LLMs check API/CLI output. Produces 0-100 confidence scores and findings. Optional in offline mode.",
+  "description_after": "Use after capturing validation evidence (phase 3.5, between capture and verdict writing) when you want AI to systematically review screenshots, API responses, and CLI output — flagging issues a human reviewer might skim past. Produces a 0-100 confidence score and structured findings per evidence item (3 types supported: screenshot / api-response / cli-output). Optional and easy to disable in offline or cost-sensitive environments. Reach for this on phrases like 'review my evidence', 'score the screenshots', 'AI check the API responses', 'spot issues in the logs', or when the verdict-writer agent needs confidence signals before ruling PASS/FAIL.",
+  "line_count_before": 354,
+  "line_count_after": 375,
+  "self_review_notes": "File grew 354->375 because structural fixes (disable + common-mistakes at top) added content without removing any. The big structural refactor — splitting 230+ lines of protocol into a reference — was correctly skipped as too risky for in-session work. Most practical wins: users can now find how to disable without reading the whole file, and the anti-patterns are visible before the reader invests in the protocol. Full restructure tracked as follow-up."
+}

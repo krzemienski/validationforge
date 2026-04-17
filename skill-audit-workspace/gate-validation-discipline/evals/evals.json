@@ -1,0 +1,17 @@
+{
+  "skill_name": "gate-validation-discipline",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "My iOS team says they've tested the login flow: app builds, logs in, shows dashboard. They're ready to ship. I have 10 minutes to verify before merge. What should I check?",
+      "expected_output": "Response should invoke gate-validation-discipline. Walk through Verification Loop: IDENTIFY (3 criteria: builds, logs in, shows dashboard) \u2192 LOCATE (ask for screenshots, logs, build output) \u2192 EXAMINE (read the actual files, view the screenshots) \u2192 MATCH (does each file prove one criterion?) \u2192 WRITE verdict. Flag if they say 'we ran tests' or 'build succeeded' without you seeing evidence. Mandate: 'Read the evidence, view the screenshots, quote the logs.'",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Sub-agent reports: 'API validation complete, all endpoints respond with 200 OK.' Should I mark it PASS?",
+      "expected_output": "Response should invoke gate-validation-discipline and flag as incomplete. 'Not without examining the evidence.' Ask: Did you READ the actual response bodies (not just status codes)? Do responses match expected JSON structure? Are there error objects inside 200 responses? Mandate reading evidence-standards.md example (200 OK with error body is a FAIL). Do not mark complete until you've reviewed the actual curl output or response file.",
+      "files": []
+    }
+  ]
+}

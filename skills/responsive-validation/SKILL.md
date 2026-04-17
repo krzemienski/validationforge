@@ -1,12 +1,15 @@
 ---
 name: responsive-validation
-description: "Validate layouts across 8 device viewports (375px–1920px): layout, touch targets, typography, content parity, orientation, overflow. Use after responsive redesigns, CSS refactors, mobile launches."
+description: "Use for systematic responsive layout validation across 8 device viewports (iPhone SE 375px up through desktop 1920px). Goes beyond screenshot-at-each-width: checks layout integrity at breakpoints, touch target sizing (44px minimum per Apple HIG, 48dp per Material), typography scaling, content parity across widths (no desktop-only content hidden on mobile), orientation handling, and horizontal overflow detection. Reach for it on phrases like 'responsive validation', 'check all breakpoints', 'mobile responsive test', 'touch target audit', 'does this overflow on mobile', after any responsive redesign or CSS refactor, or when a mobile launch needs proof."
 triggers:
   - "responsive validation"
   - "responsive testing"
   - "viewport testing"
   - "mobile responsive"
   - "breakpoint validation"
+  - "touch target audit"
+  - "horizontal overflow"
+  - "does this look right on mobile"
 context_priority: reference
 ---
 

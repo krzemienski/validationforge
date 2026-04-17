@@ -1,12 +1,16 @@
 ---
 name: chrome-devtools
-description: "Deep browser inspection via Chrome DevTools MCP: performance profiling (Core Web Vitals), Lighthouse audits, network inspection, console monitoring, memory snapshots. Use for debugging, perf, a11y."
+description: "Use whenever you need deep browser inspection that Playwright alone can't provide — live DevTools features, real Chrome behavior, Core Web Vitals, Lighthouse audits, network waterfall inspection, console monitoring across sessions, memory/heap snapshots. Pairs with web-validation (which handles the validation flow) by providing the performance/debugging/profiling side. Reach for it on phrases like 'check performance', 'Lighthouse score', 'Core Web Vitals', 'why is this slow', 'inspect the network tab', 'memory leak', 'LCP/CLS/FID', or when browser-specific debugging is needed beyond screenshots."
 triggers:
   - "chrome devtools"
   - "devtools inspection"
   - "browser devtools"
   - "inspect element"
   - "network inspector"
+  - "performance profiling"
+  - "core web vitals"
+  - "lighthouse audit"
+  - "memory snapshot"
 context_priority: reference
 ---
 

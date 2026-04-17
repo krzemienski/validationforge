@@ -1,0 +1,84 @@
+{
+  "skill_name": "ios-validation-runner",
+  "path": "/Users/nick/Desktop/validationforge/skills/ios-validation-runner/SKILL.md",
+  "skill_md_line_count": 247,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Five-phase iOS protocol: SETUP → RECORD (video+logs) → ACT (interaction) → COLLECT (artifacts) → VERIFY (verdict). Complex flows & debug scenarios. Video catches temporal evidence screenshots miss.",
+    "length_words": 32,
+    "issues": [
+      "STRONG: Problem framing clear ('Video catches temporal evidence screenshots miss'). WHEN addressed ('complex flows & debug scenarios'). Phase names memorable and sequential.",
+      "Minor: 'Complex flows & debug scenarios' is slightly vague. Stronger: 'multi-step user flows, timing issues, state transitions that require video evidence'."
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Lines 25-32: Five-Phase diagram uses ASCII art but is misleading. Phase 2 says 'Start video + logs' but Phase 2 (lines 71-98) ONLY starts recordings in BACKGROUND. Phase 3 says 'Exercise feature' but that's covered by RECORD phase description, creating confusion about where user interaction happens. Risk: user starts video in Phase 2, expects to interact, but actual interaction step is Phase 3. Reorganize diagram: SETUP (boot) → RECORD (start background capture) → ACT (interact) → COLLECT (stop capture) → VERIFY (analyze).",
+        "location": "lines 25-32"
+      },
+      {
+        "severity": "high",
+        "description": "Lines 127-128: ACT Phase says 'Using idb (preferred for automation)' but doesn't explain WHEN idb is available. Lines 104-118 assume idb but Phase 3 also offers 'manual description' fallback (lines 120-127). Risk: user tries idb, gets 'command not found', doesn't know which path to take. Should clarify: 'Install idb via: brew install idb-companion. If idb unavailable, manually describe actions and screenshot.'",
+        "location": "lines 104-128"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 38-69: SETUP Phase uses Python to extract booted simulator UUID, but Python code is fragile (parses JSON manually, assumes key 'devices' exists). Risk: script breaks on Xcode version change. Should use simpler approach: 'UDID=$(xcrun simctl list devices booted -j | jq -r '.devices | .[] | .[] | select(.state==\"Booted\") | .udid')'.",
+        "location": "lines 38-69"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 100-118: ACT Phase RECORD command (lines 77-79) says 'Start video recording in background' but doesn't explain VIDEO_PID variable management. Later in COLLECT (lines 150-152), code kills VIDEO_PID, but if user runs SETUP and RECORD in one session then manually exercises app, they must manually track PID. Should clarify: 'Save these PIDs before moving to ACT phase.'",
+        "location": "lines 100-118"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 231-240: NEVER Patterns table lists 6 anti-patterns but #5 'Deleting evidence after PASS' is not enforced by any mechanism in the skill. Skill should say: 'Copy all evidence to version control: git add e2e-evidence/ && git commit.'",
+        "location": "lines 231-240"
+      }
+    ],
+    "strengths": [
+      "Five-phase structure is pedagogically sound: SETUP → RECORD → ACT → COLLECT → VERIFY. Clear dependencies and handoff points.",
+      "Phase 2 RECORD (lines 71-98) correctly starts video+logs IN BACKGROUND before interaction, not during. This captures the temporal flow that screenshots alone miss.",
+      "Phase 3 ACT (lines 100-128) includes dual option: CLI idb (automation) or manual description (fallback). Both are documented.",
+      "Phase 4 COLLECT (lines 146-170) is thorough: stops recording (with explicit -INT flag warning), captures final state, searches for crash logs by timestamp (not just 'find all crashes').",
+      "Phase 5 VERIFY (lines 172-229) walks through evidence analysis: read logs → review screenshots → check video → check crashes → produce report. Structured thinking.",
+      "NEVER Patterns (lines 231-240) are concrete and explain WHY (e.g., 'kill -9 corrupts video file').",
+      "Section 'Integration with ValidationForge' (lines 242-247) correctly positions this skill as the most comprehensive evidence capture approach (contrasts with ios-validation 9-step and ios-validation-gate 3-gate)."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "HIGH: This skill is 247 lines of bash with manual PID tracking, Python UUID parsing, and step-by-step execution. Bundling ios-runner.sh would automate: (1) SETUP phase (extract booted UDID, verify idb), (2) RECORD phase (start video+logs, save PIDs), (3) prompt user 'Now exercise the feature manually' (blocks), (4) COLLECT phase (stop video/logs, find crashes), (5) output evidence inventory. User would run once instead of manually executing 40+ lines of bash.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Clarify Phase diagram (lines 25-32): emphasize that RECORD starts background capture, ACT is where user interacts, COLLECT stops capture. Add note: 'Do NOT interact with app in RECORD phase; wait for RECORD to complete (running in background), then move to ACT.'",
+    "Add explicit idb availability check to Phase 3 ACT (lines 104-128): 'Check idb available: which idb. If not found, install: brew install idb-companion. If idb unavailable, use manual description (lines 120-127) and skip idb-specific commands.'",
+    "Simplify SETUP UUID extraction (lines 38-69): replace Python with jq: 'UDID=$(xcrun simctl list devices booted -j | jq -r \".devices | .[] | .[] | select(.state==\\\"Booted\\\") | .udid\")'.",
+    "Add bundled shell script (ios-runner.sh) to automate phases 1-5 and manage PID tracking."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm debugging a complex iOS flow: user taps a button, waits 2 seconds, gets a confirmation message, then taps 'next' to move to the next screen. A screenshot won't capture timing. How do I use ios-validation-runner?",
+      "expected_output": "Response should invoke ios-validation-runner and walk through 5 phases: (1) SETUP: Boot simulator, create evidence dir. (2) RECORD: Start video + app logs in BACKGROUND (don't interact yet). (3) ACT: Tap button, wait 2s, observe confirmation, tap next. Manually describe each action. (4) COLLECT: Stop video/logs, capture final screenshot, check for crashes. (5) VERIFY: Review video for timing/smoothness, read logs for state transitions, read screenshots for UI changes. Video will show the 2-second delay; screenshots alone wouldn't."
+    },
+    {
+      "id": 2,
+      "prompt": "I'm in Phase 2 (RECORD) and I've started video and log streaming in the background. How do I know they're actually running? How do I make sure I capture their PIDs correctly?",
+      "expected_output": "Response should invoke ios-validation-runner, Phase 2 (lines 71-98). Explanation: (1) After backgrounding, immediately check: 'ps aux | grep recordVideo' should show the process. (2) Save $! immediately: VIDEO_PID=$!. Don't lose the PID. (3) Same for logs: LOG_PID=$!. (4) Verify: 'echo $VIDEO_PID $LOG_PID' — should show two numbers. (5) Store them in a file for safety. Phase 4 will use these PIDs to kill -INT (SIGINT, not SIGKILL) the processes gracefully."
+    },
+    {
+      "id": 3,
+      "prompt": "I ran the ios-validation-runner 5-phase protocol. Now I'm in Phase 5 (VERIFY). I have 12 screenshots, a video, and logs. How do I know if the feature actually works?",
+      "expected_output": "Response should invoke ios-validation-runner, Phase 5 (lines 172-229). Walk through: (1) READ logs: search for ERROR, WARN, exception lines. If found, FAIL. (2) REVIEW screenshots: do state transitions match actions? Screenshot 5 should show result of action 4. (3) WATCH video: does it play smoothly? Any flickering, black frames, or crashes? (4) CHECK crashes: 'ls -la e2e-evidence/*.crash' — if any, FAIL. (5) WRITE verdict: cite specific files. Not just 'feature works', but 'video shows 3-second launch, screenshot 8 shows expected result, logs show [specific lines]'."
+    }
+  ]
+}

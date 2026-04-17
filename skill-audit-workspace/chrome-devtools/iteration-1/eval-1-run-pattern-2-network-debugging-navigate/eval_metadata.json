@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "run-pattern-2-network-debugging-navigate",
+  "prompt": "A user says 'the sign-up form doesn't work'. I see the form on the page, but nothing happens when they submit. How do I debug this with DevTools?",
+  "expected_output": "Run Pattern 2 (Network Debugging): navigate_page to sign-up form, fill and submit the form, list_network_requests to see all API calls. Inspect the form submission request (POST to /api/signup) \u2014 check status code (should be 201), response body (should have user ID or token). Common bugs: (1) request not sent (form validation blocking), (2) request sent but fails (500 error). Get detailed request (get_network_request) and save to e2e-evidence/devtools-network/.",
+  "assertions": []
+}

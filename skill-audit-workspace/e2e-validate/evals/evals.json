@@ -1,0 +1,17 @@
+{
+  "skill_name": "e2e-validate",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a project that's a React frontend + Node.js backend in the same repo. I run /validate but the skill says it doesn't know what platform to validate. How do I tell it this is a fullstack project?",
+      "expected_output": "Explain: the e2e-validate skill auto-detects fullstack if it sees both frontend routes AND backend API routes. If detection is wrong, use `--platform fullstack` flag. Then guide the bottom-up order: (1) Start with database (check migrations, connectivity), (2) Test API endpoints with curl (health, CRUD, auth), (3) Test frontend UI (sign up, data loading, error states). Each layer should be independent so you can isolate failures.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm validating a Flutter mobile app. The e2e-validate skill mentions flutter-validation as a reference but I can't find it. Where is it? And what's the relationship between e2e-validate and flutter-validation?",
+      "expected_output": "Clarify: e2e-validate is the orchestrator; flutter-validation is the platform-specific skill that handles Flutter builds, device/emulator setup, screenshots, and log streaming. e2e-validate USES flutter-validation during the execute phase. If you just want to validate Flutter, go directly to flutter-validation. If you want high-level guidance on the full validation pipeline, read e2e-validate first, then drill down to flutter-validation for the specifics.",
+      "files": []
+    }
+  ]
+}

@@ -1,11 +1,14 @@
 ---
 name: web-testing
-description: "5-layer web validation: integration (APIs), E2E (journeys), accessibility (WCAG), performance (Core Web Vitals), security (OWASP). Decide which layers a feature needs. Real systems only—no mocks."
+description: "Use when you need to decide WHICH web validation layers apply to a given feature — not all features need all 5 layers, and running every layer on every feature wastes hours. Maps each of 5 layers (integration, E2E journeys, accessibility/WCAG, performance/Core Web Vitals, security/OWASP) to the features that actually need them. Pairs with web-validation (which executes the chosen layers) and specific skills per layer (accessibility-audit, chrome-devtools for performance). Reach for it on phrases like 'web testing strategy', 'which layers do I need', 'how should I validate this feature', 'do I need an a11y audit for this', or when planning the scope of a web validation effort."
 triggers:
   - "web testing strategy"
   - "web validation strategy"
   - "how to validate web app"
   - "web quality strategy"
+  - "which layers do I need"
+  - "what does thorough mean for this feature"
+  - "scope web validation"
 context_priority: reference
 ---
 

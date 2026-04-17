@@ -1,0 +1,85 @@
+{
+  "skill_name": "full-functional-audit",
+  "path": "/Users/nick/Desktop/validationforge/skills/full-functional-audit/SKILL.md",
+  "skill_md_line_count": 99,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Audit project health without code changes: exercise all features, capture evidence, classify findings by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Pre-release gates, compliance, baselines.",
+    "length_words": 24,
+    "issues": [
+      "PASSIVE CONCERN: 'without code changes' emphasizes what NOT to do rather than what audit DOES (answers 'what's the real state')",
+      "TRIGGER VAGUENESS: 'Pre-release gates, compliance, baselines' are use cases but no trigger words",
+      "SPECIFICITY OK: Severity levels (CRITICAL through INFO) are clear in description"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Evidence Capture Rules (lines 45-52) say 'exercise EVERY feature' but don't clarify what 'every' means. A web app with 50+ components—which ones count as features? Utility functions? Modal dialogs? Needs a feature definition.",
+        "location": "Lines 45-52"
+      },
+      {
+        "severity": "med",
+        "description": "Severity Matrix (lines 32-43) good but lacks edge case guidance. 'Looks wrong' = MEDIUM, but what if the UI looks wrong AND could confuse users about data integrity? Needs tie-breaker rules ('when in doubt, classify UP').",
+        "location": "Lines 32-43"
+      },
+      {
+        "severity": "med",
+        "description": "Audit Report Structure (lines 54-62) references 5 sections but doesn't say if they're required or optional. The template link is provided but the skill body doesn't enforce structure—an auditor could skip the Evidence Index section and the guidance doesn't catch that.",
+        "location": "Lines 54-62"
+      },
+      {
+        "severity": "low",
+        "description": "Use Cases (lines 64-72) lists 5 scenarios but 'Compliance Review' and 'Post-Incident' don't specify scope differently—are they narrower than full audit? When to use targeted vs full?",
+        "location": "Lines 64-72"
+      },
+      {
+        "severity": "low",
+        "description": "Rules section (lines 74-82) has 6 rules but rule #5 ('ALWAYS record UNKNOWN') is weak. If you can't reach a feature, that's a finding (dead link, missing route)—should be classified MEDIUM at minimum, not just recorded as UNKNOWN.",
+        "location": "Lines 74-82, esp. line 80"
+      }
+    ],
+    "strengths": [
+      "The Audit Rule (lines 17-20) is crystal clear: 'Observe, document, classify — but NEVER modify code.'",
+      "5-phase process (lines 22-30) is sequential and unambiguous: each phase has an input and output",
+      "Severity Matrix (lines 32-43) is well-reasoned with concrete examples (data loss = CRITICAL, JWT expiry = CRITICAL, CSS overflow = FAIL) and tie-breaker rule ('when in doubt, classify UP; Security = always CRITICAL')",
+      "Evidence Capture Rules (lines 45-52) includes hard rules like 'name evidence' and 'capture error messages verbatim' that reduce ambiguity",
+      "Related Skills section (lines 89-94) orients reader: audit is passive, functional-validation is active; audit establishes baseline"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 2,
+    "missing_scripts_opportunity": "audit-executor.sh (discover features, exercise each, capture evidence to e2e-evidence/audit/), severity-classifier.sh (classify findings by severity matrix), audit-report-generator.sh (write audit-report.md from evidence)",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Define 'feature' explicitly: 'User-facing feature = any action a user can take (button click, form submission, navigation, API endpoint call). Exclude: internal functions, utilities, comments. Include: error states, edge cases (e.g., expired session, invalid input).'",
+    "Enhance severity matrix edge-case section with more rules: 'Slow response (>3s UI, >500ms API) = MEDIUM. Missing error message = HIGH (user confusion). Works on one browser but not another = HIGH (platform-specific breakage). Works but returns wrong HTTP status code = HIGH (breaks integrations).'",
+    "Add feature discovery template to Phase 2: 'Create a Feature Inventory table in e2e-evidence/ listing all features by area (auth, dashboard, forms, API endpoints) with expected behavior. Mark as PENDING. As you exercise each feature, mark PASS/FAIL/UNKNOWN in the inventory. Final inventory shows coverage.'",
+    "Clarify targeted vs full scope: 'Full audit: all features. Targeted audit: specific areas (e.g., auth flow only, payment only). Document scope in audit report Executive Summary. Recommendations for targeted audits should note 'Other areas not audited.'",
+    "Upgrade rule #5: 'If a feature cannot be reached (dead link, missing route, access denied), that IS a finding. Classify MEDIUM at minimum ('feature unreachable'). Record the root cause: 404? Permission denied? Missing navigation link? Cite the evidence (curl response, screenshot with missing button).'",
+    "Add explicit section requirement: 'An audit report MUST include: Executive Summary (1 para), Findings Summary (severity table), Findings by Feature (per-feature status + severity + evidence + expected vs observed), Priority Recommendations (CRITICAL first), Evidence Index. Missing any section = incomplete audit.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "Running a full functional audit on a SaaS product before public launch. It has 40+ pages. How do I discover 'every feature' without spending 2 weeks? What's in scope?",
+      "expected_output": "Create Feature Inventory in Phase 2: scan codebase for routes/components (Web: routing table + component list; API: OpenAPI spec or endpoint list). Group by user journey (auth, onboarding, core workflow, settings, admin). Target ~20 features representing all journey phases. For each feature, exercise success path + 1 error state. In scope: user-facing features only (buttons, forms, endpoints, screens). Not in scope: internal utilities, refactored legacy code not visible to users. Document scope in report Executive Summary."
+    },
+    {
+      "id": 2,
+      "prompt": "Auditing a web app. I find: Button says 'Delete' but tooltip says 'Remove Item'. On click, API returns 204 (success) and item vanishes. Is this CRITICAL, HIGH, MEDIUM, LOW, or INFO?",
+      "expected_output": "MEDIUM. The feature works (item deleted, API returns success, behavior correct), but UI messaging is inconsistent ('Delete' vs 'Remove Item'). No functional impact, but violates design consistency. Classify as UX friction. Not CRITICAL (no data loss, no crash), not HIGH (feature actually works and intent is clear), not LOW (it's a labeled control—users rely on precise wording). Capture evidence: screenshot showing tooltip vs button text, API 204 response."
+    },
+    {
+      "id": 3,
+      "prompt": "Auditing an API. GET /admin/users returns 200 and user list, but there's no authentication check—any user can list all users including admins. What severity?",
+      "expected_output": "CRITICAL. This is a security vulnerability (privilege escalation + information disclosure). According to severity matrix rule: 'Security = always CRITICAL.' Capture evidence: curl request without auth token showing full user list with email/admin status. Recommendation: Add auth check to /admin/users endpoint, verify 403 on unauthorized requests. This blocks release."
+    }
+  ]
+}

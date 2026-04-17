@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "medium-the-feature-works-item-deleted",
+  "prompt": "Auditing a web app. I find: Button says 'Delete' but tooltip says 'Remove Item'. On click, API returns 204 (success) and item vanishes. Is this CRITICAL, HIGH, MEDIUM, LOW, or INFO?",
+  "expected_output": "MEDIUM. The feature works (item deleted, API returns success, behavior correct), but UI messaging is inconsistent ('Delete' vs 'Remove Item'). No functional impact, but violates design consistency. Classify as UX friction. Not CRITICAL (no data loss, no crash), not HIGH (feature actually works and intent is clear), not LOW (it's a labeled control\u2014users rely on precise wording). Capture evidence: screenshot showing tooltip vs button text, API 204 response.",
+  "assertions": []
+}

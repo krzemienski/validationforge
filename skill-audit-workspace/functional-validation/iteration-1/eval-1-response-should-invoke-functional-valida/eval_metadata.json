@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "response-should-invoke-functional-valida",
+  "prompt": "Our iOS app ships, users complain it crashes on deep links. We have unit tests passing. What evidence should I capture to prove deep links work?",
+  "expected_output": "Response should invoke functional-validation skill, then ios-validation skill. Emphasize: unit tests didn't catch this (real system failure). Recommend: boot simulator, install actual .app, test actual deep links via xcrun simctl openurl, capture screenshots of landing screens, capture logs. Point to ios-validation skill for 9-step protocol. Mention idb accessibility tree if UI automation needed.",
+  "assertions": []
+}

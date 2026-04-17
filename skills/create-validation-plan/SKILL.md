@@ -1,12 +1,15 @@
 ---
 name: create-validation-plan
-description: "Create BEFORE evidence capture. Defines PASS criteria per journey (P0/P1/P2 priority). Maps routes/endpoints/screens, orders by dependency, checks prerequisites. Use when starting validation."
+description: "Use BEFORE capturing any evidence. Plans prevent the two most common validation failures: missed journeys (you didn't test the flow that actually breaks) and vague PASS criteria (you can't tell if a run passed). This skill walks you through discovering every user journey (routes, endpoints, screens, commands), writing falsifiable PASS criteria per journey, ordering journeys by dependency, and listing prerequisites. Output is a persistent plan at e2e-evidence/validation-plan.md that guides the rest of the validation pipeline. Reach for it whenever someone says 'let's start validating', 'what should we test', 'write a test plan', 'define acceptance criteria', or before invoking e2e-validate / forge-execute."
 triggers:
   - "validation plan generation"
   - "journey discovery"
   - "pass criteria definition"
   - "validation strategy planning"
   - "upfront planning before execution"
+  - "write a test plan"
+  - "what should we test"
+  - "define acceptance criteria"
 context_priority: critical
 ---
 
@@ -46,9 +49,24 @@ Every plan follows this format:
 
 ## Journey Discovery
 
-Scan the codebase for routes, endpoints, screens, and commands by platform.
-See `references/journey-discovery-patterns.md` for platform-specific discovery commands
-(Web, API, iOS, CLI). Rule: each route = at least one journey; each form = a user interaction journey.
+Scan the codebase for every entry point users interact with. The exact commands depend on platform — here are starting points; see `references/journey-discovery-patterns.md` for the full playbook per framework.
+
+- **Web (Next.js app router)**: `rg -l 'export default' app/**/page.*`
+- **Web (React Router)**: `rg '<Route\s' src/`
+- **API (Express/Fastify)**: `rg '\.(get|post|put|delete|patch)\(' --type js --type ts`
+- **API (FastAPI)**: `rg '@(app|router)\.(get|post|put|delete|patch)'`
+- **API (Django)**: `python manage.py show_urls` (requires `django-extensions`), or `rg 'path\(|url\(' */urls.py`
+- **iOS (SwiftUI)**: `rg 'struct \w+:\s*View'` for screens; `rg 'NavigationLink'` for flows
+- **CLI (Clap)**: `rg '#\[command\(' --type rust`
+- **CLI (Click/argparse)**: `rg '@.*\.command|add_parser'`
+
+**Rules of thumb:**
+- Each route = at least one journey.
+- Each form = a user interaction journey (test valid submit AND invalid submit — that's two journeys if the error path is substantial).
+- Each auth boundary = a journey (authenticated access + unauthenticated-denied + wrong-role-denied).
+- Each empty state and error state = a journey. These are the ones most often missed, and they're where real bugs hide.
+
+Don't hand-maintain the list long-term — journey discovery should be rerun whenever routes/endpoints change, so plans stay honest.
 
 ## PASS Criteria Rules
 
@@ -60,7 +78,7 @@ good/bad examples and the anti-patterns table.
 | Specific | "Login works" | "POST /login returns 200 with `token` field" |
 | Measurable | "Page loads fast" | "DOMContentLoaded < 2s" |
 | Observable | "Data saved correctly" | "GET /users/1 returns updated name" |
-| Complete | Happy path only | Happy + error paths |
+| Complete | Happy path only — "POST /login with valid creds returns 200" | Happy + error paths — "POST /login with valid creds returns 200 + token; POST /login with invalid creds returns 401 + error message body" |
 | Ordered | Dashboard before login | Login PASS before dashboard starts |
 | Evidence-mapped | No proof method | "Screenshot shows 3 metric cards" |
 | Non-redundant | "Login works and dashboard loads" | Separate criteria |
@@ -80,10 +98,10 @@ Before starting evidence capture, verify ALL:
 
 ## Rules
 
-1. Plan MUST be created before any evidence capture begins
-2. Plan is saved as persistent artifact at `e2e-evidence/validation-plan.md`
-3. PASS criteria must be falsifiable — possible to definitively fail
-4. Never skip journey discovery — routes, endpoints, screens, and commands must all be mapped
+1. **Plan before evidence.** If you start capturing evidence without a plan, you have no way to know when you're done, and the evidence you gather will match what you tested, not what matters.
+2. **Plan is persistent.** Save to `e2e-evidence/validation-plan.md` so the next run, the next teammate, and future you can reuse it.
+3. **Criteria must be falsifiable.** If there's no concrete way to say "this failed", it will never fail — which means the criterion isn't doing any work.
+4. **Never skip journey discovery.** Routes, endpoints, screens, and commands must all be mapped. Coverage gaps in the plan become coverage gaps in validation; what you didn't plan for is what ships broken.
 
 ## Security Policy
 

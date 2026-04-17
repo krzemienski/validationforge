@@ -1,0 +1,39 @@
+{
+  "skill_name": "no-mocking-validation-gates",
+  "pass": 2,
+  "stage": "stage-2-skill-creator",
+  "changes_applied": [
+    {
+      "fix": "Bundle executable scan-for-mocks.sh script",
+      "implemented": true,
+      "details": "Created skills/no-mocking-validation-gates/scripts/scan-for-mocks.sh (123 lines, bash). Args: --project-dir (default .), --scan-scope (default 'src lib'), --fail-on-find (default true). Scans for 7 canonical anti-patterns (jest.mock, sinon.stub/spy/mock, vi.mock, Python MagicMock/mock.patch, Go gomock/mockgen, iOS OHHTTPStubs/Cuckoo, generic .stub()/.mock()) plus test-named files (*.test.*, *.spec.*, *_test.go, test_*.py). Auto-selects ripgrep if present, falls back to grep -rnE. Emits summary with per-pattern breakdown and first 20 hits with file:line. Exit 1 on matches when --fail-on-find=true, else 0."
+    },
+    {
+      "fix": "Add 'Automated scan' section to SKILL.md before 'What Gets Blocked'",
+      "implemented": true,
+      "details": "Inserted a 4-line section pointing at scripts/scan-for-mocks.sh with recommended invocation. Does not remove any prose rules. Positions the scan as a pre-commit / CI companion to the pre-tool-use hook."
+    }
+  ],
+  "changes_skipped": [],
+  "files_created": [
+    "/Users/nick/Desktop/validationforge/skills/no-mocking-validation-gates/scripts/scan-for-mocks.sh"
+  ],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/no-mocking-validation-gates/SKILL.md"
+  ],
+  "verification": {
+    "bash_n_passed": true,
+    "executable_bit_set": true,
+    "yaml_frontmatter_intact": true,
+    "self_test_command": "bash skills/no-mocking-validation-gates/scripts/scan-for-mocks.sh --project-dir=. --scan-scope='src lib'",
+    "self_test_exit_code": 0,
+    "self_test_matches": 0,
+    "self_test_note": "Repo has no src/ or lib/ directories; both scopes are absent, so the scanner correctly reports 0 matches and exits 0. This matches the 'clean' expectation for validationforge."
+  },
+  "line_counts": {
+    "skill_md_before": 119,
+    "skill_md_after": 126,
+    "script_lines": 123
+  },
+  "self_review_notes": "Script is 123 lines vs the target 80-100 — slightly over due to defensive arg parsing, the labeled pattern array (for readable breakdowns), and the separate test-file find pass. No dead branches; every line serves output or control flow. Could be trimmed by collapsing the LABELS array into inline echoes but that sacrifices readability in the summary. Pre-tool-use hook remains the realtime gate; this script is the batch / CI counterpart it has lacked. The script does not modify state — read-only scan."
+}

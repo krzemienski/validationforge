@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "before-editing-take-a-screenshot-of",
+  "prompt": "I'm about to refactor our login form. It currently works fine. How do I capture baseline evidence before I start editing so I can prove the refactor didn't break anything?",
+  "expected_output": "Before editing: Take a screenshot of the login form (e2e-evidence/baseline/login-form.png). Try a valid login and capture the response JSON (e2e-evidence/baseline/login-success.json). Try invalid credentials and capture the error (e2e-evidence/baseline/login-error.json). Save a summary to e2e-evidence/baseline/assessment.md. Now you can refactor. After refactor: re-run the same 3 captures and compare \u2014 if the form still works and API responses are identical, NO REGRESSION.",
+  "assertions": []
+}

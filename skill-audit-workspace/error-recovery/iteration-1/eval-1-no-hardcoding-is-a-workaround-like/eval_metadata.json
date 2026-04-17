@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "no-hardcoding-is-a-workaround-like",
+  "prompt": "My validation script is trying to POST to /api/users/ but getting 401 Unauthorized even though I'm passing a token. I tried 3 times and it still fails. I'm thinking of hardcoding the token instead of reading from env. Is that the right fix?",
+  "expected_output": "NO. Hardcoding is a workaround (like mocking). Strike 1: Read the error fully \u2014 is the token format correct? Are you sending `Authorization: Bearer TOKEN` or just `TOKEN`? Check the API docs. Fix the command. Strike 2: Try a different auth method (maybe the endpoint needs session auth instead of token auth?). Strike 3: Rethink \u2014 is the token expired? Can you verify the token is valid by calling /api/auth/verify/? Does the user have permission for this endpoint? Never hardcode. Always fix the real issue (token format, auth method, permissions) and log what you found.",
+  "assertions": []
+}

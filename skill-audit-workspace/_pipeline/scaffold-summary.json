@@ -1,0 +1,482 @@
+[
+  {
+    "skill": "accessibility-audit",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/accessibility-audit",
+    "evals": [
+      "eval-0-clear-guidance-to-run-4-layer-audit",
+      "eval-1-capture-baseline-lighthouse-json-keyboar"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "ai-evidence-analysis",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/ai-evidence-analysis",
+    "evals": [
+      "eval-0-run-ai-analysis-on-all-3",
+      "eval-1-set-vf-ai-analysis-disabled-skill-skips"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "api-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/api-validation",
+    "evals": [
+      "eval-0-run-health-check-first-curl-s",
+      "eval-1-get-token-token-curl-s-x-post"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "baseline-quality-assessment",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/baseline-quality-assessment",
+    "evals": [
+      "eval-0-before-editing-take-a-screenshot-of",
+      "eval-1-baseline-before-upgrade-run-all-6"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "build-quality-gates",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/build-quality-gates",
+    "evals": [
+      "eval-0-gate-1-compile-npm-run-build",
+      "eval-1-no-not-a-fail-but-needs"
+    ],
+    "priority": "low"
+  },
+  {
+    "skill": "chrome-devtools",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/chrome-devtools",
+    "evals": [
+      "eval-0-run-pattern-1-page-load-performance",
+      "eval-1-run-pattern-2-network-debugging-navigate"
+    ],
+    "priority": "low"
+  },
+  {
+    "skill": "cli-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/cli-validation",
+    "evals": [
+      "eval-0-follow-step-1-confirm-binary-exists",
+      "eval-1-build-npm-run-build-or-direct"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "condition-based-waiting",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/condition-based-waiting",
+    "evals": [
+      "eval-0-use-strategy-7-database-ready-wait-for-d",
+      "eval-1-use-strategy-6-ios-simulator-boot"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "coordinated-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/coordinated-validation",
+    "evals": [
+      "eval-0-create-3-waves-wave-0",
+      "eval-1-mark-api-verdict-as-fail-according"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "create-validation-plan",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/create-validation-plan",
+    "evals": [
+      "eval-0-step-1-mkdir-e2e-evidence-create-e2e-evi",
+      "eval-1-see-pass-criteria-examples-md-2-login-wo"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "design-token-audit",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/design-token-audit",
+    "evals": [
+      "eval-0-phase-1-extract-12-tokens-from",
+      "eval-1-phase-1-add-css-variables-step"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "design-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/design-validation",
+    "evals": [
+      "eval-0-phase-1-extract-reference-from-design-md",
+      "eval-1-stitch-is-the-preferred-source-line"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "django-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/django-validation",
+    "evals": [
+      "eval-0-guide-user-through-1-python-manage-py",
+      "eval-1-point-to-csrf-token-requirement-line"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "e2e-testing",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/e2e-testing",
+    "evals": [
+      "eval-0-explain-one-journey-one-user-goal",
+      "eval-1-walk-through-the-diagnosis-1-look"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "e2e-validate",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/e2e-validate",
+    "evals": [
+      "eval-0-explain-the-e2e-validate-skill-auto-dete",
+      "eval-1-clarify-e2e-validate-is-the-orchestrator"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "error-recovery",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/error-recovery",
+    "evals": [
+      "eval-0-walk-through-the-3-strike-protocol-strik",
+      "eval-1-no-hardcoding-is-a-workaround-like"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "flutter-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/flutter-validation",
+    "evals": [
+      "eval-0-guide-1-flutter-build-ios-release",
+      "eval-1-no-that-s-a-symptom-not"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "forge-benchmark",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/forge-benchmark",
+    "evals": [
+      "eval-0-breakdown-you-have-low-coverage-2",
+      "eval-1-you-ve-lost-coverage-fewer-journeys-and"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "forge-execute",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/forge-execute",
+    "evals": [
+      "eval-0-directs-user-to-1-read-evidence",
+      "eval-1-in-ci-mode-exit-code-1"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "forge-plan",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/forge-plan",
+    "evals": [
+      "eval-0-runs-3-parallel-analyses-alice-focuses",
+      "eval-1-directs-to-risk-classification-auth-endp"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "forge-setup",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/forge-setup",
+    "evals": [
+      "eval-0-detects-web-package-json-react-api",
+      "eval-1-detects-existing-config-json-prompts-con"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "forge-team",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/forge-team",
+    "evals": [
+      "eval-0-wave-0-db-validator-spawned-alone",
+      "eval-1-wave-1-complete-with-conditional-verdict"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "full-functional-audit",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/full-functional-audit",
+    "evals": [
+      "eval-0-create-feature-inventory-in-phase-2",
+      "eval-1-medium-the-feature-works-item-deleted"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "fullstack-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/fullstack-validation",
+    "evals": [
+      "eval-0-stop-at-layer-1-pass-gate",
+      "eval-1-api-works-returns-5-frontend-has"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "functional-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/functional-validation",
+    "evals": [
+      "eval-0-response-should-invoke-functional-valida",
+      "eval-1-response-should-invoke-functional-valida"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "gate-validation-discipline",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/gate-validation-discipline",
+    "evals": [
+      "eval-0-response-should-invoke-gate-validation-d",
+      "eval-1-response-should-invoke-gate-validation-d"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "ios-simulator-control",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/ios-simulator-control",
+    "evals": [
+      "eval-0-response-should-invoke-ios-simulator-con",
+      "eval-1-response-should-invoke-ios-simulator-con"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "ios-validation-gate",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/ios-validation-gate",
+    "evals": [
+      "eval-0-response-should-invoke-ios-validation-ga",
+      "eval-1-response-should-invoke-ios-validation-ga"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "ios-validation-runner",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/ios-validation-runner",
+    "evals": [
+      "eval-0-response-should-invoke-ios-validation-ru",
+      "eval-1-response-should-invoke-ios-validation-ru"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "ios-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/ios-validation",
+    "evals": [
+      "eval-0-response-should-invoke-ios-validation-an",
+      "eval-1-response-should-invoke-ios-validation-st"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "no-mocking-validation-gates",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/no-mocking-validation-gates",
+    "evals": [
+      "eval-0-should-diagnose-why-real-system-is",
+      "eval-1-should-acknowledge-the-existing-violatio"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "parallel-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/parallel-validation",
+    "evals": [
+      "eval-0-should-explain-that-web-and-api",
+      "eval-1-should-explain-incomplete-evidence-overa"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "playwright-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/playwright-validation",
+    "evals": [
+      "eval-0-should-guide-step-1-navigate-to",
+      "eval-1-should-say-take-screenshot-at-375px"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "preflight",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/preflight",
+    "evals": [
+      "eval-0-should-enumerate-node-js-installed-npm-i",
+      "eval-1-should-say-preflight-attempts-auto-fix-d"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "production-readiness-audit",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/production-readiness-audit",
+    "evals": [
+      "eval-0-should-say-conditional-performance-isn-t",
+      "eval-1-should-say-yes-phase-2-security"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "react-native-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/react-native-validation",
+    "evals": [
+      "eval-0-should-explain-step-1-metro-start",
+      "eval-1-should-say-this-is-a-bundler"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "research-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/research-validation",
+    "evals": [
+      "eval-0-skill-identifies-pci-dss-owasp-top",
+      "eval-1-skill-recognizes-ios-domain-suggests-app"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "responsive-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/responsive-validation",
+    "evals": [
+      "eval-0-skill-directs-8-viewport-matrix-validati",
+      "eval-1-skill-covers-phase-4-orientation-testing"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "retrospective-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/retrospective-validation",
+    "evals": [
+      "eval-0-skill-walks-phase-1-collection-git",
+      "eval-1-skill-directs-phase-1-to-collect"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "rust-cli-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/rust-cli-validation",
+    "evals": [
+      "eval-0-skill-walks-steps-1-6-cargo-check",
+      "eval-1-skill-explains-strict-vs-permissive-clip"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "sequential-analysis",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/sequential-analysis",
+    "evals": [
+      "eval-0-skill-walks-phase-1-symptom-expected",
+      "eval-1-skill-directs-phase-1-symptom-200"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "stitch-integration",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/stitch-integration",
+    "evals": [
+      "eval-0-skill-directs-phase-1-create-new",
+      "eval-1-skill-recommends-explore-range-moderate"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "team-validation-dashboard",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/team-validation-dashboard",
+    "evals": [
+      "eval-0-user-runs-collect-team-metrics-sh-edits",
+      "eval-1-user-runs-assign-ownership-sh-with-proje"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "validate-audit-benchmarks",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/validate-audit-benchmarks",
+    "evals": [
+      "eval-0-user-runs-bash-scripts-benchmark-test-ho",
+      "eval-1-user-checks-current-aggregate-score-from"
+    ],
+    "priority": "high"
+  },
+  {
+    "skill": "verification-before-completion",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/verification-before-completion",
+    "evals": [
+      "eval-0-skill-runs-through-checklist-user-says",
+      "eval-1-skill-asks-did-you-check-for"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "visual-inspection",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/visual-inspection",
+    "evals": [
+      "eval-0-user-runs-through-all-7-categories",
+      "eval-1-user-takes-screenshots-on-multiple-sim"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "web-testing",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/web-testing",
+    "evals": [
+      "eval-0-user-consults-decision-matrix-new-page-r",
+      "eval-1-skill-doesn-t-define-the-threshold-user"
+    ],
+    "priority": "med"
+  },
+  {
+    "skill": "web-validation",
+    "status": "ok",
+    "workspace": "/Users/nick/Desktop/validationforge/skill-audit-workspace/web-validation",
+    "evals": [
+      "eval-0-user-starts-at-step-1-detects",
+      "eval-1-skill-provides-template-but-not-discover"
+    ],
+    "priority": "high"
+  }
+]

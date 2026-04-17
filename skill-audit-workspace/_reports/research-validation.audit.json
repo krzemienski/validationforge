@@ -1,0 +1,84 @@
+{
+  "skill_name": "research-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/research-validation/SKILL.md",
+  "skill_md_line_count": 180,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Research applicable standards, best practices, tools before validation planning (Phase 0). Maps domain standards to skills. Use entering new domains, when standards change, or deciding coverage.",
+    "length_words": 29,
+    "issues": [
+      "Awkward phrasing: 'Use entering' should be 'Use when entering'",
+      "Weak trigger language - doesn't explain the WHY (e.g., why before validation planning?)",
+      "Undersells the phase importance - Phase 0 is foundational but description reads as optional"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Phase structure is sound but repetitive naming convention (Phase 1-5) could be more mnemonic. SCOPE/STANDARDS/TOOLS/MAP/REPORT would be clearer than Phase 1-5.",
+        "location": "Lines 25-31"
+      },
+      {
+        "severity": "low",
+        "description": "Domain classification table is good, but mixing regulatory (HIPAA, SOX) with design standards (Apple HIG, WCAG) without clarifying that both are 'standards' creates cognitive load.",
+        "location": "Lines 37-46"
+      },
+      {
+        "severity": "med",
+        "description": "Integration section is thin - claims 'research output feeds directly into create-validation-plan' but doesn't show what that consumption looks like. No example of how Phase 4 mapping translates to actual plan input.",
+        "location": "Lines 173-179"
+      },
+      {
+        "severity": "low",
+        "description": "Tool inventory section (Phase 3) references 'Context7 MCP' which is not a real MCP name. Likely meant a generic documentation tool or Context3/MCP server list.",
+        "location": "Line 73"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 2 research protocol is guidance, not prescriptive. '3-5 web searches per domain area' is arbitrary - doesn't explain how to know when you've researched enough. Research scope could be infinite.",
+        "location": "Lines 79-86"
+      }
+    ],
+    "strengths": [
+      "Clear structural flow (SCOPE → STANDARDS → TOOLS → MAP → REPORT) mirrors real research workflows",
+      "Domain classification table immediately orients users to their context",
+      "Concrete evidence directory structure (`e2e-evidence/research/step-*`) with specific file names",
+      "Each phase has explicit outputs (step-01-scope.md, step-02-standards.md, etc.) - trackable progress",
+      "Research protocol with '2+ sources' cross-reference requirement prevents single-source bias"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "Phase 3 tool inventory could ship with auto-detection script (already in README): bash loop checking for xcrun, idb, curl, node, npm, npx, python3. Would make Phase 3 reproducible.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Fix description grammar: 'Use entering' → 'Use when entering'",
+    "Strengthen description with WHY: add 'prevents blind validation' or 'surfaces applicable standards early'",
+    "Replace 'Context7 MCP' with actual tool name or clarify as 'documentation source'",
+    "Add example: show how Phase 4 mapping (requirement → skill) becomes actual journey in create-validation-plan",
+    "Quantify research stopping criteria: e.g., 'until 2+ independent sources confirm the requirement' instead of '3-5 searches'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm starting validation on an e-commerce platform handling credit card payments. Never validated fintech before. What standards apply and which ValidationForge skills should I use?",
+      "expected_output": "Skill identifies PCI DSS, OWASP Top 10 for API injection risks, accessibility laws. Maps to: api-validation for payment endpoint auth, accessibility-audit for compliance, then suggests create-validation-plan inputs. Produces e2e-evidence/research/ with scope/standards/mapping files."
+    },
+    {
+      "id": 2,
+      "prompt": "iOS app launched 3 months ago. New feature adds deep linking. How do we validate it won't break existing journeys?",
+      "expected_output": "Skill recognizes iOS domain, suggests Apple HIG deep link handling, iOS rejection risk. Phase 4 mapping includes: ios-validation for nav state, responsive-validation for screen reflow. Evidence shows tool inventory (xcrun, idb available). Clear map of which risks → which skills."
+    },
+    {
+      "id": 3,
+      "prompt": "We're refactoring our GraphQL API to REST. Standards changed. How do I research what validation we need?",
+      "expected_output": "Skill directs Phase 1 scope (API service domain), Phase 2 to OpenAPI spec + REST conventions, Phase 3 tool check (curl, httpie available?). Phase 4 maps to api-validation skill. Produces research report with OpenAPI criteria and tool availability."
+    }
+  ]
+}

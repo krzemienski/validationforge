@@ -1,0 +1,89 @@
+{
+  "skill_name": "web-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/web-validation/SKILL.md",
+  "skill_md_line_count": 188,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Web validation via browser automation: health checks, screenshots at 375/768/1920px, form testing, console/network validation. Detects CORS, hydration, CSS issues.",
+    "length_words": 19,
+    "issues": [
+      "Lists specific breakpoints (375/768/1920) but doesn't explain why those—are they device breakpoints or industry standard?",
+      "Assumes dev server is running—no guidance on starting it if it's not",
+      "No mention of test data cleanup—does test form data pollute the database?"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Step 1 (Start Dev Server, lines 24-40) attempts to detect frameworks but uses loose heuristics (if [ -f pnpm-lock.yaml ]). What if project uses both pnpm and npm? What if the dev script has a different name (yarn run development vs yarn dev)? Fragile.",
+        "location": "Lines 24-40"
+      },
+      {
+        "severity": "high",
+        "description": "Step 2 (Health Check, lines 53-59) hardcodes port 3000 but Step 1 detection doesn't determine the actual port. If Flask runs on :5000 or Next runs on :3001, the check fails silently.",
+        "location": "Lines 53-59, 24-40"
+      },
+      {
+        "severity": "med",
+        "description": "Step 3 (Page Navigation, lines 61-81) shows Playwright MCP and Chrome DevTools MCP examples but doesn't explain the differences or when to use each. User must guess which tool is available.",
+        "location": "Lines 61-81"
+      },
+      {
+        "severity": "med",
+        "description": "Step 6 (Form Validation, lines 107-125) tests 'valid' and 'invalid' data but doesn't define what makes data valid/invalid for the form. Template values (user@example.com, SecurePass123!) may not match real validation rules.",
+        "location": "Lines 107-125"
+      },
+      {
+        "severity": "med",
+        "description": "Step 8 (Route Coverage, lines 149-160) uses curl to check routes but hardcodes routes list as bash array. Real apps have dozens of routes; maintaining this list is unsustainable. No guidance on dynamic route discovery.",
+        "location": "Lines 149-160"
+      },
+      {
+        "severity": "low",
+        "description": "Common Failures section (lines 168-177) is helpful troubleshooting but the 'Blank page, no errors' section suggests checking network tab without explaining how to parse network traces or where the bundle should be.",
+        "location": "Lines 168-177"
+      }
+    ],
+    "strengths": [
+      "The 8-step workflow is sequential and actionable—each step builds on previous state",
+      "Evidence capture is systematic: health check → navigation → console errors → network → forms → responsive → routes",
+      "Both Playwright MCP and Chrome DevTools MCP examples are provided (competing tools)",
+      "Common Failures troubleshooting table is comprehensive—CORS, hydration, missing CSS are the right top 3",
+      "PASS Criteria template is concrete and machine-checkable (checkboxes, not prose)"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "web-validation-harness.sh could: detect framework → start server → wait for ready → run steps 2-8 in sequence → clean up test data. Would be a complete end-to-end harness.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Fix port detection: Step 1 should output PORT variable; Step 2 health check should use that PORT, not hardcoded 3000",
+    "Improve framework detection: Check for common dev command names (dev, dev:local, start); ask user if detection fails",
+    "Clarify tool choice: Playwright MCP vs Chrome DevTools MCP—when does user choose each? Add a decision tree or tool comparison table",
+    "For form validation (Step 6), explain how to discover valid form rules: inspect HTML <input> attributes (required, type, pattern), read validation messages, or ask API what it accepts",
+    "Add route discovery: instead of hardcoded array, suggest extracting routes from code (React Router, Django urls.py, OpenAPI spec) or using sitemap if available"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a Django app that runs on localhost:8000. I want to validate it end-to-end using this skill. Walk me through.",
+      "expected_output": "User starts at Step 1. Detects Gemfile? No. Detects manage.py? Yes. Runs 'python manage.py runserver'. But the skill says port 3000—that's wrong. Should detect port from runserver output or ask user. Step 2 health check should use http://localhost:8000, not :3000. User gets stuck here until they manually adjust ports."
+    },
+    {
+      "id": 2,
+      "prompt": "Step 6 asks me to test with invalid data (empty password). But what makes a password invalid for this form? Could be min length 8, could be 'must contain number', could be 'no special chars allowed'. How do I know?",
+      "expected_output": "Skill provides template but not discovery method. User should: inspect <input type='password'> for validation attributes (required, minlength, pattern), read any help text, try submitting empty → see error message. Or read API docs for password rules. Skill should guide this discovery, not assume."
+    },
+    {
+      "id": 3,
+      "prompt": "Our web app has 47 routes. Step 8 asks me to list them in a bash array. Is there a better way?",
+      "expected_output": "Step 8 is unmaintainable for 47 routes. Skill should suggest: extract from React Router config, Next.js file structure, Flask app.route decorators, or OpenAPI spec. Dynamic discovery > static array. Skill currently assumes manual list."
+    }
+  ]
+}

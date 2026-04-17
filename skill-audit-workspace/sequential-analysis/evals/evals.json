@@ -1,0 +1,17 @@
+{
+  "skill_name": "sequential-analysis",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Validation FAILED: UI test expected button color='blue' but got color='gray'. Unexpected because color is in CSS not dynamically set. Root cause?",
+      "expected_output": "Skill walks Phase 1 (symptom: expected blue, actual gray). Phase 2 hypotheses: H1 (CSS not loaded - timing), H2 (wrong CSS rule applied - code), H3 (screenshot taken before paint - timing), H4 (theme override - data), H5 (browser cache - environment). Phase 3 investigates: check browser console (paint timing?), git diff (CSS changed?), network tab (CSS file 404?). Phase 4 concludes: if CSS file missing, CONFIRMED root cause is timing/asset. Evidence: network trace, screenshot timestamp, CSS file status.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "API validation FAILED: endpoint returns 200 OK but response body is empty. Expected: {\"data\": [...]}. Same endpoint worked yesterday. Why?",
+      "expected_output": "Skill directs Phase 1 (symptom: 200 but empty body). Phase 2 hypotheses: H1 (data missing from DB), H2 (new code deployed with bug), H3 (pagination filter hiding data), H4 (auth token insufficient), H5 (caching stale response). Phase 3 investigates: check git log (code changed?), check DB query directly (data exists?), check request headers (auth token valid?). Phase 4: if git shows new deploy, hypothesis H2 confirmed. Evidence: git commit diff, DB query output, API response logged.",
+      "files": []
+    }
+  ]
+}

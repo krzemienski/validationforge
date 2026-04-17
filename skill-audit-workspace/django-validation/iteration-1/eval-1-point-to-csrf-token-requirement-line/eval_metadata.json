@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "point-to-csrf-token-requirement-line",
+  "prompt": "My Flask app with Gunicorn is running on port 5000, but POST /api/users returns 403 Forbidden even though I'm admin. The app works locally. What's broken?",
+  "expected_output": "Point to CSRF token requirement (line 316 in Common Failures). Show: (1) curl -s -H 'X-CSRFToken: <token>' (if CSRF is enabled), or (2) check if the POST handler requires a specific header (Authorization, Content-Type). Validate by inspecting actual 403 response body with curl -i, not just the status.",
+  "assertions": []
+}

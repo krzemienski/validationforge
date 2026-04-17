@@ -1,0 +1,17 @@
+{
+  "skill_name": "web-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a Django app that runs on localhost:8000. I want to validate it end-to-end using this skill. Walk me through.",
+      "expected_output": "User starts at Step 1. Detects Gemfile? No. Detects manage.py? Yes. Runs 'python manage.py runserver'. But the skill says port 3000\u2014that's wrong. Should detect port from runserver output or ask user. Step 2 health check should use http://localhost:8000, not :3000. User gets stuck here until they manually adjust ports.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Step 6 asks me to test with invalid data (empty password). But what makes a password invalid for this form? Could be min length 8, could be 'must contain number', could be 'no special chars allowed'. How do I know?",
+      "expected_output": "Skill provides template but not discovery method. User should: inspect <input type='password'> for validation attributes (required, minlength, pattern), read any help text, try submitting empty \u2192 see error message. Or read API docs for password rules. Skill should guide this discovery, not assume.",
+      "files": []
+    }
+  ]
+}

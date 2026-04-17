@@ -1,12 +1,14 @@
 ---
 name: baseline-quality-assessment
-description: "Capture immutable 'before' evidence before code changes. Proves changes improved targets without regressing existing functionality. Use for refactor, migration, dependency update, bug fix."
+description: "Use BEFORE making any significant code change — refactor, dependency upgrade, migration, bug fix, performance optimization — to capture an immutable 'before' snapshot. After the change, compare against this baseline to prove two things: (1) what you intended to improve actually improved, (2) what you didn't intend to touch didn't regress. Prevents the classic 'I fixed X but accidentally broke Y' failure. Reach for it on phrases like 'capture baseline', 'before refactoring', 'prove no regressions', 'snapshot current state', 'measure the improvement', or before any PR whose correctness depends on showing a delta."
 triggers:
   - "baseline capture"
   - "before-after comparison"
   - "regression detection"
   - "no-regressions proof"
   - "change impact"
+  - "snapshot before refactor"
+  - "prove improvement"
 context_priority: standard
 ---
 

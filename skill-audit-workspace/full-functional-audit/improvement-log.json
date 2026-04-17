@@ -1,0 +1,9 @@
+{
+  "skill_name": "full-functional-audit",
+  "changes_applied": [{"fix": "Rewrite description with read-only framing + distinct use cases", "implemented": true, "details": "New description leads with 'read-only' and 'without fixing anything' — the critical differentiator from forge-execute. Names pre-refactor baseline use case. 7 new YAML triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "Well-scoped 99-line skill; description was the gap."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/full-functional-audit/SKILL.md"],
+  "description_before": "Audit project health without code changes: exercise all features, capture evidence, classify findings by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Pre-release gates, compliance, baselines.",
+  "description_after": "Use for read-only health checks of a project where you want to know 'what's the real state right now' WITHOUT fixing anything along the way. Exercises every discoverable feature through the real UI, captures evidence, and classifies each finding by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Produces e2e-evidence/audit-report.md with prioritized recommendations but doesn't apply fixes — that's for follow-up work. Reach for it on phrases like 'audit the app', 'pre-release audit', 'compliance check', 'health report', 'what's the current state', or before a major refactor when you want a baseline that documents every existing issue."
+}

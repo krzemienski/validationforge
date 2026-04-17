@@ -1,0 +1,48 @@
+{
+  "skill_name": "forge-setup",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with scope + trigger phrases",
+      "implemented": true,
+      "details": "New description names the 5 detected platforms, the 3 enforcement levels, and what gets scaffolded. Added 'when it becomes a repair tool' angle. Expanded from 26 to ~85 words. 5 new YAML triggers."
+    },
+    {
+      "fix": "Add 'When to use' section clarifying first-run vs repair mode",
+      "implemented": true,
+      "details": "New section explains this runs once per project, but re-invocations serve as repair/upgrade tool for enforcement changes or missing rules/directories. Addresses the audit's conflict-resolution concern with one sentence."
+    },
+    {
+      "fix": "Document what each of the 8 rules enforces",
+      "implemented": true,
+      "details": "Old Phase 4 listed 8 filenames with no explanation. New Phase 4 is a table with each rule paired to what it enforces (Iron Rule, 7-phase pipeline order, evidence citation, wave handoff, 3-strike forge semantics, benchmarking). Makes the rules install step meaningful instead of magical."
+    },
+    {
+      "fix": "Upgrade Phase 5 verification with failure remediation",
+      "implemented": true,
+      "details": "Old checklist was 6 bullet items with no 'if it fails' guidance. New table has 3 columns: Check, Command, If it fails. Each failure row gives the fix (fix JSON syntax, rerun init script, recreate directory, re-run Phase 4, restart agent session, install MCP server). Turns the checklist into an executable runbook."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Expand config schema with additional fields (project_name, plugin_install_path, etc.)",
+      "reason": "The existing config schema is sufficient for current behavior. Adding optional fields that aren't yet consumed by other commands creates a maintenance burden without immediate payoff."
+    },
+    {
+      "fix": "Bundle detect-platforms.sh / install-rules.sh / scaffold-directories.sh",
+      "reason": "forge-init.sh is already referenced for state init. Additional scripts are good automation but require careful shell engineering; better as subagent follow-up."
+    },
+    {
+      "fix": "Add explicit MCP server detection logic",
+      "reason": "Phase 5 now checks MCP availability and gives remediation. A programmatic detection step would require MCP API calls — better handled by the hooks or by the preflight skill."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/forge-setup/SKILL.md"
+  ],
+  "description_before": "Initialize ValidationForge: detect platforms, scaffold .validationforge/ + e2e-evidence/, install rules, configure enforcement (strict/standard/permissive). Run first on any new project.",
+  "description_after": "Run first on any new project to initialize ValidationForge. Detects which platforms are present (iOS, web, API, CLI, design), picks an enforcement level (strict/standard/permissive), scaffolds .validationforge/ and e2e-evidence/ directories, copies 8 enforcement rules into .claude/rules/ with vf- prefix, and validates that MCP servers for detected platforms are reachable. Reach for it whenever someone says 'set up validation', 'initialize validationforge', 'vf setup', before the first /validate or /forge-execute call on a project, or when a project is missing .validationforge/config.json.",
+  "line_count_before": 118,
+  "line_count_after": 128,
+  "self_review_notes": "The Phase 5 verification upgrade is the biggest usability win — old checklist told you what to check but not what to do when a check failed. Now each row is a mini-runbook. The rules table gives the model and the reader a shared mental model of what enforcement actually does."
+}

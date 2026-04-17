@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "create-feature-inventory-in-phase-2",
+  "prompt": "Running a full functional audit on a SaaS product before public launch. It has 40+ pages. How do I discover 'every feature' without spending 2 weeks? What's in scope?",
+  "expected_output": "Create Feature Inventory in Phase 2: scan codebase for routes/components (Web: routing table + component list; API: OpenAPI spec or endpoint list). Group by user journey (auth, onboarding, core workflow, settings, admin). Target ~20 features representing all journey phases. For each feature, exercise success path + 1 error state. In scope: user-facing features only (buttons, forms, endpoints, screens). Not in scope: internal utilities, refactored legacy code not visible to users. Document scope in report Executive Summary.",
+  "assertions": []
+}

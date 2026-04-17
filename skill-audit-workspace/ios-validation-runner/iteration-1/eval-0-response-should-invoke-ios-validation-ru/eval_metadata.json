@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "response-should-invoke-ios-validation-ru",
+  "prompt": "I'm debugging a complex iOS flow: user taps a button, waits 2 seconds, gets a confirmation message, then taps 'next' to move to the next screen. A screenshot won't capture timing. How do I use ios-validation-runner?",
+  "expected_output": "Response should invoke ios-validation-runner and walk through 5 phases: (1) SETUP: Boot simulator, create evidence dir. (2) RECORD: Start video + app logs in BACKGROUND (don't interact yet). (3) ACT: Tap button, wait 2s, observe confirmation, tap next. Manually describe each action. (4) COLLECT: Stop video/logs, capture final screenshot, check for crashes. (5) VERIFY: Review video for timing/smoothness, read logs for state transitions, read screenshots for UI changes. Video will show the 2-second delay; screenshots alone wouldn't.",
+  "assertions": []
+}

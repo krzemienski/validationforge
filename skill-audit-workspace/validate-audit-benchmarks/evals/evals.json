@@ -1,0 +1,17 @@
+{
+  "skill_name": "validate-audit-benchmarks",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I modified three hooks last week and want to verify I didn't introduce regressions before cutting the next release. Run the benchmark suite and compare against the last baseline.",
+      "expected_output": "User runs bash scripts/benchmark/test-hooks.sh and gets exit code 0 if all hooks pass functional tests. Runs aggregate-results.sh which outputs new score, compares hook_score against previous baseline in audit-artifacts/benchmark-baseline.json. If regressed, reports which hook(s) failed.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We're about to add 5 new skills to ValidationForge. What's the minimum bar they need to meet so the overall benchmark grade doesn't drop from A to B?",
+      "expected_output": "User checks current aggregate score from prior baseline. Calculates: skills weight 20%, current skill_score N%. New skills must have avg frontmatter/description score \u2265 X to keep aggregate \u2265 90. (Actual math depends on current baseline.)",
+      "files": []
+    }
+  ]
+}

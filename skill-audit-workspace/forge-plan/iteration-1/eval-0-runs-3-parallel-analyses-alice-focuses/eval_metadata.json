@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "runs-3-parallel-analyses-alice-focuses",
+  "prompt": "New fullstack project: React frontend, Node API, PostgreSQL. 3 users: me (lead), Alice (frontend spec), Bob (API spec). We disagree on what 'signup complete' means. Use consensus mode to generate plan.",
+  "expected_output": "Runs 3 parallel analyses: Alice focuses on form UX (email validation, error messages, redirect to dashboard); Bob focuses on API (create user record, return JWT, check DB insert); I focus on integration (form \u2192 API \u2192 DB \u2192 frontend shows user name). Merges into single 'signup journey' with 7 steps covering all 3 perspectives. Writes to e2e-evidence/validation-plan.md. Mode: consensus.",
+  "assertions": []
+}

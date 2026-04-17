@@ -1,0 +1,88 @@
+{
+  "skill_name": "web-testing",
+  "path": "/Users/nick/Desktop/validationforge/skills/web-testing/SKILL.md",
+  "skill_md_line_count": 217,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "5-layer web validation: integration (APIs), E2E (journeys), accessibility (WCAG), performance (Core Web Vitals), security (OWASP). Decide which layers a feature needs. Real systems only—no mocks.",
+    "length_words": 26,
+    "issues": [
+      "Doesn't explain HOW to decide which layers a feature needs—decision matrix is present but reasoning is missing",
+      "No mention of layer dependencies (e.g., Layer 2 E2E requires Layer 1 APIs to work)",
+      "Missing cost/time guidance—all 5 layers is expensive; when is that justified?"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Decision matrix (lines 36-45) is helpful but lacks justification for each cell. Why does 'New page/route' need Layer 4 (Performance)? Why doesn't 'Style/layout change' need Layer 4? Rubric criteria are missing.",
+        "location": "Lines 36-45"
+      },
+      {
+        "severity": "med",
+        "description": "Layer 1 (Integration, lines 47-77) shows curl examples but doesn't explain what to do if an API response is wrong—is that a FAIL on this layer, or does it cascade to Layer 2? Evidence interpretation is vague.",
+        "location": "Lines 47-77"
+      },
+      {
+        "severity": "med",
+        "description": "Layer 2 (E2E, lines 79-92) is minimal and delegates to playwright-validation skill without explaining what 'critical user journeys' means. Four journeys listed but no guidance on how many journeys are 'enough'.",
+        "location": "Lines 79-92"
+      },
+      {
+        "severity": "med",
+        "description": "Layer 3 (Accessibility, lines 94-131) mixes automated checks (heading hierarchy) with manual checks (color contrast) without distinguishing what's toolable vs manual. Color contrast checks lack tools or thresholds.",
+        "location": "Lines 94-131"
+      },
+      {
+        "severity": "med",
+        "description": "Layer 4 (Performance, lines 133-165) lists Core Web Vitals thresholds but doesn't explain what to do if a metric is in 'Needs Work' range—is that a FAIL, or just a warning? Remediation guidance is missing.",
+        "location": "Lines 133-165"
+      },
+      {
+        "severity": "low",
+        "description": "Layer 5 (Security, lines 167-199) test payloads (XSS, SQLi) are hardcoded but no explanation of what a 'PASS' looks like for each—is the input rejected, sanitized, or dropped? Expected behavior unclear.",
+        "location": "Lines 167-199"
+      }
+    ],
+    "strengths": [
+      "The 5-layer model is well-conceived and maps cleanly to real validation concerns",
+      "Decision matrix gives a quick at-a-glance view of which layers apply to common feature types",
+      "Each layer has concrete commands (curl, browser tools, Lighthouse) that can be executed immediately",
+      "Evidence organization (layers → subdirectories under e2e-evidence/) is clear and scalable",
+      "Security validation includes specific test payloads (XSS, SQLi, path traversal), not just high-level guidance"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "web-validation-harness.sh could orchestrate layers by feature type: --feature='new-page' runs layers 1,2,3,4,5 in sequence. --feature='style-change' runs 2,3 only. Reduces decision fatigue.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Expand decision matrix with reasoning column: explain why 'New page/route' needs all 5 layers but 'Style/layout change' doesn't need layers 1 & 5",
+    "Define verdict thresholds for each layer: Is Layer 4 (Performance) FAIL if LCP is 3.5s (Needs Work) or only if >4.0s (Poor)? Currently undefined.",
+    "Add a 'layer dependencies' section: Layer 2 E2E requires Layer 1 APIs to work; Layer 3 A11y requires Layer 2 to load first. Order matters.",
+    "Clarify security test expectations: For XSS payload, should the browser show an error, sanitize silently, or reject the form? Each outcome is different."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "We're adding a new dashboard page that shows user data from three APIs, with interactive charts, a dark mode toggle, and user filtering. The team says 'it's just display code.' I need to define what layers of validation are mandatory.",
+      "expected_output": "User consults decision matrix: new page/route → YES (all 5 layers). User applies each layer: Layer 1 (curl the 3 APIs, verify response structure), Layer 2 (Playwright: navigate, filter data, verify filtered data displays), Layer 3 (WCAG: heading hierarchy, color contrast, keyboard nav), Layer 4 (Lighthouse: LCP, INP, CLS), Layer 5 (Security: no XSS in chart labels if user-provided). Not 'just display code'—full validation required."
+    },
+    {
+      "id": 2,
+      "prompt": "Layer 4 shows the LCP is 3.8 seconds—'Needs Work' range. Can we deploy, or is that a blocker?",
+      "expected_output": "Skill doesn't define the threshold. User must decide: is 3.8s acceptable for your SLA? Skill shows that <2.5s is 'Good'. User decides if Needs Work is a blocker or a warning. Recommendation: Layer 4 findings should feed into Layer 5 (verdict), but threshold is product decision, not VF decision."
+    },
+    {
+      "id": 3,
+      "prompt": "We changed the login button color from blue to green. The designer says 'it's just CSS, no validation needed.' Should we still run the 5-layer suite?",
+      "expected_output": "Decision matrix: Style/layout change → Layer 2 (E2E: does button still work?) and Layer 3 (A11y: is green-on-white contrast still 4.5:1?). Skip Layer 1 (no API change), Layer 4 (no perf impact), Layer 5 (no security impact). User runs subset, not full suite, saving time."
+    }
+  ]
+}

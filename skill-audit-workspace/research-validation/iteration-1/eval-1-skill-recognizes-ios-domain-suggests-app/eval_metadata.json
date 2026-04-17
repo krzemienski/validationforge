@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "skill-recognizes-ios-domain-suggests-app",
+  "prompt": "iOS app launched 3 months ago. New feature adds deep linking. How do we validate it won't break existing journeys?",
+  "expected_output": "Skill recognizes iOS domain, suggests Apple HIG deep link handling, iOS rejection risk. Phase 4 mapping includes: ios-validation for nav state, responsive-validation for screen reflow. Evidence shows tool inventory (xcrun, idb available). Clear map of which risks \u2192 which skills.",
+  "assertions": []
+}

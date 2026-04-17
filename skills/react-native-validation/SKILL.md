@@ -1,6 +1,14 @@
 ---
 name: react-native-validation
-description: "Validate React Native apps via Metro/Expo: platform build, launch, screenshots, logs, deep link testing on iOS/Android. Detects crashes, console errors, bundle issues. Covers Expo Go, CLI, bare RN."
+description: "Use for validating React Native apps built with any workflow (Expo Go, Expo prebuild/EAS, bare RN CLI) on iOS simulators, Android emulators, and physical devices. Covers: Metro bundler starts cleanly, platform build succeeds, app installs + launches, screenshots at key states, JS console errors captured, native crashes detected, deep links route correctly. Reach for it on phrases like 'validate my React Native app', 'metro bundler check', 'expo validation', 'test RN on simulator', 'does the deep link work in RN', or before an RN release."
+triggers:
+  - "react native validation"
+  - "validate RN app"
+  - "metro bundler check"
+  - "expo validation"
+  - "react native build"
+  - "RN simulator test"
+  - "RN deep link"
 context_priority: standard
 ---
 

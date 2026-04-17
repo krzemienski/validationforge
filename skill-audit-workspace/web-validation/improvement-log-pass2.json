@@ -1,0 +1,50 @@
+{
+  "skill": "web-validation",
+  "pass": 2,
+  "date": "2026-04-17",
+  "improvement": "bundled executable harness that auto-detects dev-server port from log and runs health check",
+  "artifacts": {
+    "script": "skills/web-validation/scripts/web-validation-harness.sh",
+    "script_lines": 118,
+    "bash_n_clean": true,
+    "skill_md_edit": "added 'Automated port+health' paragraph at top of Step 1 pointing to harness, kept inline 3-step sequence as explanatory source of truth"
+  },
+  "audit_finding_addressed": "Recurring hardcoded port 3000 bug — harness reads port from dev log, never assumes 3000",
+  "args": [
+    "--project-dir=.",
+    "--dev-log=dev-server.log",
+    "--health-path=/",
+    "--evidence-dir=e2e-evidence/web",
+    "--tool=auto|playwright|chrome-devtools"
+  ],
+  "port_patterns_supported": [
+    "http://localhost:N",
+    "localhost:N",
+    "running on port N",
+    "ready on N",
+    "127.0.0.1:N"
+  ],
+  "verification": {
+    "bash_n": "pass",
+    "no_port_fail_test": {
+      "command": "--dev-log=/dev/null",
+      "expected": "FAIL + port=none, exit=1",
+      "actual": "FAIL: dev server log has no detectable listening port — is the server running? (log=/dev/null); web-validation: port=none health=fail tool=auto; exit=1",
+      "pass": true
+    },
+    "port_extraction_test": {
+      "command": "log contains 'Server ready on http://localhost:8123'",
+      "expected": "port=8123, health fail (nothing listening)",
+      "actual": "Detected PORT=8123; http_code=000 size=0; web-validation: port=8123 health=fail tool=chrome-devtools; exit=0",
+      "pass": true
+    },
+    "yaml_frontmatter_intact": true
+  },
+  "behaviors": {
+    "poll_duration_seconds": 10,
+    "first_match_wins": true,
+    "tool_auto_heuristic": "/tmp or /var/folders cwd -> playwright, else chrome-devtools",
+    "evidence_written": ["web-health.html", "web-health-meta.txt"],
+    "final_summary_line": "web-validation: port=N health=pass|fail tool=X"
+  }
+}

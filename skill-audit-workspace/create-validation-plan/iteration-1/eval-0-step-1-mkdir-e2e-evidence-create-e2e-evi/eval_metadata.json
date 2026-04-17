@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "step-1-mkdir-e2e-evidence-create-e2e-evi",
+  "prompt": "I'm starting validation on a Next.js fullstack app with an API. I have no validation plan yet. How do I create one?",
+  "expected_output": "Step 1: Mkdir e2e-evidence, create e2e-evidence/validation-plan.md with header. Step 2: Run journey discovery (reference patterns for Next.js App Router): find app/*/page.tsx to find routes. For each route, create one journey (J1, J2, etc.) with priority (P0 for core, P1 for important). Step 3: For each journey, write 2+ PASS criteria (specific, measurable, observable). Example: J1 (Homepage): Criteria 1 = 'GET / returns 200, screenshot shows hero section', Criteria 2 = 'Hero includes CTA button linking to /about'. Step 4: Identify dependencies (API routes depend on database), list prerequisites (DB running, API health check passes). Save plan to validation-plan.md. Plan is now the blueprint for evidence capture.",
+  "assertions": []
+}

@@ -1,0 +1,85 @@
+{
+  "skill_name": "condition-based-waiting",
+  "path": "/Users/nick/Desktop/validationforge/skills/condition-based-waiting/SKILL.md",
+  "skill_md_line_count": 85,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Wait for conditions, not time: HTTP health polls, port availability, file existence, process readiness, browser content, iOS simulator, DB ready, log patterns. Every wait must timeout.",
+    "length_words": 24,
+    "issues": [
+      "Below minimum (24 words, target 30-80). Reads as feature list rather than problem statement.",
+      "Missing 'when' - no context about what prompts user to invoke this (e.g., 'during service startup validation')",
+      "Missing rationale - why is condition-based waiting important? (because sleep N wastes time or causes flakes)"
+    ],
+    "triggering_assessment": "under-triggers"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Core principle 'sleep 5 is NEVER acceptable' (line 22) uses absolute language without explanation. WHY is sleep never acceptable? (Wastes time, causes CI flakes on slow runners, masks actual readiness problems.)",
+        "location": "The Principle section, lines 20-32"
+      },
+      {
+        "severity": "med",
+        "description": "8 Strategies summary table (lines 34-45) references external files for 'complete implementation'. Actual reference files are present (waiting-strategies.md, timeout-patterns.md) but skill body is too thin—~40 lines of content + 2 external references.",
+        "location": "8 Strategies Summary, lines 34-45"
+      },
+      {
+        "severity": "med",
+        "description": "Timeout Rules section (lines 50-60) shows the template but doesn't explain the ELAPSED calculation or why `[ $ELAPSED -ge $TIMEOUT ]` is checked twice (at end of loop AND after loop ends).",
+        "location": "Timeout Rules, lines 50-60"
+      },
+      {
+        "severity": "low",
+        "description": "Security Policy section (lines 74-78) is generic boilerplate. No actual security concerns specific to waiting strategies (no injection, no privilege escalation). Could be removed or moved to shared rules.",
+        "location": "Security Policy section, lines 74-78"
+      },
+      {
+        "severity": "low",
+        "description": "Related Skills section lists 4 skills but doesn't explain interdependencies. How does condition-based-waiting integrate with e2e-validate or functional-validation? (e.g., 'use this BEFORE running functional-validation to ensure system is ready')",
+        "location": "Related Skills, lines 80-85"
+      }
+    ],
+    "strengths": [
+      "Principle is clear: 'Wait for WHAT, not for WHEN' with side-by-side wrong vs. right bash examples (lines 22-32).",
+      "Timeout as first-class concern: 'Every wait MUST include a timeout' prevents infinite waits (line 52).",
+      "References are well-structured: waiting-strategies.md has 8 copy-paste bash functions (lines 1-138), timeout-patterns.md has rubric + anti-patterns (lines 1-73).",
+      "8 strategies cover the full spectrum: HTTP (prefer), TCP port, file, process, browser, simulator, DB, logs. Guidance on which to prefer (health > port).",
+      "Anti-patterns table in timeout-patterns.md is actionable: shows 'sleep 5' between unrelated steps + says 'May not need any wait' (educates on root cause).",
+      "Platform-specific patterns in timeout-patterns.md (iOS simulator 90s, HTTP 30s, etc.) help users avoid trial-and-error."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 2,
+    "missing_scripts_opportunity": null,
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Expand description: 'Wait for async service readiness (server startup, DB migrations, build artifacts) using condition polling rather than fixed delays. Every wait must timeout to prevent infinite hangs.'",
+    "In The Principle section, add rationale: '`sleep 5` either wastes time (service ready in 1s) or fails (service needs 10s). Condition-based waits adapt to actual readiness and prevent CI flakes on slow runners.'",
+    "Explain ELAPSED calculation in Timeout Rules: 'Increment ELAPSED by 1 after each sleep. Check ELAPSED >= TIMEOUT inside loop to exit early on success, and after loop to detect timeout failure.'",
+    "Move Security Policy to shared rules or delete—no specific security risks in waiting strategies (not modifying code, installing software, or handling credentials).",
+    "Add 'Integration' section: 'Run condition-based waiting BEFORE functional-validation to ensure system is ready. Use in preflight phase (architecture). Examples: wait_for_health before e2e-validate starts.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a fullstack app: Docker Postgres at localhost:5432, Node API at localhost:8080/health, React dev server at localhost:3000. Currently using 'sleep 60' before running tests. How do I replace that with condition-based waits?",
+      "expected_output": "Use strategy #7 (Database Ready): wait_for_database 'postgres://localhost:5432/mydb' 30. Then strategy #1 (HTTP Health): wait_for_health 'http://localhost:8080/health' 30. Then strategy #1 again for frontend: wait_for_health 'http://localhost:3000' 30. Chain them in order: DB → API → Frontend. Each waits up to 30s but returns as soon as ready. Total time: 1s (if all fast) instead of 60s. Capture evidence: which services took how long to be ready."
+    },
+    {
+      "id": 2,
+      "prompt": "iOS validation: I'm waiting for simulator to boot before running app tests. Currently using 'sleep 30'. Simulator sometimes boots in 5s on warm start, sometimes 40s on first boot. How do I handle both?",
+      "expected_output": "Use strategy #6 (iOS Simulator Boot): wait_for_simulator 'iPhone 16' 90 (timeout 90s for cold boot). Function polls `xcrun simctl list devices` until device is 'Booted'. Returns immediately on warm start (5s), waits up to 90s on cold start. After simulator is ready, use wait_for_process to verify the app launches (strategy #4). Avoids hardcoding 30s which is too short for cold or too long for warm."
+    },
+    {
+      "id": 3,
+      "prompt": "My validation script hung indefinitely waiting for a service that crashed. No timeout. How do I prevent this in the future?",
+      "expected_output": "ALWAYS include a timeout in every wait loop. Use the template (lines 50-60): `TIMEOUT=30; ELAPSED=0; until CONDITION || [ $ELAPSED -ge $TIMEOUT ]; do sleep 1; ELAPSED=$((ELAPSED + 1)); done`. After loop, check `if [ $ELAPSED -ge $TIMEOUT ]` and capture diagnostic state: `ps aux`, `lsof -i :PORT`, `tail logfile`. This prevents infinite hangs and provides evidence for root cause analysis (e.g., process never started vs. crashed mid-startup)."
+    }
+  ]
+}

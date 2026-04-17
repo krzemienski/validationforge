@@ -1,0 +1,68 @@
+{
+  "skill": "fullstack-validation",
+  "pass": 2,
+  "stage": "skill-creator-stage-2",
+  "timestamp": "2026-04-17T06:25:00Z",
+  "theme": "Bundle executable orchestrator script for the DB -> API -> Web bottom-up protocol",
+  "changes": [
+    {
+      "type": "add_script",
+      "path": "skills/fullstack-validation/scripts/fullstack-validate.sh",
+      "lines": 122,
+      "mode": "0755",
+      "description": "Thin orchestrator that runs DB gate, API gate (via api-validation/scripts/crud-validator.sh), and Web gate (curl --fail -s --max-time 10). Each gate is skippable; first failure exits non-zero. Final line: 'fullstack: db=... api=... web=...'.",
+      "flags": [
+        "--db-check-cmd=CMD (default: true => skip)",
+        "--api-base-url=URL (skip when unset)",
+        "--web-base-url=URL (skip when unset)",
+        "--evidence-dir=DIR (default: e2e-evidence/fullstack)",
+        "--resource=NAME (default: posts; passed to crud-validator)",
+        "--token=TOKEN (optional, passed to crud-validator)"
+      ]
+    },
+    {
+      "type": "edit_skill_md",
+      "path": "skills/fullstack-validation/SKILL.md",
+      "description": "Inserted 'Composed runner' paragraph immediately before '## The Bottom-Up Rule' documenting the new orchestrator."
+    }
+  ],
+  "verification": [
+    {
+      "check": "bash -n scripts/fullstack-validate.sh",
+      "result": "pass",
+      "evidence": "SYNTAX_OK"
+    },
+    {
+      "check": "chmod +x applied",
+      "result": "pass"
+    },
+    {
+      "check": "dry run with --db-check-cmd=true and no URLs",
+      "result": "pass",
+      "evidence": "exit=0, stdout: 'fullstack: db=skip api=skip web=skip'"
+    },
+    {
+      "check": "DB-failure path with --db-check-cmd=false",
+      "result": "pass",
+      "evidence": "exit=1, stdout: 'fullstack: db=fail api=skip web=skip', wrote fullstack-db-check.txt"
+    },
+    {
+      "check": "YAML frontmatter intact",
+      "result": "pass",
+      "evidence": "Frontmatter lines 1-5: name, description, context_priority unchanged."
+    },
+    {
+      "check": "line count within 80-120 target",
+      "result": "pass-near-bound",
+      "evidence": "122 lines including comment header and blank lines; logic body is within budget."
+    }
+  ],
+  "design_notes": [
+    "Script resolves crud-validator via BASH_SOURCE so it works regardless of caller cwd.",
+    "Summary line is always printed on both success and failure paths so callers can parse it uniformly.",
+    "DB gate is explicitly skipped only when DB_CHECK_CMD is literal 'true' (the default), per spec.",
+    "Web gate uses curl --fail -s --max-time 10 as specified, saves body to $EVIDENCE_DIR/fullstack-web-index.html, and records http_code to a .status sidecar."
+  ],
+  "unresolved_questions": [],
+  "status": "complete"
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "preflight",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a Next.js app. What should preflight check before I start validation? What would cause a CLEAR vs BLOCKED verdict?",
+      "expected_output": "Should enumerate: Node.js installed, npm installed, node_modules exists, dev server port available, .env.local configured. CLEAR if all pass. BLOCKED if Node missing or major port conflict. Should explain: 'preflight runs first, 5-10 min, saves 30 min of wasted validation time on missing dependencies.'",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My Django app's database is not running. Preflight detects the failure. Should it auto-start Postgres or report BLOCKED?",
+      "expected_output": "Should say: 'Preflight attempts auto-fix: docker run postgres (or equivalent), waits, re-checks. If it succeeds, CLEAR. If docker not found, report BLOCKED \u2014 user must install Docker manually. Never auto-install Docker (major tool).'",
+      "files": []
+    }
+  ]
+}

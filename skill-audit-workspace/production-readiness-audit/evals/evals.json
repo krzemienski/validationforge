@@ -1,0 +1,17 @@
+{
+  "skill_name": "production-readiness-audit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm auditing a Node.js API before first production deploy. It's currently at Phase 3 (Performance). The Lighthouse score is 85, but LCP is 3.2s (exceeds 2.5s target). Is this READY or CONDITIONAL?",
+      "expected_output": "Should say: 'CONDITIONAL. Performance isn't blocked (Phase 3 failure doesn't block shipping per Severity Rules), but document the finding. Investigate why LCP is 3.2s (slow API, large bundle, unoptimized queries). Make it a known risk acceptance or schedule optimization post-launch.'",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "During Phase 2 (Security) audit, I notice JWT tokens in the URL params. Is this an automatic NOT READY?",
+      "expected_output": "Should say: 'YES. Phase 2 Security finding: sensitive data in URLs. This is blocking per Severity Rules (any Phase 2 FAIL = NOT READY). Fix: remove JWT from URL, use Authorization header instead. Re-audit Phase 2 before deploying.'",
+      "files": []
+    }
+  ]
+}

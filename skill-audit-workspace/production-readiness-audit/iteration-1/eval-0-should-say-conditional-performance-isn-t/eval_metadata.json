@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "should-say-conditional-performance-isn-t",
+  "prompt": "I'm auditing a Node.js API before first production deploy. It's currently at Phase 3 (Performance). The Lighthouse score is 85, but LCP is 3.2s (exceeds 2.5s target). Is this READY or CONDITIONAL?",
+  "expected_output": "Should say: 'CONDITIONAL. Performance isn't blocked (Phase 3 failure doesn't block shipping per Severity Rules), but document the finding. Investigate why LCP is 3.2s (slow API, large bundle, unoptimized queries). Make it a known risk acceptance or schedule optimization post-launch.'",
+  "assertions": []
+}

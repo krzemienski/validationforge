@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "user-takes-screenshots-on-multiple-sim",
+  "prompt": "We're testing iOS app redesign on simulator. The safe area looks correct on iPhone 12, but I need to verify it works across notched and non-notched devices. Walk me through.",
+  "expected_output": "User takes screenshots on multiple sim configs (iPhone 14 Pro Max with notch, iPhone SE no notch). Uses idb ui describe-all to check accessibility tree for safe area usage. Checklist item 5.1 (safe area respected). Reports if content is hidden behind notch or home indicator. Severity CRITICAL if hidden, HIGH if hard to use.",
+  "assertions": []
+}

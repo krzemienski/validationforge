@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "skill-walks-phase-1-collection-git",
+  "prompt": "Last 30 days: 8 deploys, 2 reverts, 1 production incident (payment button missing on mobile). How do we assess if validation methodology prevented or missed this?",
+  "expected_output": "Skill walks Phase 1 collection: git log for deploy/revert frequency (8/2 = 25% revert rate = CONCERNING). Phase 2 analysis quantifies: incident was responsive-validation gap (button not tested at 430px viewport). Phase 3 correlation: responsive-validation skill would have caught it (Phase 4 orientation test includes mobile button validation). Confidence score reflects: high detection (caught in retrospective), low in actual (missed pre-deploy). Recommendation: add responsive-validation to pre-deploy gates.",
+  "assertions": []
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "playwright-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a React checkout form. The form has 8 fields. I need to test that it rejects empty email and accepts valid email. How do I structure the evidence capture?",
+      "expected_output": "Should guide: Step 1 (navigate to /checkout, screenshot initial state), Step 2 (click submit with empty email, screenshot error), Step 3 (fill valid email, click submit, screenshot success). Should emphasize: each screenshot needs description of what's visible (error message text, form state, button enabled/disabled).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "During responsive testing at 375px, the form labels are overlapping the inputs. The app says 'page loaded' but visually it's broken. How do I capture this as evidence?",
+      "expected_output": "Should say: 'Take screenshot at 375px, describe what you see: Labels overlapping inputs, text cut off, submit button partially off-screen. This IS the evidence. Name it step-03-375px-layout-broken.png. Console errors? Network failures? Any indication the app itself is broken, not just misrendered.'",
+      "files": []
+    }
+  ]
+}

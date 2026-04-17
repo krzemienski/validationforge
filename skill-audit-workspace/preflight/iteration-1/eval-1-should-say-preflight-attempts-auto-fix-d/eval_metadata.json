@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "should-say-preflight-attempts-auto-fix-d",
+  "prompt": "My Django app's database is not running. Preflight detects the failure. Should it auto-start Postgres or report BLOCKED?",
+  "expected_output": "Should say: 'Preflight attempts auto-fix: docker run postgres (or equivalent), waits, re-checks. If it succeeds, CLEAR. If docker not found, report BLOCKED \u2014 user must install Docker manually. Never auto-install Docker (major tool).'",
+  "assertions": []
+}

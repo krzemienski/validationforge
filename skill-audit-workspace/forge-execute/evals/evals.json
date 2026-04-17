@@ -1,0 +1,17 @@
+{
+  "skill_name": "forge-execute",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a validation plan in e2e-evidence/validation-plan.md with 5 journeys. Running forge-execute now. First attempt on 'user-signup' fails: form submits but no confirmation page. API returned 200 but frontend never navigates. Help me fix and re-validate.",
+      "expected_output": "Directs user to: (1) read evidence from forge-attempt-1/user-signup/ (2) root cause: backend success but frontend redirect logic broken (3) fix: check navigation handler in signup component (4) rebuild (5) re-execute into forge-attempt-2/user-signup/. Increments strike count in state.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Running forge-execute in CI mode. Three journeys: 'login' PASS, 'checkout' FAIL (payment timeout), 'logout' FAIL (session not cleared). Should I attempt fixes or exit?",
+      "expected_output": "In CI mode: exit code 1 (journeys FAIL). Does not auto-fix; requires human intervention. Captures evidence to e2e-evidence/forge-attempt-1/ for human review. Shows which journeys FAILed and why (payment timeout = HIGH root cause, session clear = MEDIUM). User decides if fixes are safe for CI or require manual review.",
+      "files": []
+    }
+  ]
+}

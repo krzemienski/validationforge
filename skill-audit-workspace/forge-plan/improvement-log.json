@@ -1,0 +1,45 @@
+{
+  "skill_name": "forge-plan",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with output destination + mode guidance + triggers",
+      "implemented": true,
+      "details": "New description names where the plan goes (e2e-evidence/validation-plan.md), explains when each mode applies (quick/standard/consensus), and differentiates from create-validation-plan (3 bundled modes vs underlying protocol). Added 4 new YAML triggers."
+    },
+    {
+      "fix": "Add 'When to use' section clarifying relationship to create-validation-plan",
+      "implemented": true,
+      "details": "Explicit: forge-plan bundles three planning modes optimized for different project sizes; create-validation-plan is the underlying protocol. Prevents confusion about which to reach for. Also calls out that forge-execute reads validation-plan.md during Phase 0."
+    },
+    {
+      "fix": "Expand Consensus Mode with merge algorithm + worked example",
+      "implemented": true,
+      "details": "Old consensus mode had 4-step protocol but no concrete example. New version: (1) adds 'for each group, merge overlapping journeys into a single journey that covers all three aspects — don't pick one and drop the others', (2) adds worked password-reset example showing User Advocate / Security / QA perspectives merging into one journey with all concerns. Makes the value of consensus mode tangible."
+    },
+    {
+      "fix": "Replace 'never accept it works' with concrete 3-part criterion checklist",
+      "implemented": true,
+      "details": "Old Evidence Requirements section said 'never accept it works' but didn't give a positive replacement format. New version has a 3-part checklist (expected value/state + evidence type + what to look for) and concrete vague→concrete transformations ('Login works' → 'POST /login returns 200 + JWT'; 'API is fast' → 'p95 < 500ms over 10 samples')."
+    },
+    {
+      "fix": "Add risk classification rubric (HIGH/MEDIUM/LOW)",
+      "implemented": true,
+      "details": "Old plan output included a Risk Level column but never defined what HIGH/MEDIUM/LOW meant. New rubric table: HIGH = auth/payment/mutation/security boundaries (must validate before ship); MEDIUM = user-facing workflows and API contracts (should validate); LOW = secondary/cosmetic (sample-validate, gaps OK for tight deadlines). Tells the planner how to prioritize."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Bundle forge-plan.sh / consensus-merge.sh",
+      "reason": "Planning involves judgment calls (which features are HIGH risk, how to merge perspectives) that a deterministic shell script can't make well. Better as skill+LLM than as script."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/forge-plan/SKILL.md"
+  ],
+  "description_before": "Create validation plan: discover journeys, define PASS criteria per step, specify evidence types. Modes: quick, standard, consensus (critical/multi-team). Use before /validate.",
+  "description_after": "Use before /validate or /forge-execute on any new project. Scans the codebase for user-facing features (routes, endpoints, screens, CLI commands), groups them into user journeys, writes specific PASS criteria per step with required evidence type, and saves to e2e-evidence/validation-plan.md where forge-execute will pick it up. Three modes: quick (small projects, critical journeys only), standard (full discovery + coverage + gap-filling), consensus (three perspectives — user advocate, security, QA — merged for critical/multi-team projects). Reach for it on phrases like 'what should I validate', 'create a validation plan', 'plan before running validate', or when there's no validation-plan.md yet.",
+  "line_count_before": 94,
+  "line_count_after": 123,
+  "self_review_notes": "Consensus mode's worked example is the biggest win — the old 'merge: union, deduplicate by feature area, most comprehensive wins' was procedurally correct but gave no intuition for what merge actually looks like. The password-reset example shows three perspectives producing complementary concerns that become one richer journey, which is the whole point of consensus mode."
+}

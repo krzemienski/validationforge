@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "run-pattern-1-page-load-performance",
+  "prompt": "My dashboard page is slow \u2014 it takes 5 seconds to load. I want to debug performance using Chrome DevTools. What should I measure, and how do I capture evidence?",
+  "expected_output": "Run Pattern 1 (Page Load Performance): navigate_page to the dashboard, performance_start_trace (with reload=true), wait for auto-stop, analyze insights for LCP (Largest Contentful Paint), INP (Interaction to Next Paint), CLS (Cumulative Layout Shift). Save trace to e2e-evidence/devtools-perf/step-01-trace.json.gz. Identify slowest phase (e.g., 'LCP delayed by slow API call'). Evidence: trace file + screenshot before and after load.",
+  "assertions": []
+}

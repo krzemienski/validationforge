@@ -1,6 +1,6 @@
 ---
 name: functional-validation
-description: "Build & validate real systems (iOS, Web, API, CLI, fullstack)—never mocks or test files. Capture evidence from browser, simulator, CLI, cURL. Platform detection, 4-step protocol."
+description: "Use whenever you need to prove a real system actually works — not just that it compiles or that mocks return the expected shape. Build the real system, exercise it through the same interfaces real users hit (browser, simulator, CLI, cURL), capture evidence, write a verdict citing what you saw. Reach for this skill anytime someone says 'validate', 'verify', 'is this working', 'does this actually work', or claims something passes without showing the evidence."
 context_priority: critical
 ---
 
@@ -32,13 +32,15 @@ ALWAYS capture evidence that proves the feature works end-to-end.
 
 Detect the platform FIRST. Wrong platform = wrong validation approach.
 
-| Priority | Platform | Indicators | Approach | Reference |
+| Priority | Platform | Indicators | Approach | Load next |
 |----------|----------|-----------|----------|-----------|
 | 1 | iOS/macOS | `*.xcodeproj`, `Package.swift` | Xcode build, simulator, idb/simctl | skill: `ios-validation` |
 | 2 | Web | `package.json` + React/Vue/Next | Dev server, browser, Playwright MCP | skill: `web-validation` |
 | 3 | CLI | `main.go`, `Cargo.toml`, `cli.py` | Build binary, execute, capture stdout | skill: `cli-validation` |
 | 4 | API | `server.ts`, `app.py` + routes | Start server, curl endpoints | skill: `api-validation` |
 | 5 | Full-Stack | Frontend + Backend present | Bottom-up: DB -> API -> Frontend | skill: `fullstack-validation` |
+
+After detection, load the matching skill — those contain the platform-specific commands, simulator setup, browser wiring, etc. If you're orchestrating end-to-end across multiple platforms, load `e2e-validate` instead and let it conduct.
 
 ## The 4-Step Protocol
 
@@ -65,7 +67,9 @@ For full-stack apps, validate bottom-up. Each layer must PASS before testing abo
 Database/Infra (validate FIRST) -> Business Logic -> API Endpoints -> Frontend UI (validate LAST)
 ```
 
-Why: If the DB is broken, every API test fails with misleading errors.
+Why: if the DB is broken, every API test fails with misleading errors, and every UI test fails twice over. Starting at the bottom isolates root cause cheaply.
+
+For orchestrating bottom-up validation across layers with evidence handoff between them, load `fullstack-validation`. For running the entire pipeline with platform auto-detection, load `e2e-validate`.
 
 ## Verdict Format
 

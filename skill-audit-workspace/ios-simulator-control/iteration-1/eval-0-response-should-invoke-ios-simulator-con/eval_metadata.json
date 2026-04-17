@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "response-should-invoke-ios-simulator-con",
+  "prompt": "I need to validate an iOS app on iPhone 16 Pro simulator but I don't know if it's currently booted or which one to use. Walk me through checking, booting if needed, and then getting it ready to capture evidence.",
+  "expected_output": "Response should invoke ios-simulator-control. Step 1: 'xcrun simctl list devices available' to see options. Step 2: 'xcrun simctl list devices booted' to check current state. Step 3: If not booted, 'xcrun simctl boot \"iPhone 16 Pro\"'. Step 4: Verify: 'open -a Simulator'. Then explain: UDID from booted list is needed for all subsequent commands. Do NOT assume 'booted' \u2014 verify.",
+  "assertions": []
+}

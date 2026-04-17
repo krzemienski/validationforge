@@ -1,12 +1,15 @@
 ---
 name: team-validation-dashboard
-description: "Aggregate team validation metrics: posture scores, coverage %, regressions, journey ownership. Identifies critical projects (score <60). Use for CI/CD reporting, team reviews, regression tracking."
+description: "Use for organization-wide visibility across multiple projects' validation health — not for a single project (use forge-benchmark for that). Aggregates posture scores, coverage %, regression trends, and journey ownership across all registered projects in a team's portfolio. Flags critical projects (score < 60) for attention. Reach for it on phrases like 'team dashboard', 'show validation across all projects', 'which projects need attention', 'quarterly validation review', 'who owns journey X', or for CI/CD reporting in multi-project orgs."
 triggers:
   - "team dashboard"
   - "validation posture"
   - "show team metrics"
   - "which projects need attention"
   - "who owns this journey"
+  - "validation across all projects"
+  - "quarterly validation review"
+  - "portfolio validation health"
 context_priority: reference
 ---
 

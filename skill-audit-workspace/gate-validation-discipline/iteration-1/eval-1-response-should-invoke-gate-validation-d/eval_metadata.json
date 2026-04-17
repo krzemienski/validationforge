@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "response-should-invoke-gate-validation-d",
+  "prompt": "Sub-agent reports: 'API validation complete, all endpoints respond with 200 OK.' Should I mark it PASS?",
+  "expected_output": "Response should invoke gate-validation-discipline and flag as incomplete. 'Not without examining the evidence.' Ask: Did you READ the actual response bodies (not just status codes)? Do responses match expected JSON structure? Are there error objects inside 200 responses? Mandate reading evidence-standards.md example (200 OK with error body is a FAIL). Do not mark complete until you've reviewed the actual curl output or response file.",
+  "assertions": []
+}

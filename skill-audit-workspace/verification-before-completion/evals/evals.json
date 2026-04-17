@@ -1,0 +1,17 @@
+{
+  "skill_name": "verification-before-completion",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I implemented the user login form, ran the e2e test, got PASS. Can I mark this task done?",
+      "expected_output": "Skill runs through checklist. User says 'I saw the e2e test pass' but hasn't personally examined the evidence file. Skill demands: Open e2e-evidence/login-form.png, describe exactly what you see (form fields, buttons, states). Until user provides specific observation ('Email field with blue border, password field, blue Submit button'), mark done rejected.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "The API endpoint returns 200 and the response looks right to me. I also updated the frontend to use the new fields. Is that enough to ship?",
+      "expected_output": "Skill asks: Did you check for regressions? Did you verify the final state is actually the state you're shipping? (E.g., if you made 3 commits, did you re-capture evidence after the last one?) User must cite: e2e-evidence/api-endpoint.json with full response body, e2e-evidence/ui-with-new-fields.png showing fields rendered, regression-check.txt showing no prior journey broke.",
+      "files": []
+    }
+  ]
+}

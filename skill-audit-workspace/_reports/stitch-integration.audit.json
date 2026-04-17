@@ -1,0 +1,105 @@
+{
+  "skill_name": "stitch-integration",
+  "path": "/Users/nick/Desktop/validationforge/skills/stitch-integration/SKILL.md",
+  "skill_md_line_count": 197,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Generate reference designs via Stitch MCP, iterate variants, persist projects and design tokens. Use when starting UI features, exploring options before code, or validating implementation fidelity.",
+    "length_words": 27,
+    "issues": [
+      "Clear use cases (starting features, exploring options, validating fidelity). Concrete outcomes (reference designs, design tokens).",
+      "WHY is strong: 'before code' and 'validating fidelity' explain the value. Not pushy but compelling.",
+      "Triggers seem weak - 'stitch integration' is self-referential. Better: 'generate UI reference' or 'design variant exploration'"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Workflow (Lines 31-37) presents 5 phases but Phase 1 'PROJECT' is ambiguous. 'Create or load' — but HOW do you decide which? If project exists, how do you know? No guidance on when to reuse vs create new.",
+        "location": "Lines 31-37"
+      },
+      {
+        "severity": "high",
+        "description": "Phase 1 Project Management shows MCP syntax (Lines 43-55) but doesn't match typical Stitch MCP signatures. 'mcp: create_project(title=...)' looks like pseudo-code, not actual MCP call syntax. Users won't know how to invoke this in Claude Code.",
+        "location": "Lines 43-55"
+      },
+      {
+        "severity": "med",
+        "description": "Persist Project ID section (Lines 57-67) marks as CRITICAL but only shows stitch.json structure. Doesn't explain: Where should stitch.json live (repo root? .claude/ subdir)? Should it be git-tracked? How does Claude find it at runtime?",
+        "location": "Lines 57-67"
+      },
+      {
+        "severity": "high",
+        "description": "Phase 2 design system prompt (Lines 71-88) asks for many fields (background, cards, accent, text colors, fonts, radius, spacing) but doesn't explain priority or what to do if design system incomplete. If team hasn't defined 'spacing scale', prompt will fail or produce inconsistent output.",
+        "location": "Lines 71-88"
+      },
+      {
+        "severity": "med",
+        "description": "Generation call (Lines 93-98) shows 'output_components' handling (Lines 100-104) but doesn't explain what these are or why user acceptance is needed. Are these suggestions? Warnings? Errors? No context on when to accept vs reject.",
+        "location": "Lines 100-104"
+      },
+      {
+        "severity": "med",
+        "description": "Variant generation (Lines 119-131) references 'creativeRange' enum (REFINE/EXPLORE/REIMAGINE) with guidance, which is good. But 'variantOptions' schema is not validated — does Stitch MCP require all fields? What if tool version doesn't support some options?",
+        "location": "Lines 119-131"
+      },
+      {
+        "severity": "high",
+        "description": "Phase 4 capture (Lines 152-160) is sparse. Shows `list_screens` and `get_screen` calls but doesn't explain: What fields does get_screen return? How to extract image URL? Is image hosted on Stitch servers (persistence risk)? How long are URLs valid?",
+        "location": "Lines 152-160"
+      },
+      {
+        "severity": "med",
+        "description": "Integration section (Lines 191-197) claims Stitch screens 'become REFERENCE for design-validation' but no example shows what design-validation expects. How are Stitch images consumed? File format? Metadata structure?",
+        "location": "Lines 191-197"
+      },
+      {
+        "severity": "med",
+        "description": "Rules section (Line 187) says 'NEVER retry immediately on generation failure — wait, then check if it completed' but doesn't specify: wait HOW LONG? How often to check? What's 'completed' status?",
+        "location": "Lines 187"
+      }
+    ],
+    "strengths": [
+      "Workflow is well-structured (PROJECT → GENERATE → ITERATE → CAPTURE → BRIDGE) and mirrors realistic design-to-code flow",
+      "Creative range guidance (REFINE/EXPLORE/REIMAGINE) explains when to use each intensity level",
+      "Variant aspects table is concrete (LAYOUT, COLOR_SCHEME, IMAGES, etc.) - users understand what each aspect changes",
+      "Evidence output path is specific (e2e-evidence/design-validation/reference/) enabling systematic capture",
+      "Rules section emphasizes persistence ('ALWAYS' save project ID) - prevents data loss"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "No bundled Stitch MCP helper script. Skill shows pseudo-code MCP calls but no actual Claude Code or OpenCode integration. Could ship example script demonstrating: create_project → list_screens → get_screen → save references. Would make Stitch workflow reproducible and show actual MCP syntax.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Clarify project creation decision: add flowchart or checklist for 'create new' vs 'load existing' (e.g., 'new project per feature' vs 'shared design library')",
+    "Show actual MCP call syntax: move from pseudo-code to real function names/parameters (e.g., `tool.execute('stitch_mcp', 'create_project', {...})`)",
+    "Document stitch.json location and git tracking: is it .gitignore'd? Version controlled? How does Claude Code locate it at runtime?",
+    "Add design system validation: if team doesn't have all system fields (e.g., spacing scale), show how to generate them or use defaults",
+    "Explain output_components: are these suggestions? Variations? Errors? When to accept/reject? What happens if ignored?",
+    "Expand Phase 4 capture: document get_screen response schema, image URL persistence, format validation, metadata structure needed for design-validation consumption"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "Starting new feature: shopping cart redesign. Need design reference before coding. Stitch project doesn't exist yet. How do I generate initial designs?",
+      "expected_output": "Skill directs Phase 1 (create new project, save ID to stitch.json). Phase 2 generation with design system context (colors, fonts from DESIGN.md). Generates desktop and mobile cart layouts. Phase 4 captures screenshots as e2e-evidence/design-validation/reference/stitch-screen-*.png. Metadata saved for later design-validation comparison step."
+    },
+    {
+      "id": 2,
+      "prompt": "Design system update: accent color changed from blue to purple. Need 3 variants of existing card component to show stakeholders. Which creative range?",
+      "expected_output": "Skill recommends EXPLORE range (moderate changes) for color variants. Shows generate_variants call with COLOR_SCHEME aspect. Produces 3 screenshots at different purple intensities. Skill explains: REFINE for fine-tuning (opacity tweak), EXPLORE for palette alternatives, REIMAGINE for radically different approaches."
+    },
+    {
+      "id": 3,
+      "prompt": "Created Stitch designs 2 weeks ago. Want to compare implementation screenshot against Stitch reference. How do I set up for design-validation?",
+      "expected_output": "Skill Phase 4: load project from stitch.json, list_screens to get all designs, get_screen to fetch each with metadata. Saves images + metadata to e2e-evidence/design-validation/reference/. Explains: design-validation will consume these references, compare with implementation screenshots, produce fidelity score. Files structured for automated comparison."
+    }
+  ]
+}

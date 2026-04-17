@@ -1,0 +1,9 @@
+{
+  "skill_name": "ios-validation-gate",
+  "changes_applied": [{"fix": "Rewrite description differentiating from ios-validation and ios-validation-runner", "implemented": true, "details": "Completes the iOS-skills triangulation: ios-validation = protocol, ios-validation-runner = video evidence, ios-validation-gate = formal PASS/FAIL gates. Each description now explicitly differentiates from the others. 3 new triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "226 lines, structured by gate; audit priority was high but body is solid."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/ios-validation-gate/SKILL.md"],
+  "description_before": "Three-gate iOS enforcement: Simulator (build/install/launch/screenshot/a11y) + Backend (health/endpoints/responses) + Analysis (logs/correlation). ALL gates must PASS. Use after each iOS feature.",
+  "description_after": "Use after an iOS feature is implemented and you want strict gate-based validation — NOT a protocol run-through, but explicit PASS/FAIL gates that all must pass before claiming completion. Three gates: Simulator (build/install/launch/screenshot/accessibility tree), Backend (health/endpoints/responses), Analysis (logs + UI-to-log correlation). Any FAIL on any gate blocks completion. Differs from ios-validation (which is a 9-step protocol) and ios-validation-runner (which captures video evidence for complex flows) — this skill is the formal gate-based variant. Reach for it on phrases like 'iOS gate check', 'must pass before merge', 'iOS quality gate', 'iOS completion check', or when merge blockers need explicit PASS/FAIL criteria per gate."
+}

@@ -1,0 +1,30 @@
+{
+  "skill_name": "condition-based-waiting",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with flakiness framing",
+      "implemented": true,
+      "details": "New description leads with 'replaces bare sleep N (which is hope, not engineering)' and names specific wait scenarios (dev server, DB, simulator, build artifact, browser). Targets the moment the skill is most useful: when tests are flaky. 3 new YAML triggers including 'sleep 5 is flaky' and 'why do my tests intermittently fail'."
+    },
+    {
+      "fix": "Rewrite Rules with concrete consequences",
+      "implemented": true,
+      "details": "All 6 rules kept but each has rationale: 'sleep-and-hope works until the day the dev server takes 6s instead of 4s'; 'Infinite waits hang CI runs for hours'; 'the next person debugging needs the snapshot at the moment it failed, not it didn't work'; 'Postgres listens on 5432 during startup before it accepts queries'; 'Wait 2s for page to render is a guess; wait for <h1> with text is a fact'. Concrete examples make the rules sticky."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Body beyond rules",
+      "reason": "Skill is already tight (85 lines), 8-strategy table is scannable, references for full implementations. Audit didn't flag structural issues."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/condition-based-waiting/SKILL.md"
+  ],
+  "description_before": "Wait for conditions, not time: HTTP health polls, port availability, file existence, process readiness, browser content, iOS simulator, DB ready, log patterns. Every wait must timeout.",
+  "description_after": "Use whenever you need to wait for something asynchronous — a dev server to start, a DB to accept connections, a simulator to boot, a build artifact to appear, a browser to finish rendering. Replaces bare `sleep N` (which is hope, not engineering) with condition-polling patterns that time out cleanly when something is genuinely stuck. Covers 8 strategies: HTTP health polls, port checks, file existence, process ready, browser content, iOS simulator boot, DB ready, log patterns. Reach for it on phrases like 'wait for the server', 'poll until ready', 'why is sleep 5 flaky', 'why do my tests intermittently fail', or anytime timing makes a test unstable.",
+  "line_count_before": 85,
+  "line_count_after": 85,
+  "self_review_notes": "The 'sleep-and-hope works until the day it doesn't' framing is exactly when this skill should trigger — a flaky test is the signal. Concrete examples per rule make it memorable."
+}

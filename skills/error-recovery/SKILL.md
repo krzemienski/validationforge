@@ -1,12 +1,15 @@
 ---
 name: error-recovery
-description: "3-strike recovery: strike 1 (targeted fix, same step), strike 2 (alt tool/path), strike 3 (rethink assumptions). Never mock; fix real cause. Covers build fails, crashes, network/auth/DB errors."
+description: "Use whenever a validation step fails and you're about to try again — this skill enforces a structured 3-strike protocol instead of unguided retrying. Strike 1: diagnose and apply the smallest targeted fix, re-run the same step. Strike 2: try an alternative approach (different tool, different config, docs search). Strike 3: rethink assumptions about the system, check environment and dependencies. After 3 strikes without success, escalate to the user with full error history and a root-cause hypothesis. Covers build failures, runtime crashes, network timeouts, auth errors, DB issues, missing deps. Reach for it on phrases like 'this keeps failing', 'try again', 'error recovery', 'validation failed', 'fix and retry', or whenever you catch yourself about to repeat an action that just failed."
 triggers:
   - "error recovery protocol"
   - "fix validation failures"
   - "3 strike protocol"
   - "recover from failure"
   - "diagnose root cause"
+  - "this keeps failing"
+  - "try again"
+  - "validation failed how do i fix"
 context_priority: critical
 ---
 
@@ -82,13 +85,13 @@ For error log and escalation templates, see `references/error-log-template.md`.
 
 ## Rules
 
-1. **NEVER repeat the exact same failing action** without changing something first
-2. **NEVER add a mock or stub** to work around the error
-3. **NEVER skip a failing validation step** — fix it or escalate
-4. **ALWAYS fix the real cause**, not the surface symptom
-5. **ALWAYS re-validate after every fix** — run the exact same step
-6. **ALWAYS log what you tried** in `e2e-evidence/error-log.md`
-7. **ALWAYS read the FULL error output** — root cause is often in the middle
+1. **Don't repeat the same failing action unchanged.** If you didn't change anything, the result won't change either — you're just burning time. Every retry needs at least one concrete difference (different input, different tool, different hypothesis).
+2. **Don't mock or stub around the error.** The error is telling you something about the real system. Mocking hides the signal; next person to hit this gets the same bug without the warning.
+3. **Don't skip a failing step.** Either fix it, or escalate so the user knows it's unfixed. Silently advancing past a failure means the final verdict is a lie.
+4. **Fix the real cause, not the surface symptom.** A 401 isn't fixed by "retry with new session" if the actual issue is expired refresh tokens.
+5. **Re-validate after every fix by re-running the exact same step.** A fix you don't re-verify is a guess.
+6. **Log every attempt to `e2e-evidence/error-log.md`.** Three attempts with no log means the next person starts from scratch. With a log they learn from what you tried.
+7. **Read the FULL error output, not just the first line.** Root causes often live in the middle of stack traces — the top line is usually the symptom, the middle is often the cause.
 
 ## Security Policy
 

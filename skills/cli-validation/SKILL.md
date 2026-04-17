@@ -1,12 +1,15 @@
 ---
 name: cli-validation
-description: "Validate CLI binaries: build, help/version output, happy path, error cases (bad flags, missing args), exit codes, stdin/pipe, output format (JSON/CSV). Captures stdout/stderr."
+description: "Use for validating command-line tools built with any language (Rust/cargo, Go, Node/bin, Python/Click, Ruby). Covers: binary builds successfully, --help and --version produce sensible output, happy-path invocations return exit 0 with expected stdout, error cases (bad flags, missing required args, invalid input) return nonzero exits with useful stderr, pipes and stdin work, output format (JSON/CSV/text) matches spec. Evidence = captured stdout/stderr + exit codes. Reach for it on phrases like 'validate my CLI', 'test the binary', 'check exit codes', 'does ./mycli work', 'my-tool --help output', or when a CLI tool change needs evidence-backed proof before release."
 triggers:
   - "binary validation"
   - "CLI testing"
   - "exit code verification"
   - "command-line tool"
   - "stderr/stdout capture"
+  - "validate the binary"
+  - "test the cli"
+  - "cargo run validation"
 context_priority: standard
 ---
 

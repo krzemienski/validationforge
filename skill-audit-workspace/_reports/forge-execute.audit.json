@@ -1,0 +1,82 @@
+{
+  "skill_name": "forge-execute",
+  "path": "/Users/nick/Desktop/validationforge/skills/forge-execute/SKILL.md",
+  "skill_md_line_count": 137,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Execute validation journeys with autonomous fix loop: run, capture evidence, analyze, rebuild, re-execute (max 3 strikes). Use after plan exists; maintains attempt history in isolated directories.",
+    "length_words": 28,
+    "issues": [
+      "UNDERSPECIFIC: 'autonomous fix loop' lacks detail on what 'fix' means (code changes? env?)",
+      "PASSIVE VOICE: 'is maintained' would be clearer than 'maintains attempt history'",
+      "NO TRIGGER DETAIL: Doesn't signal when to use relative to lifecycle"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Modes table (quick/standard/ci/targeted) defined but never referenced in the loop phases. Unclear which mode is default or how modes affect preflight/execute.",
+        "location": "Lines 16-23 define modes, but phases 0-5 ignore them"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 3 (Analyze Failures) vague: 'sequential thinking' is implementation-specific; no concrete steps for root cause classification",
+        "location": "Lines 70-75 lack actionable detail"
+      },
+      {
+        "severity": "low",
+        "description": "State schema reference (line 127) correct but the schema itself adds 123 lines of cognitive load. Schema excerpt in body would reduce round-trips.",
+        "location": "Lines 120-127"
+      },
+      {
+        "severity": "low",
+        "description": "'MUST compile before re-validating' (line 93) is a rebuild rule but phrased as a constraint; could be clearer as 'always rebuild after every fix'",
+        "location": "Line 93"
+      },
+      {
+        "severity": "low",
+        "description": "CI exit codes (lines 129-137) are useful but disconnected from the main 7-phase loop; no indication that CI is 'codeword for non-interactive forge-execute'",
+        "location": "Lines 129-137"
+      }
+    ],
+    "strengths": [
+      "Excellent loop diagram (lines 28-30) with max 3-strike cycle visually clear",
+      "Evidence directory isolation per attempt (forge-attempt-N) is a strong archival pattern",
+      "Phase numbering (0-5) and phase-gate checkpoints ('if preflight fails: STOP') are explicit and non-negotiable",
+      "Verdict template shows realistic output structure with journey table and detailed evidence citations"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 1,
+    "missing_scripts_opportunity": "forge-init.sh (create .validationforge/forge-state.json), forge-execute.sh (orchestrate loop phases), forge-rebuild.sh (compile + re-validate)",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Add mode descriptions inline to phase sections (quick = critical journeys only; standard = all journeys; ci = non-interactive exit codes; targeted = named journeys). Remove isolated modes table.",
+    "Expand Phase 3 (Analyze Failures) with concrete classification steps: (1) read evidence, (2) compare to PASS criteria, (3) classify bug|config|env|flaky, (4) decide fixable or BLOCKED. Add examples.",
+    "Inject brief state schema excerpt (root, journey, attempt objects) into Phase 0 or Phase 5 to reduce reference-hopping",
+    "Clarify 'rebuild rule' as a bulleted sub-step in Phase 4: 'ALWAYS rebuild after fix (clean compile required before re-execute). Skip rebuild = invalidates attempt.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a validation plan in e2e-evidence/validation-plan.md with 5 journeys. Running forge-execute now. First attempt on 'user-signup' fails: form submits but no confirmation page. API returned 200 but frontend never navigates. Help me fix and re-validate.",
+      "expected_output": "Directs user to: (1) read evidence from forge-attempt-1/user-signup/ (2) root cause: backend success but frontend redirect logic broken (3) fix: check navigation handler in signup component (4) rebuild (5) re-execute into forge-attempt-2/user-signup/. Increments strike count in state."
+    },
+    {
+      "id": 2,
+      "prompt": "Running forge-execute in CI mode. Three journeys: 'login' PASS, 'checkout' FAIL (payment timeout), 'logout' FAIL (session not cleared). Should I attempt fixes or exit?",
+      "expected_output": "In CI mode: exit code 1 (journeys FAIL). Does not auto-fix; requires human intervention. Captures evidence to e2e-evidence/forge-attempt-1/ for human review. Shows which journeys FAILed and why (payment timeout = HIGH root cause, session clear = MEDIUM). User decides if fixes are safe for CI or require manual review."
+    },
+    {
+      "id": 3,
+      "prompt": "Second strike on 'checkout' journey. Previous fix: added timeout handler. Still fails with 'Cart data not persisting between steps'. Analyze and fix again, but preflight shows dev server crashed. What do I do?",
+      "expected_output": "Preflight FAIL stops execution. Directs to: (1) restart dev server (2) verify health endpoint 200 (3) run preflight again (4) if preflight PASS, re-execute. Does not increment strike until full preflight PASS. Records preflight failure in state with timestamp."
+    }
+  ]
+}

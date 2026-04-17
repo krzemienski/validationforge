@@ -1,0 +1,79 @@
+{
+  "skill_name": "preflight",
+  "path": "/Users/nick/Desktop/validationforge/skills/preflight/SKILL.md",
+  "skill_md_line_count": 87,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Run before validation to detect missing dependencies, dead servers, unseeded databases. Auto-fixes common failures, produces CLEAR/BLOCKED/WARN verdict. Prevents mid-validation debugging cycles.",
+    "length_words": 25,
+    "issues": [
+      "Slightly short (25 words) but punchy and result-focused",
+      "'When' is implicit but clear: 'before validation'",
+      "Strong rationale: prevents debugging cycles mid-validation"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Relies heavily on reference files (platform-checklists.md, auto-fix-actions.md) but provides minimal inline guidance. Lines 21-32 defer all specifics to references. Body doesn't explain HOW to detect or fix.",
+        "location": "Lines 21-32 (references to platform-checklists.md, auto-fix-actions.md)"
+      },
+      {
+        "severity": "med",
+        "description": "Preflight Report Format template (lines 35-55) shows desired output but doesn't explain how to generate it. No mention of what tool/script produces this report.",
+        "location": "## Preflight Report Format (lines 35-55)"
+      },
+      {
+        "severity": "med",
+        "description": "Auto-fix logic (lines 24) says 'attempt one auto-fix per failed check, re-check after' but provides no examples of what auto-fixes are. Users left guessing.",
+        "location": "Line 24"
+      },
+      {
+        "severity": "low",
+        "description": "Rules section (lines 66-73) includes 'NEVER auto-fix by installing major tools (Xcode, Docker)' but doesn't explain detection logic for 'major' vs 'minor' auto-fixes.",
+        "location": "## Rules (lines 66-73)"
+      }
+    ],
+    "strengths": [
+      "Severity Levels table (lines 58-64) is clear and actionable",
+      "Purpose statement (lines 14-18) is compelling: '10-30 minutes of debugging is expensive, failed preflight is cheaper'",
+      "Related Skills section (lines 81-86) shows good integration points",
+      "Security Policy (lines 75-79) is transparent about scope (diagnostic commands, service starts, no code modification)",
+      "Bottom-up validation order for fullstack (line 73) is crucial insight"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 2,
+    "missing_scripts_opportunity": "No standalone preflight script that can be executed before validation. A run-preflight.sh that detects platform, runs platform-specific checks, auto-fixes, and produces the preflight report would be valuable executable reference.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Add 3-5 concrete inline examples of platform detection (grepping for package.json, xcodeproj, Cargo.toml) and corresponding checklist invocation",
+    "Provide examples of auto-fixes: 'npm install', 'docker run postgres', 'brew services start postgresql', 'xcode-select --install'. Show what is/isn't attempted.",
+    "Add a worked example: 'Web app preflight: Node check PASS, dependencies FAIL → auto-fix: npm install → re-check PASS, Dev server FAIL → auto-fix: npm run dev → re-check PASS. Report: CLEAR.'",
+    "Bundle run-preflight.sh script that orchestrates platform detection, checklist execution, and report generation. Make it executable standalone.",
+    "Clarify 'major tools': Xcode, Docker, Android SDK are skipped; npm install, database start, env var checks are auto-fixed"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a Next.js app. What should preflight check before I start validation? What would cause a CLEAR vs BLOCKED verdict?",
+      "expected_output": "Should enumerate: Node.js installed, npm installed, node_modules exists, dev server port available, .env.local configured. CLEAR if all pass. BLOCKED if Node missing or major port conflict. Should explain: 'preflight runs first, 5-10 min, saves 30 min of wasted validation time on missing dependencies.'"
+    },
+    {
+      "id": 2,
+      "prompt": "My Django app's database is not running. Preflight detects the failure. Should it auto-start Postgres or report BLOCKED?",
+      "expected_output": "Should say: 'Preflight attempts auto-fix: docker run postgres (or equivalent), waits, re-checks. If it succeeds, CLEAR. If docker not found, report BLOCKED — user must install Docker manually. Never auto-install Docker (major tool).'"
+    },
+    {
+      "id": 3,
+      "prompt": "I'm setting up a fullstack app (React + Node + MongoDB). In what order should preflight run checks?",
+      "expected_output": "Should explain bottom-up: 1) MongoDB running? 2) Node server running and /api/health responds? 3) React dev server running? 4) Can browser hit frontend? If any layer below fails, skip layers above. Report verdict per layer."
+    }
+  ]
+}

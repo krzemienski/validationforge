@@ -1,0 +1,17 @@
+{
+  "skill_name": "forge-setup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "First-time setup on a monorepo with React frontend + Express API + iOS native. Running /forge-setup. What platforms will be detected and what's the enforcement recommendation?",
+      "expected_output": "Detects: web (package.json + React), api (Express routes), ios (xcodeproj). Recommends: standard enforcement (default). Creates .validationforge/config.json with platforms: [web, api, ios]. Scaffolds e2e-evidence/. Copies 8 rules. Verifies JSON valid. Prints: 'Platforms: web, api, ios | Enforcement: standard | Evidence: e2e-evidence/ | Rules: 8 installed | MCP: playwright (available), xcode (available)'.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm in strict enforcement mode. Running /forge-setup again on a project that already has .validationforge/config.json (enforcement: standard). What happens? Do I get prompted or does it overwrite?",
+      "expected_output": "Detects existing config.json. Prompts: 'Config exists with enforcement: standard. Upgrade to strict?' or 'Keep standard?' User chooses. If strict chosen, updates config.json enforcement field. Re-runs rules installation with strict rules variant. If standard kept, skips config update and rules reinstall. Confirms final state.",
+      "files": []
+    }
+  ]
+}

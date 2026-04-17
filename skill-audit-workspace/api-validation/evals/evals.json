@@ -1,0 +1,17 @@
+{
+  "skill_name": "api-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a Node.js API at localhost:3000 with /api/posts endpoints. I need to validate the full CRUD cycle (create, read, update, delete) and capture evidence. How do I run the API validation? What evidence should I capture?",
+      "expected_output": "Run Health Check first: curl -s http://localhost:3000/health | jq . | tee e2e-evidence/api-health.json. Then CRUD: create a post, extract ID, read it back, update it, verify update persisted, delete it, verify 404. Save each response to e2e-evidence/api-crud-posts/. Evidence is JSON bodies + status codes. No response body = FAIL.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our API uses JWT tokens. The login endpoint returns {\"access_token\": \"...\"}. How do I test that auth is working correctly \u2014 both valid tokens and invalid/missing tokens?",
+      "expected_output": "Get token: TOKEN=$(curl -s -X POST http://localhost:3000/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"...\",\"password\":\"...\"}' | jq -r '.access_token'). Test valid: curl -H \"Authorization: Bearer $TOKEN\" http://localhost:3000/api/protected (expect 200). Test invalid: curl -H 'Authorization: Bearer invalid.token' http://localhost:3000/api/protected (expect 401). Test missing: curl http://localhost:3000/api/protected (expect 401).",
+      "files": []
+    }
+  ]
+}

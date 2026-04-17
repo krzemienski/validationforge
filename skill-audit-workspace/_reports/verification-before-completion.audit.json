@@ -1,0 +1,82 @@
+{
+  "skill_name": "verification-before-completion",
+  "path": "/Users/nick/Desktop/validationforge/skills/verification-before-completion/SKILL.md",
+  "skill_md_line_count": 88,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Block premature completion: require personally examined evidence, specific citations, criteria matching, regression checks, final state capture. Use before marking tasks done, closing gates.",
+    "length_words": 20,
+    "issues": [
+      "Vague 'use before marking tasks done'—no explicit hook into TaskUpdate status changes",
+      "Doesn't explain WHO enforces this (Claude? Hook? Manual discipline?)",
+      "Missing guidance on what 'final state' means when task spans multiple commits"
+    ],
+    "triggering_assessment": "under-triggers"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "The checklist (lines 32-57) uses vague 'Good vs Bad' comparisons without explaining the *why*. Why is 'examined the evidence file' better than 'report about it'? Discipline requires clarity on the reasoning.",
+        "location": "Lines 32-57"
+      },
+      {
+        "severity": "med",
+        "description": "Evidence citation format (lines 60-65) is introduced but relies heavily on a reference file (evidence-citation-examples.md) that should have anti-patterns inline. Circular reference: skill says 'see references/' but could be self-contained.",
+        "location": "Lines 59-69"
+      },
+      {
+        "severity": "med",
+        "description": "'When to Apply' section (lines 71-77) lists 5 scenarios but doesn't say how Claude is supposed to enforce this—is there a hook that blocks TaskUpdate? A guard in the verdicts? Mechanism is unclear.",
+        "location": "Lines 71-77"
+      },
+      {
+        "severity": "med",
+        "description": "Scope section (lines 16-19) says what this skill does NOT handle (evidence generation, planning) but those are exactly the things a user will ask about in practice. Lack of integration diagram creates cognitive load.",
+        "location": "Lines 16-19"
+      },
+      {
+        "severity": "low",
+        "description": "Related Skills section (lines 84-88) is accurate but minimal—no examples of how this skill chains with functional-validation or e2e-validate in a real workflow.",
+        "location": "Lines 84-88"
+      }
+    ],
+    "strengths": [
+      "The core rule (lines 22-29) is clear and imperative—5 concrete steps that block hand-wavy claims",
+      "Evidence-citation-examples.md reference file is excellent—anti-patterns table is specific and actionable",
+      "Checklist format is self-policing—users can run through it independently",
+      "Security policy (lines 79-82) is explicit: this is read-only, prevents false completions"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 1,
+    "missing_scripts_opportunity": "A small auto-checker script (e.g., verify-evidence.sh) could validate that every criterion in a requirements table has a matching evidence citation. Currently manual.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Add a verification hook into the Claude Code task completion flow—automatically remind users to run the checklist before marking tasks done",
+    "Inline anti-patterns table from evidence-citation-examples.md into the main body (line 35–50) instead of referencing it—core logic should be self-contained",
+    "Clarify enforcement mechanism: Is this a reminder skill? Or a blocker skill? Does Claude refuse to mark tasks complete without evidence?",
+    "Add a workflow diagram showing how this skill chains with e2e-validate (generates evidence) → this skill (examines evidence) → verdict-writer (produces final report)"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I implemented the user login form, ran the e2e test, got PASS. Can I mark this task done?",
+      "expected_output": "Skill runs through checklist. User says 'I saw the e2e test pass' but hasn't personally examined the evidence file. Skill demands: Open e2e-evidence/login-form.png, describe exactly what you see (form fields, buttons, states). Until user provides specific observation ('Email field with blue border, password field, blue Submit button'), mark done rejected."
+    },
+    {
+      "id": 2,
+      "prompt": "The API endpoint returns 200 and the response looks right to me. I also updated the frontend to use the new fields. Is that enough to ship?",
+      "expected_output": "Skill asks: Did you check for regressions? Did you verify the final state is actually the state you're shipping? (E.g., if you made 3 commits, did you re-capture evidence after the last one?) User must cite: e2e-evidence/api-endpoint.json with full response body, e2e-evidence/ui-with-new-fields.png showing fields rendered, regression-check.txt showing no prior journey broke."
+    },
+    {
+      "id": 3,
+      "prompt": "My subagent ran validation and reported PASS on all 6 journeys. The task is done, right?",
+      "expected_output": "Skill rejects delegation: You must personally examine the subagent's evidence files. Open each one, describe what you see. For each of 6 journeys: What specific observation proves it passed? (E.g., 'journey-login screenshot shows dashboard rendered with user's name in header'). Delegation without re-examination is not allowed."
+    }
+  ]
+}

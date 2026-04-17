@@ -1,12 +1,15 @@
 ---
 name: build-quality-gates
-description: "4-stage pipeline: compile, lint, type-check, bundle. Each gate PASS required before next. Build gates are necessary NOT sufficient—functional validation still required. Use pre-deploy, pre-PR."
+description: "Use for pre-deploy or pre-PR build quality enforcement through a 4-stage pipeline: compile → lint → type-check → bundle. Each stage must PASS before the next runs. Critical caveat this skill hammers home: build passing is NECESSARY but NOT SUFFICIENT — 'it compiled' is never proof that it works for users. Functional validation through real UI is always the next step. Reach for it on phrases like 'run build checks', 'pre-PR checks', 'quality gates', 'verify the build', 'is the bundle clean', or when CI needs a multi-stage build verification step before tests."
 triggers:
   - "build quality"
   - "quality gates"
   - "build pipeline"
   - "pre-deploy checks"
   - "build verification"
+  - "pre-PR checks"
+  - "lint and typecheck"
+  - "compile check"
 context_priority: standard
 ---
 

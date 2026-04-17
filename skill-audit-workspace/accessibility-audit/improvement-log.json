@@ -1,0 +1,25 @@
+{
+  "skill_name": "accessibility-audit",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description calling out what Lighthouse misses + triggers",
+      "implemented": true,
+      "details": "New description explicitly says 'goes beyond what Lighthouse alone catches' and names specific gaps (keyboard traps, misused ARIA, unlabeled fields, dynamic content not announced). Adds 3 new YAML triggers including 'keyboard trap' and 'aria misuse' which are the high-signal audit findings."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Body restructuring from audit (scoring rules section, keyboard test protocol)",
+      "reason": "Body is 238 lines and audit flagged medium-severity issues (scoring rules without rationale, checklist ordering). Main body is structurally fine. Description was the primary gap."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/accessibility-audit/SKILL.md"
+  ],
+  "description_before": "Audit WCAG 2.1 AA compliance across 4 layers (Lighthouse, keyboard nav, screen reader, contrast). Use before public release, after UI changes, or on a11y complaints.",
+  "description_after": "Use for WCAG 2.1 AA accessibility audits that go beyond what Lighthouse alone catches. Runs 4 layers — automated Lighthouse scan, keyboard-only navigation walk-through (tab order, focus traps, skip links), screen-reader structure check via accessibility tree, and contrast/dark-mode verification — and scores the results with severity ratings. Catches issues Lighthouse misses: keyboard traps, misused ARIA, unlabeled form fields, dynamic content not announced. Reach for it before public release, after a significant UI change, on a11y complaints from users, or on phrases like 'WCAG audit', 'keyboard navigation test', 'screen reader check', 'accessibility compliance', 'a11y review'.",
+  "line_count_before": 238,
+  "line_count_after": 240,
+  "self_review_notes": "Description now tells the model what this skill catches that automated tools don't — the key differentiator. 'keyboard trap' and 'aria misuse' as explicit triggers helps when users don't say 'accessibility' but describe the symptoms."
+}

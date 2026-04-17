@@ -1,0 +1,9 @@
+{
+  "skill_name": "ios-validation",
+  "changes_applied": [{"fix": "Rewrite description differentiating from ios-validation-runner and ios-validation-gate", "implemented": true, "details": "New description explicitly contrasts ios-validation (9-step standard protocol) vs ios-validation-runner (video evidence, temporal) vs ios-validation-gate (gate-based). Addresses the audit's observation that the 4 iOS skills were confusingly overlapping. 3 new triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "235-line body is already structured by step."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/ios-validation/SKILL.md"],
+  "description_before": "iOS/macOS validation: Xcode build → simulator install/launch → screenshot/video/logs/deep links/accessibility tree. 9-step protocol from build through crash detection.",
+  "description_after": "Use as the standard protocol for validating iOS or macOS apps end-to-end: Xcode build → simulator install → launch → screenshots at each state → log streaming → deep-link routing check → accessibility tree check → crash detection. Runs a 9-step protocol suitable for most iOS validation needs. For deeper temporal evidence (video recording, multi-step flow debugging), use ios-validation-runner instead; for gate-based validation with explicit PASS/FAIL gates, use ios-validation-gate. Reach for it on phrases like 'validate the iOS app', 'iOS build test', 'does the iOS simulator launch', 'check deep link', 'iOS crash detection', or for any iOS app change that needs proof before release."
+}

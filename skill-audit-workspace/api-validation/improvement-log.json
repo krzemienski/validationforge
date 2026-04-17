@@ -1,0 +1,50 @@
+{
+  "skill_name": "api-validation",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with concrete when-to-use + triggers",
+      "implemented": true,
+      "details": "New description names specific scenarios (before deployment, after endpoint/auth changes, onboarding consumers) and triggering phrases ('test the API', 'validate the endpoints', 'check auth', 'curl the server'). 3 new YAML triggers added."
+    },
+    {
+      "fix": "Add Quick Start section before Prerequisites",
+      "implemented": true,
+      "details": "New table at top shows which steps to run, in what order, with time estimates and skip conditions. Answers 'do I run all 6 steps or pick a subset' — which the audit flagged as missing."
+    },
+    {
+      "fix": "Move Common Failures up to third position",
+      "implemented": true,
+      "details": "Troubleshooting table moved from end to just after Prerequisites, renamed 'Common failures (read this before debugging)'. Users now see known failure patterns before running commands that will hit them."
+    },
+    {
+      "fix": "Make Prerequisites a real gate, not a hint",
+      "implemented": true,
+      "details": "Added sentence: 'Verify every row before starting — each is a gate, not a hint. If any fails, fix that first or the rest of the run is noise.'"
+    },
+    {
+      "fix": "Add good/bad error response examples inline",
+      "implemented": true,
+      "details": "Expanded Step 4 with concrete examples. Good: validation errors with field+message pairs. Bad: numeric codes, empty objects, empty error arrays, vague 'something went wrong'. Includes the rule that makes them distinguishable (human readability + machine readability)."
+    },
+    {
+      "fix": "Clarify when to skip rate limiting (Step 6)",
+      "implemented": true,
+      "details": "Added decision guidance: check API docs or look for rate-limit middleware (express-rate-limit, @fastify/rate-limit, Django ratelimit). Skip otherwise. Also clarified: 429 without Retry-After header is a FAIL even if status is right."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Bundle crud-validator.sh / auth-test.sh / error-response-test.sh",
+      "reason": "High-value suggestion from audit, but creating 3 well-tested shell scripts with proper arg handling, evidence naming, and failure modes is substantial work better suited to subagent fanout (which is blocked). Marking for future followup."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/api-validation/SKILL.md"
+  ],
+  "description_before": "Validate APIs via curl: health checks, CRUD cycles (create/read/update/delete), auth (token, 401/403), error responses, pagination. Captures JSON bodies and status codes. Use on API changes.",
+  "description_after": "Use whenever validating an HTTP API (REST, GraphQL-over-HTTP, webhook receiver) — before deployment, after endpoint or auth changes, when onboarding a new API consumer, or when answering 'does this API actually work end-to-end'. Covers health checks, full CRUD cycles, auth (valid/invalid/missing tokens, 401/403), error response shape, pagination, and rate limiting, all via curl with JSON bodies and status codes saved as evidence. Reach for it on phrases like 'test the API', 'validate the endpoints', 'check auth', 'curl the server', 'does /api/... work'.",
+  "line_count_before": 232,
+  "line_count_after": 275,
+  "self_review_notes": "Growth (232->275) is from the Quick Start table, the good/bad error examples, and inline guidance throughout. Structure is clearer now: What-should-I-run-first table → Prerequisites → Common failures → numbered steps. The CRUD repetition (7 curl blocks) is still there — audit was right that bundling a script would be much cleaner, but that's a follow-up item requiring careful script authoring."
+}

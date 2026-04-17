@@ -1,0 +1,94 @@
+{
+  "skill_name": "rust-cli-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/rust-cli-validation/SKILL.md",
+  "skill_md_line_count": 195,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Validate Rust CLI apps via cargo: check, clippy, release build, binary execution. Detects panics, exit codes, error messages. Tests help, version, happy path, error cases.",
+    "length_words": 24,
+    "issues": [
+      "Description lists tools (cargo check, clippy, build) before WHY. Doesn't explain when to use: 'after refactoring', 'before release', 'when fixing panics'",
+      "Tone is imperative but assumes cargo/Rust knowledge. Accessible to Rust teams but not cross-platform validators"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Prerequisites section (Lines 9-17) checks 'clippy installed' with two different commands. First is wrong: `cargo clippy --version` outputs usage, not version. Correct: `cargo +nightly clippy --version` or check rustup. Will confuse users.",
+        "location": "Lines 15"
+      },
+      {
+        "severity": "high",
+        "description": "Step 2 (clippy) presents two paths: with `-D warnings` (strict) and without (permissive), but doesn't explain which to choose or when. No guidance on when strict is appropriate vs when it's overly rigid. 'Document any warnings' is vague.",
+        "location": "Lines 30-46"
+      },
+      {
+        "severity": "med",
+        "description": "Step 3 references 'TOOL_NAME' as placeholder for binary name from Cargo.toml [[bin]] name, but doesn't show how to extract it. Users with workspaces will be confused (which workspace, which package?). No example for multi-binary projects.",
+        "location": "Lines 60-64"
+      },
+      {
+        "severity": "high",
+        "description": "Step 4 (binary execution) shows individual error cases (invalid flag, missing arg, file not found) but doesn't explain HOW to generate these errors systematically. Code example shows 'COMMAND ARG1 ARG2 --flag value' but no guidance on what COMMAND/ARG1/ARG2 should be. User must invent test data.",
+        "location": "Lines 68-129"
+      },
+      {
+        "severity": "med",
+        "description": "Step 5 (cargo test) assumes tests exist and pass. No guidance on what to do if tests don't exist (common in new CLI projects). No guidance on skipping flaky tests or integration tests that need external services.",
+        "location": "Lines 131-147"
+      },
+      {
+        "severity": "low",
+        "description": "Common failures table (Lines 169-181) references 'exit code 101' as always FAIL due to panic, but doesn't explain this is Rust-specific behavior. Other languages use different panic codes. Context would help non-Rust teams understand.",
+        "location": "Lines 167"
+      },
+      {
+        "severity": "med",
+        "description": "PASS criteria template (Lines 183-195) is a checklist but doesn't explain how to check each item. E.g., 'cargo check exits 0 with no compiler errors' — how do you verify 'no compiler errors' if exit code is 0? Cargo will have already exited non-zero if errors exist.",
+        "location": "Lines 183-195"
+      }
+    ],
+    "strengths": [
+      "Six-step flow (check → clippy → build → help/version → happy path → errors → test) is logical and builds from compilation to runtime behavior",
+      "Individual error cases (invalid flag, missing arg, file-not-found) are concrete and testable",
+      "Exit code verification is explicit (Section 6) - prevents silent failures masquerading as success",
+      "Common failures table maps symptoms to causes - good debugging guide",
+      "Evidence capture pattern (tee to .txt files) is consistent and reproducible"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "No bundled validation script. Skill shows individual bash commands but user must compose them. Could ship validation script that runs all 6 steps, captures outputs to e2e-evidence/rust-cli-*.txt, and produces a summary. Would make validation repeatable without manual step transcription.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Fix clippy --version command: use `cargo +nightly clippy --version` or explain that check is for 'clippy component installed'",
+    "Add clippy strictness decision tree: when to use `-D warnings` (new projects, high-quality libs) vs permissive (legacy, low-risk CLIs)",
+    "Show how to extract binary name from Cargo.toml: add example `grep 'name =' Cargo.toml | head -1` or use cargo-tree",
+    "Provide concrete test data examples: show sample CLI invocation with real args (e.g., if tool is 'word-counter', run 'word-counter /path/to/file.txt')",
+    "Add section for 'Tests don't exist': guide on when tests are optional (CLI wrapper) vs required (data processing core)",
+    "Clarify PASS criteria checklist: 'No compiler errors' is tautological with 'exit code 0'. Show how to verify each criterion independently."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "Just built a new Rust CLI tool called 'csv-parser' that reads CSV files and outputs JSON. Need to validate it before release. Where do I start?",
+      "expected_output": "Skill walks Steps 1-6: cargo check (compilation), cargo clippy (linting), cargo build --release (binary production), --help and --version checks (usability), happy path test (csv-parser input.csv → valid JSON output), error cases (missing file, bad CSV format → helpful error messages, no panic). PASS criteria: exit code 0 on success, non-zero on errors, no 'thread panicked' output. Evidence captured to e2e-evidence/rust-*.txt."
+    },
+    {
+      "id": 2,
+      "prompt": "Clippy is complaining about 'unused imports' but we intentionally keep some for future use. Should we use -D warnings or ignore clippy?",
+      "expected_output": "Skill explains strict vs permissive clippy modes. For intentional unused imports: run without -D warnings flag, document the reason in code comment (#[allow(unused_imports)]), cite in clippy output. Skill advises: new projects should use -D warnings to catch real issues; mature projects can be permissive. Shows how to distinguish 'intentional' from 'real dead code'."
+    },
+    {
+      "id": 3,
+      "prompt": "Binary hangs when I run it without arguments. It should print help and exit. How do I test for this?",
+      "expected_output": "Skill covers Step 4 error cases and Step 6 exit code verification. Shows: run `csv-parser < /dev/null` to provide empty stdin, capture behavior (hang vs exit), verify exit code. If it hangs, likely reading stdin when it shouldn't. If exit code non-zero and message helpful, test passes. Evidence: timeouts, exit codes, error message output captured."
+    }
+  ]
+}

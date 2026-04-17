@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "user-runs-through-all-7-categories",
+  "prompt": "I just redesigned the product landing page with a new hero section, feature cards, and dark mode toggle. How do I systematically inspect it visually before marking the redesign done?",
+  "expected_output": "User runs through all 7 categories: Layout (overflow at 375/768/1440px), Typography (readable at each breakpoint), Interactive (buttons hover states, dark mode toggle works), Hierarchy (hero is most prominent), Visual Separation (cards are distinct), Dark/Light Mode (both render, no invisible text), Edge Cases (long text wraps, empty states if applicable). Captures screenshots at minimum 3 breakpoints for each mode. Produces report in e2e-evidence/visual-inspection/report.md with findings by severity.",
+  "assertions": []
+}

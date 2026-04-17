@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "see-pass-criteria-examples-md-2-login-wo",
+  "prompt": "I created a PASS criterion 'Login works'. My teammate says it's bad. Why?",
+  "expected_output": "See pass-criteria-examples.md #2: 'Login works' is bad because it doesn't define success. Better: 'POST /api/login with valid creds returns 200 with JSON containing `token` string > 20 chars; GET /me with token returns current user name'. Good criteria are specific (POST /api/login, not 'Login'), measurable (token exists, not 'works'), observable (captured via curl response), and evidence-mapped (curl output proves it).",
+  "assertions": []
+}

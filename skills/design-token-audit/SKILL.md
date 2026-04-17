@@ -1,12 +1,15 @@
 ---
 name: design-token-audit
-description: "Audit CSS/Tailwind/inline styles against design system spec (DESIGN.md, tailwind.config, CSS vars). Detects hardcoded values, off-palette colors, non-standard spacing, typography drift."
+description: "Use whenever you need to prove the UI code matches the design system instead of silently drifting — hardcoded hex colors sneaking in, spacing values not in the scale, fonts that don't match the typography system. Checks CSS, Tailwind classes, and inline styles against the spec sources (DESIGN.md, tailwind.config.{js,ts}, CSS custom properties in :root). Flags drift by category: color, spacing, typography, radius, shadow. Reach for it on phrases like 'design token compliance', 'design system drift', 'hardcoded hex values', 'off-palette colors', 'spacing audit', or before a design-critical release where visual consistency matters."
 triggers:
   - "design token audit"
   - "token compliance"
   - "design system drift"
   - "color audit"
   - "typography audit"
+  - "hardcoded hex"
+  - "off-palette color"
+  - "spacing audit"
 context_priority: reference
 ---
 

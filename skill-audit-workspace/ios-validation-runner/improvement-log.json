@@ -1,0 +1,55 @@
+{
+  "skill_name": "ios-validation-runner",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with richer when-to-use + triggers",
+      "implemented": true,
+      "details": "New description explains the specific scenario this skill targets (multi-step flows, timing-dependent state transitions, animations) and differentiates it from ios-validation-gate. Added 3 new YAML triggers: 'ios video evidence', 'record ios flow', 'debug ios transition'."
+    },
+    {
+      "fix": "Clarify phase diagram — RECORD starts background capture, ACT is where interaction happens",
+      "implemented": true,
+      "details": "Updated ASCII diagram and added a 'Key timing rule' note after it, explaining that RECORD only starts capture and the actual interaction happens in ACT. Addresses the audit's concern that users might start recording and then expect to interact inside RECORD."
+    },
+    {
+      "fix": "Replace inline Python UUID extraction with jq",
+      "implemented": true,
+      "details": "Old Phase 1 used multi-line Python to parse simctl JSON output. Replaced with a single-line jq pipeline: `jq -r '.devices | .[] | .[] | select(.state==\"Booted\") | .udid' | head -1`. More robust and readable, and jq is a standard dependency."
+    },
+    {
+      "fix": "Add PID tracking guidance and liveness checks",
+      "implemented": true,
+      "details": "Phase 2 now includes a preamble explaining why saving $! matters (needed later for clean stop), a fallback (pkill -INT -f recordVideo), and liveness sanity checks (kill -0 $VIDEO_PID; kill -0 $LOG_PID) with clear warnings if either process exits immediately. Prevents silent capture failures."
+    },
+    {
+      "fix": "Explain WHY SIGINT vs SIGKILL and WHY --level debug",
+      "implemented": true,
+      "details": "Old skill stated 'CRITICAL: use kill -INT' and 'MANDATORY: --level debug' without explaining why. Added explanations: SIGINT lets simctl finalize the MP4 container (muxing headers, index); --level debug surfaces os_log-priority debug output needed to correlate UI with state. Model now has theory-of-mind for the rule instead of memorizing it."
+    },
+    {
+      "fix": "Add idb availability check + install guidance in Phase 3",
+      "implemented": true,
+      "details": "New preamble at Phase 3: `command -v idb` check, install hint (`brew tap facebook/fb && brew install idb-companion`), and clear fallback path (use manual interaction if idb isn't available). Eliminates the 'command not found' dead-end the audit flagged."
+    },
+    {
+      "fix": "Make 'keep evidence' rule enforceable",
+      "implemented": true,
+      "details": "The NEVER Patterns table entry 'Deleting evidence after PASS' now includes the concrete command to preserve it: git add e2e-evidence/$JOURNEY && git commit. Gives the model an action instead of a platitude."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Bundle ios-runner.sh to automate phases 1-5",
+      "reason": "High-value suggestion but substantial work — would need robust PID state tracking, interactive pause during ACT, and cross-session resumability. Better as a subagent-produced artifact. The individual phase commands are now cleaner, which partially addresses the same friction."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/ios-validation-runner/SKILL.md"
+  ],
+  "description_before": "Five-phase iOS protocol: SETUP → RECORD (video+logs) → ACT (interaction) → COLLECT (artifacts) → VERIFY (verdict). Complex flows & debug scenarios. Video catches temporal evidence screenshots miss.",
+  "description_after": "Use for deep iOS validation of multi-step user flows where screenshots alone miss the timing — animations, loading states, state transitions, anything where the journey matters more than the endpoints. Runs a five-phase protocol (SETUP → RECORD → ACT → COLLECT → VERIFY) that captures video + logs in the background while you interact with the app, then analyzes everything together for a PASS/FAIL verdict. Reach for it when you need richer evidence than ios-validation-gate provides, when debugging state transitions, or when someone asks 'what actually happens between tap and result'.",
+  "line_count_before": 247,
+  "line_count_after": 258,
+  "self_review_notes": "The phase boundary confusion (RECORD vs ACT) was a real usability bug — the diagram actually encouraged misreading. Fixed. The Python→jq swap makes SETUP bulletproof across Xcode updates. Adding the 'why' behind SIGINT and --level debug is worth more than the lines it costs; those rules will survive model theory-of-mind across future edits."
+}

@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "clear-guidance-to-run-4-layer-audit",
+  "prompt": "I need to audit our React dashboard before launch next week. It's a data viz app with interactive charts, form inputs, and a dark mode toggle. Some users complained they couldn't navigate with keyboard only. How do I run a full WCAG AA audit including keyboard navigation to catch all accessibility issues?",
+  "expected_output": "Clear guidance to run 4-layer audit (Lighthouse via DevTools, tab through all controls, check a11y tree for labels/roles, verify 4.5:1 contrast). Specific evidence paths. Verdict template that says PASS or FAIL with numbered issues.",
+  "assertions": []
+}

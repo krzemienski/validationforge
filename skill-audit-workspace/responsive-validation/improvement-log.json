@@ -1,0 +1,9 @@
+{
+  "skill_name": "responsive-validation",
+  "changes_applied": [{"fix": "Rewrite description with concrete thresholds + triggers", "implemented": true, "details": "Added specific numbers (44px Apple HIG, 48dp Material) and named the checks (content parity, orientation, horizontal overflow). 3 new triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "198 lines, well-structured by viewport."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/responsive-validation/SKILL.md"],
+  "description_before": "Validate layouts across 8 device viewports (375px–1920px): layout, touch targets, typography, content parity, orientation, overflow. Use after responsive redesigns, CSS refactors, mobile launches.",
+  "description_after": "Use for systematic responsive layout validation across 8 device viewports (iPhone SE 375px up through desktop 1920px). Goes beyond screenshot-at-each-width: checks layout integrity at breakpoints, touch target sizing (44px minimum per Apple HIG, 48dp per Material), typography scaling, content parity across widths (no desktop-only content hidden on mobile), orientation handling, and horizontal overflow detection. Reach for it on phrases like 'responsive validation', 'check all breakpoints', 'mobile responsive test', 'touch target audit', 'does this overflow on mobile', after any responsive redesign or CSS refactor, or when a mobile launch needs proof."
+}

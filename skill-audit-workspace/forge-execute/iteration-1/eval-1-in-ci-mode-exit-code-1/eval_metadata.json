@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "in-ci-mode-exit-code-1",
+  "prompt": "Running forge-execute in CI mode. Three journeys: 'login' PASS, 'checkout' FAIL (payment timeout), 'logout' FAIL (session not cleared). Should I attempt fixes or exit?",
+  "expected_output": "In CI mode: exit code 1 (journeys FAIL). Does not auto-fix; requires human intervention. Captures evidence to e2e-evidence/forge-attempt-1/ for human review. Shows which journeys FAILed and why (payment timeout = HIGH root cause, session clear = MEDIUM). User decides if fixes are safe for CI or require manual review.",
+  "assertions": []
+}

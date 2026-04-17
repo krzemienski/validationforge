@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "should-diagnose-why-real-system-is",
+  "prompt": "I'm validating a React component that calls an external payment API. The API is slow and flaky in staging. Should I mock it or stub the response? What's the right approach?",
+  "expected_output": "Should diagnose why real system is unavailable (slow/flaky staging API), propose fixes (fix the flakiness, use production-like test data, add caching), and redirect to real validation. Should reference the Three-Step Correction protocol.",
+  "assertions": []
+}

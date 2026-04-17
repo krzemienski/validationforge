@@ -1,0 +1,95 @@
+{
+  "skill_name": "forge-team",
+  "path": "/Users/nick/Desktop/validationforge/skills/forge-team/SKILL.md",
+  "skill_md_line_count": 317,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Multi-agent parallel validation with wave-based dependencies: DB/Design → API → Web/iOS. Each validator owns isolated evidence directory. Blocks downstream on upstream failure. Use for fullstack.",
+    "length_words": 27,
+    "issues": [
+      "JARGON HEAVY: 'wave-based dependencies' and 'blocks downstream' are technical but unexplained in short form",
+      "CONCRETE BUT NARROW: Mentions DB→API→Web/iOS dependency chain but not Design or CLI which are also mentioned later",
+      "OK TRIGGER: 'Use for fullstack' is clear but should also mention multi-platform monorepo"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Wave execution loop (lines 104-127) is pseudocode but mixes agent spawning details with dependency logic. Unclear: Does 'wait_for_all' mean blocking I/O or timeout? How long is 'stuck > 5 min' (line 183)?",
+        "location": "Lines 104-127"
+      },
+      {
+        "severity": "high",
+        "description": "Validator Prompt construction (lines 129-136) lists required content but doesn't show an example. A lead spawning a Web validator needs a template prompt—what does it look like? What fields must be in the prompt JSON?",
+        "location": "Lines 129-136"
+      },
+      {
+        "severity": "med",
+        "description": "CONDITIONAL verdict handling (lines 59, 305) is mentioned but poorly defined. What does CONDITIONAL mean? Passes some journeys but not others? Evidence incomplete? The rules say 'dependents proceed with warning'—but no actual warning text or guidance on what the dependent should do with incomplete upstream evidence.",
+        "location": "Lines 59, 305 and scattered"
+      },
+      {
+        "severity": "med",
+        "description": "Team Size Guidelines (lines 307-316) say 'never spawn >5 validators' but the command is designed for fullstack projects that might have 6+ platforms. How does batching work? Do we run Wave 1 (5 validators), then re-run as new Wave 2?",
+        "location": "Lines 307-316"
+      },
+      {
+        "severity": "med",
+        "description": "Conflict Resolution table (lines 296-305) is helpful but 'Contradictory verdicts → Lead re-validates' is hand-wavy. A validator says PASS, another says FAIL on the same journey. Who re-validates? How is it escalated?",
+        "location": "Lines 296-305"
+      },
+      {
+        "severity": "low",
+        "description": "Evidence Ownership Rules (lines 287-294) are stated but not enforced. How does the system prevent Validator A from writing to Validator B's directory? Is this a hook? Validation only?",
+        "location": "Lines 287-294"
+      },
+      {
+        "severity": "low",
+        "description": "Monitor Progress section (lines 164-193) references 'wave-plan.json' but the schema was never defined. What's the structure? Is it for internal tracking or shared with validators?",
+        "location": "Lines 164-193"
+      }
+    ],
+    "strengths": [
+      "Architecture diagram (lines 18-27) is clear and visual: shows wave layering with precise directory ownership per validator",
+      "Dependency graph (lines 29-52) explicitly tables platform dependencies with reasoning (API needs DB because data flows; Web needs API for rendering)",
+      "Evidence Ownership Rules (lines 287-294) are absolute: no cross-directory writing, blocks written by lead only. Strong isolation principle.",
+      "Report template (lines 216-286) is comprehensive: shows wave results table, blocked platforms section, root-cause rationale",
+      "Blocked Validator Handling (lines 138-162) specifies exactly what happens when upstream FAILs: skip spawn, write BLOCKED report, record status"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "forge-team.sh (orchestrate waves, track state, aggregate reports), wave-executor.sh (spawn validators per wave, monitor progress), verdict-aggregator.sh (synthesize all evidence into unified report)",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Define CONDITIONAL verdict precisely: 'Some journeys PASS, others FAIL, or evidence incomplete (missing screenshots, API timeouts). Dependents in next wave proceed but add warning in their validator prompt: \"Upstream verdict is CONDITIONAL—use only PASS data from previous wave; upstream failures are known and may affect your evidence.\"'",
+    "Add validator prompt template: Show a concrete example JSON/markdown for spawning a Web validator. Include: platform name, wave number, the journeys to validate, evidence directory path, PASS criteria, upstream context (what API returned), and the iron rules (no mocks, cite specific proof).",
+    "Explain 'wait_for_all' semantics: 'Synchronously wait for all agents in this wave to report completion status or timeout. Timeout = 30 min per wave. If agent hangs > 5 min without progress, lead may manually inspect or reassign to new agent. Record all timeouts in final report.'",
+    "Clarify batching for 5+ platforms: 'If project has 6+ platforms, batch them into logical waves (e.g., [DB, Design] Wave 0, [API] Wave 1, [Web, iOS, CLI] Wave 2 split into [Web, iOS] then [CLI]). Never spawn >5 in parallel; spawn 5, wait for completion, spawn next batch if same wave.'",
+    "Specify wave-plan.json schema: Show the structure with wave_0/wave_1/wave_2 objects, platform → verdict/status/blocked_by fields, timestamps. Document when it's updated (after each wave completes, after all waves) and whether validators have read access.",
+    "Define evidence ownership enforcement: 'Each validator writes exclusively to its directory. Lead enforces this by (1) pre-creating read-only parent directories for other validators, (2) checking final reports for cross-directory writes, (3) failing the run if violation detected.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "Fullstack project: React + Node API + PostgreSQL. Running /forge-team. Platform detection finds all 3. Walk me through waves, parallel spawning, and dependency blocking.",
+      "expected_output": "Wave 0: DB validator spawned (alone, foundation layer). Waits for PASS. Wave 1: API validator spawned (depends on DB PASS). Waits for PASS. Wave 2: Web validator spawned (depends on API PASS). If DB FAILs in Wave 0 → API and Web are BLOCKED (never spawned). Records BLOCKED in their reports. If API FAILs in Wave 1 → Web is BLOCKED. Lead writes final report aggregating all waves with dependency chain and root causes."
+    },
+    {
+      "id": 2,
+      "prompt": "Web validator reports CONDITIONAL (3/5 journeys PASS, 2/5 FAIL—API timeouts on pagination endpoint). API validator is already done (Wave 1). iOS validator is waiting for Wave 2. What happens?",
+      "expected_output": "Wave 1 complete with CONDITIONAL verdict. Lead evaluates: API has known failures, but core CRUD works. Adds warning to iOS validator prompt: 'Upstream Wave 1: API verdict is CONDITIONAL. Use only PASS endpoints (list, get, create, update). Avoid pagination endpoint (times out). Evidence captured in e2e-evidence/api/report.md.' iOS proceeds (not blocked), focuses on endpoints that passed upstream."
+    },
+    {
+      "id": 3,
+      "prompt": "Web validator stuck > 5 min. No progress update. What does the lead do?",
+      "expected_output": "Lead checks TaskOutput for Web agent. If no progress and >5 min elapsed: (1) Inspect the stuck evidence directory—what's the last file? (2) Check if web dev server crashed or network issue (3) Manually intervene or reassign Web validation to new agent. Record timeout and manual intervention in final report. If Web validator never recovers, mark Web as INCOMPLETE and note in overall verdict."
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "skill_name": "baseline-quality-assessment",
+  "path": "/Users/nick/Desktop/validationforge/skills/baseline-quality-assessment/SKILL.md",
+  "skill_md_line_count": 94,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Capture immutable 'before' evidence before code changes. Proves changes improved targets without regressing existing functionality. Use for refactor, migration, dependency update, bug fix.",
+    "length_words": 24,
+    "issues": [
+      "Description is outcome-focused ('Proves changes...') but doesn't explain WHAT the skill does: 'Capture baseline evidence before code changes'",
+      "Missing key constraint: baseline must be captured BEFORE editing starts — this is a gate/blocker, not just best practice"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Extreme underweight: 94 lines total, only 4 steps, mostly references. Skill leaves all detailed capture commands to bundled references (baseline-capture-commands.md, regression-comparison-template.md) but doesn't include platform-specific examples IN the main skill for users who don't want to switch to references",
+        "location": "entire file"
+      },
+      {
+        "severity": "med",
+        "description": "Step 2 (Identify journeys) defers to 'create-validation-plan' skill without any bootstrap guidance — what if user doesn't have a plan yet? No inline checklist to get started",
+        "location": "line 45"
+      },
+      {
+        "severity": "med",
+        "description": "Rules section (lines 70-77) uses MUST/MUST NOT in all caps 5x (lines 71, 72, 73, 74, 75) without explaining WHY each rule matters. 'BASELINE MUST be captured before any code changes' lacks context: why is this a blocker?",
+        "location": "lines 70-77"
+      },
+      {
+        "severity": "low",
+        "description": "Regression detection table (lines 57-62) is helpful but lacks examples: what does 'broken in baseline too' look like in practice? How do you distinguish pre-existing from introduced?",
+        "location": "lines 57-62"
+      },
+      {
+        "severity": "low",
+        "description": "Post-Change Comparison section (lines 64-68) is 5 lines and defers everything to references/regression-comparison-template.md — user must leave the skill to understand what to do",
+        "location": "lines 64-68"
+      }
+    ],
+    "strengths": [
+      "Crystal clear purpose (lines 15-20): explains why baseline matters ('without a baseline, every claim of no regressions is unverifiable')",
+      "When to Use table (lines 26-34) is excellent — differentiates 'Baseline Required' from 'Optional', practical scenarios",
+      "Immutability rule (line 72) is well-intentioned — prevents accidental overwrites",
+      "Security Policy section (lines 79-81) is mature — warns about PII in evidence",
+      "Bundled references are well-named: regression-comparison-template.md, baseline-capture-commands.md"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 2,
+    "missing_scripts_opportunity": "Step 3 (capture evidence) delegates to references/baseline-capture-commands.md but could include platform-detection logic: 'Detect platform type (Web/API/iOS/CLI) from signals (package.json, .xcodeproj, Cargo.toml). For each platform, see references/baseline-capture-commands.md and run capture commands.' — would be a bundled script or logic diagram",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Expand Scope section to include a simple platform detection checklist: 'Is this a Web app (React/Vue/Next)? API server (Node/Python/Go)? iOS app? CLI tool? See references/baseline-capture-commands.md for your platform's capture commands.'",
+    "Add inline example after Step 2: 'Example journeys for a React app: Homepage load, Login flow, Dashboard data fetch, Settings save. For an API: GET /health, POST /users (create), GET /users/:id (read), PUT /users/:id (update), DELETE /users/:id (delete).'",
+    "Explain WHY each rule (lines 70-77): 'BASELINE MUST be captured before any code changes — once you start editing, the before state is permanently lost.' 'Baseline evidence is immutable — if you need to update baseline after changes, save to baseline-v2/ to preserve the original.'",
+    "Move regression detection logic to a subsection with examples: 'CRITICAL: Feature worked in baseline (evidence: page loaded, API returned 200), now fails (evidence: 500 error). Must fix. MEDIUM: Lighthouse score 85 → 78 (performance regression but not broken). HIGH: Worked before, broken now = must fix.'",
+    "Expand Post-Change Comparison (lines 64-68) with mini-example: 'After your changes, re-run the same capture commands. Save to e2e-evidence/ (NOT baseline/). Open regression-comparison-template.md to structure your findings. Each journey gets a verdict: NO REGRESSION, IMPROVED, or REGRESSION.'",
+    "Rewrite description to lead with action: 'Before you change code, capture immutable evidence of existing behavior. After changes, re-capture and compare to prove you improved targets without breaking anything else.'",
+    "Create a mini-bootstrap guide: if user has no validation plan yet, provide a 5-minute checklist (e.g., 'List every route/endpoint/screen. Pick top 3. Capture screenshots/API responses. Done.')."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm about to refactor our login form. It currently works fine. How do I capture baseline evidence before I start editing so I can prove the refactor didn't break anything?",
+      "expected_output": "Before editing: Take a screenshot of the login form (e2e-evidence/baseline/login-form.png). Try a valid login and capture the response JSON (e2e-evidence/baseline/login-success.json). Try invalid credentials and capture the error (e2e-evidence/baseline/login-error.json). Save a summary to e2e-evidence/baseline/assessment.md. Now you can refactor. After refactor: re-run the same 3 captures and compare — if the form still works and API responses are identical, NO REGRESSION."
+    },
+    {
+      "id": 2,
+      "prompt": "I want to update our Express API from v4 to v5. What baseline evidence do I capture before the upgrade, and how do I prove the upgrade didn't break anything?",
+      "expected_output": "Baseline before upgrade: Run all 6 API validation steps (health check, CRUD cycle, auth, error responses, pagination, rate limiting if applicable). Save every curl response to e2e-evidence/baseline/api-*. After upgrade: re-run the same 6 steps, save to e2e-evidence/api-after-upgrade/*. Compare: status codes, response structure, auth behavior. If all match, no regression. If any differ, investigate."
+    },
+    {
+      "id": 3,
+      "prompt": "I found a bug in the search results page — it's returning duplicates. This is a pre-existing bug (it was broken before my changes). Should I capture this in the baseline?",
+      "expected_output": "Yes. Capture the current broken state in baseline/ (e.g., 'search-duplicates.json shows results array has duplicates'). Document it in baseline/assessment.md as 'Known Issues: search returns duplicates (pre-existing, not a regression)'. After you fix the bug, capture the fixed state in e2e-evidence/, compare, and show IMPROVED (was broken, now fixed). The baseline proves it existed before your work."
+    },
+    {
+      "id": 4,
+      "prompt": "I realized I captured baseline evidence AFTER I'd already made some code changes. Is my baseline still valid?",
+      "expected_output": "No. Baseline must be captured BEFORE any editing starts. Your baseline now reflects mixed states (some old code, some new). Delete it and re-capture by reverting to the original code, capturing fresh, then reapplying your changes. Baseline is only useful if it represents the true 'before' state."
+    }
+  ]
+}

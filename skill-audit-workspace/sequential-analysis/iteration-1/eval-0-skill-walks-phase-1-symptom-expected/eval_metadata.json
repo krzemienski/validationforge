@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "skill-walks-phase-1-symptom-expected",
+  "prompt": "Validation FAILED: UI test expected button color='blue' but got color='gray'. Unexpected because color is in CSS not dynamically set. Root cause?",
+  "expected_output": "Skill walks Phase 1 (symptom: expected blue, actual gray). Phase 2 hypotheses: H1 (CSS not loaded - timing), H2 (wrong CSS rule applied - code), H3 (screenshot taken before paint - timing), H4 (theme override - data), H5 (browser cache - environment). Phase 3 investigates: check browser console (paint timing?), git diff (CSS changed?), network tab (CSS file 404?). Phase 4 concludes: if CSS file missing, CONFIRMED root cause is timing/asset. Evidence: network trace, screenshot timestamp, CSS file status.",
+  "assertions": []
+}

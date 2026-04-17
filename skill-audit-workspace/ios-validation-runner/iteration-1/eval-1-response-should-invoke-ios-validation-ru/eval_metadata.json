@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "response-should-invoke-ios-validation-ru",
+  "prompt": "I'm in Phase 2 (RECORD) and I've started video and log streaming in the background. How do I know they're actually running? How do I make sure I capture their PIDs correctly?",
+  "expected_output": "Response should invoke ios-validation-runner, Phase 2 (lines 71-98). Explanation: (1) After backgrounding, immediately check: 'ps aux | grep recordVideo' should show the process. (2) Save $! immediately: VIDEO_PID=$!. Don't lose the PID. (3) Same for logs: LOG_PID=$!. (4) Verify: 'echo $VIDEO_PID $LOG_PID' \u2014 should show two numbers. (5) Store them in a file for safety. Phase 4 will use these PIDs to kill -INT (SIGINT, not SIGKILL) the processes gracefully.",
+  "assertions": []
+}

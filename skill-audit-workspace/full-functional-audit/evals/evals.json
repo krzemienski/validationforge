@@ -1,0 +1,17 @@
+{
+  "skill_name": "full-functional-audit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Running a full functional audit on a SaaS product before public launch. It has 40+ pages. How do I discover 'every feature' without spending 2 weeks? What's in scope?",
+      "expected_output": "Create Feature Inventory in Phase 2: scan codebase for routes/components (Web: routing table + component list; API: OpenAPI spec or endpoint list). Group by user journey (auth, onboarding, core workflow, settings, admin). Target ~20 features representing all journey phases. For each feature, exercise success path + 1 error state. In scope: user-facing features only (buttons, forms, endpoints, screens). Not in scope: internal utilities, refactored legacy code not visible to users. Document scope in report Executive Summary.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Auditing a web app. I find: Button says 'Delete' but tooltip says 'Remove Item'. On click, API returns 204 (success) and item vanishes. Is this CRITICAL, HIGH, MEDIUM, LOW, or INFO?",
+      "expected_output": "MEDIUM. The feature works (item deleted, API returns success, behavior correct), but UI messaging is inconsistent ('Delete' vs 'Remove Item'). No functional impact, but violates design consistency. Classify as UX friction. Not CRITICAL (no data loss, no crash), not HIGH (feature actually works and intent is clear), not LOW (it's a labeled control\u2014users rely on precise wording). Capture evidence: screenshot showing tooltip vs button text, API 204 response.",
+      "files": []
+    }
+  ]
+}

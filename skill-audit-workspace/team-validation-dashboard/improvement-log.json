@@ -1,0 +1,9 @@
+{
+  "skill_name": "team-validation-dashboard",
+  "changes_applied": [{"fix": "Rewrite description distinguishing from forge-benchmark", "implemented": true, "details": "forge-benchmark = single project posture; team-validation-dashboard = multi-project org visibility. 3 new triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "172 lines, structured dashboard concepts."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/team-validation-dashboard/SKILL.md"],
+  "description_before": "Aggregate team validation metrics: posture scores, coverage %, regressions, journey ownership. Identifies critical projects (score <60). Use for CI/CD reporting, team reviews, regression tracking.",
+  "description_after": "Use for organization-wide visibility across multiple projects' validation health — not for a single project (use forge-benchmark for that). Aggregates posture scores, coverage %, regression trends, and journey ownership across all registered projects in a team's portfolio. Flags critical projects (score < 60) for attention. Reach for it on phrases like 'team dashboard', 'show validation across all projects', 'which projects need attention', 'quarterly validation review', 'who owns journey X', or for CI/CD reporting in multi-project orgs."
+}

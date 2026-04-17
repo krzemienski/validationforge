@@ -1,0 +1,50 @@
+{
+  "skill": "e2e-validate",
+  "pass": 2,
+  "date": "2026-04-17",
+  "change": "Added scripts/detect-platform.sh — executable platform detection script mirroring SKILL.md priority table (ios > react-native > flutter > cli > api > web > django > fullstack > generic). Supports --project-dir=<path> and --json flags. First-match-wins logic per priority order.",
+  "files": {
+    "created": [
+      "skills/e2e-validate/scripts/detect-platform.sh"
+    ],
+    "modified": [
+      "skills/e2e-validate/SKILL.md"
+    ]
+  },
+  "skill_md_edit": "Inserted 'Automated detection' paragraph after the 'When signals conflict' subsection pointing callers at scripts/detect-platform.sh --json. Existing prose intact. YAML frontmatter unchanged.",
+  "script_details": {
+    "path": "skills/e2e-validate/scripts/detect-platform.sh",
+    "lines": 141,
+    "shebang": "#!/usr/bin/env bash",
+    "strict_mode": "set -euo pipefail",
+    "bash_n_passes": true,
+    "output_default": "platform=<name> confidence=high|medium|low signals=<semicolon-list>",
+    "output_json": "{\"platform\":\"X\",\"confidence\":\"Y\",\"signals\":[...]}",
+    "confidence_rules": {
+      "high": ">=2 independent signals matched",
+      "medium": "1 signal matched (non-generic)",
+      "low": "platform=generic"
+    }
+  },
+  "verifications": [
+    {
+      "test": "bash -n scripts/detect-platform.sh",
+      "result": "syntax OK"
+    },
+    {
+      "test": "run against /Users/nick/Desktop/validationforge (self)",
+      "output_text": "platform=cli confidence=medium signals=package.json:bin",
+      "output_json": "{\"platform\":\"cli\",\"confidence\":\"medium\",\"signals\":[\"package.json:bin\"]}",
+      "note": "ValidationForge exposes CLI bin entries in package.json; priority 4 (cli) wins over fullstack. Reasonable — VF is itself a CLI tool. Auditor can override with --platform if needed."
+    },
+    {
+      "test": "mock flutter project (/tmp/mock-flutter-$$ with pubspec.yaml + lib/main.dart)",
+      "output_text": "platform=flutter confidence=high signals=pubspec.yaml;lib/main.dart;*.dart",
+      "output_json": "{\"platform\":\"flutter\",\"confidence\":\"high\",\"signals\":[\"pubspec.yaml\",\"lib/main.dart\",\"*.dart\"]}",
+      "expected": "platform=flutter confidence=high",
+      "matches_expected": true
+    }
+  ],
+  "yaml_frontmatter_intact": true,
+  "notes": "Script handles missing project dirs gracefully (exit 2 with error on stderr). Uses compgen for safe globbing. join() helper produces deterministic semicolon/JSON output. The self-detection returning 'cli' flags a useful fact: validationforge's package.json declares bin entries, making it technically a CLI. Auditors running this inside a project can always pass --platform override."
+}

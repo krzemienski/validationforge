@@ -1,12 +1,15 @@
 ---
 name: retrospective-validation
-description: "Assess if validation methodology worked: analyze past results, deployments, incidents. Calculates false PASS/FAIL rates, revert frequency, confidence score. Recommends process changes."
+description: "Use to evaluate whether your validation process itself is working — not whether a single run passed, but whether the team's validation discipline is catching real bugs before they ship. Analyzes past validation results, deployments, and incidents to compute false PASS rate (validations that said PASS but bug shipped), false FAIL rate (validations that said FAIL but nothing was actually broken), revert frequency, and confidence score. Outputs specific process change recommendations. Reach for it on phrases like 'did our validation approach work', 'retrospective on process', 'quality of our validation', 'post-incident review of QA', or quarterly when reviewing QA discipline."
 triggers:
   - "retrospective validation"
   - "validate methodology"
   - "historical validation"
   - "did our approach work"
   - "post-mortem analysis"
+  - "quality of our validation"
+  - "false pass rate"
+  - "qa retrospective"
 context_priority: reference
 ---
 

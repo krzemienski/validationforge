@@ -1,0 +1,83 @@
+{
+  "skill_name": "ios-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/ios-validation/SKILL.md",
+  "skill_md_line_count": 235,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "iOS/macOS validation: Xcode build → simulator install/launch → screenshot/video/logs/deep links/accessibility tree. 9-step protocol from build through crash detection.",
+    "length_words": 25,
+    "issues": [
+      "SLIGHT UNDER-TRIGGER: Description is feature-list ('Xcode build → simulator...') rather than problem-framing. Should emphasize WHEN: 'iOS feature failing in production but passing unit tests? Here's the 9-step protocol.'",
+      "Accuracy issue: title says '9-step protocol' but actual protocol is Step 1-9 = Build, Install, Launch, Screenshot, Video, Log, Deep Link, UI Automation, Crash Detection. Description reads procedural but underspecifies WHY each step is necessary."
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Lines 167-186: Option B (Xcode MCP tools) references 4 functions (idb_describe_all, idb_tap, idb_input, idb_gesture) that are NOT documented as existing in ValidationForge. These are presented as a parallel path to CLI idb but their availability is unknown. Risk: user tries this and it fails silently. Either remove Option B, or document where these MCP tools come from and their availability.",
+        "location": "lines 167-186"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 142-164: Option A (CLI idb) is thorough but the skill doesn't explain WHEN to prefer CLI idb vs Xcode MCP (Option B). Or when NEITHER is available. Falls back to what? Adds decision friction.",
+        "location": "lines 142-164"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 32-56: Build section uses `xcodebuild` with -derivedDataPath build/ but doesn't verify the scheme exists first. Pre-flight checks (lines 15-24) mention 'App scheme configured' but body doesn't show how to verify or handle missing scheme. Users hit 'no scheme' error (line 217 mentions this in troubleshooting) without early detection.",
+        "location": "lines 32-56"
+      },
+      {
+        "severity": "low",
+        "description": "Lines 203-208: Evidence Quality section uses GOOD/BAD pattern. Good: 'Shows 3 items in list view with blue navigation header...'. This is excellent. But transitions immediately to PASS Criteria Template (lines 225-235) which is a checklist, not narrative evidence. Tension: skill emphasizes narrative descriptive evidence but then asks for checkbox completion. These are compatible but the transition is jarring.",
+        "location": "lines 203-235"
+      },
+      {
+        "severity": "low",
+        "description": "Lines 213-223: Common Failures table is valuable but entries are platform-specific (xcodebuild, xcrun, idb). If this skill is supposed to be 'ios-validation' (iOS + macOS), where's the macOS-specific row (e.g., device boot, code signing for real device)? Currently assumes simulator-only.",
+        "location": "lines 213-223"
+      }
+    ],
+    "strengths": [
+      "Prerequisites section (lines 15-24) is crisp: 6 checks with verification commands. No hand-waving.",
+      "9-step protocol is comprehensive and linear: Build → Install → Launch → Screenshot → Video → Logs → Deep Links → UI Automation → Crash Detection. No decision trees, clear sequence.",
+      "Copy-paste ready: every command has realistic syntax, bundle ID placeholders, -derivedDataPath, timeout flags. Flags explained (e.g., --console-pty, --codec=h264).",
+      "Deep Link Testing section (lines 119-140) includes loop over multiple URLs with sequential screenshots. Shows thinking about end-to-end flow, not just happy path.",
+      "PASS Criteria Template (lines 225-235) includes 9 measurable criteria covering build, install, launch, rendering, flow, errors, logs, deep links, performance.",
+      "Security: no hardcoded credentials, respects real simulator entitlements, no test frameworks."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "MEDIUM: Bundling a shell script (ios-validate-journey.sh) that assembles Build → Install → Launch → Screenshot → Video → Logs → Deep Link → Crash checks into one executable would reduce manual assembly. Could be used by ios-validation-gate and ios-validation-runner without duplication. The skill is 235 lines of bash snippets that users must manually orchestrate.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Remove Option B (Xcode MCP tools) or document its source and availability. If it's a real feature of ValidationForge, link to it; if not, delete and stick with Option A (CLI idb) as canonical.",
+    "Add scheme verification to Build step: 'Run xcodebuild -list to see available schemes before starting build. If your scheme is not listed, add it to the .xcodeproj target settings.'",
+    "Rewrite description: 'iOS/macOS validation in 9 steps: build with Xcode, install to simulator, exercise the app, capture evidence (screenshots, video, logs), test deep links, check for crashes. Real system validation from CLI.'",
+    "Add macOS-specific row to Troubleshooting table (lines 213-223) or clarify: 'This skill assumes iOS Simulator. For real macOS devices, use Archive and code signing, not simulator commands.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have an iOS app in Xcode. It builds fine, but when I try to validate it on simulator, xcodebuild fails with 'No scheme found'. How do I debug this?",
+      "expected_output": "Response should invoke ios-validation and point to Pre-flight checks (lines 22). First: 'xcodebuild -list' to see available schemes. If scheme is missing, it's not registered in the .xcodeproj file. User must add scheme in Xcode: Product → Scheme → Edit Scheme, or use 'xcodebuild -scheme MyAppName' with exact name from -list output. Then retry Build step (lines 32-56)."
+    },
+    {
+      "id": 2,
+      "prompt": "I built and installed the app on simulator. It launched and rendered the main screen. Now I need to test a deep link: myapp://item/123. Walk me through capturing evidence that the deep link actually works.",
+      "expected_output": "Response should invoke ios-validation, Step 7 (lines 119-140). (1) Get booted simulator UDID. (2) Open deep link: 'xcrun simctl openurl $UDID \"myapp://item/123\"'. (3) Wait 2 seconds. (4) Screenshot: 'xcrun simctl io $UDID screenshot e2e-evidence/ios-deeplink-item-123.png'. (5) Open the screenshot and describe: does it show the item detail screen? If deep link doesn't work, screenshot shows wrong screen (e.g., home screen instead of detail). THAT'S evidence."
+    },
+    {
+      "id": 3,
+      "prompt": "My app crashes when I launch it on the simulator. Xcode's build succeeded, install succeeded, but launch immediately exits. How do I find the crash log and what should I look for?",
+      "expected_output": "Response should invoke ios-validation, Step 9 (lines 188-201). Explanation: (1) Check simctl logs in real-time before launch: 'xcrun simctl spawn booted log stream --predicate \"process == \\\"MyApp\\\"\" --level debug'. (2) Then launch and capture logs. (3) Look for 'SIGILL', 'EXC_BAD', 'exception', 'unhandled'. (4) If not in live logs, check DiagnosticReports: 'find ~/Library/Logs/DiagnosticReports -name \"*.crash\" -mmin -5'. Read the crash file to find the faulting function. (5) Capture crash file to e2e-evidence/. This is a FAIL, not a PASS."
+    }
+  ]
+}

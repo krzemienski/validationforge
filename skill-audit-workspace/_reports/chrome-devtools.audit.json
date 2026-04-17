@@ -1,0 +1,92 @@
+{
+  "skill_name": "chrome-devtools",
+  "path": "/Users/nick/Desktop/validationforge/skills/chrome-devtools/SKILL.md",
+  "skill_md_line_count": 222,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Deep browser inspection via Chrome DevTools MCP: performance profiling (Core Web Vitals), Lighthouse audits, network inspection, console monitoring, memory snapshots. Use for debugging, perf, a11y.",
+    "length_words": 27,
+    "issues": [
+      "Description lists CAPABILITIES but not WHEN-TO-USE triggers. 'Use for debugging, perf, a11y' is too vague — 'after API integration' or 'when Lighthouse score dropped' would be more concrete",
+      "Description omits the key constraint: 'Complements Playwright (not a replacement)' — users might assume it's the primary tool"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Available Tools section (lines 27-93) lists 25+ tools across 7 categories (page management, snapshots, interaction, network, console, performance, memory, emulation) in a flat list. No guidance on which tools are essential vs optional, or what each tool is FOR",
+        "location": "lines 27-93"
+      },
+      {
+        "severity": "med",
+        "description": "Evidence Capture Patterns (lines 95-191) shows 6 patterns (page load perf, network debugging, a11y audit, console errors, responsive testing, memory leak detection) but no prioritization. Which patterns are critical vs nice-to-have?",
+        "location": "lines 95-191"
+      },
+      {
+        "severity": "med",
+        "description": "Element Discovery Workflow (lines 193-199) is 5 steps but doesn't explain WHY prefer snapshot over screenshot (line 45 says 'prefer snapshot' but doesn't explain). Makes the workflow feel rote, not principled",
+        "location": "lines 193-199"
+      },
+      {
+        "severity": "low",
+        "description": "Pattern 6 (Memory Leak Detection, lines 178-191) uses heap snapshots but doesn't explain how to INTERPRET diffs — large growth doesn't always mean leak (e.g., app legitimately cached data). No guidance on false positives",
+        "location": "lines 178-191"
+      },
+      {
+        "severity": "low",
+        "description": "When to Use DevTools vs Playwright table (lines 210-222) is helpful but comes at the very end. Should come much earlier (after 'When to Use' section)",
+        "location": "lines 210-222"
+      }
+    ],
+    "strengths": [
+      "Crystal clear opening (lines 13-15): 'Complements Playwright MCP with DevTools-specific capabilities' — sets correct mental model",
+      "When to Use section (lines 17-23) is specific: 'when you need performance profiling', 'when debugging network requests in detail', 'when running Lighthouse audits'",
+      "Available Tools list is comprehensive and grouped by category (page management, snapshots, interaction, etc.)",
+      "Evidence Capture Patterns provide realistic workflows (page load performance, network debugging, responsive testing, a11y)",
+      "Integration callout (lines 201-208) explains how DevTools fits with Playwright and verdict-writer agent",
+      "When to Use DevTools vs Playwright table (lines 210-222) clarifies the complementary relationship"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "Pattern commands (lines 99-191) contain repeated MCP tool invocations (navigate_page, take_screenshot, lighthouse_audit) that could be bundled as scripts/profile-page-load.sh, scripts/test-a11y.sh, scripts/capture-responsive.sh for one-liner execution per pattern",
+    "over_bundled": false
+  },
+  "priority": "low",
+  "top_fixes": [
+    "Rewrite description: 'Browser inspection via Chrome DevTools MCP: performance profiling, Lighthouse audits, network inspection, console monitoring, memory debugging. Use alongside Playwright for deeper debugging (DevTools shows internals, Playwright tests user journeys). Complements, not replaces, Playwright.'",
+    "Add 'Quick Start' section after 'When to Use': 'Typical workflow: (1) navigate_page to feature, (2) take_snapshot to inspect DOM/a11y, (3) take_screenshot for visual evidence, (4) list_network_requests to debug API calls, (5) lighthouse_audit for accessibility/SEO. Save results to e2e-evidence/devtools-*/.'",
+    "Reorganize Available Tools (lines 27-93): Add 'Essential' vs 'Advanced' grouping. Essential: navigate_page, take_snapshot, take_screenshot, list_network_requests, lighthouse_audit. Advanced: performance traces, memory snapshots, console monitoring. (This reflects real usage)",
+    "Rename 'Evidence Capture Patterns' to 'Common Workflows' and add 1-line summary above each: 'Pattern 1: Page Load Performance — Measure LCP, INP, CLS via performance traces. Pattern 2: Network Debugging — Inspect API request/response headers and payloads.'",
+    "Expand Element Discovery Workflow (lines 193-199) with rationale: 'Snapshots give you text-based element UIDs (preferred for script interaction); screenshots show visual rendering. Use snapshot first to identify elements, then screenshot for visual evidence.' Explain that snapshot is 'machine-readable' and screenshot is 'human-readable'.",
+    "Move 'When to Use DevTools vs Playwright' table (lines 210-222) to immediately after 'When to Use' section, before 'Available Tools'. This clarifies the mental model early.",
+    "Add Memory Leak guidance: 'Heap snapshots show object counts and retained size. Compare before/after execution: if retained size grew >50%, investigate whether objects are being released. Growth of <20% is usually benign (legitimate caching).'",
+    "Keep the patterns mostly as-is, they are concrete and runnable"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "My dashboard page is slow — it takes 5 seconds to load. I want to debug performance using Chrome DevTools. What should I measure, and how do I capture evidence?",
+      "expected_output": "Run Pattern 1 (Page Load Performance): navigate_page to the dashboard, performance_start_trace (with reload=true), wait for auto-stop, analyze insights for LCP (Largest Contentful Paint), INP (Interaction to Next Paint), CLS (Cumulative Layout Shift). Save trace to e2e-evidence/devtools-perf/step-01-trace.json.gz. Identify slowest phase (e.g., 'LCP delayed by slow API call'). Evidence: trace file + screenshot before and after load."
+    },
+    {
+      "id": 2,
+      "prompt": "A user says 'the sign-up form doesn't work'. I see the form on the page, but nothing happens when they submit. How do I debug this with DevTools?",
+      "expected_output": "Run Pattern 2 (Network Debugging): navigate_page to sign-up form, fill and submit the form, list_network_requests to see all API calls. Inspect the form submission request (POST to /api/signup) — check status code (should be 201), response body (should have user ID or token). Common bugs: (1) request not sent (form validation blocking), (2) request sent but fails (500 error). Get detailed request (get_network_request) and save to e2e-evidence/devtools-network/."
+    },
+    {
+      "id": 3,
+      "prompt": "I need to check if our app works on mobile. How do I use DevTools to test responsive design?",
+      "expected_output": "Run Pattern 5 (Responsive Testing): navigate_page to feature, emulate mobile viewport (375x812), take_screenshot, emulate tablet (768x1024), take_screenshot, emulate desktop (1440x900), take_screenshot. Save all 3 to e2e-evidence/devtools-responsive/. Compare: on mobile, is layout broken? Elements overlapping? Text readable? If issues, investigate CSS media queries. Also test dark mode: emulate colorScheme='dark', take_screenshot."
+    },
+    {
+      "id": 4,
+      "prompt": "Should I use Chrome DevTools or Playwright to test my feature?",
+      "expected_output": "Use Playwright for the user journey (navigate page, fill form, click button, verify result). Use DevTools when you need to DEBUG the journey (performance trace shows LCP is slow, network inspector shows API response malformed, console shows error). They are complementary: Playwright is the test, DevTools is the debugging magnifying glass."
+    }
+  ]
+}

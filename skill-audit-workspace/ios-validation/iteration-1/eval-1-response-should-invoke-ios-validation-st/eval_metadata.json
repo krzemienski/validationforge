@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "response-should-invoke-ios-validation-st",
+  "prompt": "I built and installed the app on simulator. It launched and rendered the main screen. Now I need to test a deep link: myapp://item/123. Walk me through capturing evidence that the deep link actually works.",
+  "expected_output": "Response should invoke ios-validation, Step 7 (lines 119-140). (1) Get booted simulator UDID. (2) Open deep link: 'xcrun simctl openurl $UDID \"myapp://item/123\"'. (3) Wait 2 seconds. (4) Screenshot: 'xcrun simctl io $UDID screenshot e2e-evidence/ios-deeplink-item-123.png'. (5) Open the screenshot and describe: does it show the item detail screen? If deep link doesn't work, screenshot shows wrong screen (e.g., home screen instead of detail). THAT'S evidence.",
+  "assertions": []
+}

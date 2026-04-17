@@ -1,0 +1,17 @@
+{
+  "skill_name": "fullstack-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Django project with PostgreSQL. Starting fullstack validation. Layer 1 (DB): schema looks good, but migration shows 'pending migrations'. Do I proceed to Layer 2 or fix first?",
+      "expected_output": "STOP at Layer 1 PASS gate. Pending migrations = database state is wrong. Layer 2 (API CRUD) will fail or show incorrect data. Fix first: run `python manage.py migrate`, then verify schema again. Only after migrations complete and schema is correct proceed to Layer 2.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Layer 2 passes (API returns 5 users from GET /api/users). Layer 3 (frontend): frontend loads but shows empty list (0 users). What's the root cause and how do I diagnose?",
+      "expected_output": "API works (returns 5), frontend has the bug. Likely causes: (1) Frontend uses mock/cached data instead of real API, (2) Fetch URL points to wrong endpoint, (3) Response parsing broken. Diagnose: (1) Check browser DevTools Network tab\u2014does GET /api/users fire? (2) Check response body\u2014do you see 5 user records? (3) Check JavaScript console for errors. Capture evidence: Network tab screenshot, API response JSON, console errors.",
+      "files": []
+    }
+  ]
+}

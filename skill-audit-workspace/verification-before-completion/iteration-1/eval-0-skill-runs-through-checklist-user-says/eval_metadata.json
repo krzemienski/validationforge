@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "skill-runs-through-checklist-user-says",
+  "prompt": "I implemented the user login form, ran the e2e test, got PASS. Can I mark this task done?",
+  "expected_output": "Skill runs through checklist. User says 'I saw the e2e test pass' but hasn't personally examined the evidence file. Skill demands: Open e2e-evidence/login-form.png, describe exactly what you see (form fields, buttons, states). Until user provides specific observation ('Email field with blue border, password field, blue Submit button'), mark done rejected.",
+  "assertions": []
+}

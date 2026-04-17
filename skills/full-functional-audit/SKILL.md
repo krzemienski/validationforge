@@ -1,6 +1,14 @@
 ---
 name: full-functional-audit
-description: "Audit project health without code changes: exercise all features, capture evidence, classify findings by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Pre-release gates, compliance, baselines."
+description: "Use for read-only health checks of a project where you want to know 'what's the real state right now' WITHOUT fixing anything along the way. Exercises every discoverable feature through the real UI, captures evidence, and classifies each finding by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Produces e2e-evidence/audit-report.md with prioritized recommendations but doesn't apply fixes — that's for follow-up work. Reach for it on phrases like 'audit the app', 'pre-release audit', 'compliance check', 'health report', 'what's the current state', or before a major refactor when you want a baseline that documents every existing issue."
+triggers:
+  - "audit project"
+  - "project audit"
+  - "pre-release audit"
+  - "compliance audit"
+  - "health check report"
+  - "document existing state"
+  - "catalog known issues"
 context_priority: standard
 ---
 

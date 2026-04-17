@@ -1,12 +1,16 @@
 ---
 name: ios-simulator-control
-description: "iOS Simulator commands: boot, install, launch, screenshot, video, logs, deep links, permissions, location, crash detection. Reference for evidence capture. Used with all iOS validation skills."
+description: "Use as the command reference for every iOS Simulator operation — boot/shutdown, install/uninstall apps, launch, screenshot, screen recording, log streaming, deep-link triggering, permission grants, location injection, crash log retrieval. This is the primitives layer that ios-validation / ios-validation-gate / ios-validation-runner all build on. Reach for it whenever you need to do something specific to the simulator and don't remember the exact simctl/idb invocation, or on phrases like 'boot simulator', 'simctl command', 'simulator screenshot', 'trigger deep link', 'record simulator video', 'grant camera permission'."
 triggers:
   - "simulator control"
   - "boot simulator"
   - "simulator screenshot"
   - "manage simulator"
   - "simulator lifecycle"
+  - "simctl command"
+  - "idb command"
+  - "trigger deep link"
+  - "record simulator video"
 context_priority: reference
 ---
 

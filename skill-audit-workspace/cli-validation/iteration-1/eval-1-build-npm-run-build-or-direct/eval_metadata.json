@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "build-npm-run-build-or-direct",
+  "prompt": "Node.js CLI shipped as npm package. ./bin/mycli produces JSON output. Tests are currently in __tests__/ mocking the output. How do I validate the real CLI without mocks?",
+  "expected_output": "Build (npm run build or direct node invocation). Run mycli with real data, capture stdout to e2e-evidence/cli-happy-path.txt. Verify JSON is valid by piping through jq: `mycli --format json | jq . | tee e2e-evidence/cli-json-output.txt`. Test error cases with invalid inputs, verify exit code is non-zero. Capture all evidence files. No test files needed\u2014use real commands and real output.",
+  "assertions": []
+}

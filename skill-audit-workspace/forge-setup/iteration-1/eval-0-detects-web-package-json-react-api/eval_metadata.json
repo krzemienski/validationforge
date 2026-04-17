@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "detects-web-package-json-react-api",
+  "prompt": "First-time setup on a monorepo with React frontend + Express API + iOS native. Running /forge-setup. What platforms will be detected and what's the enforcement recommendation?",
+  "expected_output": "Detects: web (package.json + React), api (Express routes), ios (xcodeproj). Recommends: standard enforcement (default). Creates .validationforge/config.json with platforms: [web, api, ios]. Scaffolds e2e-evidence/. Copies 8 rules. Verifies JSON valid. Prints: 'Platforms: web, api, ios | Enforcement: standard | Evidence: e2e-evidence/ | Rules: 8 installed | MCP: playwright (available), xcode (available)'.",
+  "assertions": []
+}

@@ -1,0 +1,85 @@
+{
+  "skill_name": "react-native-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/react-native-validation/SKILL.md",
+  "skill_md_line_count": 354,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Validate React Native apps via Metro/Expo: platform build, launch, screenshots, logs, deep link testing on iOS/Android. Detects crashes, console errors, bundle issues. Covers Expo Go, CLI, bare RN.",
+    "length_words": 27,
+    "issues": [
+      "Slightly short (27 words) but densely packed",
+      "'When' is implicit: during React Native development/validation",
+      "Good specificity on what's detected (crashes, console errors, bundle issues)"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Prerequisites table (lines 8-19) requires 6+ external tools (Node, npm/yarn, RN CLI, iOS Simulator, Android emulator, Metro port). No guidance if any prerequisite is missing. Error messages are vague if tools missing.",
+        "location": "## Prerequisites (lines 8-19)"
+      },
+      {
+        "severity": "med",
+        "description": "Metro Startup section (lines 34-50) uses background process management (& operator) and PID tracking, which is fragile. If Metro fails to start, the error is silently swallowed in tee output. No recovery.",
+        "location": "## Step 1: Metro Startup (lines 34-50)"
+      },
+      {
+        "severity": "med",
+        "description": "Log Streaming section (lines 164-209) provides multiple log collection methods (iOS xcrun, Android logcat, Metro logs) but no guidance on which to prioritize or how to aggregate them into coherent evidence.",
+        "location": "## Step 5: Log Streaming (lines 164-209)"
+      },
+      {
+        "severity": "med",
+        "description": "Deep Link Testing (lines 211-270) shows examples for myapp:// but doesn't explain how to discover valid deep link routes in the app or what happens if a route isn't registered.",
+        "location": "## Step 6: Deep Link Testing (lines 211-270)"
+      },
+      {
+        "severity": "low",
+        "description": "Common Failures table (lines 328-341) lists errors but some solutions are outside validation scope: 'Set ANDROID_HOME' is dev environment setup, not validation.",
+        "location": "## Common Failures (lines 328-341)"
+      }
+    ],
+    "strengths": [
+      "Step-by-step structure (Steps 1-7) is methodical and covers full lifecycle",
+      "Platform-specific branching (Expo vs bare React Native) acknowledges different workflows",
+      "Screenshot capture examples for both iOS and Android are concrete",
+      "Crash detection section (Step 7) covers multiple failure modes (iOS logs, Android logcat, Metro red screen)",
+      "PASS Criteria template (lines 343-354) is comprehensive and metric-focused",
+      "Evidence quality section (lines 318-326) models good vs bad descriptions"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "No bundled script to orchestrate all steps. A react-native-validate.sh that detects project type (Expo vs bare), runs prerequisites check, Metro startup, platform build, screenshot capture, log collection, and produces structured report would be valuable.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Add prerequisite check script that verifies all 6+ tools and provides specific install instructions if missing (e.g., 'Node not found. Install from nodejs.org or brew install node')",
+    "Improve Metro Startup error handling: capture stderr separately, check for 'packager-status:running' in curl response, exit with error message if startup fails",
+    "Consolidate log streaming guidance: 'Start with Metro logs (Step 1 output). If errors visible, check platform-specific logs (iOS/Android). Aggregate all into evidence-inventory.txt'",
+    "For Deep Link Testing, add discovery step: 'Review app.json or AndroidManifest.xml to find registered deep link schemes and paths. Test 2-3 valid routes + 1 invalid route.'",
+    "Bundle react-native-validate.sh that orchestrates all 7 steps with error checking and produces final validation report"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a bare React Native app (not Expo). I need to test it on both iOS and Android. What's the sequential order of steps, and what evidence do I need to capture?",
+      "expected_output": "Should explain: Step 1 (Metro start), Step 2 (iOS build via react-native run-ios, capture build log), Step 4 (screenshot iOS simulator), Step 5 (iOS logs), Step 2 (Android build), Step 4 (Android screenshots), Step 5 (Android logcat). Should emphasize: parallel iOS/Android after Metro is running, or sequential if one emulator/simulator."
+    },
+    {
+      "id": 2,
+      "prompt": "Metro starts but the app shows a Red Screen of Death: 'Cannot find module RNGestureHandler'. How do I capture this as evidence and what verdict?",
+      "expected_output": "Should say: 'This is a bundler error (missing dependency). Capture: Metro output showing the error, screenshot of the red screen, evidence-inventory.txt documenting the error. Verdict: FAIL. Fix: npm install react-native-gesture-handler (or missing module). Re-run Metro and validation.'"
+    },
+    {
+      "id": 3,
+      "prompt": "Deep link testing: I want to test myapp://profile/123. How do I know if that route is registered in the app, and how do I verify it worked?",
+      "expected_output": "Should guide: Check app.json or android:scheme in AndroidManifest.xml to find registered deep link pattern (e.g., myapp://profile/:id). Test with xcrun simctl openurl (iOS) or adb shell am start (Android). Capture screenshot showing the profile screen loaded with ID 123 visible. Evidence that deep link was parsed and handled correctly."
+    }
+  ]
+}

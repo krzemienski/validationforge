@@ -1,6 +1,14 @@
 ---
 name: rust-cli-validation
-description: "Validate Rust CLI apps via cargo: check, clippy, release build, binary execution. Detects panics, exit codes, error messages. Tests help, version, happy path, error cases."
+description: "Use for Rust CLI binaries built with cargo — a more rigorous variant of cli-validation specific to the Rust toolchain. Runs the full cargo discipline: cargo check (type checks), cargo clippy (lints), cargo build --release (optimized binary), then executes the binary against --help, --version, happy-path inputs, and error cases. Captures panics, exit codes, and formatted error messages. Reach for it on phrases like 'validate my Rust CLI', 'cargo clippy check', 'is my rust binary release-ready', 'rust release validation', when cargo panic patterns matter, or for any Rust CLI pre-release check. Use cli-validation instead for non-Rust binaries."
+triggers:
+  - "rust cli validation"
+  - "validate rust cli"
+  - "cargo clippy"
+  - "cargo release build"
+  - "rust binary check"
+  - "rust release validation"
+  - "panic detection"
 context_priority: standard
 ---
 

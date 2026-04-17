@@ -1,0 +1,49 @@
+{
+  "skill_name": "coordinated-validation",
+  "changes_applied": [
+    {
+      "fix": "Expand description with 'why dependency-aware' rationale + triggers",
+      "implemented": true,
+      "details": "New description explains the core value (prevents false positives from validating frontend against broken API), lists the wave structure (DB → API → Web/iOS), and adds concrete invocation phrases ('validate everything in the right order', 'multi-platform validation', 'parallel platform validation'). Added 3 new YAML triggers. Expanded from 23 to ~100 words."
+    },
+    {
+      "fix": "Add 'Why dependency-aware?' paragraph after the opening description",
+      "implemented": true,
+      "details": "Explains upfront that running Web against a broken API produces false failures — every Web journey fails but the real bug is one layer down. Makes the skill's raison d'être impossible to miss."
+    },
+    {
+      "fix": "Define 'Agent' tool in Wave Execution Rules",
+      "implemented": true,
+      "details": "Audit flagged that 'Agent tool with run_in_background: true' was undefined. Added explicit definition: 'an agent is either (a) a background subagent spawned via the Task tool, or (b) a human team member assigned to a platform who runs validation and writes evidence to the assigned directory. Both follow the same wave semantics.' Also clarified that each agent runs a platform-specific skill (web-validation, api-validation, ios-validation)."
+    },
+    {
+      "fix": "Upgrade Common Failures table with diagnosis + root cause columns",
+      "implemented": true,
+      "details": "Old table had 3 columns (Symptom / Cause / Resolution) where Cause was often vague ('Orchestrator error'). New table has 4 columns (Symptom / Root cause / How to diagnose / Resolution) with concrete diagnostic commands per row — curl API endpoint manually, check await semantics, compare Assignment Table to actual agent prompts, etc."
+    },
+    {
+      "fix": "Add timing formula and worked example to Performance Guidelines",
+      "implemented": true,
+      "details": "Old table gave descriptive estimates ('Moderate', '3 waves'). New table includes the actual timing formula per configuration (time(DB) + time(API) + max(time(Web), time(iOS))). Added a worked example (DB=10s, API=15s, Web=20s, iOS=25s → 50s parallel vs 70s sequential, saves 20s). Makes the parallelism value concrete."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Simplify verdict aggregation table (BLOCKED vs FAIL)",
+      "reason": "The distinction is semantically important — BLOCKED means 'didn't run because upstream failed', FAIL means 'ran and failed'. Conflating them would lose root-cause information in reports. Keeping the distinction."
+    },
+    {
+      "fix": "Add explicit 'How to Define Agents' section",
+      "reason": "The inline 'What counts as an agent?' paragraph now in Wave Execution Rules covers this. Adding a separate section would duplicate."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/coordinated-validation/SKILL.md"
+  ],
+  "description_before": "Multi-platform validation respecting dependencies: DB→API→Web/iOS. Parallelizes independent layers, blocks downstream on failure, coordinates evidence. Use for fullstack, mobile+API, CI/CD.",
+  "description_after": "Use for multi-platform projects (fullstack, mobile+API, web+iOS, any combination where one layer depends on another) when you want validation to respect those dependencies instead of running everything in parallel and getting false positives. This skill organizes validation into dependency-aware waves: DB first, then API, then Web/iOS in parallel. Upstream failures auto-block downstream waves (no point validating Web against a broken API). Also assigns exclusive evidence directories per agent to prevent collisions. Reach for it on phrases like 'validate everything in the right order', 'coordinate fullstack validation', 'run all platforms in parallel where safe', or before invoking multiple platform validators simultaneously.",
+  "line_count_before": 351,
+  "line_count_after": 363,
+  "self_review_notes": "The agent-tool definition was the biggest usability fix — the old skill referenced 'Agent tool with run_in_background: true' as if it were standard ValidationForge vocabulary, but the term wasn't defined anywhere. Now it's clear that an 'agent' is either a background subagent or a human team member, both following the same wave semantics. Common Failures table upgrade makes troubleshooting actionable instead of tautological."
+}

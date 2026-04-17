@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "run-health-check-first-curl-s",
+  "prompt": "I have a Node.js API at localhost:3000 with /api/posts endpoints. I need to validate the full CRUD cycle (create, read, update, delete) and capture evidence. How do I run the API validation? What evidence should I capture?",
+  "expected_output": "Run Health Check first: curl -s http://localhost:3000/health | jq . | tee e2e-evidence/api-health.json. Then CRUD: create a post, extract ID, read it back, update it, verify update persisted, delete it, verify 404. Save each response to e2e-evidence/api-crud-posts/. Evidence is JSON bodies + status codes. No response body = FAIL.",
+  "assertions": []
+}

@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "user-starts-at-step-1-detects",
+  "prompt": "I have a Django app that runs on localhost:8000. I want to validate it end-to-end using this skill. Walk me through.",
+  "expected_output": "User starts at Step 1. Detects Gemfile? No. Detects manage.py? Yes. Runs 'python manage.py runserver'. But the skill says port 3000\u2014that's wrong. Should detect port from runserver output or ask user. Step 2 health check should use http://localhost:8000, not :3000. User gets stuck here until they manually adjust ports.",
+  "assertions": []
+}

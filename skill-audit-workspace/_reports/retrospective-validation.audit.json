@@ -1,0 +1,95 @@
+{
+  "skill_name": "retrospective-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/retrospective-validation/SKILL.md",
+  "skill_md_line_count": 212,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Assess if validation methodology worked: analyze past results, deployments, incidents. Calculates false PASS/FAIL rates, revert frequency, confidence score. Recommends process changes.",
+    "length_words": 24,
+    "issues": [
+      "Strong description - concrete (false PASS/FAIL, confidence score) and action-oriented (process changes)",
+      "WHY is implicit but clear: validates the validator. Not pushing, but selling the outcome.",
+      "Triggers are weak - 'historical validation' is vague. Better: 'post-deployment' or 'after incident'"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Confidence formula (Lines 150-159) uses 'days_since_last_miss / 30' as Longevity metric, but doesn't explain the 30-day window. Why 30? Capped at 1.0 means 30+ days = max score, but a team shipping daily might miss every 25 days and still score 0.83. Context-dependent without guidance.",
+        "location": "Lines 150-159"
+      },
+      {
+        "severity": "med",
+        "description": "Evidence sources table (Lines 37-45) references 'Issue tracker' for incident reports and user feedback, but doesn't clarify how to extract structured data. 'Bug reports' in an issue tracker vary wildly - reproducible vs anecdotal vs feature requests. No parsing guidance.",
+        "location": "Lines 37-45"
+      },
+      {
+        "severity": "high",
+        "description": "Phase 1 collection bash scripts use `git log --grep='deploy\\|release\\|revert'` to find deployments, but this assumes consistent commit message patterns. Many teams don't mark deploys in git history (they deploy from CI/CD). The script will miss data entirely if commits don't match the grep pattern.",
+        "location": "Lines 58-66"
+      },
+      {
+        "severity": "med",
+        "description": "Pattern detection (Lines 136-146) suggests 'Most incidents in UI rendering → visual inspection is insufficient' but doesn't explain next action. Is the fix to add visual validation? Change review process? Ambiguous conclusion.",
+        "location": "Lines 136-146"
+      },
+      {
+        "severity": "low",
+        "description": "Report template references 'incident correlation' analysis (Phase 3) but this phase is dense and disconnected from the template. The report section shows findings/recommendations but doesn't show how to structure incident-by-incident traceability.",
+        "location": "Lines 167-201"
+      },
+      {
+        "severity": "med",
+        "description": "Metrics table (Lines 73-82) defines thresholds ('Good: >90%', 'Concerning: <80%') but these are arbitrary for all contexts. A 3-person team and a 300-person company will have very different realistic PASS rates. No adjustment guidance.",
+        "location": "Lines 73-82"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 3 correlation asks 'Would ValidationForge have caught it?' (Line 130) but assumes ValidationForge skills cover the incident domain. What if incident is in a platform not yet covered by VF skills? Guidance is circular.",
+        "location": "Lines 129-134"
+      }
+    ],
+    "strengths": [
+      "Four-phase structure (COLLECT → ANALYZE → CORRELATE → CONCLUDE) is logical and follows evidence-driven reasoning",
+      "Metrics table is comprehensive - covers detection, accuracy, deployment frequency, MTTR, evidence quality",
+      "Correlation matrix (Phase 3) drills down to 'which skill would have caught it?' - forces root-cause thinking",
+      "Confidence formula explicitly weights detection, accuracy, and longevity - transparent scoring",
+      "Integration note correctly positions retrospective as feedback loop to validation-plan updates"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "Phase 1 collection script is partial - bash commands shown but not complete. Could ship a production-ready script that handles git log parsing, issue tracker API queries (GitHub, Jira), and produces step-01/02/03 artifacts automatically. Would make Phase 1 reproducible across teams.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Explain Longevity window (30 days) or make it configurable: what's the baseline for your team's deploy frequency?",
+    "Add evidence extraction guidance for issue trackers: what fields to parse (created date, labels, linked PR), how to distinguish bug from feature request",
+    "Warn about git log limitations: many teams deploy via CI/CD without commit markers. Suggest checking deploy logs, release tags, or CI job history as alternatives",
+    "Define next actions for pattern detection: 'Most UI incidents → add visual validation skill to plan' or 'Most after urgent deploys → enforce 2-person review'",
+    "Make metrics thresholds team-relative: e.g., 'high-velocity teams (daily deploys) should target <5% false PASS; low-velocity (<1/week) can tolerate <10%'",
+    "Clarify Phase 3 scope: incident must be validatable WITH AVAILABLE SKILLS. Add: 'If incident domain not covered by deployed ValidationForge skills, note as gap in skill coverage.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "Last 30 days: 8 deploys, 2 reverts, 1 production incident (payment button missing on mobile). How do we assess if validation methodology prevented or missed this?",
+      "expected_output": "Skill walks Phase 1 collection: git log for deploy/revert frequency (8/2 = 25% revert rate = CONCERNING). Phase 2 analysis quantifies: incident was responsive-validation gap (button not tested at 430px viewport). Phase 3 correlation: responsive-validation skill would have caught it (Phase 4 orientation test includes mobile button validation). Confidence score reflects: high detection (caught in retrospective), low in actual (missed pre-deploy). Recommendation: add responsive-validation to pre-deploy gates."
+    },
+    {
+      "id": 2,
+      "prompt": "We've been doing e2e validation for 3 months. Want to know: are we catching real bugs or generating false FAILs that waste time investigating?",
+      "expected_output": "Skill directs Phase 1 to collect past validation reports (PASS/FAIL verdicts) and deployment outcomes (incidents post-deploy). Phase 2 calculates false PASS rate (bugs found in prod that validation missed) and false FAIL rate (investigations that found nothing real). Phase 4 confidence formula weights detection (1 - false_pass_rate) and accuracy (1 - false_fail_rate). Produces report: if false FAIL >15%, validation criteria too brittle; if false PASS >5%, journeys missing."
+    },
+    {
+      "id": 3,
+      "prompt": "We have 5 critical incidents in the last quarter. All happened after 'urgent' deploys where we skipped normal validation. What does this pattern mean?",
+      "expected_output": "Skill runs Phase 3 pattern detection: 5/5 incidents correlate to skipped-validation deploys. Indicates process/discipline gap, not methodology gap. Phase 4 produces recommendations: 'START: require 5-minute smoke-test even on urgent deploys'; 'STOP: allowing validation bypass'. Confidence score reflects: methodology is sound (if validation ran, incidents would likely be caught), but process enforcement is broken."
+    }
+  ]
+}

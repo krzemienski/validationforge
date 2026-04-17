@@ -1,0 +1,72 @@
+{
+  "skill_name": "no-mocking-validation-gates",
+  "path": "/Users/nick/Desktop/validationforge/skills/no-mocking-validation-gates/SKILL.md",
+  "skill_md_line_count": 80,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Iron rule: no mocks/stubs/test files. Hook blocks *.test.ts, __tests__/, jest.mock(), etc. When mocking tempts: diagnose why real system unavailable, fix it, validate real system instead.",
+    "length_words": 30,
+    "issues": [
+      "Under 30 words (exactly 30) - marginal",
+      "Lacks 'when' context - describes what not when to use",
+      "Somewhat pushy ('Iron rule') but justified by critical nature"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Scope section (lines 15-18) is defensive and context-switching - 'Does NOT handle' adds uncertainty about when to use this vs other skills",
+        "location": "## Scope (lines 15-18)"
+      },
+      {
+        "severity": "low",
+        "description": "Mock drift example (lines 24-28) is strong but uses abstract timeline ('Month 1/3/6'). Concrete date ranges would ground better.",
+        "location": "Mock drift example (lines 24-28)"
+      },
+      {
+        "severity": "med",
+        "description": "Complete pattern catalog relegated to reference file - body doesn't give users enough in-situ pattern examples to recognize violations immediately",
+        "location": "Pattern catalog reference (line 43)"
+      }
+    ],
+    "strengths": [
+      "The Three-Step Correction (lines 53-57) is imperative and concrete: DIAGNOSE → FIX → VERIFY",
+      "What IS NOT Blocked section (lines 45-51) is valuable clarity on exceptions",
+      "Related Skills section properly cross-references complementary guidance",
+      "Security Policy (lines 69-73) is transparent about limitations"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 2,
+    "missing_scripts_opportunity": "No auto-detection script for existing mocks in a codebase. A shell script that scans for blocked patterns (jest.mock, __tests__/ dirs, etc.) could be valuable preflight.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Expand body with 2-3 concrete code snippet examples inline (jest.mock usage, unittest.mock, XCTest) instead of deferring all patterns to reference",
+    "Reframe 'when' context: 'When starting validation and the urge to mock rises' vs 'This skill handles blocking'",
+    "Add brief real-world scenario: 'API field renamed in staging, mock still returns old field, validation passes but production breaks'",
+    "Consider brief script: scan-for-mocks.sh to detect existing violations at preflight time"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a React component that calls an external payment API. The API is slow and flaky in staging. Should I mock it or stub the response? What's the right approach?",
+      "expected_output": "Should diagnose why real system is unavailable (slow/flaky staging API), propose fixes (fix the flakiness, use production-like test data, add caching), and redirect to real validation. Should reference the Three-Step Correction protocol."
+    },
+    {
+      "id": 2,
+      "prompt": "I'm working on a React Native app and someone on my team created __tests__/ with jest.mock() calls. The skill should block file creation, but we already have these. How do I convert to real validation?",
+      "expected_output": "Should acknowledge the existing violation, explain mock drift risk, and guide toward real system validation (start Metro bundler, use real API endpoints, capture screenshots from simulator). Should reference real-system-validation-guide.md reference."
+    },
+    {
+      "id": 3,
+      "prompt": "Our test suite uses unittest.mock heavily in Python. I want to convert to ValidationForge. Where do I start?",
+      "expected_output": "Should list the mock patterns being used (patch, MagicMock, etc.), explain each creates false confidence, and guide toward real validation (start the real server, run real database, test via CLI or HTTP client). Should reference the thought patterns that lead to mocking."
+    }
+  ]
+}

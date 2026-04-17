@@ -1,0 +1,83 @@
+{
+  "skill_name": "ios-validation-gate",
+  "path": "/Users/nick/Desktop/validationforge/skills/ios-validation-gate/SKILL.md",
+  "skill_md_line_count": 226,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Three-gate iOS enforcement: Simulator (build/install/launch/screenshot/a11y) + Backend (health/endpoints/responses) + Analysis (logs/correlation). ALL gates must PASS. Use after each iOS feature.",
+    "length_words": 31,
+    "issues": [
+      "GOOD: Problem-framing + solution clear: 'ALL gates must PASS'. Imperative 'Use after each iOS feature' addresses WHEN.",
+      "Slight issue: Description mentions 'a11y' (accessibility tree) but doesn't say this requires idb. Gate 1 step 6 (line 85-86) shows 'requires idb' but description doesn't flag the dependency. Risk: user hits 'idb not found' error."
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Lines 14-34: Gate Architecture diagram shows '| → v →' flow but doesn't explain DEPENDENCIES. What if Gate 1 fails? Do we skip Gate 2 and 3, or run all three and report aggregate? Skill says 'ALL three must PASS' (line 34, 221-223) but doesn't say 'STOP on first FAIL' or 'collect all failures then decide'. Risk: user runs all gates even if first fails, wasting effort.",
+        "location": "lines 14-34"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 38-46: Parameters section uses 'Detect these from the project' but doesn't show HOW to detect them. E.g., 'BUNDLE_ID from Info.plist' — which Info.plist file in a complex project with multiple targets? How to extract it? Should include: 'grep -A1 CFBundleIdentifier ProjectName/Info.plist | tail -1' or similar.",
+        "location": "lines 38-46"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 101-104: Gate 2 Backend Gate has 'Skip condition: If the app is purely offline/local, mark this gate as PASS (N/A)'. But skill doesn't explain WHEN to apply this skip. Every app has some backend (server, cloud, API). Skip condition is too broad. Should be: 'Skip Gate 2 only if the feature being validated has ZERO network calls.' How to verify? Check logs for network calls, check app code for API clients.",
+        "location": "lines 101-104"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 142-190: Gate 3 Analysis Gate defines 'Correlate' (line 167-170) as matching logs to screenshots, but doesn't show a concrete EXAMPLE. Correlation report template (lines 172-189) has placeholders but no filled-in example. User must infer what 'correlation' means. Risk: user writes vague correlation ('logs look good') instead of specific correlation ('log entry at 14:22:01 shows network call to /api/users, screenshot at 14:22:02 shows user list loaded').",
+        "location": "lines 142-190"
+      },
+      {
+        "severity": "low",
+        "description": "Lines 209-218: Final Verdict template uses Markdown table but doesn't show example verdicts. Does 'PASS' mean all 3 gates PASS? Does 'N/A' count as PASS? Unclear. Should include filled example: '| 1. Simulator | PASS | e2e-evidence/ios-gate-1-simulator/step-04-initial-screen.png shows expected home screen | | 2. Backend | PASS | HTTP 200 from all 3 endpoints |'",
+        "location": "lines 209-218"
+      }
+    ],
+    "strengths": [
+      "Three-gate architecture is clear and independent: Simulator (app works) → Backend (API works) → Analysis (app + API work together). Each gate can be debugged separately.",
+      "Gate 1 Simulator (lines 48-98) is concrete: 6 numbered steps with commands, PASS/FAIL triggers explicit.",
+      "Gate 2 Backend (lines 100-140) correctly identifies critical endpoints and response validation, includes skip condition for offline apps (though imperfect).",
+      "Gate 3 Analysis (lines 142-202) is the differentiator: doesn't just check presence, but CORRELATION between logs and screenshots. This catches state mismatches that individual gates miss.",
+      "Rules section (lines 220-226) is crisp: ALL three must PASS, never skip Analysis, document failures.",
+      "Scope boundary clear (line 14-15): Three-gate enforcement specific to iOS; complements ios-validation (9-step detail) and ios-validation-runner (5-phase comprehensive)."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "MEDIUM: The 3 gates follow parallel structure: detect params, create evidence dir, run checks, write verdict. Bundling a shell script (ios-gate-runner.sh) would automate: (1) parameter detection (find bundle ID, scheme, simulator), (2) evidence directory setup, (3) run all 3 gates, (4) collect verdicts. Would be used in ios-validation-gate context when user says 'validate this iOS feature'.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Clarify gate execution model: 'Run all 3 gates EVEN IF ONE FAILS, then write unified verdict. This lets you see all problems at once instead of fix-test-retry loops.'",
+    "Add 'How to detect' examples for each parameter (lines 38-46): 'BUNDLE_ID: grep CFBundleIdentifier ProjectName/Info.plist | awk... or xcodebuild -list'.",
+    "Rewrite Gate 2 skip condition (lines 101-104): 'Skip Gate 2 only if the feature has ZERO network calls. Verify by: (1) Grep app code for URLSession, Alamofire, or API client usage. (2) Check logs for network.tcp entries. (3) Run without internet and verify feature still works.' If ANY network is present, Gate 2 must PASS.",
+    "Add filled example to Gate 3 correlation report template (lines 172-189): show logs with timestamps, before/after screenshots, and the correlation narrative."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm implementing a new iOS feature: users can bookmark articles. After implementing it, I need to validate the feature is complete. Walk me through ios-validation-gate.",
+      "expected_output": "Response should invoke ios-validation-gate. (1) Gate 1 Simulator: Build app, install, launch, screenshot home screen, tap bookmark button, screenshot saved state, capture accessibility tree. Check: no crashes, app responsive, UI reflects bookmark action. (2) Gate 2 Backend: Is there a backend? If yes, verify bookmark API endpoint returns 200 and response contains bookmark status. If no backend (local-only), mark PASS N/A. (3) Gate 3 Analysis: Correlate — do logs show bookmark API call when user taps? Do screenshots show UI change (e.g., heart icon fill)? All three gates PASS? Overall PASS. One fails? Overall FAIL."
+    },
+    {
+      "id": 2,
+      "prompt": "Gate 1 (Simulator) PASSED: app builds, installs, launches, screenshots look good. Gate 2 (Backend) is failing: health endpoint returns 500. Should I stop and mark the overall feature FAIL, or keep going with Gate 3?",
+      "expected_output": "Response should invoke ios-validation-gate and explain: Run ALL three gates even if one fails (lines 14-34 architecture). Gate 2 FAIL means backend is broken, but continue to Gate 3 to see if the app's LOCAL state works (e.g., UI responds to taps even if API fails). This tells you: 'frontend works, backend broken' vs 'both broken'. Then write unified verdict: FAIL (Gate 2 critical). Fix backend health, re-run all three gates."
+    },
+    {
+      "id": 3,
+      "prompt": "I'm validating an offline iOS app (no backend, local-only). It's a note-taking app. Do I need to do Gate 2 Backend, or can I skip it?",
+      "expected_output": "Response should invoke ios-validation-gate, lines 101-104. Skip Gate 2 only if: (1) You've verified the app has ZERO network calls (grep for URLSession, Alamofire, etc.). (2) Feature works without internet. (3) Document the skip reason. Mark Gate 2 as 'PASS (N/A — offline-only, no API)'. Gate 1 and Gate 3 still required. If the app ever makes network calls (even for analytics), Gate 2 is REQUIRED."
+    }
+  ]
+}

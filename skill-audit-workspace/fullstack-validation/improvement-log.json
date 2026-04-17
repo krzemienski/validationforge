@@ -1,0 +1,55 @@
+{
+  "skill_name": "fullstack-validation",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with concrete stacks + scenarios",
+      "implemented": true,
+      "details": "New description names specific stack combinations (Rails+React, Django+Vue, Next.js+Postgres), lists the 4 cross-layer flows this skill proves (frontend->DB, DB->frontend, API->everywhere, delete cascade), and names the decision point (bug could be in any layer; need to prove which). Expanded from 25 to ~90 words."
+    },
+    {
+      "fix": "Add explicit scope/composition section",
+      "implemented": true,
+      "details": "New 'Scope vs. platform-specific skills' section explains that fullstack-validation doesn't replace api-validation or web-validation — it composes them. During Layer 2, load api-validation for full coverage; during Layer 3, load web-validation. Addresses the audit's concern about broken cross-references."
+    },
+    {
+      "fix": "Reinforce gate enforcement in Bottom-Up Rule",
+      "implemented": true,
+      "details": "Added explicit note after the rule: 'Gates matter. Each layer has a PASS gate. If Layer 1 fails, do not proceed to Layer 2. Skipping a gate turns 20 minutes of rework into hours of chasing ghosts.' Makes the gating semantics impossible to miss."
+    },
+    {
+      "fix": "Add 'If it fails' column to Prerequisites with concrete remediation",
+      "implemented": true,
+      "details": "Old table had 'How to verify' only; new table adds 'If it fails' with concrete start commands per stack (brew services start postgresql, docker compose up db, npm run dev, python manage.py runserver, bundle exec rails server). Also added browser MCP prerequisite with pointer to web-validation."
+    },
+    {
+      "fix": "Acknowledge Playwright vs Chrome DevTools MCP",
+      "implemented": true,
+      "details": "Layer 3 now explicitly states commands are Playwright MCP syntax and lists the Chrome DevTools MCP equivalents (navigate_page, take_snapshot, take_screenshot), pointing to web-validation for the full mapping. Addresses audit's concern that MCP call syntax was unexplained."
+    },
+    {
+      "fix": "Upgrade Common Failures table with diagnosis commands",
+      "implemented": true,
+      "details": "Old table had Symptom / Layer / Likely Cause / Fix. New table swaps 'Likely Cause' for 'How to diagnose' with actual commands (psql count queries, migration status checks, Network tab inspection, API log correlation). Makes the table actionable instead of speculative."
+    },
+    {
+      "fix": "Clarify PASS criteria specificity",
+      "implemented": true,
+      "details": "Added preamble defining what 'correctly' means (exact values, count match, order match). Updated individual criteria to require citing specific values/IDs in evidence (old value vs new value for updates, unique ID traced across layers for creates, count decrease for deletes). No more ambiguous 'displayed correctly'."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Bundle fullstack-validate.sh / db-validate.sh / api-validate.sh / frontend-validate.sh / integration-validate.sh",
+      "reason": "5 separate harness scripts would be very substantial to write correctly (per-DB-type branching, framework detection, MCP invocation, evidence naming, gate enforcement). Better as subagent-produced artifacts when usage allows. The skill is already structured to make manual execution tractable."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/fullstack-validation/SKILL.md"
+  ],
+  "description_before": "Validate fullstack bottom-up: DB schema/data → API CRUD → frontend rendering → integration (create→read→update→delete across layers). Use for multi-layer projects; proves data flows end-to-end.",
+  "description_after": "Use whenever validating a multi-layer app where frontend depends on backend depends on database — Rails+React, Django+Vue, Next.js+Postgres, any monorepo or separate repos that share data. Runs a strict bottom-up protocol: verify DB schema and seed data first, then API CRUD, then frontend rendering, then cross-layer integration flows (create in frontend → appears in DB, insert in DB → appears in frontend, update via API → propagates everywhere, delete cascades). Reach for this when a bug could be in any layer and you need to prove which one, or before shipping a change that touches more than one layer.",
+  "line_count_before": 217,
+  "line_count_after": 236,
+  "self_review_notes": "The biggest improvement is clarifying composition: fullstack-validation isn't a replacement for api-validation/web-validation, it's the glue that proves data travels between them. That was the audit's single most important finding and the most common source of confusion. The diagnosis commands in Common Failures turn the table from vague troubleshooting into a playbook."
+}

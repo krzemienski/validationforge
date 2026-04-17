@@ -1,0 +1,30 @@
+{
+  "skill_name": "verification-before-completion",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with broader trigger coverage",
+      "implemented": true,
+      "details": "New description names the specific completion moments (todo status complete, close issue, merge PR, hand verdict, say 'done'), explains the 5-point check structure, and lists invocation phrases. Added 3 new YAML triggers: 'merge it', 'ready to close', 'checklist before marking complete'."
+    },
+    {
+      "fix": "Add explicit relationship to gate-validation-discipline",
+      "implemented": true,
+      "details": "These two skills overlap significantly and the old descriptions didn't differentiate them. New Scope section explains: gate-validation-discipline is for formal pipeline gates with plan-defined PASS criteria; verification-before-completion is the general form for any completion moment (todos, PRs, issues, ship decisions). Reach for whichever fits the context."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Additional body changes",
+      "reason": "The skill is already lean (88 lines), well-structured (Rule, Checklist, Citation Format, When to Apply), and the audit didn't flag major body issues. Main problem was scope ambiguity with gate-validation-discipline, which is now addressed."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/verification-before-completion/SKILL.md"
+  ],
+  "description_before": "Block premature completion: require personally examined evidence, specific citations, criteria matching, regression checks, final state capture. Use before marking tasks done, closing gates.",
+  "description_after": "Use before marking ANY task, gate, or checkpoint complete — whenever you're about to set a todo status to completed, close an issue, merge a PR, hand a verdict to a team lead, or say 'done'. This skill runs a structured 5-point check: personal examination, specific citation, criteria matching, regression scan, final-state capture. It catches the common failure where evidence was produced but never actually read. Reach for it on phrases like 'mark done', 'close this task', 'merge it', 'can I ship this', 'verify before completion', 'checklist before marking complete', or when finishing any unit of work.",
+  "line_count_before": 88,
+  "line_count_after": 99,
+  "self_review_notes": "The scope overlap with gate-validation-discipline was the real usability problem — two skills with nearly-identical purposes. Now they're positioned as gate (formal) vs general form. The 5-point check itself was already solid."
+}

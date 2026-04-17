@@ -1,0 +1,17 @@
+{
+  "skill_name": "django-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a Django REST API project with postgres. I want to validate that the migrations are applied and the /api/posts/ endpoint returns real data, not a mock. What do I check? I'm concerned the DB might have migration errors.",
+      "expected_output": "Guide user through: (1) python manage.py check, (2) python manage.py showmigrations to spot [ ] unapplied, (3) python manage.py migrate to apply, (4) curl -s http://localhost:8000/api/posts/ to verify non-empty response. Emphasize checking the actual postgres, not in-memory test DB.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My Flask app with Gunicorn is running on port 5000, but POST /api/users returns 403 Forbidden even though I'm admin. The app works locally. What's broken?",
+      "expected_output": "Point to CSRF token requirement (line 316 in Common Failures). Show: (1) curl -s -H 'X-CSRFToken: <token>' (if CSRF is enabled), or (2) check if the POST handler requires a specific header (Authorization, Content-Type). Validate by inspecting actual 403 response body with curl -i, not just the status.",
+      "files": []
+    }
+  ]
+}

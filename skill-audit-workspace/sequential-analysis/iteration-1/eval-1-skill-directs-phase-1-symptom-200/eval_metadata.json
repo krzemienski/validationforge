@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "skill-directs-phase-1-symptom-200",
+  "prompt": "API validation FAILED: endpoint returns 200 OK but response body is empty. Expected: {\"data\": [...]}. Same endpoint worked yesterday. Why?",
+  "expected_output": "Skill directs Phase 1 (symptom: 200 but empty body). Phase 2 hypotheses: H1 (data missing from DB), H2 (new code deployed with bug), H3 (pagination filter hiding data), H4 (auth token insufficient), H5 (caching stale response). Phase 3 investigates: check git log (code changed?), check DB query directly (data exists?), check request headers (auth token valid?). Phase 4: if git shows new deploy, hypothesis H2 confirmed. Evidence: git commit diff, DB query output, API response logged.",
+  "assertions": []
+}

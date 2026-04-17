@@ -1,12 +1,15 @@
 ---
 name: sequential-analysis
-description: "Root cause analysis for FAIL verdicts: structured hypothesis testing, evidence investigation, sequential thinking. Use when validation fails unexpectedly or errors are ambiguous."
+description: "Use when a validation FAIL verdict is unexpected or the error is ambiguous — when you can't tell from the evidence alone what actually went wrong. Runs structured step-by-step hypothesis testing via the sequential-thinking MCP tool: form a hypothesis from the evidence, test it against other evidence, refine, repeat until root cause is pinned. Produces a traceable reasoning chain, not just a guess. Different from error-recovery (which handles the 3-strike fix loop) — this skill is for diagnosis, not fixing. Reach for it on phrases like 'why did this fail', 'trace the root cause', 'help me debug this validation', 'the error doesn't make sense', 'ambiguous failure'."
 triggers:
   - "sequential analysis"
   - "root cause analysis"
   - "why did validation fail"
   - "trace the failure"
   - "debug validation"
+  - "ambiguous error"
+  - "systematic diagnosis"
+  - "the error doesnt make sense"
 context_priority: standard
 ---
 

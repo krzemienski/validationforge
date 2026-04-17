@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "directs-to-risk-classification-auth-endp",
+  "prompt": "Express API with 12 endpoints. I can't validate all of them in one cycle. How do I prioritize journeys in the plan?",
+  "expected_output": "Directs to risk classification: auth endpoints (login, refresh token) = HIGH \u2192 must validate; payment endpoints = HIGH \u2192 must validate; CRUD for secondary resources = MEDIUM \u2192 validate sample. Generates quick mode plan: 4-5 critical journeys covering auth + payments. Identifies gaps: 'CRUD for Orders' marked MEDIUM, deferred to next cycle. Justifies priorities in plan header.",
+  "assertions": []
+}

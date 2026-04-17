@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "clarify-e2e-validate-is-the-orchestrator",
+  "prompt": "I'm validating a Flutter mobile app. The e2e-validate skill mentions flutter-validation as a reference but I can't find it. Where is it? And what's the relationship between e2e-validate and flutter-validation?",
+  "expected_output": "Clarify: e2e-validate is the orchestrator; flutter-validation is the platform-specific skill that handles Flutter builds, device/emulator setup, screenshots, and log streaming. e2e-validate USES flutter-validation during the execute phase. If you just want to validate Flutter, go directly to flutter-validation. If you want high-level guidance on the full validation pipeline, read e2e-validate first, then drill down to flutter-validation for the specifics.",
+  "assertions": []
+}

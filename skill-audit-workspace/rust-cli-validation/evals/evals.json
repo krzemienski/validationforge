@@ -1,0 +1,17 @@
+{
+  "skill_name": "rust-cli-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Just built a new Rust CLI tool called 'csv-parser' that reads CSV files and outputs JSON. Need to validate it before release. Where do I start?",
+      "expected_output": "Skill walks Steps 1-6: cargo check (compilation), cargo clippy (linting), cargo build --release (binary production), --help and --version checks (usability), happy path test (csv-parser input.csv \u2192 valid JSON output), error cases (missing file, bad CSV format \u2192 helpful error messages, no panic). PASS criteria: exit code 0 on success, non-zero on errors, no 'thread panicked' output. Evidence captured to e2e-evidence/rust-*.txt.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Clippy is complaining about 'unused imports' but we intentionally keep some for future use. Should we use -D warnings or ignore clippy?",
+      "expected_output": "Skill explains strict vs permissive clippy modes. For intentional unused imports: run without -D warnings flag, document the reason in code comment (#[allow(unused_imports)]), cite in clippy output. Skill advises: new projects should use -D warnings to catch real issues; mature projects can be permissive. Shows how to distinguish 'intentional' from 'real dead code'.",
+      "files": []
+    }
+  ]
+}

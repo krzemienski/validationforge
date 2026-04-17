@@ -1,0 +1,17 @@
+{
+  "skill_name": "accessibility-audit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to audit our React dashboard before launch next week. It's a data viz app with interactive charts, form inputs, and a dark mode toggle. Some users complained they couldn't navigate with keyboard only. How do I run a full WCAG AA audit including keyboard navigation to catch all accessibility issues?",
+      "expected_output": "Clear guidance to run 4-layer audit (Lighthouse via DevTools, tab through all controls, check a11y tree for labels/roles, verify 4.5:1 contrast). Specific evidence paths. Verdict template that says PASS or FAIL with numbered issues.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "After our refactor, I need to prove we didn't break accessibility. We have Lighthouse at 85 before the change. What baseline evidence do I capture, and how do I detect regressions in keyboard nav or screen reader experience?",
+      "expected_output": "Capture baseline: Lighthouse JSON, keyboard test findings table (lines 91-100 format), a11y tree snapshot. After refactor: re-run same 4 layers, compare side-by-side. Any keyboard navigation that worked before but fails now = REGRESSION = FAIL.",
+      "files": []
+    }
+  ]
+}

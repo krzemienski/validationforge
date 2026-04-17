@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "skill-directs-phase-1-create-new",
+  "prompt": "Starting new feature: shopping cart redesign. Need design reference before coding. Stitch project doesn't exist yet. How do I generate initial designs?",
+  "expected_output": "Skill directs Phase 1 (create new project, save ID to stitch.json). Phase 2 generation with design system context (colors, fonts from DESIGN.md). Generates desktop and mobile cart layouts. Phase 4 captures screenshots as e2e-evidence/design-validation/reference/stitch-screen-*.png. Metadata saved for later design-validation comparison step.",
+  "assertions": []
+}

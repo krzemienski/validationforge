@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "skill-provides-template-but-not-discover",
+  "prompt": "Step 6 asks me to test with invalid data (empty password). But what makes a password invalid for this form? Could be min length 8, could be 'must contain number', could be 'no special chars allowed'. How do I know?",
+  "expected_output": "Skill provides template but not discovery method. User should: inspect <input type='password'> for validation attributes (required, minlength, pattern), read any help text, try submitting empty \u2192 see error message. Or read API docs for password rules. Skill should guide this discovery, not assume.",
+  "assertions": []
+}

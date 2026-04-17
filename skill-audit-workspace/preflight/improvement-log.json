@@ -1,0 +1,30 @@
+{
+  "skill_name": "preflight",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with cost framing + invocation triggers",
+      "implemented": true,
+      "details": "New description leads with the cost frame (10-30 min of mid-validation debugging saved), names what gets caught (dead servers, unseeded DBs, stale builds), explains the auto-fix loop behavior, and lists concrete invocation phrases. 7 YAML triggers instead of the previous 0 explicit triggers (was relying on body text)."
+    },
+    {
+      "fix": "Rewrite Rules with WHY instead of MUST/ALWAYS/NEVER spam",
+      "implemented": true,
+      "details": "Old rules were 6 capitalized imperatives. New rules keep the same 6 requirements but explain consequences: 'A failed preflight costs seconds; a mid-validation failure for the same reason costs 10-30 minutes'; 'Two attempts means something isn't actually self-healing'; 'those are intentional decisions the user should make, not silent side effects'; 'skipping breaks the chain'; 'starting the API first wastes time because every check will fail on DB'. Each rule now teaches the model why it matters."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Body restructuring",
+      "reason": "Skill is already well-scoped and lean (87 lines). How It Works, Report Format, Severity Levels are all clear. Main weaknesses were descriptive (description triggering, rules-as-dogma). Both addressed."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/preflight/SKILL.md"
+  ],
+  "description_before": "Run before validation to detect missing dependencies, dead servers, unseeded databases. Auto-fixes common failures, produces CLEAR/BLOCKED/WARN verdict. Prevents mid-validation debugging cycles.",
+  "description_after": "Run BEFORE any validation session to catch missing dependencies, dead servers, unseeded databases, and stale builds — the failures that otherwise eat 10-30 minutes of mid-validation debugging. Auto-attempts one fix per failed check (start the DB, install dependencies, run migrations) and re-checks. Produces a CLEAR / BLOCKED / WARN verdict and a structured report at e2e-evidence/preflight-report.md. Reach for it whenever someone says 'check before validating', 'why is the dev server down', 'pre-validation check', 'environment health', before /validate or /forge-execute, or when a previous validation FAILed for environmental reasons (server crashed, DB empty, missing env var).",
+  "line_count_before": 87,
+  "line_count_after": 98,
+  "self_review_notes": "The cost framing in the description is the real conversion trick — 'save 10-30 minutes of debugging' makes the skill's value tangible instead of abstract. Rules with WHY ages better than rules with NEVER."
+}

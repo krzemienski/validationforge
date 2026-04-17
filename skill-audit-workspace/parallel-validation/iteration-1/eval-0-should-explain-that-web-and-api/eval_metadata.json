@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "should-explain-that-web-and-api",
+  "prompt": "I have a fullstack app (Next.js frontend, Node.js API, PostgreSQL). I want to validate them in parallel using 2 agents. What are the pitfalls and how do I structure the evidence directories?",
+  "expected_output": "Should explain that Web and API can parallelize (independent validation journeys) but Database must be seeded before API validation starts (sequential dependency). Should show exact directory structure: e2e-evidence/web-validation/, e2e-evidence/api-validation/, and explain why overlap is forbidden.",
+  "assertions": []
+}

@@ -1,0 +1,50 @@
+{
+  "skill_name": "web-validation",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with concrete scenarios + triggers",
+      "implemented": true,
+      "details": "New description lists specific frameworks (React, Vue, Next.js, Django, Rails, static), scenarios (validate the site, take screenshots, check console, responsive testing), and distinguishes this from 'just builds'. Added 2 new YAML triggers."
+    },
+    {
+      "fix": "Fix port hardcoding — use detected $PORT throughout",
+      "implemented": true,
+      "details": "Critical bug: Step 1 detected framework but Step 2 hardcoded port 3000, breaking Django (8000), Flask (5000), Vite (5173). Step 1 now tails dev server log to extract the actual port via regex and exports it as $PORT. All subsequent steps (health check, route coverage) use $PORT."
+    },
+    {
+      "fix": "Add tool-choice guidance (Playwright MCP vs Chrome DevTools MCP)",
+      "implemented": true,
+      "details": "Added 'Choosing your browser tool' table at top, explaining when each MCP is best (Playwright: cross-browser, CI, mature; Chrome DevTools: real Chrome debugging, live DevTools features). Answers the audit's complaint that users had to guess which tool to use."
+    },
+    {
+      "fix": "Improve framework detection",
+      "implemented": true,
+      "details": "Reordered detection (pnpm > yarn > npm to prefer faster tools), added fallback guidance: if detection fails or the 'dev' script is named differently (start/dev:local/serve/develop), open package.json and check the scripts section."
+    },
+    {
+      "fix": "Explain how to discover form validation rules before testing",
+      "implemented": true,
+      "details": "Added preamble to Step 6: inspect HTML attributes (required, minlength, pattern), trigger a bad submit to read error messages, or check API schema (OpenAPI, Django serializer, Zod). Warns that generic test values like 'SecurePass123!' may not pass stricter rules."
+    },
+    {
+      "fix": "Replace hardcoded routes array with source-of-truth extraction",
+      "implemented": true,
+      "details": "Step 8 now tells the reader to pull routes from the framework's routing definition (React Router files, Django show_urls, Rails bin/rails routes, sitemap.xml, OpenAPI spec) rather than hand-maintain a bash array."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Bundle web-validation-harness.sh",
+      "reason": "Valuable but substantial — a working harness needs framework detection, port discovery, step orchestration, error handling, and cleanup. Better as a subagent-produced artifact when usage allows."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/web-validation/SKILL.md"
+  ],
+  "description_before": "Web validation via browser automation: health checks, screenshots at 375/768/1920px, form testing, console/network validation. Detects CORS, hydration, CSS issues.",
+  "description_after": "Use whenever validating a web app (React, Vue, Next.js, Django, Rails, static site) end-to-end through a real browser — not just 'it builds' or 'dev server starts'. Covers health check, screenshot-based navigation, console error detection, network request inspection, form submission, responsive layout at mobile/tablet/desktop widths, and route coverage. Reach for it on phrases like 'validate the site', 'take screenshots', 'check the console', 'responsive testing', 'does the page load', or when a frontend change needs proof that real users won't see errors.",
+  "line_count_before": 188,
+  "line_count_after": 228,
+  "self_review_notes": "The port-hardcoding bug was the biggest functional problem — whoever ran this on Django/Flask would have failed silently and blamed the app. Now fixed. Tool-choice table eliminates the 'which MCP?' guessing. Form validation and route coverage sections now teach how to do the work correctly instead of providing unrealistic templates."
+}

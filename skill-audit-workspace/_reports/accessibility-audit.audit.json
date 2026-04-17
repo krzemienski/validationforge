@@ -1,0 +1,79 @@
+{
+  "skill_name": "accessibility-audit",
+  "path": "/Users/nick/Desktop/validationforge/skills/accessibility-audit/SKILL.md",
+  "skill_md_line_count": 238,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Audit WCAG 2.1 AA compliance across 4 layers (Lighthouse, keyboard nav, screen reader, contrast). Use before public release, after UI changes, or on a11y complaints.",
+    "length_words": 24,
+    "issues": [
+      "Terse description lacks actionable trigger phrases—\"WCAG audit\", \"check a11y\", \"keyboard navigation test\", \"screen reader validation\" not present in description itself",
+      "Description is imperative (\"Use before...\") but doesn't explain value: no mention that audit catches issues automated tools miss"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Bloated preamble (lines 13-33): 3 paragraphs + diagram before first actionable step; could be collapsed to 2 sentences + reference the diagram",
+        "location": "lines 13-33"
+      },
+      {
+        "severity": "med",
+        "description": "Rigid WCAG scoring thresholds (lines 186-191) presented as rules without explanation WHY these specific weights (30% auto, 25% keyboard, 25% screen reader, 20% visual). No rationale for why 85 = PASS",
+        "location": "lines 178-191"
+      },
+      {
+        "severity": "low",
+        "description": "Keyboard test protocol (lines 69-77) is exhaustive but includes 8 steps—no prioritization. 'Keyboard traps' (step 7) should be flagged as CRITICAL override early",
+        "location": "lines 69-77"
+      },
+      {
+        "severity": "low",
+        "description": "Layer 3 (Screen Reader) checks use abstract checklist format; no instructions on HOW to use accessibility tree snapshots to verify each check",
+        "location": "lines 104-130"
+      }
+    ],
+    "strengths": [
+      "Clear 4-layer structure with diagram—immediately frames scope",
+      "Layer 1 (Lighthouse) and Layer 2 (Keyboard) have concrete, runnable steps with artifact names",
+      "Evidence capture template (lines 91-100) is practical—exact filenames given",
+      "Dark mode audit is thoughtful inclusion (lines 157-170) — often forgotten",
+      "Final report template uses concrete field names (lines 196-226) — verdicts writer can copy directly"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "Keyboard test protocol (lines 69-77) + evidence capture steps (lines 81-88) repeat tab/screenshot/record pattern that could be a shell script automating snapshot capture into e2e-evidence/accessibility/keyboard/ with sequential naming",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Rewrite description (3-4 sentences max): lead with WCAG 2.1 AA, add 3 trigger phrases ('WCAG audit', 'keyboard navigation test', 'screen reader validation'), explain it catches issues Lighthouse misses (keyboard traps, ARIA misuse). Target 40-50 words.",
+    "Move scoring rules (lines 178-191) to a bundled reference/scoring-rules.md; replace with: 'Weighted across 4 layers (see references/scoring-rules.md). Final verdict: >85=PASS, 70-85=CONDITIONAL (HIGH issues documented), <70=FAIL. **Override: any keyboard trap = FAIL regardless of score.**'",
+    "Collapse preamble (lines 13-33): replace with single sentence: 'Systematic audit covering automated scans, keyboard navigation, screen reader structure, and visual accessibility. Each layer scored and weighted for final verdict.'",
+    "Add subsection to Layer 3: 'How to verify each check using accessibility tree' — show 1 concrete example (e.g., 'For check 3.1, count <h1> elements in the tree snapshot; 0 or >1 = FAIL')",
+    "Move keyboard test steps 1-8 to a reference/keyboard-test-protocol.md; keep only the 8-item list here with note: 'Run in order. **CRITICAL: Step 7 (keyboard trap) triggers automatic FAIL regardless of score.'",
+    "Dark mode audit is good — keep as is"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I need to audit our React dashboard before launch next week. It's a data viz app with interactive charts, form inputs, and a dark mode toggle. Some users complained they couldn't navigate with keyboard only. How do I run a full WCAG AA audit including keyboard navigation to catch all accessibility issues?",
+      "expected_output": "Clear guidance to run 4-layer audit (Lighthouse via DevTools, tab through all controls, check a11y tree for labels/roles, verify 4.5:1 contrast). Specific evidence paths. Verdict template that says PASS or FAIL with numbered issues."
+    },
+    {
+      "id": 2,
+      "prompt": "After our refactor, I need to prove we didn't break accessibility. We have Lighthouse at 85 before the change. What baseline evidence do I capture, and how do I detect regressions in keyboard nav or screen reader experience?",
+      "expected_output": "Capture baseline: Lighthouse JSON, keyboard test findings table (lines 91-100 format), a11y tree snapshot. After refactor: re-run same 4 layers, compare side-by-side. Any keyboard navigation that worked before but fails now = REGRESSION = FAIL."
+    },
+    {
+      "id": 3,
+      "prompt": "Our designer added new form fields with custom aria-label attributes. How do I verify the ARIA is correct and won't confuse screen readers? Do I need to test with an actual screen reader?",
+      "expected_output": "Use accessibility tree snapshot (Chrome DevTools MCP) to inspect a11y tree structure. Check Layer 3 items 3.5-3.8: inputs have labels, ARIA roles match behavior, ARIA states update. No actual screen reader needed for this audit — tree snapshot is sufficient. Findings go in step-03-screen-reader.md."
+    }
+  ]
+}

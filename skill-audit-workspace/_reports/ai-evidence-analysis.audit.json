@@ -1,0 +1,102 @@
+{
+  "skill_name": "ai-evidence-analysis",
+  "path": "/Users/nick/Desktop/validationforge/skills/ai-evidence-analysis/SKILL.md",
+  "skill_md_line_count": 354,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "AI-augmented evidence review: vision models analyze screenshots, LLMs check API/CLI output. Produces 0-100 confidence scores and findings. Optional in offline mode.",
+    "length_words": 24,
+    "issues": [
+      "Description omits WHO uses this (verdict-writer agent) and WHERE in pipeline (phase 3.5 between execute and analyze)",
+      "Doesn't mention the 3 evidence types supported or what 'confidence score' actionably enables (prioritization, finding detection)"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Massive feature bloat: 354 lines covering vision + LLM + JSON schema + edge cases + disable logic + aggregation rules. Should be split into minimal skill + 4 bundled references. Right now a user reading this can't quickly find 'how do I run AI analysis on my evidence?'",
+        "location": "entire file"
+      },
+      {
+        "severity": "high",
+        "description": "Schema documentation (lines 52-84) is exhaustive but unclear: AnalysisResult JSON structure takes 30 lines; could be 10 lines with a link to references/analysis-schema.md",
+        "location": "lines 52-84"
+      },
+      {
+        "severity": "high",
+        "description": "Analysis protocol (lines 112-240) mixes 5 step-by-step instructions with complex CLI snippets (lines 117-152 for file detection). Users trying to do step 1 have to wade through line 140s bash one-liners with xxd and grep",
+        "location": "lines 112-240"
+      },
+      {
+        "severity": "med",
+        "description": "Evidence type classification (lines 124-152) repeats extension logic then 'fallback content inspection' — this is a bundled script opportunity (detect_evidence_type.sh), not inline education",
+        "location": "lines 124-152"
+      },
+      {
+        "severity": "med",
+        "description": "Confidence score tiers (lines 86-94) presented inline, but the full scoring rubric lives in references/confidence-scoring.md (409 lines). Bidirectional references create cognitive overhead — users can't tell which is authoritative",
+        "location": "lines 86-94 and references/confidence-scoring.md"
+      },
+      {
+        "severity": "med",
+        "description": "Disable/offline logic (lines 276-323) uses 3 different disable methods (env var, config flag, implicit offline detection). No single clear 'how to disable' sentence before diving into methods",
+        "location": "lines 276-323"
+      },
+      {
+        "severity": "low",
+        "description": "Anti-patterns section (lines 338-346) is good guardrails but comes after 200+ lines of detail — should come after 'When to Use', not at end",
+        "location": "lines 338-346"
+      }
+    ],
+    "strengths": [
+      "Crystal clear Scope section (lines 28-42): what it does and what it does NOT do — good boundary setting",
+      "Supported evidence types table (lines 44-50) is scannable and includes analysis model and example checks",
+      "Vision/LLM prompt templates (lines 164-205) are pragmatic — users can copy directly to Claude",
+      "Bundled references are well-organized: confidence-scoring.md (409 lines), screenshot-analysis.md, api-response-analysis.md, cli-output-analysis.md",
+      "Journey-level aggregation (lines 251-273) explains weighted averaging clearly with worked example",
+      "Integration callout (lines 325-336) shows where this fits in 7-phase pipeline and how verdict-writer uses output"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 4,
+    "missing_scripts_opportunity": "Evidence type detection (lines 124-152) with xxd/file/json checks could be detect-evidence-type.sh; Analysis protocol Step 1 (lines 116-119) find+sort command could be discover-evidence.sh; both would make main skill less CLI-heavy",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Split into 2 files: (1) Minimal SKILL.md (<120 lines): When to Use, Quick Start (run analysis on e2e-evidence/, get confidence scores), Integration section. (2) References: full Analysis Protocol, Schema details, Confidence scoring (already bundled), Anti-patterns. Current lines 52-240 move to references/analysis-protocol.md.",
+    "Rewrite description: 'Intelligent analysis of validation evidence using vision models (screenshots) and LLMs (API/CLI output). Produces confidence scores (0-100) and findings that inform verdict decisions. Runs at phase 3.5 (between capture and analysis). Optional in offline mode.' (Target 40-50 words)",
+    "Move evidence classification logic (lines 124-152) to scripts/detect-evidence-type.sh + reference in main skill as 'use references/detect-evidence-type.sh to classify evidence files'",
+    "Collapse schema documentation: replace lines 52-84 with: 'Every evidence item produces AnalysisResult (see references/analysis-schema.json for full schema). Key fields: evidence_file, confidence (0-100), verdict_label (PASS/WARN/FAIL), findings[].'",
+    "Move disable/offline logic to a separate section right after 'When to Use': 'Disable checks: set VF_AI_ANALYSIS=disabled or config ai_analysis.enabled=false. Offline mode skips all API calls; pipeline continues without analysis.'",
+    "Move anti-patterns (lines 338-346) to come immediately after 'When to Use' as 'Common mistakes'",
+    "Create references/quick-start-example.md showing end-to-end: 'You have 5 evidence files in e2e-evidence/login-journey/. Run AI analysis, get confidence scores, save results to ai-analysis-*.json. Copy findings to verdict report.'",
+    "Keep the 4 bundled references (confidence-scoring.md, screenshot-analysis.md, api-response-analysis.md, cli-output-analysis.md) — they are excellent"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I captured 3 pieces of evidence for my login journey: login-page.png (screenshot), auth-response.json (API response), and build-log.txt (CLI output). I want AI to analyze all 3 and tell me if they all support a PASS verdict. What confidence scores should I be looking for?",
+      "expected_output": "Run AI analysis on all 3 files. Get individual confidence scores: screenshot should be 85+, API response should be 75+, build log should be 70+. Aggregate to journey-level score. If all are 70+, journey-level is probably 75+ (PASS). If any has CRITICAL findings, journey score drops to 50 (FAIL)."
+    },
+    {
+      "id": 2,
+      "prompt": "I'm in an air-gapped environment (no API access). Can I still use this skill? What happens to the confidence scores?",
+      "expected_output": "Set VF_AI_ANALYSIS=disabled. Skill skips all model API calls, doesn't produce analysis files, logs one notice line. Verdict writer proceeds with raw evidence only. No confidence scores generated, but validation continues."
+    },
+    {
+      "id": 3,
+      "prompt": "My screenshot shows a loading spinner on the 'Create Order' button. The skill gave it a confidence of 52. Why is that, and can I still use it as evidence?",
+      "expected_output": "Loading spinner = incomplete page load = low confidence (50-69 tier). Score is 52 because page is NOT fully rendered. Use is risky — the feature might be broken, or just slow. You need to capture a follow-up screenshot after the page fully loads to get high-confidence evidence."
+    },
+    {
+      "id": 4,
+      "prompt": "Our API response includes an old deprecated field 'legacy_token' that our team plans to remove next quarter. The AI analysis flagged it as a finding with LOW severity and scored the response 87. Should we still PASS this journey?",
+      "expected_output": "Score is 87 (MODERATE tier, PASS eligible) because the deprecated field is LOW severity and doesn't block the feature. Verdict should be PASS with a note: 'One deprecated field detected; plan removal in Q2'. The confidence score and findings are input to the verdict, not the verdict itself."
+    }
+  ]
+}

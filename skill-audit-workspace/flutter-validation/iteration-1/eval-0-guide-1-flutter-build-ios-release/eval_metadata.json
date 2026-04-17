@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "guide-1-flutter-build-ios-release",
+  "prompt": "I'm validating a Flutter app that I need to release tomorrow. It runs fine in debug on the iOS Simulator but I want to validate the release build. What's the right sequence of commands to ensure it won't crash in production?",
+  "expected_output": "Guide: (1) `flutter build ios --release` (build for device, not simulator). (2) `flutter run --release -d DEVICE_ID` on a physical iPhone if possible (or simulator with release build). (3) Capture logs: `flutter logs -d DEVICE_ID &` to stream output. (4) Watch for 'FlutterError', 'unhandled exception', or crash output. (5) Screenshot the main screen and any critical user flows. (6) Check for platform-specific crashes: iOS (check ~/Library/Logs/DiagnosticReports/), Android (adb logcat). If you see any error that doesn't appear in debug, that's a release-only issue (often related to optimization or asset bundling) \u2014 investigate before shipping.",
+  "assertions": []
+}

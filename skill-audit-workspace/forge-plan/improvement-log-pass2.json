@@ -1,0 +1,37 @@
+{
+  "skill": "forge-plan",
+  "pass": 2,
+  "date": "2026-04-17",
+  "change_type": "bundle-script",
+  "summary": "Bundled deterministic consensus-mode merge helper (bash + python) that implements the merge algorithm the skill previously only described prose-style.",
+  "files_added": [
+    "skills/forge-plan/scripts/forge-plan-merge.sh",
+    "skills/forge-plan/scripts/_merge_impl.py"
+  ],
+  "files_modified": [
+    "skills/forge-plan/SKILL.md"
+  ],
+  "script_cli": "bash scripts/forge-plan-merge.sh --plan-a=PATH --plan-b=PATH --output=PATH",
+  "algorithm": {
+    "journey_dedup": "case-insensitive name match",
+    "criteria_union": "union of bullet-list PASS criteria per journey",
+    "conflict_detection": "first-3-word subject key; differing tails emit CONFLICT on stderr",
+    "conflict_resolution": "plan A wins; HTML comment annotates the kept line with plan B's version",
+    "summary_section": "## Merge Summary lists source paths, journey counts (total/unique-A/unique-B/overlap), conflict count"
+  },
+  "verification": {
+    "bash_syntax": "bash -n — OK",
+    "python_compile": "compile() — OK",
+    "fixture_test": {
+      "plan_a_journeys": ["Login", "Checkout"],
+      "plan_b_journeys": ["Checkout", "Profile"],
+      "output_journeys": 3,
+      "stderr_conflict_emitted": true,
+      "stderr_line": "CONFLICT: Checkout / POST /checkout returns 200 on success — plan A says \"POST /checkout returns 200 on success\", plan B says \"POST /checkout returns 201 on success\"",
+      "html_comment_present": true
+    }
+  },
+  "yaml_frontmatter_intact": true,
+  "loc_total": 180,
+  "skill_md_addition": "Added 'Merge helper:' paragraph in Consensus Mode section pointing at scripts/forge-plan-merge.sh with CLI example and pairwise-merge guidance for the 3-perspective case."
+}

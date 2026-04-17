@@ -1,6 +1,6 @@
 ---
 name: ai-evidence-analysis
-description: "AI-augmented evidence review: vision models analyze screenshots, LLMs check API/CLI output. Produces 0-100 confidence scores and findings. Optional in offline mode."
+description: "Use after capturing validation evidence (phase 3.5, between capture and verdict writing) when you want AI to systematically review screenshots, API responses, and CLI output — flagging issues a human reviewer might skim past. Produces a 0-100 confidence score and structured findings per evidence item (3 types supported: screenshot / api-response / cli-output). Optional and easy to disable in offline or cost-sensitive environments. Reach for this on phrases like 'review my evidence', 'score the screenshots', 'AI check the API responses', 'spot issues in the logs', or when the verdict-writer agent needs confidence signals before ruling PASS/FAIL."
 context_priority: standard
 triggers:
   - "analyze evidence"
@@ -11,6 +11,8 @@ triggers:
   - "analyze CLI output"
   - "evidence quality check"
   - "flag evidence issues"
+  - "review my evidence"
+  - "score the screenshots"
 ---
 
 # AI-Powered Evidence Analysis
@@ -24,6 +26,25 @@ Intelligent analysis of captured validation evidence using vision models and LLM
 - When validating API response bodies against expected schemas or patterns
 - When CLI output contains warnings or errors that need systematic analysis
 - When confidence scores are needed to prioritize which evidence to cite in verdicts
+
+## How to disable
+
+Three equivalent ways, pick whichever fits your workflow:
+
+- Env var: `export VF_AI_ANALYSIS=disabled`
+- Config: set `ai_analysis.enabled = false` in your ValidationForge config
+- Offline mode: if no API credentials are configured, analysis is auto-skipped
+
+When disabled, the pipeline continues unchanged — verdicts are written by humans/agents without AI confidence scores.
+
+## Common mistakes
+
+Bad patterns that show up when this skill is misused:
+
+- **Treating the confidence score as a verdict.** The score is a signal for the verdict-writer, not the verdict itself. A 70 needs human review; a 95 still needs a sanity check.
+- **Analyzing evidence that shouldn't exist.** Empty files, zero-byte screenshots, log files with no content — don't feed these to a model hoping for insight. Flag them as invalid evidence and move on.
+- **Over-indexing on findings list length.** A clean PASS has zero findings. More findings doesn't mean more thorough analysis; it usually means the model is hallucinating to fill the array.
+- **Running AI analysis in CI without a cost budget.** Vision analysis on 50 screenshots per build adds up fast. Cap the number of files analyzed per run, or disable in CI and let humans review.
 
 ## Scope
 
@@ -120,6 +141,8 @@ cat e2e-evidence/evidence-inventory.txt
 ```
 
 Skip files that are 0 bytes — empty evidence files are invalid and should be noted as failures.
+
+**Pre-classify with**: `bash scripts/detect-evidence-type.sh --evidence-dir=e2e-evidence --write-tsv` produces `e2e-evidence/_classified.tsv` that subsequent steps can read to skip the extension-based classification logic inline. The TSV columns are `file_path\tcategory\tbytes\tnon_empty` where `category` ∈ {screenshot, api_response, dom_snapshot, cli_output, log, network_trace, verdict, notes, unknown} and `non_empty=1` when size > 10 bytes. Downstream steps only need to filter by category; the heuristics below remain as a reference / fallback when the script is unavailable.
 
 ### Step 2: Classify Evidence Types
 

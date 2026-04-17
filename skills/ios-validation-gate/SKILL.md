@@ -1,11 +1,14 @@
 ---
 name: ios-validation-gate
-description: "Three-gate iOS enforcement: Simulator (build/install/launch/screenshot/a11y) + Backend (health/endpoints/responses) + Analysis (logs/correlation). ALL gates must PASS. Use after each iOS feature."
+description: "Use after an iOS feature is implemented and you want strict gate-based validation — NOT a protocol run-through, but explicit PASS/FAIL gates that all must pass before claiming completion. Three gates: Simulator (build/install/launch/screenshot/accessibility tree), Backend (health/endpoints/responses), Analysis (logs + UI-to-log correlation). Any FAIL on any gate blocks completion. Differs from ios-validation (which is a 9-step protocol) and ios-validation-runner (which captures video evidence for complex flows) — this skill is the formal gate-based variant. Reach for it on phrases like 'iOS gate check', 'must pass before merge', 'iOS quality gate', 'iOS completion check', or when merge blockers need explicit PASS/FAIL criteria per gate."
 triggers:
   - "ios validation gate"
   - "ios gate"
   - "validate ios app"
   - "ios quality gate"
+  - "ios completion check"
+  - "ios merge blocker"
+  - "must pass before ios merge"
 context_priority: reference
 ---
 

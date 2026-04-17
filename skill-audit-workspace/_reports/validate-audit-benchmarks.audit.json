@@ -1,0 +1,87 @@
+{
+  "skill_name": "validate-audit-benchmarks",
+  "path": "/Users/nick/Desktop/validationforge/skills/validate-audit-benchmarks/SKILL.md",
+  "skill_md_line_count": 80,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Score ValidationForge primitives: hooks (60% weight), skills (20%), commands (20%). Produces A-F grade, compares against prior benchmarks. Run before releases, after modifications, during audits.",
+    "length_words": 22,
+    "issues": [
+      "Vague on *which* primitives qualify—all 48 skills or subset? Scope not defined.",
+      "Missing timeline guidance: how often to benchmark? When to compare against baseline?",
+      "Doesn't clarify if this is for ValidationForge self-audit or user projects"
+    ],
+    "triggering_assessment": "under-triggers"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "The entire skill is 80 lines and references automation ('bash scripts/benchmark/...') without shipping the scripts. Scripts are in the main repo but not bundled with this skill—if a user extracts the skill, they have no way to run it.",
+        "location": "Lines 23-37"
+      },
+      {
+        "severity": "high",
+        "description": "Scoring rubric claims 60% weight on Hook Correctness but doesn't explain *what* makes a hook correct—syntax? Functional behavior? Protocol compliance? Vague criteria = unreliable scores.",
+        "location": "Lines 39-46"
+      },
+      {
+        "severity": "med",
+        "description": "'Top 10 Skills by Impact' (lines 67-80) is ordered by design importance, not by frequency of use or user pain. Unclear why this ranking matters in a benchmarking skill.",
+        "location": "Lines 67-80"
+      },
+      {
+        "severity": "med",
+        "description": "Baseline comparison section assumes prior baseline exists at 'audit-artifacts/benchmark-baseline.json' but never explains how to initialize it on first run.",
+        "location": "Lines 59-65"
+      },
+      {
+        "severity": "med",
+        "description": "No explanation of what each script actually validates—does test-hooks.sh run stdin tests or inspect code? Does validate-skills.sh run the skills or just check structure?",
+        "location": "Lines 34-36"
+      },
+      {
+        "severity": "low",
+        "description": "Grades table (lines 49-55) is copy-pasted from README with same caveats ('design targets, not calibrated'). This is honest but raises confidence issues—users may not realize the grades are not empirically validated.",
+        "location": "Lines 47-56"
+      }
+    ],
+    "strengths": [
+      "Weight distribution (60/20/20 hooks/skills/commands) is clear and defensible",
+      "A-F grading scale is familiar and actionable",
+      "Comparison against prior baseline enables regression detection",
+      "'Top 10 Skills by Impact' provides a prioritization lens for manual audits"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "All three scripts (test-hooks.sh, validate-skills.sh, aggregate-results.sh) must be bundled or the skill is just guidance without execution capability",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Define 'Hook Correctness' scoring rubric in detail—list the exact checks test-hooks.sh performs (exit codes, pattern accuracy, protocol compliance)",
+    "Either bundle the benchmark scripts or add clear path guidance (e.g., 'scripts/benchmark/ relative to ValidationForge root')",
+    "Explain baseline initialization—what does first run look like? No prior baseline to compare against.",
+    "Clarify whether this skill is for VF self-audit or for user projects auditing their own validation setup"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I modified three hooks last week and want to verify I didn't introduce regressions before cutting the next release. Run the benchmark suite and compare against the last baseline.",
+      "expected_output": "User runs bash scripts/benchmark/test-hooks.sh and gets exit code 0 if all hooks pass functional tests. Runs aggregate-results.sh which outputs new score, compares hook_score against previous baseline in audit-artifacts/benchmark-baseline.json. If regressed, reports which hook(s) failed."
+    },
+    {
+      "id": 2,
+      "prompt": "We're about to add 5 new skills to ValidationForge. What's the minimum bar they need to meet so the overall benchmark grade doesn't drop from A to B?",
+      "expected_output": "User checks current aggregate score from prior baseline. Calculates: skills weight 20%, current skill_score N%. New skills must have avg frontmatter/description score ≥ X to keep aggregate ≥ 90. (Actual math depends on current baseline.)"
+    },
+    {
+      "id": 3,
+      "prompt": "I want to understand exactly why command validation failed. What does validate-cmds.sh check for?",
+      "expected_output": "Skill should explain that validate-cmds.sh checks each command's SKILL.md for required frontmatter (name, description, triggers, etc.), description length, and cross-reference validity. Currently it just says 'command frontmatter validation'."
+    }
+  ]
+}

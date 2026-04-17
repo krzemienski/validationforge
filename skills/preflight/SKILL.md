@@ -1,6 +1,14 @@
 ---
 name: preflight
-description: "Run before validation to detect missing dependencies, dead servers, unseeded databases. Auto-fixes common failures, produces CLEAR/BLOCKED/WARN verdict. Prevents mid-validation debugging cycles."
+description: "Run BEFORE any validation session to catch missing dependencies, dead servers, unseeded databases, and stale builds — the failures that otherwise eat 10-30 minutes of mid-validation debugging. Auto-attempts one fix per failed check (start the DB, install dependencies, run migrations) and re-checks. Produces a CLEAR / BLOCKED / WARN verdict and a structured report at e2e-evidence/preflight-report.md. Reach for it whenever someone says 'check before validating', 'why is the dev server down', 'pre-validation check', 'environment health', before /validate or /forge-execute, or when a previous validation FAILed for environmental reasons (server crashed, DB empty, missing env var)."
+triggers:
+  - "preflight check"
+  - "pre-validation check"
+  - "environment health"
+  - "check dependencies"
+  - "before validation"
+  - "is everything running"
+  - "validate environment"
 context_priority: critical
 ---
 
@@ -65,12 +73,12 @@ Status: CLEAR | BLOCKED
 
 ## Rules
 
-1. **ALWAYS run preflight** before any validation session
-2. **ALWAYS attempt auto-fix once** before reporting BLOCKED
-3. **NEVER auto-fix** by installing major tools (Xcode, Docker) — report BLOCKED
-4. **ALWAYS re-check** after auto-fix to confirm resolution
-5. **ALWAYS save** the preflight report to `e2e-evidence/preflight-report.md`
-6. **Check bottom-up** for fullstack: Database -> API -> Frontend.
+1. **Run preflight before any validation session.** A failed preflight costs seconds; a mid-validation failure for the same reason costs 10-30 minutes of misread errors.
+2. **Try auto-fix once, then stop.** Auto-fix is for the well-known "service not started" class of problem (start the DB, run migrations, install deps). Two attempts means something isn't actually self-healing — escalate to BLOCKED and let a human diagnose.
+3. **Don't auto-fix by installing major tools** (Xcode, Docker, language runtimes). Those are intentional decisions the user should make, not silent side effects.
+4. **Re-check after every auto-fix.** Auto-fix without re-check risks reporting CLEAR when the fix didn't actually work.
+5. **Save the report to `e2e-evidence/preflight-report.md`.** Later validation commands read it to know the starting state; skipping this breaks the chain.
+6. **Check bottom-up for fullstack**: Database → API → Frontend. If the DB is down, starting the API first wastes time because every API check will fail on DB connection.
 
 ## Security Policy
 

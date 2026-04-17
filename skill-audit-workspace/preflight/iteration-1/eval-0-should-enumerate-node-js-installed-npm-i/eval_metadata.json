@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "should-enumerate-node-js-installed-npm-i",
+  "prompt": "I have a Next.js app. What should preflight check before I start validation? What would cause a CLEAR vs BLOCKED verdict?",
+  "expected_output": "Should enumerate: Node.js installed, npm installed, node_modules exists, dev server port available, .env.local configured. CLEAR if all pass. BLOCKED if Node missing or major port conflict. Should explain: 'preflight runs first, 5-10 min, saves 30 min of wasted validation time on missing dependencies.'",
+  "assertions": []
+}

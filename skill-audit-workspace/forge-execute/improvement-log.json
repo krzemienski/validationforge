@@ -1,0 +1,49 @@
+{
+  "skill_name": "forge-execute",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with prerequisites + invocation phrases",
+      "implemented": true,
+      "details": "New description makes clear this runs AFTER a plan exists, explains the 3-strike fix loop concisely, and names the attempt-directory isolation pattern. Added 6 new YAML triggers ('run validation', 'execute validation', 'run the plan', 'fix and retry', etc.). Expanded from 27 to ~80 words."
+    },
+    {
+      "fix": "Add 'When to use' section clarifying plan-first sequencing",
+      "implemented": true,
+      "details": "New section explicitly states forge-execute requires a plan from forge-plan or create-validation-plan. Explains the rationale: without PASS criteria the fix loop has nothing to converge on. Prevents users from invoking forge-execute blind."
+    },
+    {
+      "fix": "Expand Modes table with when-to-use + fix-loop behavior",
+      "implemented": true,
+      "details": "Old table had 3 columns: Mode, Use Case, Behavior. New table clarifies when each mode is right (pre-release, pre-commit smoke, CI, debug/partial fix) and explicitly calls out that CI mode DISABLES the fix loop — critical safety detail since auto-fixes in CI can mutate the branch under test."
+    },
+    {
+      "fix": "Expand Phase 3 (Analyze Failures) with ordered classification",
+      "implemented": true,
+      "details": "Old Phase 3 was 3 terse bullets. New version is a 4-step ordered protocol: (1) read actual evidence — don't guess from verdict; (2) compare to criteria — which one failed, actual vs expected; (3) classify into code bug / config / environment / flaky with per-category implications; (4) decide fixable vs BLOCKED with criteria for each. Includes concrete example at end."
+    },
+    {
+      "fix": "Expand rebuild rule with sub-rules",
+      "implemented": true,
+      "details": "Old rebuild rule was one sentence. New version is 3 bullets covering the always-rebuild rule, what happens if rebuild fails (that's the new failure; strike increments; fix the compile error), and how to handle skipped rebuilds (null strike, redo)."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Inject state schema excerpt into Phase 0 or Phase 5",
+      "reason": "The forge-state-schema.md reference is already linked in two places. Inlining an excerpt would duplicate content and the schema is 200+ lines — hurts readability more than it helps. Keep the reference link."
+    },
+    {
+      "fix": "Bundle forge-init.sh, forge-execute.sh, forge-rebuild.sh",
+      "reason": "The forge loop is inherently stateful (reads plan, writes state, rebuilds, re-executes) — a naive shell orchestrator would be error-prone. Better handled by subagents with full tool access when usage permits."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/forge-execute/SKILL.md"
+  ],
+  "description_before": "Execute validation journeys with autonomous fix loop: run, capture evidence, analyze, rebuild, re-execute (max 3 strikes). Use after plan exists; maintains attempt history in isolated directories.",
+  "description_after": "Use after a validation plan exists to actually run the journeys and, when they fail, autonomously try to fix them. Runs each journey against the real system, captures evidence into a fresh attempt directory, analyzes failures, applies a fix, rebuilds, and re-runs — up to 3 strikes before giving up on that journey. Preserves the full attempt history (e2e-evidence/forge-attempt-N/) so you can see exactly what changed between tries. Reach for it on phrases like 'run validation', 'execute the plan', 'validate now', 'fix the failures and retry', or after forge-plan produced a plan.",
+  "line_count_before": 137,
+  "line_count_after": 158,
+  "self_review_notes": "The CI-mode fix-loop-disabled clarification is the most important change — auto-fixes in CI can mutate the branch under test and produce corrupt evidence. The expanded Phase 3 gives the model a real diagnostic protocol instead of 'classify the bug' hand-waving, which is where the fix loop actually converges or diverges."
+}

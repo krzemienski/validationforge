@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "use-strategy-6-ios-simulator-boot",
+  "prompt": "iOS validation: I'm waiting for simulator to boot before running app tests. Currently using 'sleep 30'. Simulator sometimes boots in 5s on warm start, sometimes 40s on first boot. How do I handle both?",
+  "expected_output": "Use strategy #6 (iOS Simulator Boot): wait_for_simulator 'iPhone 16' 90 (timeout 90s for cold boot). Function polls `xcrun simctl list devices` until device is 'Booted'. Returns immediately on warm start (5s), waits up to 90s on cold start. After simulator is ready, use wait_for_process to verify the app launches (strategy #4). Avoids hardcoding 30s which is too short for cold or too long for warm.",
+  "assertions": []
+}

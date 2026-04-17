@@ -1,0 +1,17 @@
+{
+  "skill_name": "error-recovery",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm running a Flutter validation on iOS Simulator. The app crashes on launch with 'Fatal Exception: java.lang.NullPointerException'. I've re-run it 5 times and it still crashes. What should I do according to the error-recovery skill?",
+      "expected_output": "Walk through the 3-strike protocol: Strike 1: Read the FULL error (Java NullPointerException is the symptom, but WHERE is null?). Check flutter-run.txt for the stack trace \u2014 it should show the file and line number of the null access. Fix that code, rebuild, re-run the exact same launch. If it still crashes, Strike 2: Try a different approach (clean Flutter cache: `flutter clean`, rebuild, re-run). If still crashes, Strike 3: Rethink \u2014 is the emulator out of space? Is a required permission missing? Is the environment variable set correctly? Check flutter doctor. Never just 'run it again' without changing something. Always log what you tried.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My validation script is trying to POST to /api/users/ but getting 401 Unauthorized even though I'm passing a token. I tried 3 times and it still fails. I'm thinking of hardcoding the token instead of reading from env. Is that the right fix?",
+      "expected_output": "NO. Hardcoding is a workaround (like mocking). Strike 1: Read the error fully \u2014 is the token format correct? Are you sending `Authorization: Bearer TOKEN` or just `TOKEN`? Check the API docs. Fix the command. Strike 2: Try a different auth method (maybe the endpoint needs session auth instead of token auth?). Strike 3: Rethink \u2014 is the token expired? Can you verify the token is valid by calling /api/auth/verify/? Does the user have permission for this endpoint? Never hardcode. Always fix the real issue (token format, auth method, permissions) and log what you found.",
+      "files": []
+    }
+  ]
+}

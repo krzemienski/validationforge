@@ -1,0 +1,96 @@
+{
+  "skill_name": "sequential-analysis",
+  "path": "/Users/nick/Desktop/validationforge/skills/sequential-analysis/SKILL.md",
+  "skill_md_line_count": 192,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Root cause analysis for FAIL verdicts: structured hypothesis testing, evidence investigation, sequential thinking. Use when validation fails unexpectedly or errors are ambiguous.",
+    "length_words": 21,
+    "issues": [
+      "Strong description - concrete ('hypothesis testing', 'sequential thinking') and action-clear ('when validation fails unexpectedly')",
+      "WHY is implicit: structured thinking prevents rabbit-holes. Good implicit framing.",
+      "Minor: 'ambiguous' is subjective - better: 'root cause unclear' or 'multiple possible failure points'"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Phase 3 investigation relies on 'sequential-thinking MCP tool' (Line 90) but the skill doesn't explain how to invoke this tool or what it expects as input. The integration note mentions it (Line 191) but no actual invocation pattern is shown. Users won't know what MCP method call to use.",
+        "location": "Lines 90, 120-129"
+      },
+      {
+        "severity": "med",
+        "description": "Hypothesis categories (Lines 58-68) are broad buckets (Data, Timing, Environment, Code, Integration, Infrastructure, Validation setup) but don't explain how to distinguish them. A missing API field could be 'Data' (stale data) or 'Integration' (API changed). No decision tree to categorize correctly.",
+        "location": "Lines 58-68"
+      },
+      {
+        "severity": "high",
+        "description": "Phase 3 investigation protocol (Lines 93-100) is circular: 'collect evidence to confirm/deny hypothesis' but doesn't explain what constitutes 'evidence'. Is a screenshot sufficient? Does a hypothesis need numeric proof? No rubric for evidence quality or sufficiency.",
+        "location": "Lines 93-100"
+      },
+      {
+        "severity": "med",
+        "description": "Evidence collection commands (Lines 103-117) are platform-specific bash examples (env, git log) but don't cover other platforms (Windows, macOS). Generic instruction 'adapt to your app' puts burden on user to know their own logs/diagnostics.",
+        "location": "Lines 103-117"
+      },
+      {
+        "severity": "med",
+        "description": "Multi-failure correlation (Lines 172-182) suggests pattern detection but is vague. 'Same error message across failures' — what if error is generic ('Operation failed')? 'Same timestamp' — what if they're 1 second apart? No tolerance guidance.",
+        "location": "Lines 172-182"
+      },
+      {
+        "severity": "low",
+        "description": "Report template (Lines 135-168) asks for 'Risk of fix: LOW/MEDIUM/HIGH' but this section is doing ROOT CAUSE analysis, not fix implementation. The report touches on fix recommendation but doesn't deeply analyze fix risks (regression, breaking changes, etc.).",
+        "location": "Lines 162"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 2 (generate hypotheses) instructs 'order by likelihood' (Line 73) but doesn't explain how to estimate likelihood without evidence. User must guess based on experience. More systematic approach (frequency-based, known bugs) would help.",
+        "location": "Lines 55-85"
+      }
+    ],
+    "strengths": [
+      "Four-phase structure (SYMPTOM → HYPOTHESIZE → INVESTIGATE → CONCLUDE) is logical and forces structured thinking",
+      "Hypothesis categories cover major failure domains - good mental model for troubleshooting",
+      "Phase 1 (symptom) is concrete: 'expected vs actual' with evidence file references",
+      "Phase 4 includes 'confidence' rating (HIGH/MEDIUM/LOW) - acknowledges uncertainty",
+      "Integration note correctly positions sequential-analysis as post-FAIL investigation, taking FAIL verdicts as input",
+      "Prevention section encourages process improvements beyond the immediate fix"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "Phase 3 investigation heavily references MCP tool invocation but no script shows actual tool calls. Could bundle an example script that demonstrates: gathering evidence (env dump, git log, error logs), formulating hypotheses with context, and calling sequentialthinking MCP with structured thought chains. Would make Phase 3 repeatable.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Show actual sequentialthinking MCP tool invocation: function name, parameters, expected response format",
+    "Add hypothesis categorization decision tree: if error is in API response → Integration category; if stale data in DB → Data category, etc.",
+    "Define 'sufficient evidence': e.g., 'hypothesis confirmed when 2+ independent sources agree' or 'single authoritative source (e.g., error log) suffices'",
+    "Expand evidence collection for Windows/macOS: document equivalent diagnostics (event viewer, system logs) alongside bash examples",
+    "Add tolerance guidance for pattern correlation: e.g., 'same error within 30-second window counts as same failure; beyond that, independent failures'",
+    "Refocus 'risk of fix' section or move to separate fix-implementation skill - this skill is analysis, not implementation"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "Validation FAILED: UI test expected button color='blue' but got color='gray'. Unexpected because color is in CSS not dynamically set. Root cause?",
+      "expected_output": "Skill walks Phase 1 (symptom: expected blue, actual gray). Phase 2 hypotheses: H1 (CSS not loaded - timing), H2 (wrong CSS rule applied - code), H3 (screenshot taken before paint - timing), H4 (theme override - data), H5 (browser cache - environment). Phase 3 investigates: check browser console (paint timing?), git diff (CSS changed?), network tab (CSS file 404?). Phase 4 concludes: if CSS file missing, CONFIRMED root cause is timing/asset. Evidence: network trace, screenshot timestamp, CSS file status."
+    },
+    {
+      "id": 2,
+      "prompt": "API validation FAILED: endpoint returns 200 OK but response body is empty. Expected: {\"data\": [...]}. Same endpoint worked yesterday. Why?",
+      "expected_output": "Skill directs Phase 1 (symptom: 200 but empty body). Phase 2 hypotheses: H1 (data missing from DB), H2 (new code deployed with bug), H3 (pagination filter hiding data), H4 (auth token insufficient), H5 (caching stale response). Phase 3 investigates: check git log (code changed?), check DB query directly (data exists?), check request headers (auth token valid?). Phase 4: if git shows new deploy, hypothesis H2 confirmed. Evidence: git commit diff, DB query output, API response logged."
+    },
+    {
+      "id": 3,
+      "prompt": "Mobile app test FAILED on iPhone 15 but PASSED on iPhone SE same day. Same code, same validation. Device-specific bug?",
+      "expected_output": "Skill Phase 1 documents discrepancy: iPhone SE PASS, iPhone 15 FAIL. Phase 2 hypotheses: H1 (screen size difference), H2 (iOS version difference - iPhone 15 has newer iOS), H3 (device-specific bug in OS), H4 (test device data state different), H5 (simulator vs real device behavior). Phase 3 investigates: compare iOS versions (git log phone OS versions?), check viewport sizes (375 vs 393 width?), check test device reset state. Phase 4: likely H1 (responsive issue at 393px) or H2 (iOS 18 vs 17 API difference). Confidence: MEDIUM (multiple possible causes, need more evidence)."
+    }
+  ]
+}

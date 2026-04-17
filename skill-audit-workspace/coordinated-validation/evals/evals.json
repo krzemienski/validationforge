@@ -1,0 +1,17 @@
+{
+  "skill_name": "coordinated-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a fullstack project: Postgres DB, Node API, React web, iOS app. The web and iOS teams want to validate simultaneously but both depend on API working. How do I structure the validation so they don't block each other?",
+      "expected_output": "Create 3 waves: Wave 0 = DB (1 agent), Wave 1 = API (1 agent), Wave 2 = Web (1 agent) + iOS (1 agent in parallel). Assign agents to each platform. Wave 0 runs, wait for DB PASS, then launch Wave 1. Wave 1 runs, wait for API PASS, then launch Web and iOS agents in parallel via run_in_background: true. Web and iOS validate independently (no interdependency), each captures evidence. Both finish before report generation. Total time: DB time + API time + max(Web time, iOS time).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "API validation FAILED (database connection error). Web and iOS are waiting. What should happen?",
+      "expected_output": "Mark API verdict as FAIL. According to failure blocking matrix (lines 82-83), mark Web and iOS as BLOCKED (not failed, but blocked by upstream failure). Skip Wave 2 execution. Report shows: Wave 1 = FAIL (API), Wave 2 = BLOCKED (Web and iOS blocked by API failure), Overall verdict = FAIL. Debugging should focus on API \u2194 database connection, not on web/iOS code.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "no-that-s-a-symptom-not",
+  "prompt": "My Flutter app has a build error: 'gradle: version 7.2.0 is not supported'. I have no idea what this means. Should I just update gradle in the Gradle wrapper?",
+  "expected_output": "No \u2014 that's a symptom, not the fix. The error means your Flutter SDK expects gradle version X but your android/gradle/wrapper/gradle-wrapper.properties has version 7.2.0. Options: (1) Update compileSdkVersion in android/app/build.gradle to match your Gradle version, or (2) Update gradle wrapper to a version compatible with your compileSdkVersion. Check the Common Failures table for 'Build fails with Gradle error' \u2014 it shows the proper fix. Don't just increment versions randomly. Always check the error output for the recommended version.",
+  "assertions": []
+}

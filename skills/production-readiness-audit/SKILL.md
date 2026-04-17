@@ -1,12 +1,15 @@
 ---
 name: production-readiness-audit
-description: "Audit app readiness across 8 phases: code quality, security, performance, reliability, observability, documentation, deployment. Produces READY/NOT READY/CONDITIONAL verdict with blocking issues."
+description: "Use before shipping to production to answer the specific question 'is this actually ready for real users'. Audits across 8 phases — code quality, security, performance, reliability, observability, documentation, deployment, rollback — and produces a READY / NOT READY / CONDITIONAL verdict with the specific blocking issues per phase. Different from full-functional-audit (which catalogs current state of a live app) — this one is forward-looking for a deploy decision. Reach for it on phrases like 'is this ready to ship', 'production readiness', 'ship checklist', 'pre-deploy audit', 'green light for production', or before any production-critical release."
 triggers:
   - "production readiness"
   - "deploy audit"
   - "is this ready for production"
   - "production checklist"
   - "readiness review"
+  - "ship checklist"
+  - "pre-deploy audit"
+  - "green light for production"
 context_priority: reference
 ---
 

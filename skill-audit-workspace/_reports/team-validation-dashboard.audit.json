@@ -1,0 +1,87 @@
+{
+  "skill_name": "team-validation-dashboard",
+  "path": "/Users/nick/Desktop/validationforge/skills/team-validation-dashboard/SKILL.md",
+  "skill_md_line_count": 172,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Aggregate team validation metrics: posture scores, coverage %, regressions, journey ownership. Identifies critical projects (score <60). Use for CI/CD reporting, team reviews, regression tracking.",
+    "length_words": 27,
+    "issues": [
+      "Under-specified: no indication of *when* to trigger dashboard vs when metrics are stale",
+      "Missing mention of team-metrics.sh dependency—assumes users know scripts exist in /scripts/",
+      "No guardrails on missing .vf/team/projects.json—error behavior undefined"
+    ],
+    "triggering_assessment": "under-triggers"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Architecture diagram references non-existent scripts: collect-team-metrics.sh, team-dashboard.sh, assign-ownership.sh are listed but live in /scripts/, not bundled here. Diagram misleads user about file structure.",
+        "location": "Lines 26-30"
+      },
+      {
+        "severity": "high",
+        "description": "Data availability note admits benchmark format is incomplete—coverage_pct, regression_count display as 0 in real use. This is a major limitation that should be prominent in triggers, not buried in a note.",
+        "location": "Lines 45-50"
+      },
+      {
+        "severity": "med",
+        "description": "Workflow section assumes .vf/team/projects.json exists; if it doesn't, script creates template but skill gives no guidance on adding projects before first run.",
+        "location": "Lines 53-74"
+      },
+      {
+        "severity": "med",
+        "description": "Step 3 uses informal urgency language ('Critical', 'Needs attention') but never defines score thresholds precisely—are they hardcoded in the scripts or configurable? Ambiguous.",
+        "location": "Lines 90-113"
+      },
+      {
+        "severity": "med",
+        "description": "The skill references posture_score but never explains how it's weighted (coverage, evidence quality, enforcement, speed per README). Links to /validate-benchmark but doesn't explain the relationship.",
+        "location": "Lines 38, 45"
+      },
+      {
+        "severity": "low",
+        "description": "Quick reference table lists 'Shared team registry' option but doesn't explain git/shared storage setup—users may struggle with CI/CD integration.",
+        "location": "Lines 163-171"
+      }
+    ],
+    "strengths": [
+      "Clear step-by-step workflow with actionable commands",
+      "Data format specifications (snapshot.json, ownership.json) are precise and machine-readable",
+      "Ownership assignment feature is concrete and useful for team accountability",
+      "Color-coded urgency levels (Critical < 60, Needs Attention 60–79) are intuitive"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "collect-team-metrics.sh, team-dashboard.sh, assign-ownership.sh should be either bundled here or cross-referenced with live path validation",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Move data availability note to frontmatter description or early warning—users must know coverage_pct is 0 before running",
+    "Add explicit file structure diagram showing where /scripts/team-dashboard.sh actually lives (relative to skill directory)",
+    "Define posture_score calculation inline or link directly to /validate-benchmark source, not just the README",
+    "Add error handling guidance: what if projects.json is missing? What if a project path is invalid?"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "We have 5 projects across web, iOS, and backend. I need a dashboard showing validation posture so the team lead can spot which ones need urgent attention before next sprint planning. Set it up.",
+      "expected_output": "User runs collect-team-metrics.sh, edits .vf/team/projects.json to add all 5 projects with paths, runs team-dashboard.sh, gets color-coded table with Critical/Attention/Healthy buckets. Dashboard shows scores, regressions, coverage (though coverage will be 0 until /validate-benchmark outputs enriched format)."
+    },
+    {
+      "id": 2,
+      "prompt": "Our validation scores show project-alpha at 42%, but I don't know who's supposed to be fixing the failing journeys. Assign ownership so accountability is clear.",
+      "expected_output": "User runs assign-ownership.sh with --project project-alpha --journey login-flow --owner alice for each failing journey. assign-ownership.sh appends to .vf/team/ownership.json. Next team-dashboard.sh run shows ownership column in table."
+    },
+    {
+      "id": 3,
+      "prompt": "I've modified validation rules across all projects—I need to re-benchmark everything and see which projects regressed. What's the quickest path?",
+      "expected_output": "User runs team-dashboard.sh --no-collect to skip metrics collection if snapshot is fresh, or re-runs collect-team-metrics.sh first to refresh all project snapshots. Table shows new regression_count column. (Note: regression detection depends on enriched benchmark format—may be 0 until that's implemented.)"
+    }
+  ]
+}

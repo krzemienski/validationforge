@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "baseline-before-upgrade-run-all-6",
+  "prompt": "I want to update our Express API from v4 to v5. What baseline evidence do I capture before the upgrade, and how do I prove the upgrade didn't break anything?",
+  "expected_output": "Baseline before upgrade: Run all 6 API validation steps (health check, CRUD cycle, auth, error responses, pagination, rate limiting if applicable). Save every curl response to e2e-evidence/baseline/api-*. After upgrade: re-run the same 6 steps, save to e2e-evidence/api-after-upgrade/*. Compare: status codes, response structure, auth behavior. If all match, no regression. If any differ, investigate.",
+  "assertions": []
+}

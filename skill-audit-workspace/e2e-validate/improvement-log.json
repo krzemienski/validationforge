@@ -1,0 +1,64 @@
+{
+  "skill_name": "e2e-validate",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description for triggering",
+      "implemented": true,
+      "details": "New description leads with 'Start HERE when validating any project', lists concrete trigger phrases ('validate', 'end-to-end test', 'does this actually work', 'unsure which validation skill'). Expanded from 26 to ~70 words. Added 2 new trigger entries to YAML."
+    },
+    {
+      "fix": "Add 'When to use' section clarifying e2e-validate vs platform-specific skills",
+      "implemented": true,
+      "details": "New top section explains: e2e-validate is the conductor; platform-specific skills (flutter-validation, api-validation, ios-validation) are the playbooks it calls. Use the specific skill directly if you already know your platform."
+    },
+    {
+      "fix": "Add multi-signal conflict resolution to Platform Detection",
+      "implemented": true,
+      "details": "New 'When signals conflict' subsection with 5 concrete examples: Next.js+API routes, Django+React, iOS+companion server, Next.js SPA, monorepo. Explains the priority-order rationale (mobile > CLI > server > browser)."
+    },
+    {
+      "fix": "Annotate Success Criteria mandatory vs platform-specific",
+      "implemented": true,
+      "details": "Converted the 9-item list into a table with 'Applies to' column. Criteria 1-8 apply to all platforms; criterion 9 (zero unreviewed evidence files) is marked as applying to platforms that produce files, skipped for pure CLI where stdout/exit code is the evidence."
+    },
+    {
+      "fix": "Inline guidance in Command Routing table",
+      "implemented": true,
+      "details": "Added 'When to use' column. Each flag now explains the scenario where it applies (e.g., 'Previous run FAILED, want auto-recovery' for --fix, 'Running in CI/CD, no humans around' for --ci)."
+    },
+    {
+      "fix": "Remove Context Budget section (belongs in ARCHITECTURE.md)",
+      "implemented": true,
+      "details": "Deleted the Context Budget section and its tier table. It was meta-documentation about skill loading strategy — belongs in plugin architecture docs, not in a user-facing validation skill."
+    },
+    {
+      "fix": "Explain WHY bottom-up validation order",
+      "implemented": true,
+      "details": "Expanded Validation Order section with rationale: bottom-up isolates causes before symptoms, each layer is independently verifiable. Added per-platform bottom-up examples (fullstack, mobile, API, CLI). Added caveat that bottom-up doesn't always apply (pure CLI is one layer)."
+    },
+    {
+      "fix": "Trim and reorganize Related Skills",
+      "implemented": true,
+      "details": "Converted the 10-row table into two grouped bullet lists: 'always-on critical' vs 'loaded on demand'. Removed the 'Priority' and 'Load When' columns — the grouping conveys that information more clearly."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Fix dangling references to workflow files and platform references (audit body.issues severity=med)",
+      "reason": "Verified by listing the skill directory — all 10 workflow files and all 10 reference files DO exist. Audit was factually wrong on this point. No action needed."
+    },
+    {
+      "fix": "Bundle detect-platform.sh inside the skill directory (audit bundled_resources opportunity)",
+      "reason": "The script already exists at the plugin root's scripts/ directory and is referenced correctly. The audit suggested moving it into the skill, but scripts at the plugin root are invokable from any skill — bundling would duplicate and risk drift."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/e2e-validate/SKILL.md"
+  ],
+  "description_before": "Orchestrator: detect platform → map journeys → PASS criteria → capture evidence → verdicts (zero mocks). Supports iOS/RN/Flutter/web/API/CLI/Django/fullstack. Bottom-up order, 3-strike fix loop.",
+  "description_after": "Start HERE when validating any project. Auto-detects your platform (iOS, React Native, Flutter, web, API, CLI, Django, fullstack) and runs the full pipeline: map user journeys, write PASS criteria, build the real system, capture evidence through real interfaces, diagnose failures, emit a verdict. Use whenever the user says 'validate', 'end-to-end test', 'does this actually work', or is unsure which validation skill to reach for.",
+  "line_count_before": 153,
+  "line_count_after": 174,
+  "self_review_notes": "Description now leads with user intent instead of jargon ('Orchestrator'). Platform detection handles real-world ambiguity (Next.js, Django+React) instead of implying 9 clean categories. Success Criteria distinguishes universal from conditional. Removed meta-documentation (Context Budget) that didn't help the user. Audit's claim that workflow/reference files were missing was wrong — verified all 20 files exist; skipped those fixes with justification."
+}

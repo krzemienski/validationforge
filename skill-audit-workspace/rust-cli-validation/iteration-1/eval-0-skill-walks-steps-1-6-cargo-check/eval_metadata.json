@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "skill-walks-steps-1-6-cargo-check",
+  "prompt": "Just built a new Rust CLI tool called 'csv-parser' that reads CSV files and outputs JSON. Need to validate it before release. Where do I start?",
+  "expected_output": "Skill walks Steps 1-6: cargo check (compilation), cargo clippy (linting), cargo build --release (binary production), --help and --version checks (usability), happy path test (csv-parser input.csv \u2192 valid JSON output), error cases (missing file, bad CSV format \u2192 helpful error messages, no panic). PASS criteria: exit code 0 on success, non-zero on errors, no 'thread panicked' output. Evidence captured to e2e-evidence/rust-*.txt.",
+  "assertions": []
+}

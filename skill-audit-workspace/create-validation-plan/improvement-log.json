@@ -1,0 +1,40 @@
+{
+  "skill_name": "create-validation-plan",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with problem framing + workflow triggers",
+      "implemented": true,
+      "details": "New description names the two failure modes this skill prevents (missed journeys + vague criteria), lists the outputs (persistent plan at e2e-evidence/validation-plan.md), and names specific invocation phrases ('write a test plan', 'what should we test', 'define acceptance criteria', 'before invoking e2e-validate/forge-execute'). 3 new YAML triggers added."
+    },
+    {
+      "fix": "Expand Journey Discovery with inline rg command samples",
+      "implemented": true,
+      "details": "Old section was 5 lines pointing to a reference file. New section gives starting rg commands for 8 common stacks (Next.js, React Router, Express/Fastify, FastAPI, Django, SwiftUI, Clap, Click/argparse) directly inline. Reference still links for the full playbook. Also added 'rules of thumb' covering forms, auth boundaries, empty states, error states — the journeys most often forgotten."
+    },
+    {
+      "fix": "Expand 'Complete' criteria example with concrete good/bad",
+      "implemented": true,
+      "details": "Old Complete row had 'Happy path only' vs 'Happy + error paths' — abstract. New row shows actual criteria text: bad ('POST /login with valid creds returns 200'), good ('POST /login with valid creds returns 200 + token; POST /login with invalid creds returns 401 + error message body'). Matches the concreteness level of the other 7 rows."
+    },
+    {
+      "fix": "Rewrite Rules with WHY instead of MUST/NEVER bullets",
+      "implemented": true,
+      "details": "Old rules were 4 terse imperatives with no rationale. New rules keep the same 4 requirements but explain consequences ('if you start without a plan, evidence matches what you tested, not what matters', 'if there's no way to say this failed, the criterion isn't doing any work', 'coverage gaps in the plan become coverage gaps in validation'). Model now understands why the rules exist."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Add meta-documentation explaining context_priority: critical",
+      "reason": "The audit suggested adding an explanation that context_priority=critical means this skill is a prerequisite for all other validation work. But context_priority is a plugin-architecture concept, not a user-facing validation concept — belongs in ARCHITECTURE.md, not the skill body. Same rationale as the e2e-validate Context Budget removal."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/create-validation-plan/SKILL.md"
+  ],
+  "description_before": "Create BEFORE evidence capture. Defines PASS criteria per journey (P0/P1/P2 priority). Maps routes/endpoints/screens, orders by dependency, checks prerequisites. Use when starting validation.",
+  "description_after": "Use BEFORE capturing any evidence. Plans prevent the two most common validation failures: missed journeys (you didn't test the flow that actually breaks) and vague PASS criteria (you can't tell if a run passed). This skill walks you through discovering every user journey (routes, endpoints, screens, commands), writing falsifiable PASS criteria per journey, ordering journeys by dependency, and listing prerequisites. Output is a persistent plan at e2e-evidence/validation-plan.md that guides the rest of the validation pipeline. Reach for it whenever someone says 'let's start validating', 'what should we test', 'write a test plan', 'define acceptance criteria', or before invoking e2e-validate / forge-execute.",
+  "line_count_before": 104,
+  "line_count_after": 122,
+  "self_review_notes": "Skill was already well-structured (Quick Start, Plan Structure table, 8-dimension PASS criteria rubric, Plan Quality Checklist). The main improvements were pulling journey-discovery commands inline so the model doesn't need to context-switch to the reference, and rewriting Rules with WHY — skills that rely on dictate-style lists age poorly because the model can't reason about exceptions."
+}

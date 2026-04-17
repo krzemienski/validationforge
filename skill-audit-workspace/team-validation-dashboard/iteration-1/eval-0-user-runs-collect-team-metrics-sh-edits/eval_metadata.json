@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "user-runs-collect-team-metrics-sh-edits",
+  "prompt": "We have 5 projects across web, iOS, and backend. I need a dashboard showing validation posture so the team lead can spot which ones need urgent attention before next sprint planning. Set it up.",
+  "expected_output": "User runs collect-team-metrics.sh, edits .vf/team/projects.json to add all 5 projects with paths, runs team-dashboard.sh, gets color-coded table with Critical/Attention/Healthy buckets. Dashboard shows scores, regressions, coverage (though coverage will be 0 until /validate-benchmark outputs enriched format).",
+  "assertions": []
+}

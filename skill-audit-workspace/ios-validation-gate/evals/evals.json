@@ -1,0 +1,17 @@
+{
+  "skill_name": "ios-validation-gate",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm implementing a new iOS feature: users can bookmark articles. After implementing it, I need to validate the feature is complete. Walk me through ios-validation-gate.",
+      "expected_output": "Response should invoke ios-validation-gate. (1) Gate 1 Simulator: Build app, install, launch, screenshot home screen, tap bookmark button, screenshot saved state, capture accessibility tree. Check: no crashes, app responsive, UI reflects bookmark action. (2) Gate 2 Backend: Is there a backend? If yes, verify bookmark API endpoint returns 200 and response contains bookmark status. If no backend (local-only), mark PASS N/A. (3) Gate 3 Analysis: Correlate \u2014 do logs show bookmark API call when user taps? Do screenshots show UI change (e.g., heart icon fill)? All three gates PASS? Overall PASS. One fails? Overall FAIL.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Gate 1 (Simulator) PASSED: app builds, installs, launches, screenshots look good. Gate 2 (Backend) is failing: health endpoint returns 500. Should I stop and mark the overall feature FAIL, or keep going with Gate 3?",
+      "expected_output": "Response should invoke ios-validation-gate and explain: Run ALL three gates even if one fails (lines 14-34 architecture). Gate 2 FAIL means backend is broken, but continue to Gate 3 to see if the app's LOCAL state works (e.g., UI responds to taps even if API fails). This tells you: 'frontend works, backend broken' vs 'both broken'. Then write unified verdict: FAIL (Gate 2 critical). Fix backend health, re-run all three gates.",
+      "files": []
+    }
+  ]
+}

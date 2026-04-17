@@ -1,0 +1,90 @@
+{
+  "skill_name": "django-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/django-validation/SKILL.md",
+  "skill_md_line_count": 335,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Django/Flask validation: dependencies → system check → migrations → server startup → health/CRUD endpoints → auth flows → admin check. Uses curl, captures HTTP/migrations/logs. Also Flask+Gunicorn.",
+    "length_words": 29,
+    "issues": [
+      "Description is procedural laundry list — lacks clear 'when' (when to use this skill)",
+      "Undersells the value: why validate with curl instead of mocked test? What does it prevent?",
+      "Mentions both Django AND Flask in same skill — dilutes focus, should split or clarify scope"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Prerequisites section (lines 15-41) is verbose and mostly standard setup. First 27 lines could collapse to 1-2 essentials. Pushes actual validation guidance deeper into the file.",
+        "location": "lines 15-41"
+      },
+      {
+        "severity": "high",
+        "description": "Redundant evidence capture: Steps 5-8 use identical curl + tee pattern for health, list, POST, PUT, DELETE, but never explain WHY those specific endpoints matter or how they map to PASS criteria in Step 9.",
+        "location": "lines 169-274"
+      },
+      {
+        "severity": "med",
+        "description": "Step 7 (Authentication Testing) shows THREE variants (token, JWT, unauthenticated) but doesn't guide which to use when. User must guess based on their framework.",
+        "location": "lines 229-258"
+      },
+      {
+        "severity": "med",
+        "description": "Common Failures table (lines 306-319) is good diagnostic reference but appears AFTER the procedure — should precede steps or be indexed for quick jump.",
+        "location": "lines 306-319"
+      },
+      {
+        "severity": "low",
+        "description": "Step 2 (Django System Check) and Step 3 (Migration Status) are framework-specific, but Step 7 (Auth Testing) isn't clearly flagged as DRF-specific. Mixed guidance on when features are optional.",
+        "location": "lines 64-104, 229-258"
+      },
+      {
+        "severity": "low",
+        "description": "RESOURCE placeholder used 7 times (lines 174-227) but no explanation of how to identify RESOURCE in actual project. Should show example (e.g., /api/posts/, /api/users/).",
+        "location": "lines 174-227"
+      }
+    ],
+    "strengths": [
+      "Concrete curl examples with actual HTTP verbs, headers, and response handling",
+      "Evidence Quality section (lines 293-304) explicitly teaches the difference between good and bad descriptions — this is the right standard",
+      "PASS Criteria template (lines 321-335) is a strong checklist; covers auth, CRUD, admin, and no 500s",
+      "Server startup for both Django and Flask with proper backgrounding and cleanup",
+      "Error classification table (lines 306-319) is thorough and immediately actionable"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "A shell script validating Django setup end-to-end (install → check → migrate → server → curl examples) would save copy-paste and let users run a single command. Could also help diagnose which step fails.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Rewrite description to lead with the VALUE: 'Validate Django/Flask in production mode: no test runners, no mocks. Exercises real DB, real migrations, real auth. Catches config errors, dependency conflicts, and auth flow breaks that unit tests miss.' (max 80w)",
+    "Collapse Prerequisites (lines 15-41) to inline checks within steps; readers know to activate venv before starting a skill",
+    "Move Common Failures earlier (after description, before steps) and cross-reference from each step",
+    "Clarify framework splits: add section 'Django Only', 'Flask Only', 'Both'. Make optional steps explicit with [Optional: Flask only]",
+    "Replace RESOURCE placeholders with real example: 'e.g., /api/posts/ for a blog, /api/users/ for a user management API'",
+    "Add explicit guidance: 'If you're using Django REST Framework, use Step 7A (Token Auth). If using simplejwt, use Step 7B (JWT). If using session auth, skip to Step 8.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a Django REST API project with postgres. I want to validate that the migrations are applied and the /api/posts/ endpoint returns real data, not a mock. What do I check? I'm concerned the DB might have migration errors.",
+      "expected_output": "Guide user through: (1) python manage.py check, (2) python manage.py showmigrations to spot [ ] unapplied, (3) python manage.py migrate to apply, (4) curl -s http://localhost:8000/api/posts/ to verify non-empty response. Emphasize checking the actual postgres, not in-memory test DB."
+    },
+    {
+      "id": 2,
+      "prompt": "My Flask app with Gunicorn is running on port 5000, but POST /api/users returns 403 Forbidden even though I'm admin. The app works locally. What's broken?",
+      "expected_output": "Point to CSRF token requirement (line 316 in Common Failures). Show: (1) curl -s -H 'X-CSRFToken: <token>' (if CSRF is enabled), or (2) check if the POST handler requires a specific header (Authorization, Content-Type). Validate by inspecting actual 403 response body with curl -i, not just the status."
+    },
+    {
+      "id": 3,
+      "prompt": "I'm validating a Django app before release. I need to check auth flows: token auth, login/logout, and superuser access to /admin/. I have a test user 'testuser' with password 'test123'. How do I validate all three in real system?",
+      "expected_output": "Walk through Step 7A (obtain token via /api/auth/token/), Step 8 (admin check with curl to /admin/ + superuser creation), and unauthenticated test (403/401 on protected endpoint). Show complete curl commands with actual credentials. Emphasize: always validate against the real database, not a fixture."
+    }
+  ]
+}

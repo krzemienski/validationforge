@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "run-ai-analysis-on-all-3",
+  "prompt": "I captured 3 pieces of evidence for my login journey: login-page.png (screenshot), auth-response.json (API response), and build-log.txt (CLI output). I want AI to analyze all 3 and tell me if they all support a PASS verdict. What confidence scores should I be looking for?",
+  "expected_output": "Run AI analysis on all 3 files. Get individual confidence scores: screenshot should be 85+, API response should be 75+, build log should be 70+. Aggregate to journey-level score. If all are 70+, journey-level is probably 75+ (PASS). If any has CRITICAL findings, journey score drops to 50 (FAIL).",
+  "assertions": []
+}

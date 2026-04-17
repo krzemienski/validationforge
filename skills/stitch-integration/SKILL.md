@@ -1,12 +1,15 @@
 ---
 name: stitch-integration
-description: "Generate reference designs via Stitch MCP, iterate variants, persist projects and design tokens. Use when starting UI features, exploring options before code, or validating implementation fidelity."
+description: "Use for the design-to-code pipeline via Stitch MCP — generating reference designs from text prompts before implementation, iterating variants, and persisting the design + tokens as the reference that design-validation later compares against. Most useful at the START of a UI feature (explore options visually before writing code) or when you want to lock in a reference for later validation. Pairs with design-validation (compares built UI vs Stitch output) and design-token-audit (checks token compliance). Reach for it on phrases like 'design before code', 'stitch design', 'explore UI options', 'generate UI mockup', 'create design reference', 'design-to-code'."
 triggers:
   - "stitch integration"
   - "stitch design"
   - "generate design"
   - "design to code"
   - "stitch project"
+  - "explore UI options"
+  - "generate UI mockup"
+  - "create design reference"
 context_priority: reference
 ---
 

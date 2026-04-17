@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "create-3-waves-wave-0",
+  "prompt": "I have a fullstack project: Postgres DB, Node API, React web, iOS app. The web and iOS teams want to validate simultaneously but both depend on API working. How do I structure the validation so they don't block each other?",
+  "expected_output": "Create 3 waves: Wave 0 = DB (1 agent), Wave 1 = API (1 agent), Wave 2 = Web (1 agent) + iOS (1 agent in parallel). Assign agents to each platform. Wave 0 runs, wait for DB PASS, then launch Wave 1. Wave 1 runs, wait for API PASS, then launch Web and iOS agents in parallel via run_in_background: true. Web and iOS validate independently (no interdependency), each captures evidence. Both finish before report generation. Total time: DB time + API time + max(Web time, iOS time).",
+  "assertions": []
+}

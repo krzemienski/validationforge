@@ -1,0 +1,40 @@
+{
+  "skill_name": "no-mocking-validation-gates",
+  "changes_applied": [
+    {
+      "fix": "Reframe description with 'when' context and concrete trigger phrases",
+      "implemented": true,
+      "details": "New description leads with 'Use whenever someone is about to write a mock'. Lists explicit phrase triggers ('just mock it', 'jest.mock', 'unittest.mock', 'sinon', 'XCTest', 'staging is slow so I'll fake it'). Added 4 new YAML triggers."
+    },
+    {
+      "fix": "Add 'When to use' section above scope",
+      "implemented": true,
+      "details": "Frames the skill around the moment of temptation (flaky API, slow dep, dev DB down) rather than passive 'this skill handles X'. Makes invocation more obvious."
+    },
+    {
+      "fix": "Add real-world mock-drift scenario inline",
+      "implemented": true,
+      "details": "After the calendar diagram, added a concrete scenario (API field renamed users->data, mocks pass, real staging crashes). Shows the cost of mocking in 2 sentences."
+    },
+    {
+      "fix": "Inline blocked code patterns in 4 languages",
+      "implemented": true,
+      "details": "Added a 'Patterns that get blocked inline' subsection with code samples in JavaScript, Python, Swift, Go. Previously the catalog was only in references/. Inline examples make pattern recognition immediate without reading the reference."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Bundle scan-for-mocks.sh preflight script",
+      "reason": "The pre-tool-use hook already does runtime mock detection. A separate scan script would be valuable but is out of scope for in-session improvements (would require new file content + hook integration). Preflight skill could call it later."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/no-mocking-validation-gates/SKILL.md"
+  ],
+  "description_before": "Iron rule: no mocks/stubs/test files. Hook blocks *.test.ts, __tests__/, jest.mock(), etc. When mocking tempts: diagnose why real system unavailable, fix it, validate real system instead.",
+  "description_after": "Use whenever someone is about to write a mock, stub, test double, or test file — or is already tempted to. This skill explains why mocking creates false confidence (mock drift), shows what gets blocked and what doesn't, and redirects to real-system validation via a concrete DIAGNOSE → FIX → VERIFY flow. Trigger on phrases like 'just mock it', 'stub out the API', 'add a test file', 'jest.mock', 'unittest.mock', 'sinon', 'XCTest', 'vitest', 'staging is slow so I'll fake it', or whenever the real system feels inconvenient.",
+  "line_count_before": 80,
+  "line_count_after": 119,
+  "self_review_notes": "The growth (80->119) is mostly the inline code patterns and the real-world scenario — both are high-leverage because they let the model recognize violations without loading the reference file. Description now triggers on the language and frameworks that signal mocking intent, not just abstract concepts."
+}

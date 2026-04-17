@@ -1,21 +1,30 @@
 ---
 name: e2e-validate
-description: "Orchestrator: detect platform → map journeys → PASS criteria → capture evidence → verdicts (zero mocks). Supports iOS/RN/Flutter/web/API/CLI/Django/fullstack. Bottom-up order, 3-strike fix loop."
+description: "Start HERE when validating any project. Auto-detects your platform (iOS, React Native, Flutter, web, API, CLI, Django, fullstack) and runs the full pipeline: map user journeys, write PASS criteria, build the real system, capture evidence through real interfaces, diagnose failures, emit a verdict. Use whenever the user says 'validate', 'end-to-end test', 'does this actually work', or is unsure which validation skill to reach for."
 triggers:
   - "end to end validation"
   - "full validation pipeline"
   - "orchestrate validation"
   - "platform detection"
   - "validation orchestration"
+  - "validate my project"
+  - "does this actually work"
 context_priority: critical
 ---
 
 # ValidationForge: End-to-End Validation Orchestrator
 
+## When to use this skill
+
+Reach for `e2e-validate` when you need to run validation end-to-end and aren't sure where to start. It figures out the platform, chains the right platform-specific skill at each phase, and ties everything together with a single verdict.
+
+Use a platform-specific skill instead (e.g., `flutter-validation`, `api-validation`, `ios-validation`) when you already know your platform and just need the validation protocol for it. `e2e-validate` will call those same skills under the hood during execution — they're the detailed playbooks, this skill is the conductor.
+
 ## Scope
 
-This skill handles: platform detection, journey mapping, PASS criteria definition, evidence capture and review, PASS/FAIL verdict writing, fix loops, and CI/CD report generation.
-Does NOT handle: individual gate evidence examination (use `gate-validation-discipline`), mock pattern detection (use `no-mocking-validation-gates`), isolated plan generation (use `create-validation-plan`).
+Handles: platform detection, journey mapping, PASS criteria definition, evidence capture and review, PASS/FAIL verdict writing, fix loops, and CI/CD report generation.
+
+Does NOT handle: individual gate evidence examination (`gate-validation-discipline`), mock pattern detection (`no-mocking-validation-gates`), isolated plan generation (`create-validation-plan`).
 
 ## Iron Rule
 
@@ -29,7 +38,7 @@ See `no-mocking-validation-gates` for mock pattern detection and blocking rules.
 
 ## Platform Detection
 
-Scan project root. First match wins.
+Scan project root. First match wins — priorities are ordered so mobile > CLI > server > browser, because the more specialized the runtime, the narrower the validation approach.
 
 | Priority | Signals | Platform | Primary Tool |
 |----------|---------|----------|-------------|
@@ -43,28 +52,50 @@ Scan project root. First match wins.
 | 8 | Frontend AND backend in same project | **fullstack** | All tools, bottom-up |
 | 9 | None of the above | **generic** | Adaptive |
 
-Auto-detection script available in `scripts/detect-platform.sh`.
+### When signals conflict
+
+- **Next.js with API routes**: both frontend and backend signals match. Treat as **fullstack** — the web UI and API tests both run, but from one codebase.
+- **Django + React SPA**: Django's `manage.py` matches priority 7, React matches priority 6. Django wins. Use **django** and validate the React frontend as part of the Django flow.
+- **iOS app with a Node.js companion server in the same repo**: iOS wins by priority. Spin up a separate validation run for the server with `--platform api --scope ./server`.
+- **Next.js SPA, no backend**: no API routes → **web**, not fullstack.
+- **Monorepo with both a mobile app and a web app**: run two separate validations, one per subpath, with `--scope` set accordingly.
+
+If the auto-detected platform is wrong, override with `--platform <type>` and re-run.
+
+**Automated detection**: `bash scripts/detect-platform.sh --project-dir=. --json` prints the resolved platform + signals in JSON. Use this when you want deterministic platform-gating in CI.
+
+Auto-detection script: `scripts/detect-platform.sh` (in the plugin root).
 
 ## Command Routing
 
-| Flag | Effect | Workflow |
-|------|--------|----------|
-| (none) | Full pipeline: analyze → plan → approve → execute → report | `workflows/full-run.md` |
-| `--analyze` | Scan codebase, detect platform, map journeys | `workflows/analyze.md` |
-| `--plan` | Generate validation plan with PASS criteria | `workflows/plan.md` |
-| `--execute` | Run the full validation pipeline | `workflows/execute.md` |
-| `--fix` | Auto-fix failures + re-validate (3-strike) | `workflows/fix-and-revalidate.md` |
-| `--audit` | Read-only validation, no code changes | `workflows/audit.md` |
-| `--report` | Generate/export validation report | `workflows/report.md` |
-| `--ci` | Non-interactive, no approval gates | `workflows/ci-mode.md` |
+Start with no flag (full pipeline). Use the others when you need a specific phase in isolation.
 
-**Modifiers:** `--platform <type>` (override detection), `--scope <path>` (limit scope),
-`--parallel` (sub-agents), `--verbose` (inline evidence).
+| Flag | When to use | Effect | Workflow |
+|------|-------------|--------|----------|
+| (none) | Default — you want the whole thing | Full pipeline: analyze → plan → approve → execute → report | `workflows/full-run.md` |
+| `--analyze` | Just want to know what platform/journeys exist | Discovery only, no planning or execution | `workflows/analyze.md` |
+| `--plan` | You want to write/review PASS criteria before running anything | Plan only, no execution | `workflows/plan.md` |
+| `--execute` | Plan already exists, run it | Execute the plan | `workflows/execute.md` |
+| `--fix` | Previous run FAILED, want auto-recovery | 3-strike failure recovery + re-validate | `workflows/fix-and-revalidate.md` |
+| `--audit` | Pre-release review, don't change code | Read-only severity classification | `workflows/audit.md` |
+| `--report` | Need a saved report for stakeholders | Generate/export report from last run | `workflows/report.md` |
+| `--ci` | Running in CI/CD, no humans around | Non-interactive, no approval gates, exit codes | `workflows/ci-mode.md` |
+
+**Modifiers:** `--platform <type>` (override detection), `--scope <path>` (limit scope), `--parallel` (sub-agents), `--verbose` (inline evidence).
 
 ## Validation Order
 
 Always validate bottom-up: Data Layer → Backend API → Frontend Logic → UI/CLI.
-Higher layers depend on lower layers. Start at the data layer to find causes, not symptoms.
+
+**Why bottom-up?** Higher layers depend on lower ones. A broken database makes every API call fail; broken API endpoints make every UI flow fail. If you test the UI first, every failure looks like a UI bug even when the real cause is three layers down. Starting at the bottom isolates root cause cheaply — each layer is independently verifiable, and once a layer is green you trust it for the next one up.
+
+**What bottom-up looks like per platform:**
+- **fullstack**: DB migrations → API endpoints (curl) → UI flows (Playwright)
+- **mobile**: deep-link routing → data fetching / storage → UI screens → user journeys
+- **API**: DB connectivity → health endpoint → auth → CRUD
+- **CLI**: argument parsing → core operation → output format → exit codes
+
+Bottom-up doesn't always apply: a pure CLI with no persistence is basically one layer. Use judgment — the point is to find causes before symptoms, not to follow the order dogmatically.
 
 ## Platform References
 
@@ -97,17 +128,19 @@ Higher layers depend on lower layers. Start at the data layer to find causes, no
 
 ## Success Criteria
 
-Validation is complete ONLY when ALL are true:
+Validation is complete only when all applicable criteria are true. The first seven apply to every platform. The last two depend on what kind of evidence the platform produces.
 
-1. Platform detected and all user journeys identified
-2. PASS criteria defined for every journey BEFORE execution
-3. Real system built AND running (not just "no errors")
-4. Every journey exercised through real interfaces
-5. Evidence captured AND read (content described, not just "exists")
-6. Evidence matched to criteria with PASS/FAIL verdicts written
-7. Failures diagnosed with root cause analysis
-8. Report saved to `e2e-evidence/report.md`
-9. Zero unreviewed evidence files
+| # | Criterion | Applies to |
+|---|-----------|-----------|
+| 1 | Platform detected and all user journeys identified | all |
+| 2 | PASS criteria defined for every journey BEFORE execution | all |
+| 3 | Real system built AND running (not just "no errors") | all |
+| 4 | Every journey exercised through real interfaces | all |
+| 5 | Evidence captured AND read (content described, not just "exists") | all |
+| 6 | Evidence matched to criteria with PASS/FAIL verdicts written | all |
+| 7 | Failures diagnosed with root cause analysis | all (if any FAIL) |
+| 8 | Report saved to `e2e-evidence/report.md` | all |
+| 9 | Zero unreviewed evidence files in `e2e-evidence/` | platforms that produce files (web, ios, mobile, fullstack); skip for pure CLI where stdout/exit code is the evidence |
 
 ## Rules
 
@@ -122,32 +155,22 @@ Evidence directories may contain screenshots of authenticated screens or API res
 with tokens. Store in `e2e-evidence/` (gitignored). Never commit evidence containing
 credentials or PII to public repositories.
 
-## Context Budget
-
-All 41 ValidationForge skills total ~6,726 lines. Loading every skill simultaneously crowds
-out the user's codebase in the context window. Skills are tiered by `context_priority` to
-stay within a 2,000-line initial budget.
-
-| Tier | context_priority | Load Policy | Line Budget |
-|------|-----------------|-------------|-------------|
-| Critical | `critical` | Always loaded — every validation run requires these | ~754 lines |
-| Standard | `standard` | Load when matching platform detected or workflow phase entered | On demand |
-| Reference | `reference` | Load only when explicitly invoked or required by a dependency | On demand |
-
-**Do not eagerly load standard or reference skills.** Reference each skill by name in
-instructions; load it only when the workflow actually reaches the phase that needs it.
-
 ## Related Skills
 
-| Skill | Role in Pipeline | Priority | Load When |
-|-------|-----------------|----------|-----------|
-| `functional-validation` | Core protocol, referenced in all workflows | critical | Always |
-| `gate-validation-discipline` | Evidence verification during verdict writing | critical | Always |
-| `no-mocking-validation-gates` | Mock detection during analysis | critical | Always |
-| `create-validation-plan` | Plan generation for `--plan` workflow | critical | Always |
-| `verification-before-completion` | Pre-completion checklist | critical | Always |
-| `preflight` | Environment checks before execution | critical | Always |
-| `error-recovery` | Error handling during fix loop | critical | Always |
-| `full-functional-audit` | Audit protocol for `--audit` workflow | standard | `--audit` flag |
-| `baseline-quality-assessment` | Quality baseline during analysis | standard | Analysis phase |
-| `condition-based-waiting` | Smart waits during evidence capture | standard | Execution phase |
+Core skills used on every run (already loaded as `critical` priority):
+
+- `functional-validation` — the core protocol each workflow calls into
+- `create-validation-plan` — invoked during `--plan`
+- `gate-validation-discipline` — evidence verification during verdict writing
+- `no-mocking-validation-gates` — catches mock patterns during analysis
+- `preflight` — environment checks before execution
+- `error-recovery` — 3-strike recovery during `--fix`
+- `verification-before-completion` — pre-completion checklist
+
+Loaded on demand when the workflow reaches their phase:
+
+- `full-functional-audit` — when `--audit` is set
+- `baseline-quality-assessment` — during analysis
+- `condition-based-waiting` — during execution, for flaky waits
+
+Platform-specific skills are loaded at execute time based on detection. See the **Platform References** table above.

@@ -1,0 +1,17 @@
+{
+  "skill_name": "react-native-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a bare React Native app (not Expo). I need to test it on both iOS and Android. What's the sequential order of steps, and what evidence do I need to capture?",
+      "expected_output": "Should explain: Step 1 (Metro start), Step 2 (iOS build via react-native run-ios, capture build log), Step 4 (screenshot iOS simulator), Step 5 (iOS logs), Step 2 (Android build), Step 4 (Android screenshots), Step 5 (Android logcat). Should emphasize: parallel iOS/Android after Metro is running, or sequential if one emulator/simulator.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Metro starts but the app shows a Red Screen of Death: 'Cannot find module RNGestureHandler'. How do I capture this as evidence and what verdict?",
+      "expected_output": "Should say: 'This is a bundler error (missing dependency). Capture: Metro output showing the error, screenshot of the red screen, evidence-inventory.txt documenting the error. Verdict: FAIL. Fix: npm install react-native-gesture-handler (or missing module). Re-run Metro and validation.'",
+      "files": []
+    }
+  ]
+}

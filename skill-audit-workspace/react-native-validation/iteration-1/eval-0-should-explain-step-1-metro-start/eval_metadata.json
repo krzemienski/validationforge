@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "should-explain-step-1-metro-start",
+  "prompt": "I'm validating a bare React Native app (not Expo). I need to test it on both iOS and Android. What's the sequential order of steps, and what evidence do I need to capture?",
+  "expected_output": "Should explain: Step 1 (Metro start), Step 2 (iOS build via react-native run-ios, capture build log), Step 4 (screenshot iOS simulator), Step 5 (iOS logs), Step 2 (Android build), Step 4 (Android screenshots), Step 5 (Android logcat). Should emphasize: parallel iOS/Android after Metro is running, or sequential if one emulator/simulator.",
+  "assertions": []
+}

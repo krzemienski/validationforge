@@ -1,0 +1,17 @@
+{
+  "skill_name": "design-token-audit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a React app with Tailwind. DESIGN.md defines 12 colors in a palette. I grep the code and find 147 color references: some using Tailwind classes (bg-primary), some hardcoded (#FF0000). How do I audit compliance?",
+      "expected_output": "Phase 1: Extract 12 tokens from DESIGN.md, document them (--primary-bg, --text-primary, etc.). Phase 2: Grep codebase for hardcoded hex (#), color CSS properties (color:, background:), and Tailwind arbitrary values (bg-[#FF0000]). Save results to step-02-implementation-scan.md. Phase 3: For each reference, check if it matches a token. Example: #FF0000 is not in palette \u2192 HIGH violation. bg-primary is in Tailwind config \u2192 PASS. bg-[#FF0000] is arbitrary \u2192 LOW violation. Count: 140 PASS, 5 HIGH, 2 LOW. Compliance = 140/147 = 95.2% \u2192 PASS verdict. Report recommends fixing 5 HIGH violations before next release.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My design system has colors in CSS variables (--primary: #0066FF) in a CSS file. My audit only found tokens in DESIGN.md. How do I include CSS variables?",
+      "expected_output": "Phase 1, add CSS Variables step: grep -rn '^--' src/ --include='*.css'. Extract values into token catalog. Merge with DESIGN.md tokens. Document source for each token (DESIGN.md vs CSS file). Then proceed with Phase 2-4 comparing implementation against the complete merged catalog. Example: '--primary from CSS: #0066FF' is now part of the spec, so implementation using --primary or #0066FF both count as compliant.",
+      "files": []
+    }
+  ]
+}

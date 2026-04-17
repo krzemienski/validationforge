@@ -1,0 +1,17 @@
+{
+  "skill_name": "forge-team",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Fullstack project: React + Node API + PostgreSQL. Running /forge-team. Platform detection finds all 3. Walk me through waves, parallel spawning, and dependency blocking.",
+      "expected_output": "Wave 0: DB validator spawned (alone, foundation layer). Waits for PASS. Wave 1: API validator spawned (depends on DB PASS). Waits for PASS. Wave 2: Web validator spawned (depends on API PASS). If DB FAILs in Wave 0 \u2192 API and Web are BLOCKED (never spawned). Records BLOCKED in their reports. If API FAILs in Wave 1 \u2192 Web is BLOCKED. Lead writes final report aggregating all waves with dependency chain and root causes.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Web validator reports CONDITIONAL (3/5 journeys PASS, 2/5 FAIL\u2014API timeouts on pagination endpoint). API validator is already done (Wave 1). iOS validator is waiting for Wave 2. What happens?",
+      "expected_output": "Wave 1 complete with CONDITIONAL verdict. Lead evaluates: API has known failures, but core CRUD works. Adds warning to iOS validator prompt: 'Upstream Wave 1: API verdict is CONDITIONAL. Use only PASS endpoints (list, get, create, update). Avoid pagination endpoint (times out). Evidence captured in e2e-evidence/api/report.md.' iOS proceeds (not blocked), focuses on endpoints that passed upstream.",
+      "files": []
+    }
+  ]
+}

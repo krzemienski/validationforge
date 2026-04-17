@@ -1,0 +1,94 @@
+{
+  "skill_name": "responsive-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/responsive-validation/SKILL.md",
+  "skill_md_line_count": 198,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Validate layouts across 8 device viewports (375px–1920px): layout, touch targets, typography, content parity, orientation, overflow. Use after responsive redesigns, CSS refactors, mobile launches.",
+    "length_words": 24,
+    "issues": [
+      "Description starts with tool (8 viewports) before explaining the WHY. Pushy on dimensions without motivation.",
+      "Missing context: 'responsive redesigns' assumes user knows what to validate FOR. Better: 'ensure mobile usability after redesign' or 'validate breakpoint behavior'"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Device matrix lacks Safari/iOS specific behavior. Table includes 'iPhone SE/15/15 Pro Max' but no guidance on WebKit rendering differences, safe area insets, notch handling, or bouncy overscroll. Mobile Safari != Chrome DevTools emulation.",
+        "location": "Lines 25-38"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 2 section structure uses 'Phase 2a/2b/2c/2d/2e' nested phases which is confusing. Reads like 5 separate validation runs instead of 5 checks per viewport iteration.",
+        "location": "Lines 62-107"
+      },
+      {
+        "severity": "high",
+        "description": "Touch target validation (Line 85-91) claims 44x44 CSS pixels is the standard but doesn't cite source (WCAG? Apple HIG? Android?). Standard varies: WCAG 2.5.5 requires 44x44 CSS pixels but only at C level; iOS recommends 44x44pt (88px at 2x DPR). No guidance on which to use.",
+        "location": "Lines 85-91"
+      },
+      {
+        "severity": "med",
+        "description": "Typography validation (Line 93-99) recommends '16px on mobile prevents iOS zoom' - this is outdated. Modern iOS (14+) doesn't auto-zoom on 16px+ input fields. Guidance should note iOS version or remove the claim.",
+        "location": "Lines 95-96"
+      },
+      {
+        "severity": "low",
+        "description": "Evidence structure section (Lines 138-155) specifies per-viewport directories (mobile-375/, mobile-393/) but viewport naming doesn't match table header names (iPhone SE vs mobile-375). Inconsistency in naming convention.",
+        "location": "Lines 138-155"
+      },
+      {
+        "severity": "med",
+        "description": "Verdict rules (Lines 157-167) define 'CONDITIONAL' for 'minor issues' but doesn't quantify. Is a single layout shift CONDITIONAL or FAIL? Ambiguous threshold.",
+        "location": "Lines 157-167"
+      },
+      {
+        "severity": "high",
+        "description": "Phase 4 orientation testing uses a single ratio (375x667 ↔ 667x375) but doesn't address cross-orientation consistency. What happens at iPad orientation change? Device rotation physics vary. No guidance on when to test orientation.",
+        "location": "Lines 120-135"
+      }
+    ],
+    "strengths": [
+      "Device matrix is comprehensive and practical - 8 viewports cover realistic device range",
+      "Per-viewport checklists (layout, touch, typography, content parity) are concrete and testable",
+      "Orientation testing explicitly covers portrait/landscape - often forgotten",
+      "Cross-breakpoint analysis section catches intermediate breakpoints (769px) - good edge case thinking",
+      "Evidence directory structure is systematic and audit-friendly"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "No bundled Playwright/Chrome DevTools MCP wrappers. Skill references 'browser_resize(width, height)' and 'emulate(viewport=...)' but doesn't show actual tool syntax. Could ship example calls for both Playwright and Chrome DevTools MCPs.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Add iOS-specific viewport notes: WebKit rendering, safe areas, notch handling, bouncy scroll behavior",
+    "Cite touch target standard sources: clarify WCAG C (44x44 CSS px) vs Apple HIG (44x44pt) vs Android Material (48dp minimum)",
+    "Update iOS font zoom claim to note iOS 14+ behavior change",
+    "Rename evidence directories from pixel widths to device names for consistency with device matrix headers",
+    "Define 'CONDITIONAL' verdict threshold: e.g., 'single cosmetic layout shift' vs 'affects primary content area'",
+    "Add orientation testing guidance: when to test rotation (tablets always, phones context-dependent), account for landscape keyboard on iPad"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "Just redesigned our e-commerce checkout for mobile-first. Desktop version is narrower now. Need to validate layouts don't break between 375px phones and 1920px monitors. Where do I start?",
+      "expected_output": "Skill directs 8-viewport matrix validation, emphasizes content parity (critical for checkout), touch target checks on mobile. Captures screenshots at 375/393/430 (mobile), 768/1024 (tablet), 1280/1440/1920 (desktop). Verdict checklist ensures no horizontal overflow at any size. Evidence structured per viewport with layout/touch/typography findings."
+    },
+    {
+      "id": 2,
+      "prompt": "Users report layout 'shifts' on iPad when rotating between portrait and landscape. Sometimes text disappears. How do I systematically test orientation changes?",
+      "expected_output": "Skill covers Phase 4 orientation testing: portrait and landscape captures at iPad viewports (768x1024 and 1024x768). Checks content reflow, navigation state consistency, no critical content cut off. Highlights safe area inset handling for notch-equipped devices. Produces evidence comparing before/after rotation."
+    },
+    {
+      "id": 3,
+      "prompt": "Touch targets on mobile buttons too small - users can't tap. What size should buttons be? How do I verify across all phones?",
+      "expected_output": "Skill references 44x44 CSS pixel minimum (with note on WCAG/HIG standards). Phase 2c directs per-viewport touch target audit: measure button dimensions in screenshots, verify ≥8px spacing between targets. Tests on all 3 mobile viewports (375/393/430). Clear FAIL verdict if any button <44x44 or spacing <8px."
+    }
+  ]
+}

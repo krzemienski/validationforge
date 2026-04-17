@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "detects-existing-config-json-prompts-con",
+  "prompt": "I'm in strict enforcement mode. Running /forge-setup again on a project that already has .validationforge/config.json (enforcement: standard). What happens? Do I get prompted or does it overwrite?",
+  "expected_output": "Detects existing config.json. Prompts: 'Config exists with enforcement: standard. Upgrade to strict?' or 'Keep standard?' User chooses. If strict chosen, updates config.json enforcement field. Re-runs rules installation with strict rules variant. If standard kept, skips config update and rules reinstall. Confirms final state.",
+  "assertions": []
+}

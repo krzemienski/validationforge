@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "should-say-yes-phase-2-security",
+  "prompt": "During Phase 2 (Security) audit, I notice JWT tokens in the URL params. Is this an automatic NOT READY?",
+  "expected_output": "Should say: 'YES. Phase 2 Security finding: sensitive data in URLs. This is blocking per Severity Rules (any Phase 2 FAIL = NOT READY). Fix: remove JWT from URL, use Authorization header instead. Re-audit Phase 2 before deploying.'",
+  "assertions": []
+}

@@ -1,0 +1,25 @@
+{
+  "skill_name": "baseline-quality-assessment",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with BEFORE framing + concrete use cases + triggers",
+      "implemented": true,
+      "details": "New description names the 'I fixed X but accidentally broke Y' failure this prevents, lists the change types (refactor, dep upgrade, migration, bug fix, perf), and explains the 2-thing check (improved intended, didn't regress unintended). 2 new YAML triggers: 'snapshot before refactor', 'prove improvement'."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Body changes",
+      "reason": "Skill is already lean (94 lines) and well-organized. Description was the primary triggering issue."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/baseline-quality-assessment/SKILL.md"
+  ],
+  "description_before": "Capture immutable 'before' evidence before code changes. Proves changes improved targets without regressing existing functionality. Use for refactor, migration, dependency update, bug fix.",
+  "description_after": "Use BEFORE making any significant code change — refactor, dependency upgrade, migration, bug fix, performance optimization — to capture an immutable 'before' snapshot. After the change, compare against this baseline to prove two things: (1) what you intended to improve actually improved, (2) what you didn't intend to touch didn't regress. Prevents the classic 'I fixed X but accidentally broke Y' failure. Reach for it on phrases like 'capture baseline', 'before refactoring', 'prove no regressions', 'snapshot current state', 'measure the improvement', or before any PR whose correctness depends on showing a delta.",
+  "line_count_before": 94,
+  "line_count_after": 96,
+  "self_review_notes": "The 'fixed X but broke Y' phrase is exactly the failure mode this skill prevents — making that concrete in the description makes it trigger on the right moments."
+}

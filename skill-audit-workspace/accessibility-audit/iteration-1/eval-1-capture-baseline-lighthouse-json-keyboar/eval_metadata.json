@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "capture-baseline-lighthouse-json-keyboar",
+  "prompt": "After our refactor, I need to prove we didn't break accessibility. We have Lighthouse at 85 before the change. What baseline evidence do I capture, and how do I detect regressions in keyboard nav or screen reader experience?",
+  "expected_output": "Capture baseline: Lighthouse JSON, keyboard test findings table (lines 91-100 format), a11y tree snapshot. After refactor: re-run same 4 layers, compare side-by-side. Any keyboard navigation that worked before but fails now = REGRESSION = FAIL.",
+  "assertions": []
+}

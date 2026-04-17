@@ -1,0 +1,97 @@
+{
+  "skill_name": "build-quality-gates",
+  "path": "/Users/nick/Desktop/validationforge/skills/build-quality-gates/SKILL.md",
+  "skill_md_line_count": 193,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "4-stage pipeline: compile, lint, type-check, bundle. Each gate PASS required before next. Build gates are necessary NOT sufficient—functional validation still required. Use pre-deploy, pre-PR.",
+    "length_words": 28,
+    "issues": [
+      "Description emphasizes 'NOT sufficient' but doesn't lead with what the skill DOES. Reads like a disclaimer before explaining the value.",
+      "Missing WHO runs this: 'part of preflight checks', 'CI/CD gate', 'before you PR'"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Diagram (lines 26-43) is oversized for a simple sequential gate structure. 7 lines to show 'Gate 1 → Gate 2 → Gate 3 → Gate 4' + box saying 'all must pass'. Could be 2-3 lines.",
+        "location": "lines 26-43"
+      },
+      {
+        "severity": "high",
+        "description": "Platform Detection table (lines 47-57) mixes detection signals with compile commands. Suggests platform detection is trivial, but no guidance on what to do when detection is ambiguous (e.g., project has both package.json AND Cargo.toml)",
+        "location": "lines 47-57"
+      },
+      {
+        "severity": "med",
+        "description": "Each gate (Gates 1-4) uses PASS/FAIL criteria that are vague: Gate 2 says 'Zero errors (warnings acceptable, but document them)' — which warnings are OK? Deprecation? Security? No rubric.",
+        "location": "lines 102-104"
+      },
+      {
+        "severity": "med",
+        "description": "Bundle Analysis (Gate 4, lines 135-158) includes 'Warning Triggers (not FAIL, but document)' for bundle size growth. But the skill doesn't explain how to measure 'reasonable' size — should a bundle of 500KB pass? 5MB?",
+        "location": "lines 135-158"
+      },
+      {
+        "severity": "med",
+        "description": "Gate Report template (lines 160-186) is good, but the 'IMPORTANT' note (lines 181-183) is a weak disclaimer placed inside the template. Should be in main body: 'Build gates passing does NOT mean the feature works. Functional validation is still required.'",
+        "location": "lines 160-186"
+      },
+      {
+        "severity": "low",
+        "description": "Gate 3 (Type-Check) includes 'Skip Condition: Dynamically typed language with no type checker configured' (lines 132-133) but doesn't explain how to decide — what if a project COULD use mypy but doesn't? Is skipping OK?",
+        "location": "lines 112-134"
+      }
+    ],
+    "strengths": [
+      "Clear 4-gate structure with consistent pattern per gate: Objective, Commands, PASS Criteria, FAIL Actions",
+      "Gate 1 (Compile) is concise and includes warning: 'identify the first error (cascading errors stem from it)'",
+      "Gate 2 (Lint) shows platform-specific linters (eslint, ruff, go vet, swiftlint) — not just JavaScript",
+      "Gate 4 (Bundle) includes thoughtful warnings for bundle growth >20% — captures creep without failing",
+      "Integration callout (lines 188-192) is honest: 'Build gates are first, never the only step'",
+      "FAIL Actions explain diagnostic approach: read logs, identify root cause, fix, re-run"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "Platform detection logic (lines 47-57) could be a bundled detect-build-system.sh that inspects the project and outputs the detected build system name. Each gate command could be bundled: run-gate-1-compile.sh, run-gate-2-lint.sh, etc., taking detected system as argument.",
+    "over_bundled": false
+  },
+  "priority": "low",
+  "top_fixes": [
+    "Collapse diagram (lines 26-43) to 2 lines: 'COMPILE → LINT → TYPE-CHECK → BUNDLE | All gates must PASS in sequence before next gate runs.'",
+    "Rewrite description: lead with WHAT: '4-stage quality gates (compile, lint, type-check, bundle) enforced in sequence. Each gate must PASS before next. Gates are necessary for code health but do NOT replace functional validation via real UI.'",
+    "Expand Platform Detection (lines 47-57) with 'When detection is ambiguous (e.g., both package.json and Cargo.toml): ask the team which stack is primary, or run both toolchains.'",
+    "Add lint warning rubric to Gate 2: 'Benign warnings (unused imports, style inconsistencies) OK if auto-fixable. Security warnings (unsafe functions, hardcoded secrets) are FAIL. Deprecation warnings are WARN (document but don't block).'",
+    "Add bundle size baseline to Gate 4: 'Measure current bundle size: `du -sh dist/`. This is your baseline. New builds should stay within +20% of baseline. First run = set the baseline.' Link to: how to determine if bundle should be smaller (e.g., tree-shaking unused deps).",
+    "Move 'IMPORTANT: Build gates passing does NOT...' disclaimer (lines 181-183) to the top of the body, right after the structure diagram. Emphasize it's a GATE, not a verdict.",
+    "Clarify Gate 3 skip condition: 'Skip type-check if: (1) Language has no type system (Python, Go without mypy/vet), OR (2) Team chose not to use type checking (acceptable but documented). Do NOT skip if tooling exists but is misconfigured.'",
+    "Keep the Gate Report template — it's concrete and actionable"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a Next.js project (package.json + next.config.js). I want to run all 4 build quality gates before I deploy. What are the exact commands I should run, and what should PASS vs FAIL?",
+      "expected_output": "Gate 1 (Compile): `npm run build` → should output 'Build successful' + artifacts in .next/. FAIL if exit code is non-zero. Gate 2 (Lint): `npx eslint .` → should output zero errors. FAIL if any ERROR lines. Gate 3 (Type-check): `npx tsc --noEmit` → zero type errors. FAIL if any TS errors. Gate 4 (Bundle): `du -sh .next/` → should be <500MB or your baseline +20%. FAIL if bundle grew >20%. All PASS = good to deploy. But still need functional testing."
+    },
+    {
+      "id": 2,
+      "prompt": "My linter is reporting 50 warnings (mostly unused imports). The compiler still succeeds. Is this a FAIL?",
+      "expected_output": "No, not a FAIL, but needs investigation. Unused imports are benign warnings if auto-fixable. Run `eslint --fix` to remove them automatically, then re-run linter. If warnings are security-related (e.g., unsafe function usage), then it's a FAIL. Document any warnings that remain after fix attempts."
+    },
+    {
+      "id": 3,
+      "prompt": "Our bundle grew from 400KB to 580KB after adding a new feature. That's >20% growth. Does the gate FAIL automatically?",
+      "expected_output": "Gate 4 produces a WARNING, not a FAIL. Bundle growth >20% is flagged for investigation. Causes could be: (1) New dependencies (expected if feature needed them), (2) Unused dependencies (remove them), (3) Missing tree-shaking (configure webpack/vite). Investigate, document, then decide: accept growth, or optimize and rebuild."
+    },
+    {
+      "id": 4,
+      "prompt": "All 4 gates PASS: code compiles, lints clean, types check, bundle is reasonable size. Can I deploy now?",
+      "expected_output": "No. Build gates are necessary but NOT sufficient. You still need functional validation: Does the feature actually work? Are there any UI regressions? Does the API contract still hold? Run those tests before deploying. Gates just verify code quality, not behavior."
+    }
+  ]
+}

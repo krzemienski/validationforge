@@ -1,0 +1,17 @@
+{
+  "skill_name": "no-mocking-validation-gates",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a React component that calls an external payment API. The API is slow and flaky in staging. Should I mock it or stub the response? What's the right approach?",
+      "expected_output": "Should diagnose why real system is unavailable (slow/flaky staging API), propose fixes (fix the flakiness, use production-like test data, add caching), and redirect to real validation. Should reference the Three-Step Correction protocol.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm working on a React Native app and someone on my team created __tests__/ with jest.mock() calls. The skill should block file creation, but we already have these. How do I convert to real validation?",
+      "expected_output": "Should acknowledge the existing violation, explain mock drift risk, and guide toward real system validation (start Metro bundler, use real API endpoints, capture screenshots from simulator). Should reference real-system-validation-guide.md reference.",
+      "files": []
+    }
+  ]
+}

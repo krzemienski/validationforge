@@ -1,0 +1,90 @@
+{
+  "skill_name": "coordinated-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/coordinated-validation/SKILL.md",
+  "skill_md_line_count": 351,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Multi-platform validation respecting dependencies: DB→API→Web/iOS. Parallelizes independent layers, blocks downstream on failure, coordinates evidence. Use for fullstack, mobile+API, CI/CD.",
+    "length_words": 23,
+    "issues": [
+      "Too short (23 words, target 30-80). Feels like feature enumeration.",
+      "Missing rationale: why is dependency-aware validation necessary? (prevents false positives from validating frontend against broken API)",
+      "Missing 'when' context, though use cases are listed in body (good) but not in description"
+    ],
+    "triggering_assessment": "under-triggers"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Dependency Graph section (lines 24-32) shows the dependency tree but doesn't explain WHY these dependencies exist. E.g., 'Why does Web depend on API?' Answer buried in 'Why' column: 'Frontend fetches from API'. Could be more explicit upfront.",
+        "location": "Dependency Graph, lines 24-32"
+      },
+      {
+        "severity": "high",
+        "description": "Execution Protocol: Waves uses 'Agent' tool with 'run_in_background: true' (line 66) but this tool is never defined or explained. Is it a ValidationForge primitive? An MCP tool? Needs clarification and example.",
+        "location": "Wave Execution Rules, line 66"
+      },
+      {
+        "severity": "med",
+        "description": "Member Assignment phase (lines 96-116) requires explicit assignment table but doesn't explain how to discover or define 'agents'. Agent prompt template (lines 213-242) is prescriptive but assumes agents are pre-defined. Circular reference.",
+        "location": "Phase 2: Member Assignment, lines 96-116"
+      },
+      {
+        "severity": "med",
+        "description": "Verdict Aggregation rules (lines 244-264) define verdicts (PASS/CONDITIONAL/FAIL/BLOCKED/INCOMPLETE) but 'BLOCKED' differs from 'FAIL' only in cause (upstream failed). Table at lines 247-253 could be simpler.",
+        "location": "Verdict Aggregation, lines 244-264"
+      },
+      {
+        "severity": "low",
+        "description": "Performance Guidelines table (lines 340-350) estimates wall clock time but provides NO formula or methodology. Comment says '3 waves; Web waits for API' but doesn't show actual timing math (e.g., 10s DB + 15s API + max(20s Web, 25s iOS) = 45s total).",
+        "location": "Performance Guidelines, lines 340-350"
+      },
+      {
+        "severity": "low",
+        "description": "Common Failures section (lines 329-337) lists symptoms but doesn't explain root causes. E.g., 'Wave 2 agents launched before Wave 1 complete' → 'Orchestrator error' is vague. What specifically went wrong in the orchestration?",
+        "location": "Common Failures, lines 329-337"
+      }
+    ],
+    "strengths": [
+      "Dependency graph is explicit and visual (ASCII tree). Standard dependency rules table is practical (API depends on DB, Web depends on API, etc.).",
+      "Wave execution protocol is well-defined: all platforms at same depth run in parallel, waves are sequential. Failure blocking matrix (lines 73-83) clearly shows what happens if Wave N fails.",
+      "Evidence directory structure (lines 177-210) is explicit and unambiguous: each agent owns one directory exclusively. 'NEVER let two agents write to same directory' (line 209) prevents evidence corruption.",
+      "Agent prompt template (lines 213-242) is thorough and includes upstream context (what passed upstream), journey list, and verdict rules.",
+      "Verdict aggregation is clear: wave verdict = worst platform verdict. Overall verdict = worst wave verdict. BLOCKED is treated as FAIL.",
+      "Report template is comprehensive: dependency graph visualization, per-wave breakdown, cross-platform evidence checks (API user count vs Web display), summaries."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": null,
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Expand description: 'Orchestrate multi-platform validation (DB → API → Web/iOS) in dependency-respecting waves. Parallelizes independent platforms, blocks downstream on upstream failure, synthesizes evidence into unified report. Use for fullstack and mobile+API projects where test accuracy depends on system integration.'",
+    "In Wave Execution Rules, define 'Agent' tool: 'An Agent is a ValidationForge validator that runs validation commands and captures evidence to a dedicated directory. Spawn with run_in_background: true, then await completion before evaluating wave results.' Add link to Agent definition or provide concrete example.",
+    "Add explicit 'How to Define Agents' section: agents are team members or AI validators assigned to specific platforms. Each agent receives a prompt (template provided), exclusive evidence directory, and upstream context. Agents may be human (you) or automated (AI Claude instances in parallel).",
+    "Add timing formula to Performance Guidelines: 'Total time = T(Wave0) + T(Wave1) + T(Wave2), where T(Wave2) = max(T(Web), T(iOS)).' Include concrete example: '10s DB + 15s API + max(20s Web, 25s iOS) = 50s total (Web and iOS run in parallel, save 20s vs sequential).'",
+    "Expand Common Failures with root causes: 'Orchestrator error' → 'Did you check all Wave 1 agents completed before starting Wave 2? Use await on run_in_background tasks and verify platform verdicts before proceeding to next wave.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a fullstack project: Postgres DB, Node API, React web, iOS app. The web and iOS teams want to validate simultaneously but both depend on API working. How do I structure the validation so they don't block each other?",
+      "expected_output": "Create 3 waves: Wave 0 = DB (1 agent), Wave 1 = API (1 agent), Wave 2 = Web (1 agent) + iOS (1 agent in parallel). Assign agents to each platform. Wave 0 runs, wait for DB PASS, then launch Wave 1. Wave 1 runs, wait for API PASS, then launch Web and iOS agents in parallel via run_in_background: true. Web and iOS validate independently (no interdependency), each captures evidence. Both finish before report generation. Total time: DB time + API time + max(Web time, iOS time)."
+    },
+    {
+      "id": 2,
+      "prompt": "API validation FAILED (database connection error). Web and iOS are waiting. What should happen?",
+      "expected_output": "Mark API verdict as FAIL. According to failure blocking matrix (lines 82-83), mark Web and iOS as BLOCKED (not failed, but blocked by upstream failure). Skip Wave 2 execution. Report shows: Wave 1 = FAIL (API), Wave 2 = BLOCKED (Web and iOS blocked by API failure), Overall verdict = FAIL. Debugging should focus on API ↔ database connection, not on web/iOS code."
+    },
+    {
+      "id": 3,
+      "prompt": "I accidentally had two agents writing to e2e-evidence/api/. Evidence files got mixed up. How do I prevent this in the future?",
+      "expected_output": "Evidence directory structure must be exclusive per agent (lines 177-210). Create assignment table before execution: assign one agent per platform, one evidence directory per agent. Verify in orchestration code: Agent A writes to e2e-evidence/api/ ONLY, Agent B writes to e2e-evidence/web/ ONLY. If you discover collision, discard corrupted evidence and re-run that wave with correct assignment. Use the Member Assignment table (lines 103-110) as the source of truth."
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "skill_name": "parallel-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/parallel-validation/SKILL.md",
+  "skill_md_line_count": 219,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Multi-agent parallel validation: iOS+Web+API simultaneously on independent journeys. Strict file ownership prevents conflicts. Verdict aggregation: any FAIL=FAIL. For large apps, multi-platform.",
+    "length_words": 26,
+    "issues": [
+      "Slightly short (26 vs 30-80 target) but punchy",
+      "Missing explicit 'when' context - assumes user knows parallelization tradeoff",
+      "Verdict aggregation rule is good specificity"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "File Ownership Rules section (lines 104-126) is critical but placed mid-document. Risk: users skim and miss CRITICAL warnings about concurrent writes.",
+        "location": "## File Ownership Rules (lines 104-126)"
+      },
+      {
+        "severity": "med",
+        "description": "Agent Prompt Template (lines 138-160) is boilerplate that users must customize. Template lacks instructions for how to extract {platform}, {journey list}, {acceptance criteria} from a real project.",
+        "location": "## Agent Prompt Template (lines 138-160)"
+      },
+      {
+        "severity": "low",
+        "description": "Performance Guidelines table (lines 162-169) shows expected speedup but provides no methodology or caveats. 'Expected Speedup 1.5x' for small apps - depends heavily on toolchain parallelization limits.",
+        "location": "## Performance Guidelines (lines 162-169)"
+      },
+      {
+        "severity": "high",
+        "description": "Task tool usage (lines 75-84) assumes Task tool with run_in_background parameter exists and is available. No fallback if subagent execution is unavailable. Risk: skill fails silently or produces incomplete evidence.",
+        "location": "## Phase 3: Parallel Execution (lines 72-84)"
+      }
+    ],
+    "strengths": [
+      "Safe to Parallelize vs Must Be Sequential tables (lines 27-44) are clear decision trees",
+      "Orchestration Protocol with 5 explicit phases (lines 46-102) provides structure",
+      "File Ownership Rules with visual directory tree is well-illustrated",
+      "Verdict Aggregation rules are unambiguous: any FAIL = overall FAIL",
+      "Integration with ValidationForge section ties back to ecosystem"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "No script to validate evidence directory isolation (no overlapping writes). A bash script that checks for file conflicts and produces a directory ownership report would prevent silent evidence corruption.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Move File Ownership Rules to top of body, above When to Use, with visual warning/highlight",
+    "Add concrete example: 'If parallelizing a 3-platform app (iOS/Web/API), show the exact agent assignment with 3 distinct evidence directories'",
+    "Clarify Task tool dependency: document what happens if subagent execution is unavailable; provide sequential fallback",
+    "Expand Performance Guidelines with a note: 'Speedup varies with project complexity, tool startup time, and dependency graph structure. Measure, don't assume.'",
+    "Add script suggestion: evidence-isolation-check.sh that scans e2e-evidence/ for overlapping agent directories before proceeding"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a fullstack app (Next.js frontend, Node.js API, PostgreSQL). I want to validate them in parallel using 2 agents. What are the pitfalls and how do I structure the evidence directories?",
+      "expected_output": "Should explain that Web and API can parallelize (independent validation journeys) but Database must be seeded before API validation starts (sequential dependency). Should show exact directory structure: e2e-evidence/web-validation/, e2e-evidence/api-validation/, and explain why overlap is forbidden."
+    },
+    {
+      "id": 2,
+      "prompt": "One of my parallel agents failed midway through. I have evidence from 2 other agents. Can I merge the reports, or do I need to rerun all 3?",
+      "expected_output": "Should explain incomplete evidence = overall FAIL verdict (per aggregation rules). Should advise running only the failed agent again (file ownership ensures clean isolation), then re-aggregating all 3 verdicts. Should clarify that partial success is not acceptable for deployment decisions."
+    },
+    {
+      "id": 3,
+      "prompt": "I'm on a team without access to Claude Code's Task tool / subagent feature. Can I still use parallel-validation?",
+      "expected_output": "Should acknowledge the constraint, suggest sequential validation as fallback, or manual agent coordination (humans as agents on Slack/Discord with explicit evidence directory assignments). Should explain the trade-off: sequential takes longer but avoids evidence conflicts."
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "skill_name": "design-token-audit",
+  "path": "/Users/nick/Desktop/validationforge/skills/design-token-audit/SKILL.md",
+  "skill_md_line_count": 221,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Audit CSS/Tailwind/inline styles against design system spec (DESIGN.md, tailwind.config, CSS vars). Detects hardcoded values, off-palette colors, non-standard spacing, typography drift.",
+    "length_words": 20,
+    "issues": [
+      "Too short (20 words, target 30-80). Focuses on features (what is detected) rather than problem (why audit is necessary).",
+      "Missing 'when' context. When would a user invoke this? (After implementing CSS, before release, during design system migration.)",
+      "Missing rationale: why is token compliance important? (Prevents design debt, maintains consistency, unblocks design system evolution.)"
+    ],
+    "triggering_assessment": "under-triggers"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Phase 1: Extract Design Tokens (lines 34-61) shows grep patterns for DESIGN.md but doesn't explain what constitutes a complete token catalog. How many tokens are 'enough'? How do you know when you've extracted everything?",
+        "location": "Phase 1: Extract, lines 34-61"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 2: Scan Implementation (lines 96-131) uses grep to find hardcoded values but doesn't handle context. A grep for '#[0-9a-fA-F]{3,8}' will match hex in comments, strings, URLs, not just CSS. No filtering guidance.",
+        "location": "Phase 2: Scan, lines 96-131"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 3: Compare (lines 133-156) defines violation types (off-palette, hardcoded, non-standard, wrong font, arbitrary Tailwind) but doesn't explain severity assignment rationale. Why is 'off-palette color' HIGH but 'arbitrary Tailwind' LOW? No impact analysis.",
+        "location": "Phase 3: Compare, lines 133-156"
+      },
+      {
+        "severity": "med",
+        "description": "Compliance Calculation formula (lines 148-155) is simplistic: (Compliant / Total) × 100. Doesn't weight violations by frequency (1 violation in 100 uses vs 1 violation in 1 use should differ). No formula for mixed severity scores.",
+        "location": "Compliance Calculation, lines 148-155"
+      },
+      {
+        "severity": "low",
+        "description": "Verdict Rules table (lines 159-165) uses arbitrary thresholds (>95% PASS, 80-95% CONDITIONAL, <80% FAIL) without justification. Why 95%? Why not 90% or 85%?",
+        "location": "Verdict Rules, lines 159-165"
+      },
+      {
+        "severity": "low",
+        "description": "Integration section (lines 215-221) mentions 'stitch-integration' skill and 'verdict-writer' agent but these are never explained or cross-referenced. Circular dependency on undefined primitives.",
+        "location": "Integration, lines 215-221"
+      }
+    ],
+    "strengths": [
+      "4-phase structure is clear and auditable: Extract → Scan → Compare → Report. Each phase produces artifacts (token catalog, implementation scan, violations list, compliance score).",
+      "Token Catalog output format (lines 65-92) is well-structured with tables for Colors, Typography, Spacing. Shows token name, value, usage context.",
+      "Violation Types table (lines 135-144) provides specific examples (e.g., '#FF0000 when palette has no red' for off-palette). Helps identify what counts as a violation.",
+      "Evidence structure (lines 169-176) is explicit and auditable: step-01 through step-04 plus report.md. Each step produces scannable artifacts.",
+      "Report template (lines 179-213) is comprehensive: compliance scores by category, specific violations with file:line references, recommendations with file paths.",
+      "Pure code analysis (no mocking, no test files) aligns with ValidationForge principles."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "Bundled script (design-token-audit.sh) could automate Phases 1-3: extract tokens from DESIGN.md/tailwind.config, scan codebase for hardcoded values, generate violations report. Would save users from manual grep chains.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Expand description: 'Audit implementation CSS and Tailwind classes against a design system specification (DESIGN.md, tailwind.config, CSS variables). Detects design debt: hardcoded values, off-palette colors, non-standard spacing, typography drift. Use before release to catch design system violations.'",
+    "In Phase 1, add 'Completeness Check': 'Count tokens by category (colors, typography, spacing). If count is suspiciously low (e.g., 3 colors for a design system), re-scan or check the spec format. Expect 10+ colors, 5+ typography scales, 8+ spacing values for a typical system.'",
+    "In Phase 2, add 'Context Filtering': 'Grep finds hex patterns in comments and strings too. After collecting results, manually filter: keep only CSS/Tailwind/inline styles, discard comments and URL strings. Document filters applied in step-02 output.'",
+    "In Phase 3, add 'Severity Rationale' column in violation types table: 'Off-palette color = HIGH (breaks visual identity), Hardcoded value = MEDIUM (harder to maintain but not broken), Arbitrary Tailwind = LOW (works but not aligned). Rationale: severity = impact on design system maintenance and consistency.'",
+    "In Verdict Rules, justify thresholds: '>95% (rarely possible—some technical debt normal) = PASS, 80-95% (maintainable, schedule fixes) = CONDITIONAL, <80% (significant drift, fix before shipping) = FAIL. Or explain the project's threshold choice in report recommendations.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a React app with Tailwind. DESIGN.md defines 12 colors in a palette. I grep the code and find 147 color references: some using Tailwind classes (bg-primary), some hardcoded (#FF0000). How do I audit compliance?",
+      "expected_output": "Phase 1: Extract 12 tokens from DESIGN.md, document them (--primary-bg, --text-primary, etc.). Phase 2: Grep codebase for hardcoded hex (#), color CSS properties (color:, background:), and Tailwind arbitrary values (bg-[#FF0000]). Save results to step-02-implementation-scan.md. Phase 3: For each reference, check if it matches a token. Example: #FF0000 is not in palette → HIGH violation. bg-primary is in Tailwind config → PASS. bg-[#FF0000] is arbitrary → LOW violation. Count: 140 PASS, 5 HIGH, 2 LOW. Compliance = 140/147 = 95.2% → PASS verdict. Report recommends fixing 5 HIGH violations before next release."
+    },
+    {
+      "id": 2,
+      "prompt": "My design system has colors in CSS variables (--primary: #0066FF) in a CSS file. My audit only found tokens in DESIGN.md. How do I include CSS variables?",
+      "expected_output": "Phase 1, add CSS Variables step: grep -rn '^--' src/ --include='*.css'. Extract values into token catalog. Merge with DESIGN.md tokens. Document source for each token (DESIGN.md vs CSS file). Then proceed with Phase 2-4 comparing implementation against the complete merged catalog. Example: '--primary from CSS: #0066FF' is now part of the spec, so implementation using --primary or #0066FF both count as compliant."
+    },
+    {
+      "id": 3,
+      "prompt": "I ran the audit and got 72% compliance (FAIL). I disagree—we use a design system, I just can't find all the tokens. Should I accept FAIL or retry the audit?",
+      "expected_output": "FAIL is likely correct. 72% suggests significant design debt: ~28% of code uses hardcoded/arbitrary values outside the system. Options: 1) Retry Phase 1 with more thorough token extraction (check tailwind.config for all theme.extend values, search CSS files for @property, check CSS-in-JS files). 2) If tokens are truly missing from spec, add them to DESIGN.md first, then re-audit. 3) Schedule token violations as technical debt: mark which files have drift (step-03), create tickets to migrate them to token-based styles. Audit again after migration."
+    }
+  ]
+}

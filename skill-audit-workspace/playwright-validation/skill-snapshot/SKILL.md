@@ -1,0 +1,214 @@
+---
+name: playwright-validation
+description: "Validate web features via real browser interaction: screenshots, DOM snapshots, form testing, responsive layouts, console/network error detection. Use for feature verification and evidence capture."
+triggers:
+  - "playwright validation"
+  - "browser validation"
+  - "web browser test"
+  - "playwright verify"
+context_priority: reference
+---
+
+# Playwright Validation
+
+Browser-based validation using Playwright MCP tools. Interacts with real running web applications, captures screenshots and DOM snapshots as evidence.
+
+## When to Use
+
+- Validating web application features through a real browser
+- Capturing visual evidence for `e2e-validate` web journeys
+- Testing responsive layouts at multiple breakpoints
+- Verifying form submissions, navigation, and interactive elements
+
+## Prerequisites
+
+1. **Dev server must be running** — detect and start if needed:
+```bash
+# Common dev server commands
+npm run dev          # Next.js, Vite, CRA
+pnpm dev             # pnpm projects
+yarn dev             # yarn projects
+python manage.py runserver  # Django
+```
+
+2. **Detect the URL** — check `package.json` scripts, `vite.config.*`, or `next.config.*`:
+```bash
+# Common defaults
+# http://localhost:3000  (Next.js, CRA)
+# http://localhost:5173  (Vite)
+# http://localhost:8000  (Django)
+# http://localhost:4321  (Astro)
+```
+
+## Validation Protocol
+
+### Step 1: Setup
+
+```bash
+mkdir -p e2e-evidence/web-playwright
+```
+
+Start the dev server if not already running (use `run_in_background`).
+
+### Step 2: Navigate and Capture Initial State
+
+Using Playwright MCP tools:
+
+```
+browser_navigate → URL
+browser_snapshot → e2e-evidence/web-playwright/step-01-initial-snapshot.md
+browser_take_screenshot → e2e-evidence/web-playwright/step-01-initial.png
+```
+
+**Describe what you see** in the screenshot. Never just say "page loaded."
+
+### Step 3: Exercise Features
+
+For each feature being validated:
+
+1. **Navigate** to the relevant page
+2. **Snapshot** the DOM (accessibility tree)
+3. **Interact** with elements (click, type, select)
+4. **Screenshot** after each significant state change
+5. **Check console** for errors
+
+```
+browser_click → ref="submit-button"
+browser_take_screenshot → e2e-evidence/web-playwright/step-02-after-submit.png
+browser_console_messages → level="error"
+```
+
+### Step 4: Responsive Testing
+
+Test at standard breakpoints:
+
+| Breakpoint | Width | Device Class |
+|-----------|-------|--------------|
+| Mobile S | 375px | iPhone SE |
+| Mobile L | 428px | iPhone 14 Pro Max |
+| Tablet | 768px | iPad Mini |
+| Desktop | 1440px | Standard desktop |
+
+```
+browser_resize → width=375, height=812
+browser_take_screenshot → e2e-evidence/web-playwright/step-03-375px.png
+
+browser_resize → width=768, height=1024
+browser_take_screenshot → e2e-evidence/web-playwright/step-03-768px.png
+
+browser_resize → width=1440, height=900
+browser_take_screenshot → e2e-evidence/web-playwright/step-03-1440px.png
+```
+
+### Step 5: Form Validation
+
+If the page has forms:
+
+```
+# Fill with valid data
+browser_fill_form → fields=[{name, type, ref, value}]
+browser_take_screenshot → e2e-evidence/web-playwright/step-04-form-filled.png
+
+# Submit
+browser_click → ref="submit"
+browser_take_screenshot → e2e-evidence/web-playwright/step-04-form-submitted.png
+
+# Test validation errors
+browser_fill_form → fields=[{name, type, ref, value=""}]  # empty required field
+browser_click → ref="submit"
+browser_take_screenshot → e2e-evidence/web-playwright/step-04-validation-errors.png
+```
+
+### Step 6: Console Error Check
+
+```
+browser_console_messages → level="error"
+```
+
+Save output to `e2e-evidence/web-playwright/step-05-console-errors.txt`.
+
+**Any console error is a finding** — even if the UI appears correct.
+
+### Step 7: Network Request Verification
+
+```
+browser_network_requests → includeStatic=false
+```
+
+Save to `e2e-evidence/web-playwright/step-06-network.txt`.
+
+Check for:
+- Failed requests (4xx, 5xx)
+- Unexpected API calls
+- Missing resources
+
+## Evidence Output
+
+```
+e2e-evidence/web-playwright/
+  step-01-initial.png
+  step-01-initial-snapshot.md
+  step-02-after-submit.png
+  step-03-375px.png
+  step-03-768px.png
+  step-03-1440px.png
+  step-04-form-filled.png
+  step-04-form-submitted.png
+  step-04-validation-errors.png
+  step-05-console-errors.txt
+  step-06-network.txt
+  evidence-inventory.txt
+```
+
+Generate inventory:
+```bash
+find e2e-evidence/web-playwright -type f | sort | while read f; do
+  echo "$(wc -c < "$f" | tr -d ' ') $f"
+done | tee e2e-evidence/web-playwright/evidence-inventory.txt
+```
+
+## Common Patterns
+
+### Authentication Flow
+```
+1. Navigate to /login
+2. Fill email + password
+3. Click submit
+4. Verify redirect to dashboard
+5. Check for auth cookie/token in network tab
+```
+
+### CRUD Operations
+```
+1. Navigate to list page — screenshot empty/existing state
+2. Click "Create" — fill form — submit
+3. Verify item appears in list
+4. Click item — verify detail view
+5. Edit item — verify changes persist
+6. Delete item — verify removal from list
+```
+
+### Navigation
+```
+1. Click each nav link
+2. Verify correct page loads (URL + content)
+3. Check back/forward browser navigation
+4. Test any breadcrumbs
+```
+
+## Anti-Patterns
+
+| Anti-pattern | Correct approach |
+|-------------|-----------------|
+| "Page loads successfully" | Describe what elements are visible on the page |
+| Skipping mobile breakpoints | Always test 375px minimum |
+| Ignoring console errors | Every error is a finding, even cosmetic ones |
+| Only testing happy path | Test empty states, errors, edge cases |
+| Not checking network tab | API failures can hide behind cached UI |
+
+## Integration with ValidationForge
+
+- Evidence files go to `e2e-evidence/web-playwright/` (or journey-specific subdirectory)
+- The `verdict-writer` agent reads these files for web journey verdicts
+- Complements the existing `web-validation` skill with deeper browser automation
+- Use alongside `visual-inspection` for comprehensive UI validation

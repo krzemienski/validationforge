@@ -1,0 +1,29 @@
+{
+  "skill": "forge-setup",
+  "pass": 2,
+  "date": "2026-04-17",
+  "change_summary": "Bundled idempotent forge-init.sh script and referenced it near the top of SKILL.md.",
+  "files_changed": [
+    {
+      "path": "skills/forge-setup/scripts/forge-init.sh",
+      "action": "created",
+      "purpose": "Idempotent workspace initializer: creates .vf/config.json (with evidence_retention_days=30), .vf/state/, .vf/benchmarks/, e2e-evidence/.gitkeep, updates .gitignore, copies .claude/rules/*.md."
+    },
+    {
+      "path": "skills/forge-setup/SKILL.md",
+      "action": "edited",
+      "purpose": "Added Automated setup line under heading pointing at forge-init.sh."
+    }
+  ],
+  "script_flags": ["--project-dir", "--enforcement-level", "--force", "--help"],
+  "validation": {
+    "bash_syntax_check": "passed (bash -n)",
+    "idempotency_test": "passed (run 2 on /tmp/forge-test-29759 — config=skipped, rules=0, gitignore=already-listed)",
+    "frontmatter_intact": true
+  },
+  "line_counts": {
+    "forge-init.sh": 115,
+    "SKILL.md": 130
+  },
+  "notes": "Script sources rules from repo-root/.claude/rules (validationforge repo ships 3 .md rule files); script warns but does not fail if rules source or target .gitignore is missing. Config schema trimmed to essentials (version, enforcement, evidence_dir, evidence_retention_days, max_fix_attempts, created_at) — platform detection still belongs to the skill's manual Phase 1."
+}

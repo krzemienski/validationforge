@@ -1,0 +1,9 @@
+{
+  "skill_name": "react-native-validation",
+  "changes_applied": [{"fix": "Rewrite description with workflow coverage + triggers", "implemented": true, "details": "Names all RN workflows (Expo Go, Expo prebuild, bare RN), platforms (iOS sim, Android emu, physical), and what's checked. 7 new YAML triggers (was 0 explicit)."}],
+  "changes_skipped": [{"fix": "Body (354 lines)", "reason": "Large but organized by platform/workflow. Body reform is subagent-scale work."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/react-native-validation/SKILL.md"],
+  "description_before": "Validate React Native apps via Metro/Expo: platform build, launch, screenshots, logs, deep link testing on iOS/Android. Detects crashes, console errors, bundle issues. Covers Expo Go, CLI, bare RN.",
+  "description_after": "Use for validating React Native apps built with any workflow (Expo Go, Expo prebuild/EAS, bare RN CLI) on iOS simulators, Android emulators, and physical devices. Covers: Metro bundler starts cleanly, platform build succeeds, app installs + launches, screenshots at key states, JS console errors captured, native crashes detected, deep links route correctly. Reach for it on phrases like 'validate my React Native app', 'metro bundler check', 'expo validation', 'test RN on simulator', 'does the deep link work in RN', or before an RN release."
+}

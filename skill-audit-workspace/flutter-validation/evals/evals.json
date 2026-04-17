@@ -1,0 +1,17 @@
+{
+  "skill_name": "flutter-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a Flutter app that I need to release tomorrow. It runs fine in debug on the iOS Simulator but I want to validate the release build. What's the right sequence of commands to ensure it won't crash in production?",
+      "expected_output": "Guide: (1) `flutter build ios --release` (build for device, not simulator). (2) `flutter run --release -d DEVICE_ID` on a physical iPhone if possible (or simulator with release build). (3) Capture logs: `flutter logs -d DEVICE_ID &` to stream output. (4) Watch for 'FlutterError', 'unhandled exception', or crash output. (5) Screenshot the main screen and any critical user flows. (6) Check for platform-specific crashes: iOS (check ~/Library/Logs/DiagnosticReports/), Android (adb logcat). If you see any error that doesn't appear in debug, that's a release-only issue (often related to optimization or asset bundling) \u2014 investigate before shipping.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My Flutter app has a build error: 'gradle: version 7.2.0 is not supported'. I have no idea what this means. Should I just update gradle in the Gradle wrapper?",
+      "expected_output": "No \u2014 that's a symptom, not the fix. The error means your Flutter SDK expects gradle version X but your android/gradle/wrapper/gradle-wrapper.properties has version 7.2.0. Options: (1) Update compileSdkVersion in android/app/build.gradle to match your Gradle version, or (2) Update gradle wrapper to a version compatible with your compileSdkVersion. Check the Common Failures table for 'Build fails with Gradle error' \u2014 it shows the proper fix. Don't just increment versions randomly. Always check the error output for the recommended version.",
+      "files": []
+    }
+  ]
+}

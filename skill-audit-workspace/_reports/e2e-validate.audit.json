@@ -1,0 +1,97 @@
+{
+  "skill_name": "e2e-validate",
+  "path": "/Users/nick/Desktop/validationforge/skills/e2e-validate/SKILL.md",
+  "skill_md_line_count": 153,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Orchestrator: detect platform → map journeys → PASS criteria → capture evidence → verdicts (zero mocks). Supports iOS/RN/Flutter/web/API/CLI/Django/fullstack. Bottom-up order, 3-strike fix loop.",
+    "length_words": 26,
+    "issues": [
+      "Description buries the headline: it's the core orchestrator skill, but 'Orchestrator' is jargon — users don't know if they need this",
+      "Lists 8 platforms as a comma-separated list (iOS/RN/Flutter/web/API/CLI/Django/fullstack) — overwhelming. Should lead with 'auto-detects your platform'",
+      "Doesn't say WHEN to use this skill vs just reading platform-specific skills (ios-validation, flutter-validation, etc.). When does user invoke e2e-validate vs just reading the platform skill?"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Platform Detection table (lines 32-45) has 9 rows with dense signal descriptions. No guidance on what to do if MULTIPLE signals match (e.g., project has both frontend and backend). Should clarify that 'first match wins' but also show conflict resolution.",
+        "location": "lines 32-45"
+      },
+      {
+        "severity": "high",
+        "description": "Success Criteria section (lines 98-110) lists 9 checkpoints but doesn't distinguish between mandatory and conditional. Are all 9 required for EVERY platform? Or are some iOS-only, some API-only?",
+        "location": "lines 98-110"
+      },
+      {
+        "severity": "med",
+        "description": "Command Routing table (lines 49-62) is comprehensive but none of the workflow files referenced (workflows/full-run.md, workflows/analyze.md, etc.) are present in the skill directory. Readers will search for these files and not find them.",
+        "location": "lines 49-62"
+      },
+      {
+        "severity": "med",
+        "description": "Platform References table (lines 70-81) lists 8 reference files but none are bundled in the skill. This skill reads like an index, not a standalone reference. New users won't know where to find those files.",
+        "location": "lines 70-81"
+      },
+      {
+        "severity": "med",
+        "description": "Context Budget section (lines 125-138) explains skill tiering strategy but is meta-documentation. Doesn't belong in a skill meant to guide E2E validation. Should be in ARCHITECTURE.md, not here.",
+        "location": "lines 125-138"
+      },
+      {
+        "severity": "low",
+        "description": "Validation Order (lines 64-67) states 'always validate bottom-up' but no justification or examples. Why bottom-up? What happens if you validate UI first? When is bottom-up not applicable?",
+        "location": "lines 64-67"
+      },
+      {
+        "severity": "low",
+        "description": "Related Skills section (lines 140-153) is a table but doesn't explain the RELATIONSHIPS. Why does 'functional-validation' come first? What does 'critical' mean in Load When context?",
+        "location": "lines 140-153"
+      }
+    ],
+    "strengths": [
+      "Iron Rule (lines 20-26) is the manifesto and it's crystal clear: fix real systems, never mock",
+      "Platform detection logic is practical and prioritized (iOS > RN > Flutter > CLI > API > Web)",
+      "Success Criteria (lines 98-110) is a robust validation checklist",
+      "Scope statement (lines 15-18) explicitly says what this skill DOES NOT handle, preventing scope creep"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "This skill is an ORCHESTRATOR and SHOULD bundle: (1) detect-platform.sh (mentioned in line 46 but not bundled), (2) a decision tree flowchart (text or diagram) to help users navigate platform detection and workflow selection, (3) quick reference card for which workflow to use when (full run, plan-only, fix-loop, etc.)",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Rewrite description to clarify WHEN and WHY: 'This is the validation orchestrator skill. Read this FIRST if you're unsure how to validate your project. It auto-detects your platform (iOS, React Native, Flutter, web, API, CLI, Django, fullstack), guides you through journey definition, and manages the full validation pipeline (plan → execute → diagnose failures → verdict). Use this to coordinate validation across platforms.'",
+    "In Platform Detection (lines 32-45), add: 'If your project has BOTH frontend and backend signals (e.g., Next.js with API routes), the fullstack platform is detected. If you have a frontend without a backend, web is detected. If you have routes but no frontend, api is detected.' Add real examples: 'A Django project with React frontend triggers fullstack; a Next.js project without a separate backend is web+api (same tier).'",
+    "In Success Criteria (lines 98-110), annotate which are mandatory vs platform-specific: '1. [ALWAYS] Platform detected. 2. [ALWAYS] Journeys identified. 3. [ALWAYS] PASS criteria defined. 4. [ALWAYS] Real system running. 5. [ALWAYS] Journeys exercised. 6. [ALWAYS] Evidence captured and reviewed. 7. [ALWAYS] Failures diagnosed. 8. [ALWAYS] Report saved. 9. [API/Web only] Zero unreviewed evidence files (N/A for CLI/binary validation).' Make it actionable.",
+    "Add a section 'When to use e2e-validate vs platform-specific skills': 'Use e2e-validate if you're unsure about your platform or need a high-level overview. Use platform-specific skills (flutter-validation, django-validation, etc.) WITHIN the e2e-validate flow, or as standalone references for that platform. e2e-validate ties them together.'",
+    "In Command Routing (lines 49-62), add inline guidance: '(none): Start here. Full pipeline (plan + execute + report). --analyze: Discovery only (what's your platform?). --plan: Generate PASS criteria without running anything. --execute: Run the plan. --fix: 3-strike failure recovery. --audit: Read-only severity review. --ci: Automated, no human gates.'",
+    "In Platform References (lines 70-81), change 'reference' to 'learn more in skill:<name>' or add note: 'These references are other skills in ValidationForge. Load them when you reach the execution phase for that platform.' Link them explicitly.",
+    "Move Context Budget section (lines 125-138) to a footnote or REMOVE it entirely. This skill shouldn't discuss its own loading strategy — that's architecture metadata.",
+    "In Validation Order (lines 64-67), explain the WHY: 'Bottom-up validation finds CAUSES before symptoms. If the database is broken, the API will fail. If the API fails, the UI will show errors. Start at the data layer so you can isolate root cause. Examples: (1) fullstack: test DB migrations first, then API endpoints, then UI. (2) mobile: test deep links first (routing layer), then UI flows. (3) API: test DB connectivity, then health check, then auth, then CRUD.'",
+    "Remove or heavily trim the Related Skills section (lines 140-153) in favor of a more direct 'Load these skills in this order' note in the beginning."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a project that's a React frontend + Node.js backend in the same repo. I run /validate but the skill says it doesn't know what platform to validate. How do I tell it this is a fullstack project?",
+      "expected_output": "Explain: the e2e-validate skill auto-detects fullstack if it sees both frontend routes AND backend API routes. If detection is wrong, use `--platform fullstack` flag. Then guide the bottom-up order: (1) Start with database (check migrations, connectivity), (2) Test API endpoints with curl (health, CRUD, auth), (3) Test frontend UI (sign up, data loading, error states). Each layer should be independent so you can isolate failures."
+    },
+    {
+      "id": 2,
+      "prompt": "I'm validating a Flutter mobile app. The e2e-validate skill mentions flutter-validation as a reference but I can't find it. Where is it? And what's the relationship between e2e-validate and flutter-validation?",
+      "expected_output": "Clarify: e2e-validate is the orchestrator; flutter-validation is the platform-specific skill that handles Flutter builds, device/emulator setup, screenshots, and log streaming. e2e-validate USES flutter-validation during the execute phase. If you just want to validate Flutter, go directly to flutter-validation. If you want high-level guidance on the full validation pipeline, read e2e-validate first, then drill down to flutter-validation for the specifics."
+    },
+    {
+      "id": 3,
+      "prompt": "My Django project with Django REST API and React frontend keeps failing auth tests. The e2e-validate skill mentions a 3-strike fix loop and error-recovery skill. How do I know when to give up and escalate?",
+      "expected_output": "Walk through the 3-strike protocol: Strike 1: read the error (e.g., 403 Forbidden on POST /api/resource/). Is it CSRF? Are headers correct? Try fixing. Strike 2: try an alternative auth method (token instead of session, etc.). Strike 3: rethink assumptions (are env vars set? Is the user actually authenticated? Does the endpoint exist?). If all 3 fail, escalate to the user with the error log, all 3 attempts, and root cause hypothesis (e.g., 'CSRF token not being sent', 'auth endpoint returns wrong field names', 'JWT expiry too short'). Never retry the same failing action twice."
+    }
+  ]
+}

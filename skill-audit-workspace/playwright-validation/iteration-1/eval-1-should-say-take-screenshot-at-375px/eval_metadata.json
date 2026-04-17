@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "should-say-take-screenshot-at-375px",
+  "prompt": "During responsive testing at 375px, the form labels are overlapping the inputs. The app says 'page loaded' but visually it's broken. How do I capture this as evidence?",
+  "expected_output": "Should say: 'Take screenshot at 375px, describe what you see: Labels overlapping inputs, text cut off, submit button partially off-screen. This IS the evidence. Name it step-03-375px-layout-broken.png. Console errors? Network failures? Any indication the app itself is broken, not just misrendered.'",
+  "assertions": []
+}

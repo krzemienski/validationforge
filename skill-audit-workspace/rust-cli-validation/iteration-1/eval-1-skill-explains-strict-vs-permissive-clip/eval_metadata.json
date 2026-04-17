@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "skill-explains-strict-vs-permissive-clip",
+  "prompt": "Clippy is complaining about 'unused imports' but we intentionally keep some for future use. Should we use -D warnings or ignore clippy?",
+  "expected_output": "Skill explains strict vs permissive clippy modes. For intentional unused imports: run without -D warnings flag, document the reason in code comment (#[allow(unused_imports)]), cite in clippy output. Skill advises: new projects should use -D warnings to catch real issues; mature projects can be permissive. Shows how to distinguish 'intentional' from 'real dead code'.",
+  "assertions": []
+}

@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "user-consults-decision-matrix-new-page-r",
+  "prompt": "We're adding a new dashboard page that shows user data from three APIs, with interactive charts, a dark mode toggle, and user filtering. The team says 'it's just display code.' I need to define what layers of validation are mandatory.",
+  "expected_output": "User consults decision matrix: new page/route \u2192 YES (all 5 layers). User applies each layer: Layer 1 (curl the 3 APIs, verify response structure), Layer 2 (Playwright: navigate, filter data, verify filtered data displays), Layer 3 (WCAG: heading hierarchy, color contrast, keyboard nav), Layer 4 (Lighthouse: LCP, INP, CLS), Layer 5 (Security: no XSS in chart labels if user-provided). Not 'just display code'\u2014full validation required.",
+  "assertions": []
+}

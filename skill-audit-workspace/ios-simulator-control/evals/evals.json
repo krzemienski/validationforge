@@ -1,0 +1,17 @@
+{
+  "skill_name": "ios-simulator-control",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to validate an iOS app on iPhone 16 Pro simulator but I don't know if it's currently booted or which one to use. Walk me through checking, booting if needed, and then getting it ready to capture evidence.",
+      "expected_output": "Response should invoke ios-simulator-control. Step 1: 'xcrun simctl list devices available' to see options. Step 2: 'xcrun simctl list devices booted' to check current state. Step 3: If not booted, 'xcrun simctl boot \"iPhone 16 Pro\"'. Step 4: Verify: 'open -a Simulator'. Then explain: UDID from booted list is needed for all subsequent commands. Do NOT assume 'booted' \u2014 verify.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm recording video evidence of an iOS feature test. What's the right way to start and stop video recording? What mistakes should I avoid?",
+      "expected_output": "Response should invoke ios-simulator-control and explain: (1) 'xcrun simctl io $UDID recordVideo output.mp4 &' with & to background. (2) After exercising app: 'kill -INT $PID' (SIGINT, not SIGKILL). (3) Explicitly flag: DO NOT use 'kill -9' or SIGKILL \u2014 corrupts video file. Reference lines 97, 235, 262. Should also mention: capture $! before backgrounding to save PID.",
+      "files": []
+    }
+  ]
+}

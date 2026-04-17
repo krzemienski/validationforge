@@ -1,0 +1,88 @@
+{
+  "skill_name": "forge-setup",
+  "path": "/Users/nick/Desktop/validationforge/skills/forge-setup/SKILL.md",
+  "skill_md_line_count": 118,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Initialize ValidationForge: detect platforms, scaffold .validationforge/ + e2e-evidence/, install rules, configure enforcement (strict/standard/permissive). Run first on any new project.",
+    "length_words": 21,
+    "issues": [
+      "PREACHY TONE: 'must be correct first' and 'ALWAYS' overuses imperative voice without context of why",
+      "UNCLEAR SEQUENCING: Description doesn't signal that platform detection happens BEFORE config selection",
+      "VAGUE TARGET: 'Run first on any new project' — what triggers this? First validation command? Project init? Onboarding?"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Phase 4 (Rules Installation) lists 8 rules with vf- prefix (lines 67-75) but never explains what each rule enforces or why they're necessary. A developer won't understand why 'vf-team-validation.md' is being copied.",
+        "location": "Lines 67-75"
+      },
+      {
+        "severity": "high",
+        "description": "Phase 5 (Verification) includes a JSON validation check (lines 82-83: 'python3 -m json.tool') but doesn't explain what to do if validation FAILS. Should be a phase gate with remediation.",
+        "location": "Lines 79-87"
+      },
+      {
+        "severity": "med",
+        "description": "Config Schema (lines 89-106) shows JSON structure but is incomplete: no 'project_name', no 'hook_manifest_path', no reference to how this file is consumed by later commands. The schema example doesn't match what the phase-2 section promises.",
+        "location": "Lines 89-106"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 1 (Platform Detection) mentions MCP servers (Playwright, Xcode, etc.) but doesn't explain how to detect availability or what happens if required servers are missing. Is this a hard gate or a warning?",
+        "location": "Lines 19-30"
+      },
+      {
+        "severity": "low",
+        "description": "Output summary (lines 108-117) shows ideal state but doesn't address common failure scenarios (rules already installed, .validationforge/ already exists, conflicting enforcement level from prior setup).",
+        "location": "Lines 108-117"
+      },
+      {
+        "severity": "low",
+        "description": "Enforcement Level selection (lines 32-42) references 'config/strict.json', 'config/standard.json', 'config/permissive.json' in plugin directory but user hasn't been told where plugin is installed yet.",
+        "location": "Lines 34-40"
+      }
+    ],
+    "strengths": [
+      "5-phase structure (detection → config → scaffold → install → verify) is linear and sequenced correctly",
+      "Platform detection table (lines 20-28) is specific: lists exact file signals (xcodeproj, package.json, OpenAPI spec) and tools per platform",
+      "Enforcement level table (lines 34-40) clearly contrasts strict/standard/permissive with specific behavioral differences (block test files, evidence reminders, advisory only)",
+      "Scaffold output (lines 44-55) shows realistic directory structure with .gitkeep marker"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "forge-init.sh (run all 5 phases in sequence), detect-platforms.sh (scan project for platform signals), install-rules.sh (copy 8 rules with vf- prefix), scaffold-directories.sh (create .validationforge/ and e2e-evidence/)",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Explain each of the 8 rules in Phase 4: Add a brief sentence per rule (vf-validation-discipline.md = enforce no test files; vf-evidence-management.md = require evidence before completion; etc.). Or link to a separate rules manifest.",
+    "Add Phase 5 failure paths: If JSON validation fails → 'Check syntax errors in config.json with `cat .validationforge/config.json | python3 -m json.tool`; fix and re-run forge-setup.' If rules missing → 'Re-run Phase 4: bash scripts/install-rules.sh'",
+    "Expand config schema with full fields: add project_name, plugin_install_path (so later commands know where to find hook scripts), evidence_dir_absolute_path, enforcement_created_at. Include a 'mcp_servers' full example.",
+    "Add MCP server detection logic: In Phase 1, after platform detection, check 'Playwright available?' (if web platform detected), 'Xcode available?' (if iOS), etc. If critical server missing → WARN or FAIL depending on enforcement level.",
+    "Document conflict resolution: If .validationforge/ already exists → 'Upgrade existing config' or 'Overwrite'? If rules already installed → skip or reinstall? Add 'repair' mode: `forge-setup --repair` to fix partial setups."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "First-time setup on a monorepo with React frontend + Express API + iOS native. Running /forge-setup. What platforms will be detected and what's the enforcement recommendation?",
+      "expected_output": "Detects: web (package.json + React), api (Express routes), ios (xcodeproj). Recommends: standard enforcement (default). Creates .validationforge/config.json with platforms: [web, api, ios]. Scaffolds e2e-evidence/. Copies 8 rules. Verifies JSON valid. Prints: 'Platforms: web, api, ios | Enforcement: standard | Evidence: e2e-evidence/ | Rules: 8 installed | MCP: playwright (available), xcode (available)'."
+    },
+    {
+      "id": 2,
+      "prompt": "I'm in strict enforcement mode. Running /forge-setup again on a project that already has .validationforge/config.json (enforcement: standard). What happens? Do I get prompted or does it overwrite?",
+      "expected_output": "Detects existing config.json. Prompts: 'Config exists with enforcement: standard. Upgrade to strict?' or 'Keep standard?' User chooses. If strict chosen, updates config.json enforcement field. Re-runs rules installation with strict rules variant. If standard kept, skips config update and rules reinstall. Confirms final state."
+    },
+    {
+      "id": 3,
+      "prompt": "After /forge-setup, I run the JSON validation check and get 'Expecting property name enclosed in double quotes'. Config is broken. What do I do?",
+      "expected_output": "Directs to: 'Config syntax error detected. Review .validationforge/config.json with `cat .validationforge/config.json | python3 -m json.tool` to see exact error line. Fix syntax (missing comma, trailing comma, unquoted keys). Then re-run `forge-setup` to repair, or manually edit config.json and run Phase 5 verification again.'"
+    }
+  ]
+}

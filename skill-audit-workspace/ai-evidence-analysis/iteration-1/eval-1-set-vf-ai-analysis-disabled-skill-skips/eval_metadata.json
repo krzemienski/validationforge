@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "set-vf-ai-analysis-disabled-skill-skips",
+  "prompt": "I'm in an air-gapped environment (no API access). Can I still use this skill? What happens to the confidence scores?",
+  "expected_output": "Set VF_AI_ANALYSIS=disabled. Skill skips all model API calls, doesn't produce analysis files, logs one notice line. Verdict writer proceeds with raw evidence only. No confidence scores generated, but validation continues.",
+  "assertions": []
+}

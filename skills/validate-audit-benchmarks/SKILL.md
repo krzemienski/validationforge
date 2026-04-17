@@ -1,12 +1,15 @@
 ---
 name: validate-audit-benchmarks
-description: "Score ValidationForge primitives: hooks (60% weight), skills (20%), commands (20%). Produces A-F grade, compares against prior benchmarks. Run before releases, after modifications, during audits."
+description: "Use for ValidationForge plugin maintainers — scores the plugin's own structural integrity, NOT a user project's validation (that's forge-benchmark). Audits the 7 hooks (60% weight — they're the enforcement layer), 48 skills (20% — check frontmatter + schema), and 17 commands (20% — check YAML + references). Produces an A-F grade with regressions flagged against prior benchmarks. Reach for it on phrases like 'audit the plugin', 'validate the validation primitives', 'are the hooks still working', 'benchmark the plugin', or before any ValidationForge release."
 triggers:
   - "audit benchmarks"
   - "run benchmark suite"
   - "score hook correctness"
   - "validate primitives"
   - "quality metrics"
+  - "audit the plugin"
+  - "benchmark plugin itself"
+  - "plugin structural integrity"
 context_priority: reference
 ---
 

@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "phase-1-extract-12-tokens-from",
+  "prompt": "I have a React app with Tailwind. DESIGN.md defines 12 colors in a palette. I grep the code and find 147 color references: some using Tailwind classes (bg-primary), some hardcoded (#FF0000). How do I audit compliance?",
+  "expected_output": "Phase 1: Extract 12 tokens from DESIGN.md, document them (--primary-bg, --text-primary, etc.). Phase 2: Grep codebase for hardcoded hex (#), color CSS properties (color:, background:), and Tailwind arbitrary values (bg-[#FF0000]). Save results to step-02-implementation-scan.md. Phase 3: For each reference, check if it matches a token. Example: #FF0000 is not in palette \u2192 HIGH violation. bg-primary is in Tailwind config \u2192 PASS. bg-[#FF0000] is arbitrary \u2192 LOW violation. Count: 140 PASS, 5 HIGH, 2 LOW. Compliance = 140/147 = 95.2% \u2192 PASS verdict. Report recommends fixing 5 HIGH violations before next release.",
+  "assertions": []
+}

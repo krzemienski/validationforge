@@ -1,0 +1,96 @@
+{
+  "skill_name": "fullstack-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/fullstack-validation/SKILL.md",
+  "skill_md_line_count": 217,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Validate fullstack bottom-up: DB schema/data → API CRUD → frontend rendering → integration (create→read→update→delete across layers). Use for multi-layer projects; proves data flows end-to-end.",
+    "length_words": 25,
+    "issues": [
+      "EXCELLENT FRAMING: 'bottom-up' principle stated upfront; 'proves data flows' is concrete outcome",
+      "GOOD TRIGGER: 'multi-layer projects' is clear",
+      "MINOR: Could emphasize 'start at deepest dependency' more explicitly in description"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Layer 2 (API Validation) delegates to 'api-validation skill' (line 74) but that skill is not bundled here. Cross-reference is broken; reader must hunt for the api-validation skill or duplicate the logic.",
+        "location": "Line 74"
+      },
+      {
+        "severity": "high",
+        "description": "Layer 3 (Frontend Validation) same issue: references 'web-validation skill' (line 100) without bundling it. Also uses 'browser_navigate', 'browser_snapshot', 'browser_take_screenshot' MCP calls that are not explained or validated.",
+        "location": "Lines 100-113"
+      },
+      {
+        "severity": "med",
+        "description": "Layer 4 (Integration Testing) mixes bash, MCP, and conceptual steps without clear demarcation. Lines 122-127 are bash. Lines 145-153 are MCP calls. Syntax is inconsistent (no explanation of what 'ref=' means, browser automation semantics).",
+        "location": "Lines 116-182"
+      },
+      {
+        "severity": "med",
+        "description": "Prerequisites (lines 27-34) say 'how to verify' but don't say what to do if a prerequisite is NOT met. If database is not running, should we STOP, or is there a remediation?",
+        "location": "Lines 27-34"
+      },
+      {
+        "severity": "med",
+        "description": "Evidence Standards (lines 186-192) are good but the 'GOOD' example assumes curl + jq + bash is available, and doesn't account for systems without these tools. Also assumes single record by ID tracing, but doesn't cover bulk operations.",
+        "location": "Lines 186-192"
+      },
+      {
+        "severity": "low",
+        "description": "Common Failures table (lines 194-202) is useful but doesn't explain HOW to diagnose ('Check DB seed data first' is vague; what command shows seed data?).",
+        "location": "Lines 194-202"
+      },
+      {
+        "severity": "low",
+        "description": "PASS Criteria Template (lines 205-217) is a checklist but doesn't specify what 'correct' means. 'Data displayed correctly' (line 213) — does this mean exact string match? Same order? Same count? Needs clarification.",
+        "location": "Lines 205-217"
+      }
+    ],
+    "strengths": [
+      "Bottom-Up Rule (lines 9-25) is explained with clear rationale: 'frontend bug might actually be backend bug; backend bug might be database bug. Start at deepest.'",
+      "4-layer architecture (DB → API → Frontend → Integration) is sequential with clear PASS gates at each layer (lines 70, 96, 114, 184)",
+      "Layer 1 (Database Validation) is concrete: shows actual bash commands per DB type (PostgreSQL, MySQL, SQLite) for schema and seed data verification",
+      "Layer 4 (Integration Testing) covers all CRUD paths: frontend→DB write path, DB→frontend read path, API→frontend update propagation, delete cascade",
+      "Common Failures table (lines 194-202) maps symptoms to root causes (empty list → DB or API; stale data → caching or migration pending)"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "fullstack-validate.sh (run all 4 layers in sequence with gate checks), db-validate.sh (schema + seed verification per DB type), api-validate.sh (CRUD cycle verification), frontend-validate.sh (MCP Playwright automation), integration-validate.sh (end-to-end data flow verification)",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Remove external skill references (api-validation, web-validation). Either (1) inline the essential CRUD steps and web navigation steps, OR (2) state clearly: 'See api-validation skill for full endpoint testing; fullstack-validation covers API+DB integration only.' Currently creates broken references.",
+    "Clarify Layer 4 MCP syntax: Explain 'browser_navigate', 'browser_snapshot', 'browser_take_screenshot' are Playwright MCP commands. Show actual Python/JavaScript equivalents or link to Playwright docs. Current syntax looks like pseudo-code.",
+    "Add prerequisite failure remediation: If database not running → 'Start your database server (e.g., `brew services start postgresql`), then verify with the health check command above.' If API server down → 'Start dev server: `npm run dev` or equivalent. If MCP not available → 'Ensure Playwright MCP is configured in .claude/mcp.json.'",
+    "Enhance 'Evidence Standards' section: Show 2 examples of GOOD end-to-end evidence: (1) API returns user ID 42, frontend shows 'User: 42' (same ID), (2) API returns 5 items, frontend list shows exactly 5 rows. Make clear: GOOD = cite specific data values in evidence; BAD = generic 'loaded successfully.'",
+    "Expand Common Failures: Add 'How to diagnose' column with actual commands: 'Empty list? Run `psql $DB -c \"SELECT count(*) FROM users\"` to check seed data. 0 rows = seed missing. Run migrations first.'",
+    "Clarify PASS Criteria specificity: 'Data displayed correctly' means: (1) values match exactly (no truncation, no formatting), (2) order matches if order matters (sorting), (3) count matches, (4) no missing or extra records. For bulk operations: 'If API returns 50 items, frontend must show 50 items (or pagination showing 50 total).'",
+    "Add failure gate explanation: Each layer has a PASS gate. If Layer 1 fails (bad DB schema) → STOP, don't proceed to Layer 2. Violating this gate = wasted effort debugging API when DB is the real problem."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "Django project with PostgreSQL. Starting fullstack validation. Layer 1 (DB): schema looks good, but migration shows 'pending migrations'. Do I proceed to Layer 2 or fix first?",
+      "expected_output": "STOP at Layer 1 PASS gate. Pending migrations = database state is wrong. Layer 2 (API CRUD) will fail or show incorrect data. Fix first: run `python manage.py migrate`, then verify schema again. Only after migrations complete and schema is correct proceed to Layer 2."
+    },
+    {
+      "id": 2,
+      "prompt": "Layer 2 passes (API returns 5 users from GET /api/users). Layer 3 (frontend): frontend loads but shows empty list (0 users). What's the root cause and how do I diagnose?",
+      "expected_output": "API works (returns 5), frontend has the bug. Likely causes: (1) Frontend uses mock/cached data instead of real API, (2) Fetch URL points to wrong endpoint, (3) Response parsing broken. Diagnose: (1) Check browser DevTools Network tab—does GET /api/users fire? (2) Check response body—do you see 5 user records? (3) Check JavaScript console for errors. Capture evidence: Network tab screenshot, API response JSON, console errors."
+    },
+    {
+      "id": 3,
+      "prompt": "Layer 4 integration test: create user via frontend (form visible, user enters 'Alice', clicks Save). Frontend shows success. Layer 2 says API returned 201. But Layer 1 query 'SELECT count(*) FROM users' shows count didn't increase. What happened?",
+      "expected_output": "API accepted the request (201 = success) but database transaction rolled back or insert failed silently. Root cause: likely API transaction not committed, or write to wrong table. Capture evidence: (1) curl to API /users endpoint showing 201 + full response body with ID, (2) psql query showing count unchanged, (3) psql query with WHERE clause looking for 'Alice' (returns 0 rows). Check API code: is transaction committed? Is write to correct table? Does error handling swallow the exception?"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "skill_name": "playwright-validation",
+  "changes_applied": [{"fix": "Rewrite description positioning against chrome-devtools and web-validation", "implemented": true, "details": "Playwright MCP is for cross-browser validation; chrome-devtools is for performance/DevTools-specific; web-validation is the overall flow. Clear ladder. 3 new triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "Well-structured."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/playwright-validation/SKILL.md"],
+  "description_before": "Validate web features via real browser interaction: screenshots, DOM snapshots, form testing, responsive layouts, console/network error detection. Use for feature verification and evidence capture.",
+  "description_after": "Use for web feature validation via Playwright MCP — real browser interactions, cross-browser support (Chromium/Firefox/WebKit), screenshot + DOM snapshot evidence capture, form testing, responsive layouts, console/network error detection. Reach for it when you've picked Playwright as your browser tool (vs Chrome DevTools MCP), or on phrases like 'Playwright validation', 'validate with Playwright', 'browser feature test', 'cross-browser check', 'take DOM snapshot', 'browser automation for validation'. For performance-focused Chrome inspection use chrome-devtools; for the overall web-validation flow use web-validation."
+}

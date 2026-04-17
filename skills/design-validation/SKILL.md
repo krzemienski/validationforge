@@ -1,12 +1,15 @@
 ---
 name: design-validation
-description: "Compare implementation screenshots against design refs (Stitch, DESIGN.md, Figma). Scores colors, typography, spacing, layout, interactions across 5 categories. Use after UI implementation."
+description: "Use after implementing a UI from a design spec to measure how closely the built version matches the reference. Compares a browser/device screenshot against the design source (Stitch MCP export, Figma image, or inline DESIGN.md mockup) across five categories: colors, typography, spacing, layout, interactions. Produces a weighted fidelity score and flags the specific mismatches. Pairs with design-token-audit (which checks the code-level tokens) — this skill checks the rendered output. Reach for it on phrases like 'does it match the design', 'design fidelity', 'visual regression', 'compare to mockup', 'design QA', or before shipping anything where the visual match is part of the acceptance criteria."
 triggers:
   - "design validation"
   - "validate design"
   - "design fidelity"
   - "compare design to implementation"
   - "does it match the design"
+  - "visual regression"
+  - "design QA"
+  - "compare to mockup"
 context_priority: reference
 ---
 

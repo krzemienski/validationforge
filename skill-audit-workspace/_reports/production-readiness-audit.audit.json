@@ -1,0 +1,84 @@
+{
+  "skill_name": "production-readiness-audit",
+  "path": "/Users/nick/Desktop/validationforge/skills/production-readiness-audit/SKILL.md",
+  "skill_md_line_count": 211,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Audit app readiness across 8 phases: code quality, security, performance, reliability, observability, documentation, deployment. Produces READY/NOT READY/CONDITIONAL verdict with blocking issues.",
+    "length_words": 26,
+    "issues": [
+      "Slightly short (26 words) but comprehensive list",
+      "Clear 'when' context: before production deployment or major releases",
+      "Result focus (verdict type) adds credibility"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Phases 1-7 are enormous checklist sections (50+ lines combined) with minimal explanation of WHY each check matters or HOW to interpret results. Risk: users check boxes without understanding risk.",
+        "location": "## Phase 1-7 (lines 38-152)"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 2 (Security) checklist lacks specificity. 'Input sanitization: Submit XSS payloads in forms' — what is a realistic XSS payload? How do you verify it's sanitized? Users must guess.",
+        "location": "## Phase 2: Security (lines 55-72)"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 3 (Performance) references Lighthouse but doesn't explain what 'LCP under 2.5s' means in context or how to set up Lighthouse audit. External dependency not documented.",
+        "location": "## Phase 3: Performance (lines 74-90)"
+      },
+      {
+        "severity": "med",
+        "description": "Phase 5 (Observability) asks to 'Review analytics/monitoring setup' without defining what minimum viable observability looks like. Vague acceptance criteria.",
+        "location": "## Phase 5: Observability (lines 107-121)"
+      },
+      {
+        "severity": "low",
+        "description": "Severity Rules (lines 191-197) define blocking criteria (Security/Deployment FAIL = NOT READY) but don't explain rollback scenario: if you shipped a FAIL, what's the recovery?",
+        "location": "## Severity Rules (lines 191-197)"
+      }
+    ],
+    "strengths": [
+      "8-phase pipeline diagram (lines 26-36) shows orchestration and parallelization opportunity",
+      "Comprehensive checklist across 8 dimensions (code, security, perf, reliability, observability, docs, deployment)",
+      "Final report template (lines 157-187) is well-structured and includes blocking/non-blocking distinction",
+      "Severity Rules are unambiguous about blocking (Security, Deployment)",
+      "Related Skills section ties audit to feature validation workflow"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "No automated checklist runner. Script could execute Phase 1 checks (grep for TODO/FIXME, check for hardcoded secrets, scan dependencies) and produce structured report. Phases 2-7 require manual inspection but Phase 1 is mostly automatable.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Add context for each phase: 'Phase 1 catches common coding mistakes. Phase 2 validates security boundaries. Phase 3 ensures performance isn't degraded.' — Why matters, not just what to check.",
+    "For Phase 2 (Security), provide concrete XSS test strings: `<img src=x onerror=alert(1)>`, `\"><script>alert(1)</script>`. Show expected sanitized output.",
+    "For Phase 3 (Performance), link to Lighthouse setup guide or bundle a script: `npm install -g lighthouse && lighthouse https://localhost:3000 --output=json > perf-report.json`",
+    "For Phase 5 (Observability), define MVP: 'At minimum: error tracking (Sentry or equivalent), 1 dashboard showing error rate and response time, health check endpoint'",
+    "Bundle script: audit-phase-1.sh that automates TODO/FIXME/secrets scan and produces structured report for manual review of phases 2-7"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm auditing a Node.js API before first production deploy. It's currently at Phase 3 (Performance). The Lighthouse score is 85, but LCP is 3.2s (exceeds 2.5s target). Is this READY or CONDITIONAL?",
+      "expected_output": "Should say: 'CONDITIONAL. Performance isn't blocked (Phase 3 failure doesn't block shipping per Severity Rules), but document the finding. Investigate why LCP is 3.2s (slow API, large bundle, unoptimized queries). Make it a known risk acceptance or schedule optimization post-launch.'"
+    },
+    {
+      "id": 2,
+      "prompt": "During Phase 2 (Security) audit, I notice JWT tokens in the URL params. Is this an automatic NOT READY?",
+      "expected_output": "Should say: 'YES. Phase 2 Security finding: sensitive data in URLs. This is blocking per Severity Rules (any Phase 2 FAIL = NOT READY). Fix: remove JWT from URL, use Authorization header instead. Re-audit Phase 2 before deploying.'"
+    },
+    {
+      "id": 3,
+      "prompt": "My app passes all 8 phases. Documentation (Phase 6) is incomplete but we're under time pressure. Can we ship as CONDITIONAL?",
+      "expected_output": "Should say: 'Yes, Phase 6 Documentation failure = CONDITIONAL (non-blocking). But: users will struggle to understand deployment, team onboarding will be hard, debugging in production will be slower. Schedule doc completion within 2 weeks post-launch. Document this as accepted risk.'"
+    }
+  ]
+}

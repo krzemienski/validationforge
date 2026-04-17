@@ -1,12 +1,14 @@
 ---
 name: parallel-validation
-description: "Multi-agent parallel validation: iOS+Web+API simultaneously on independent journeys. Strict file ownership prevents conflicts. Verdict aggregation: any FAIL=FAIL. For large apps, multi-platform."
+description: "Use to fan out validation across multiple independent agents running simultaneously — only when journeys genuinely don't depend on each other. Strict file ownership per agent prevents evidence collisions. Verdict aggregation: any FAIL = overall FAIL (one weak link makes the whole run fail). Different from coordinated-validation and forge-team: those handle DEPENDENCY-AWARE waves; this one assumes journeys are fully independent. Reach for it on phrases like 'run validation in parallel', 'fan out validation', 'concurrent agents', 'validate all at once', or when you have many isolated journeys (e.g., 20 routes across independent pages) and want max throughput."
 triggers:
   - "parallel validation"
   - "validate in parallel"
   - "concurrent validation"
   - "multi-platform validation"
   - "fan out validation"
+  - "concurrent agents"
+  - "validate all at once"
 context_priority: standard
 ---
 

@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "guide-user-through-1-python-manage-py",
+  "prompt": "I have a Django REST API project with postgres. I want to validate that the migrations are applied and the /api/posts/ endpoint returns real data, not a mock. What do I check? I'm concerned the DB might have migration errors.",
+  "expected_output": "Guide user through: (1) python manage.py check, (2) python manage.py showmigrations to spot [ ] unapplied, (3) python manage.py migrate to apply, (4) curl -s http://localhost:8000/api/posts/ to verify non-empty response. Emphasize checking the actual postgres, not in-memory test DB.",
+  "assertions": []
+}

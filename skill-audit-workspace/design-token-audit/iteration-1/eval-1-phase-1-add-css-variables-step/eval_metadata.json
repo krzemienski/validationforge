@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "phase-1-add-css-variables-step",
+  "prompt": "My design system has colors in CSS variables (--primary: #0066FF) in a CSS file. My audit only found tokens in DESIGN.md. How do I include CSS variables?",
+  "expected_output": "Phase 1, add CSS Variables step: grep -rn '^--' src/ --include='*.css'. Extract values into token catalog. Merge with DESIGN.md tokens. Document source for each token (DESIGN.md vs CSS file). Then proceed with Phase 2-4 comparing implementation against the complete merged catalog. Example: '--primary from CSS: #0066FF' is now part of the spec, so implementation using --primary or #0066FF both count as compliant.",
+  "assertions": []
+}

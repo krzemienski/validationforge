@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "should-acknowledge-the-existing-violatio",
+  "prompt": "I'm working on a React Native app and someone on my team created __tests__/ with jest.mock() calls. The skill should block file creation, but we already have these. How do I convert to real validation?",
+  "expected_output": "Should acknowledge the existing violation, explain mock drift risk, and guide toward real system validation (start Metro bundler, use real API endpoints, capture screenshots from simulator). Should reference real-system-validation-guide.md reference.",
+  "assertions": []
+}

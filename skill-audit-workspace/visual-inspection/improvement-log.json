@@ -1,0 +1,9 @@
+{
+  "skill_name": "visual-inspection",
+  "changes_applied": [{"fix": "Rewrite description emphasizing all-states coverage + triggers", "implemented": true, "details": "Concrete: 'happy path isn't enough — empty/error/loading/disabled/focus/overflow states matter'. Names specific triggers that signal the skill should fire ('did I handle all states', 'empty state check', 'loading spinner verification'). 3 new triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "191 lines, scoped."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/visual-inspection/SKILL.md"],
+  "description_before": "Capture rendered UI state via screenshots across breakpoints, modes, edge cases. Use before claiming frontend work done, validating responsive layouts, dark/light modes, empty/error/loading states.",
+  "description_after": "Use before claiming any frontend work is done to capture the states that often break silently — not just the happy path. Covers: all responsive breakpoints, dark/light mode switching, empty states (no data), error states (API failed), loading states (skeleton / spinner), disabled states, focus states, long-content overflow. Reach for it on phrases like 'is the UI right', 'check the frontend before I ship', 'visual review', 'did I handle all states', 'empty state check', 'loading spinner verification', or whenever a frontend change could affect visual behavior beyond the happy path."
+}

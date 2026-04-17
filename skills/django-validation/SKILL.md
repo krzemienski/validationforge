@@ -1,12 +1,15 @@
 ---
 name: django-validation
-description: "Django/Flask validation: dependencies → system check → migrations → server startup → health/CRUD endpoints → auth flows → admin check. Uses curl, captures HTTP/migrations/logs. Also Flask+Gunicorn."
+description: "Use for validating Python web apps built with Django, Flask, or FastAPI. Runs an ordered protocol: check Python deps (pip freeze vs requirements.txt), system check (python manage.py check for Django), migrations up-to-date, server starts cleanly, health endpoint works, CRUD endpoints respond with correct JSON, auth flows (login/logout/protected routes), admin panel loads (Django only). Captures HTTP responses, migration state, and server logs as evidence. Reach for it on phrases like 'validate my Django app', 'check migrations', 'Flask validation', 'FastAPI endpoint check', 'django server test', or before shipping a Python web app change."
 triggers:
   - "django framework testing"
   - "flask validation"
   - "django server check"
   - "migration validation"
   - "django endpoint testing"
+  - "fastapi validation"
+  - "python web app"
+  - "python manage.py"
 context_priority: standard
 ---
 

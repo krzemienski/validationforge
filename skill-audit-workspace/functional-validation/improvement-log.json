@@ -1,0 +1,39 @@
+{
+  "skill_name": "functional-validation",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description as problem+solution with pushy triggers",
+      "implemented": true,
+      "details": "New description leads with the user's problem ('prove a real system actually works — not just that it compiles'), then names concrete trigger phrases ('validate', 'verify', 'is this working', 'does this actually work', 'claims something passes without showing evidence'). Expanded from 31 to ~85 words."
+    },
+    {
+      "fix": "Cross-reference platform-specific skills after detection table",
+      "implemented": true,
+      "details": "Added a sentence after the table pointing explicitly to the next skill to load per platform, and to e2e-validate for multi-platform orchestration. Previously the table just named skills without telling the model what to do with them."
+    },
+    {
+      "fix": "Add pointer to fullstack-validation and e2e-validate from Multi-Platform section",
+      "implemented": true,
+      "details": "Multi-Platform Validation Order now ends with a 'for orchestrating bottom-up with evidence handoff, load fullstack-validation' pointer, addressing the audit's observation that this section described multi-layer work without naming the skill that runs it."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Remove fragile cross-references to ios/web/api/cli/fullstack-validation in Related Skills",
+      "reason": "Verified all five platform skills exist in the plugin. The audit flagged this as possibly fragile, but they're real and the cross-references are correct."
+    },
+    {
+      "fix": "Verify all 4 bundled reference files exist",
+      "reason": "All four references (evidence-capture-commands.md, common-failure-patterns.md, quick-reference-card.md, team-adoption-guide.md) exist in references/. No action needed."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/functional-validation/SKILL.md"
+  ],
+  "description_before": "Build & validate real systems (iOS, Web, API, CLI, fullstack)—never mocks or test files. Capture evidence from browser, simulator, CLI, cURL. Platform detection, 4-step protocol.",
+  "description_after": "Use whenever you need to prove a real system actually works — not just that it compiles or that mocks return the expected shape. Build the real system, exercise it through the same interfaces real users hit (browser, simulator, CLI, cURL), capture evidence, write a verdict citing what you saw. Reach for this skill anytime someone says 'validate', 'verify', 'is this working', 'does this actually work', or claims something passes without showing the evidence.",
+  "line_count_before": 98,
+  "line_count_after": 102,
+  "self_review_notes": "The original skill was already lean and well-structured (Iron Rule, pre-flight checklist, 4-step protocol, verdict format). The main issues were triggering (description too feature-list-y) and navigation (platform table listed skills without telling the model to load them). Both addressed. Left everything else alone — there's no dead weight to cut."
+}

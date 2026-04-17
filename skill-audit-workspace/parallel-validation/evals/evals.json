@@ -1,0 +1,17 @@
+{
+  "skill_name": "parallel-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a fullstack app (Next.js frontend, Node.js API, PostgreSQL). I want to validate them in parallel using 2 agents. What are the pitfalls and how do I structure the evidence directories?",
+      "expected_output": "Should explain that Web and API can parallelize (independent validation journeys) but Database must be seeded before API validation starts (sequential dependency). Should show exact directory structure: e2e-evidence/web-validation/, e2e-evidence/api-validation/, and explain why overlap is forbidden.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "One of my parallel agents failed midway through. I have evidence from 2 other agents. Can I merge the reports, or do I need to rerun all 3?",
+      "expected_output": "Should explain incomplete evidence = overall FAIL verdict (per aggregation rules). Should advise running only the failed agent again (file ownership ensures clean isolation), then re-aggregating all 3 verdicts. Should clarify that partial success is not acceptable for deployment decisions.",
+      "files": []
+    }
+  ]
+}

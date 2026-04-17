@@ -1,0 +1,101 @@
+{
+  "skill_name": "api-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/api-validation/SKILL.md",
+  "skill_md_line_count": 232,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Validate APIs via curl: health checks, CRUD cycles (create/read/update/delete), auth (token, 401/403), error responses, pagination. Captures JSON bodies and status codes. Use on API changes.",
+    "length_words": 27,
+    "issues": [
+      "Missing 'when to use' context in description itself — 'Use on API changes' is vague. Should include 'before deployment', 'after auth changes', 'when adding endpoints'",
+      "Doesn't explain what 'validation' means here: confirming API contract correctness (schemas, status codes, error structures), not just 'the API responds'"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Repetitive curl patterns (lines 27-95): every CRUD operation follows curl → tee → jq → check format. Same 30-line pattern repeated 7 times. Should be bundled as scripts/crud-validator.sh with arguments for resource name",
+        "location": "lines 27-95"
+      },
+      {
+        "severity": "high",
+        "description": "No clear entry point: skill jumps to Prerequisites (lines 14-23) then Step 1. User doesn't know if they should run all 6 steps or pick a subset. No guidance on priority (health check > CRUD > error handling, or something else?)",
+        "location": "lines 14-50"
+      },
+      {
+        "severity": "med",
+        "description": "Prerequisites table (lines 14-23) lists 5 requirements but doesn't say 'STOP here if any fail' or link to how to fix (e.g., 'database seeding' — how? See what docs?)",
+        "location": "lines 14-23"
+      },
+      {
+        "severity": "med",
+        "description": "Error response validation (lines 144-168) is good but abstract: 'Test that error responses include proper status codes AND meaningful bodies' without examples of GOOD vs BAD responses",
+        "location": "lines 144-168"
+      },
+      {
+        "severity": "med",
+        "description": "CRUD cycle section (lines 34-98) mixes instructions with bash code that is neither runnable as-is (needs PORT, TOKEN, RESOURCE interpolation) nor properly templated (variables appear undefined mid-example)",
+        "location": "lines 34-98"
+      },
+      {
+        "severity": "low",
+        "description": "Step 6 (Rate Limiting) is optional ('if applicable') but no guidance on when to include it or how to assess if rate limiting exists in the API",
+        "location": "lines 191-200"
+      },
+      {
+        "severity": "low",
+        "description": "Common Failures table (lines 210-219) is useful but comes AFTER all steps; should come after Prerequisites so users can diagnose failures early",
+        "location": "lines 210-219"
+      }
+    ],
+    "strengths": [
+      "PASS Criteria template (lines 221-232) is excellent — 10 concrete checkboxes, scannable, actionable",
+      "Health Check step (lines 25-32) is concise and includes warning: 'bare 200 OK without body is suspicious'",
+      "Evidence capture reminder (line 204-208) is clear: 'Every error response MUST include a human-readable message, not just a status code'",
+      "Step 5 (Pagination) includes key verification checks: different items per page, consistent totals, empty page handling",
+      "Common Failures table shows SYMPTOM → CAUSE → FIX mapping (lines 210-219), practical for debugging"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "CRUD cycle pattern (lines 34-98) repeated 7x — should be scripts/crud-validator.sh that takes resource name, endpoint base, and token; one-liner execution per resource. Auth testing (lines 100-142) should be scripts/auth-test.sh. Error response validation (lines 144-168) should be scripts/error-response-test.sh.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Add 'When to Use' section after description: 'Before any deployment, after adding/modifying auth, after endpoint changes, when onboarding new API consumers. Validates contract correctness, not just reachability.'",
+    "Restructure to clear flow: (1) Prerequisites (unchanged). (2) QUICK START: 'Run these in order: Health Check (5 min) → CRUD (20 min) → Auth (10 min). If all PASS, stop here. Otherwise, continue to Error Responses and Pagination.' (3) Then detailed steps.",
+    "Move Common Failures table (lines 210-219) to come immediately after Prerequisites as 'Troubleshooting'",
+    "Create scripts/crud-validator.sh: takes RESOURCE, ENDPOINT_BASE, TOKEN as args, runs create/read/update/delete/verify cycle once, outputs all responses to e2e-evidence/api-crud-$RESOURCE/. Replace lines 34-98 with: 'Run: bash scripts/crud-validator.sh posts http://localhost:3000/api $TOKEN. Evidence saves to e2e-evidence/api-crud-posts/'",
+    "Create scripts/auth-test.sh: takes ENDPOINT_BASE, EMAIL, PASSWORD, returns TOKEN if valid. Replace lines 100-142 with: 'Run: TOKEN=$(bash scripts/auth-test.sh http://localhost:3000 user@ex.com pwd). Test protected routes: curl -H \"Authorization: Bearer $TOKEN\" [endpoint]'",
+    "Expand Error Response section (lines 144-168) with good/bad examples: 'GOOD: {\"error\": \"Invalid email format\", \"field\": \"email\"}. BAD: {\"error\": 1008} (numeric code only, no message)'",
+    "Clarify Step 6 (Rate Limiting): add decision tree — 'Does API docs mention rate limits? If yes, add this step. If no, skip.'",
+    "Rewrite Prerequisites to 'STOP before proceeding:' — make it a gate, not just info"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I have a Node.js API at localhost:3000 with /api/posts endpoints. I need to validate the full CRUD cycle (create, read, update, delete) and capture evidence. How do I run the API validation? What evidence should I capture?",
+      "expected_output": "Run Health Check first: curl -s http://localhost:3000/health | jq . | tee e2e-evidence/api-health.json. Then CRUD: create a post, extract ID, read it back, update it, verify update persisted, delete it, verify 404. Save each response to e2e-evidence/api-crud-posts/. Evidence is JSON bodies + status codes. No response body = FAIL."
+    },
+    {
+      "id": 2,
+      "prompt": "Our API uses JWT tokens. The login endpoint returns {\"access_token\": \"...\"}. How do I test that auth is working correctly — both valid tokens and invalid/missing tokens?",
+      "expected_output": "Get token: TOKEN=$(curl -s -X POST http://localhost:3000/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"...\",\"password\":\"...\"}' | jq -r '.access_token'). Test valid: curl -H \"Authorization: Bearer $TOKEN\" http://localhost:3000/api/protected (expect 200). Test invalid: curl -H 'Authorization: Bearer invalid.token' http://localhost:3000/api/protected (expect 401). Test missing: curl http://localhost:3000/api/protected (expect 401)."
+    },
+    {
+      "id": 3,
+      "prompt": "I'm testing error responses. When I POST to /api/posts with an empty body ({}), the API returns HTTP 422 with just {\"errors\": []}. Is this correct? What should the error response look like?",
+      "expected_output": "No. An empty errors array is not useful. Each error should include field name and description: {\"errors\": [{\"field\": \"title\", \"message\": \"Title is required\"}, {\"field\": \"body\", \"message\": \"Body is required\"}]}. Your API needs to populate the errors array with specific, actionable messages. This is a FAIL until the API is fixed."
+    },
+    {
+      "id": 4,
+      "prompt": "After running the CRUD validation, I want to know if I covered all the resources in the API. How do I know if I've tested enough?",
+      "expected_output": "Run CRUD for each resource endpoint in your API: /api/posts, /api/comments, /api/users, etc. PASS Criteria checkbox: Create returns 201 with ID, Read returns 200 with same data, Update persists, Delete returns 404 on re-read. If all endpoints PASS these 4 checks, you've covered the API contract. Pagination and rate limiting are optional extras; focus on core CRUD first."
+    }
+  ]
+}

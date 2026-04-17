@@ -1,6 +1,6 @@
 ---
 name: visual-inspection
-description: "Capture rendered UI state via screenshots across breakpoints, modes, edge cases. Use before claiming frontend work done, validating responsive layouts, dark/light modes, empty/error/loading states."
+description: "Use before claiming any frontend work is done to capture the states that often break silently — not just the happy path. Covers: all responsive breakpoints, dark/light mode switching, empty states (no data), error states (API failed), loading states (skeleton / spinner), disabled states, focus states, long-content overflow. Reach for it on phrases like 'is the UI right', 'check the frontend before I ship', 'visual review', 'did I handle all states', 'empty state check', 'loading spinner verification', or whenever a frontend change could affect visual behavior beyond the happy path."
 triggers:
   - "visual inspection"
   - "check the UI"
@@ -8,6 +8,9 @@ triggers:
   - "visual review"
   - "UI inspection"
   - "screenshot review"
+  - "empty state check"
+  - "did I handle all states"
+  - "loading state check"
 context_priority: reference
 ---
 

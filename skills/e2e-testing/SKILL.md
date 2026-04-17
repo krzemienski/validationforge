@@ -1,12 +1,15 @@
 ---
 name: e2e-testing
-description: "E2E patterns: journey design (one goal per journey, precondition→action→assertion), evidence management (step-NN naming, inventory), flaky flow diagnosis (3 runs, capture delta, fix root)."
+description: "Use when designing end-to-end validation strategy — deciding how to structure journeys, how to name evidence, how to diagnose flaky flows. This is a strategy/patterns skill (the HOW-TO-THINK layer), separate from execution skills like e2e-validate / playwright-validation / ios-validation which actually RUN the validation. Covers: one goal per journey, precondition→action→assertion structure, step-NN evidence naming, inventory files, flaky-flow diagnosis (3-run delta technique, root-cause fix patterns). Reach for it on phrases like 'how do I structure e2e tests', 'journey design patterns', 'why is this test flaky', 'e2e strategy', or when planning the shape of E2E work before executing it."
 triggers:
   - "e2e testing patterns"
   - "end to end patterns"
   - "journey design"
   - "flaky flow"
   - "e2e strategy"
+  - "how to structure e2e"
+  - "why is this flaky"
+  - "journey naming"
 context_priority: standard
 ---
 

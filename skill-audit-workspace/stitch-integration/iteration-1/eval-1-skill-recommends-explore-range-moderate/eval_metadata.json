@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "skill-recommends-explore-range-moderate",
+  "prompt": "Design system update: accent color changed from blue to purple. Need 3 variants of existing card component to show stakeholders. Which creative range?",
+  "expected_output": "Skill recommends EXPLORE range (moderate changes) for color variants. Shows generate_variants call with COLOR_SCHEME aspect. Produces 3 screenshots at different purple intensities. Skill explains: REFINE for fine-tuning (opacity tweak), EXPLORE for palette alternatives, REIMAGINE for radically different approaches.",
+  "assertions": []
+}

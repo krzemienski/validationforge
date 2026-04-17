@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "should-guide-step-1-navigate-to",
+  "prompt": "I'm validating a React checkout form. The form has 8 fields. I need to test that it rejects empty email and accepts valid email. How do I structure the evidence capture?",
+  "expected_output": "Should guide: Step 1 (navigate to /checkout, screenshot initial state), Step 2 (click submit with empty email, screenshot error), Step 3 (fill valid email, click submit, screenshot success). Should emphasize: each screenshot needs description of what's visible (error message text, form state, button enabled/disabled).",
+  "assertions": []
+}

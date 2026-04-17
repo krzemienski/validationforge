@@ -1,0 +1,77 @@
+{
+  "skill_name": "functional-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/functional-validation/SKILL.md",
+  "skill_md_line_count": 98,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Build & validate real systems (iOS, Web, API, CLI, fullstack)—never mocks or test files. Capture evidence from browser, simulator, CLI, cURL. Platform detection, 4-step protocol.",
+    "length_words": 31,
+    "issues": [
+      "UNDER-TRIGGER: Description reads like a feature list rather than pushy problem statement. Should emphasize WHEN/WHY to use this skill.",
+      "Lacks imperative hook. Starts with 'Build & validate' (imperative) but doesn't address pain point: 'Validating without mocks' or 'Evidence-based verdicts'."
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "low",
+        "description": "Line 57-58 reference non-existent files: 'references/evidence-capture-commands.md' and 'references/common-failure-patterns.md' exist and are bundled, but 'references/quick-reference-card.md' is also referenced (all three DO exist — no issue). However, line references to these files add fragility if filenames change.",
+        "location": "lines 57-58"
+      },
+      {
+        "severity": "low",
+        "description": "Platform detection table (lines 35-41) lists 5 platforms but ONLY iOS has a platform-specific skill cross-reference. Web, CLI, API, Fullstack references missing. Creates incomplete navigation breadcrumbs.",
+        "location": "lines 35-41"
+      },
+      {
+        "severity": "med",
+        "description": "Section 'Multi-Platform Validation Order' (lines 60-68) is generic bottom-up guidance but references no skill companions for orchestrating multi-layer validation. Should point to 'fullstack-validation' or 'e2e-validate' skill.",
+        "location": "lines 60-68"
+      },
+      {
+        "severity": "low",
+        "description": "Related Skills section (lines 89-94) mentions skills but with fragile text: 'ios-validation', 'web-validation', 'api-validation', 'cli-validation', 'fullstack-validation'. Not all exist at audit date; web/api/cli/fullstack may be out of scope. Only ios-validation confirmed in audit set.",
+        "location": "lines 89-94"
+      }
+    ],
+    "strengths": [
+      "Iron Rule clearly stated and imperative (lines 14-21). Memorable, actionable.",
+      "5-question pre-flight checklist (lines 23-29) is concrete and prevents false starts.",
+      "4-step protocol is well-scoped and repeatable: Build → Exercise → Capture → Verdict (lines 44-55).",
+      "References bundled and specific; all 4 reference files exist and add concrete value (evidence-capture-commands, common-failure-patterns, quick-reference-card, team-adoption-guide).",
+      "Clear boundary statements (lines 11-12) prevent scope creep: doesn't own mock blocking, evidence examination, or planning."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 4,
+    "missing_scripts_opportunity": "No opportunity — this skill is guidance-only, not procedural automation. Scripts belong in `ios-validation`, `web-validation`, etc.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Reframe description as problem+solution: 'Your validation matters only if it tests REAL systems. This skill teaches evidence-based validation: build real, exercise as users would, capture proof, write verdicts. No mocks, no false confidence.'",
+    "Add cross-references to platform-specific skills in detection table (lines 35-41): point web → web-validation, cli → cli-validation, api → api-validation, fullstack → fullstack-validation.",
+    "Wrap section 'Multi-Platform Validation Order' (lines 60-68) with pointer to `e2e-validate` or `fullstack-validation` skill for multi-layer orchestration.",
+    "Tighten Related Skills (lines 89-94): verify all 5 skills exist; mark which are in current scope; link to SKILLS.md index."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I've built a React app with a Node.js backend that talks to Postgres. The build succeeds but I don't know if the end-to-end flow actually works. User signs up → gets email confirmation → logs in → sees dashboard. How do I validate this without unit tests?",
+      "expected_output": "Response should invoke functional-validation skill. Recommend bottom-up: database alive?, API endpoints respond?, frontend loads and can interact?. Point to 4-step protocol (Build → Exercise → Capture → Verdict). Reference fullstack-validation or e2e-validate for multi-layer orchestration. Ask about evidence capture targets (screenshots, response bodies, logs). NO mention of jest/mocha/pytest."
+    },
+    {
+      "id": 2,
+      "prompt": "Our iOS app ships, users complain it crashes on deep links. We have unit tests passing. What evidence should I capture to prove deep links work?",
+      "expected_output": "Response should invoke functional-validation skill, then ios-validation skill. Emphasize: unit tests didn't catch this (real system failure). Recommend: boot simulator, install actual .app, test actual deep links via xcrun simctl openurl, capture screenshots of landing screens, capture logs. Point to ios-validation skill for 9-step protocol. Mention idb accessibility tree if UI automation needed."
+    },
+    {
+      "id": 3,
+      "prompt": "I'm validating a CLI tool (written in Rust). It's supposed to read a CSV, process it, and output JSON. The tool exits 0 but I'm not confident it's actually working. What should I capture?",
+      "expected_output": "Response should invoke functional-validation skill, then recommend cli-validation approach (no platform detection given, but infer from context). Build binary (cargo build), execute with real data (./mytool --input data.csv), capture stdout/stderr to file, READ the JSON output and verify structure, check exit code AND output content. Not just 'exit 0 = success'."
+    }
+  ]
+}

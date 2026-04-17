@@ -1,12 +1,15 @@
 ---
 name: research-validation
-description: "Research applicable standards, best practices, tools before validation planning (Phase 0). Maps domain standards to skills. Use entering new domains, when standards change, or deciding coverage."
+description: "Use at Phase 0 before validation planning, or when entering an unfamiliar domain (healthcare, payments, a11y-regulated, new framework) where the applicable standards aren't already known. Researches what standards apply (WCAG 2.1 AA? PCI-DSS? SOC 2? GDPR?), what validation tools are industry-standard, and maps each to the ValidationForge skills that implement them. Output informs create-validation-plan by establishing the starting rubric. Reach for it on phrases like 'what standards apply', 'how should we validate X', 'research before validation', 'new domain entry', 'regulatory validation', or when the team isn't yet aligned on what 'thorough' means for this project."
 triggers:
   - "research validation"
   - "validation research"
   - "what standards apply"
   - "how should we validate"
   - "research before validation"
+  - "new domain entry"
+  - "regulatory validation"
+  - "what does thorough mean"
 context_priority: reference
 ---
 

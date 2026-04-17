@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "no-not-a-fail-but-needs",
+  "prompt": "My linter is reporting 50 warnings (mostly unused imports). The compiler still succeeds. Is this a FAIL?",
+  "expected_output": "No, not a FAIL, but needs investigation. Unused imports are benign warnings if auto-fixable. Run `eslint --fix` to remove them automatically, then re-run linter. If warnings are security-related (e.g., unsafe function usage), then it's a FAIL. Document any warnings that remain after fix attempts.",
+  "assertions": []
+}

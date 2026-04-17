@@ -1,0 +1,56 @@
+{
+  "skill": "ios-validation",
+  "pass": 2,
+  "stage": "skill-creator stage-2 bundled executable",
+  "timestamp": "2026-04-17T06:21:00Z",
+  "scripts_added": [
+    {
+      "path": "skills/ios-validation/scripts/ios-runner.sh",
+      "lines": 159,
+      "bytes": 6806,
+      "executable": true,
+      "syntax_check": "bash -n PASS",
+      "purpose": "Collapse Step 1 (build) + Step 2 (install) + Step 3 (launch) + Step 4 (launch screenshot) into a single invocation with argument-driven configuration.",
+      "args": [
+        "--scheme (required)",
+        "--workspace-or-project (required; detects .xcworkspace vs project)",
+        "--simulator-name (default: 'iPhone 15')",
+        "--bundle-id (required)",
+        "--evidence-dir (required)"
+      ],
+      "steps": [
+        "verify xcrun/xcodebuild/simctl on PATH",
+        "boot named simulator (idempotent; tolerates already-booted state)",
+        "xcodebuild -sdk iphonesimulator build -> $EVIDENCE_DIR/ios-build.log",
+        "resolve .app via xcodebuild -showBuildSettings (TARGET_BUILD_DIR + FULL_PRODUCT_NAME)",
+        "xcrun simctl install booted <app-path> -> $EVIDENCE_DIR/ios-install.log",
+        "xcrun simctl launch booted <bundle-id> -> $EVIDENCE_DIR/ios-launch.log (captures PID)",
+        "xcrun simctl io booted screenshot -> $EVIDENCE_DIR/ios-screenshot-launch.png (verifies non-empty)"
+      ],
+      "style_notes": "Follows scripts/benchmark/score-project.sh conventions: set -euo pipefail, '[ios-runner] step N ok: ...' diagnostic echo per phase, non-zero exit on any failure, tee to evidence logs."
+    }
+  ],
+  "skill_md_edits": [
+    {
+      "file": "skills/ios-validation/SKILL.md",
+      "change": "Added 'Fast path' paragraph immediately under '## Step 2: Install' heading pointing at scripts/ios-runner.sh",
+      "lines_before": 239,
+      "lines_after": 240,
+      "inline_commands_preserved": true,
+      "frontmatter_intact": true
+    }
+  ],
+  "verification": {
+    "bash_syntax_check": "PASS (bash -n skills/ios-validation/scripts/ios-runner.sh)",
+    "yaml_frontmatter_intact": true,
+    "chmod_executable": true,
+    "inline_steps_retained": "all 9 original steps remain in SKILL.md; fast-path is additive"
+  },
+  "notes": [
+    "Script is 159 lines, ~40 over the 100-120 target because of the named-arg parser, required-arg validation, idempotent boot handling, and the showBuildSettings-based .app resolution (which is more robust than `find build/ -name '*.app'`).",
+    "Uses ${!req} indirect expansion to validate required args uniformly; requires bash 3.2+ which ships on macOS.",
+    "Screenshot size check (-s) prevents 0-byte screenshot evidence from silently passing.",
+    "Launch PID extraction is best-effort — simctl's output format is 'com.example.app: 12345' — if parsing fails, step still logs 'unknown' rather than failing."
+  ],
+  "unresolved_questions": []
+}

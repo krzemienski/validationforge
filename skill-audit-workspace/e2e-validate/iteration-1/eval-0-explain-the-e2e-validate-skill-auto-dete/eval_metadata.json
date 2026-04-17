@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "explain-the-e2e-validate-skill-auto-dete",
+  "prompt": "I have a project that's a React frontend + Node.js backend in the same repo. I run /validate but the skill says it doesn't know what platform to validate. How do I tell it this is a fullstack project?",
+  "expected_output": "Explain: the e2e-validate skill auto-detects fullstack if it sees both frontend routes AND backend API routes. If detection is wrong, use `--platform fullstack` flag. Then guide the bottom-up order: (1) Start with database (check migrations, connectivity), (2) Test API endpoints with curl (health, CRUD, auth), (3) Test frontend UI (sign up, data loading, error states). Each layer should be independent so you can isolate failures.",
+  "assertions": []
+}

@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "user-checks-current-aggregate-score-from",
+  "prompt": "We're about to add 5 new skills to ValidationForge. What's the minimum bar they need to meet so the overall benchmark grade doesn't drop from A to B?",
+  "expected_output": "User checks current aggregate score from prior baseline. Calculates: skills weight 20%, current skill_score N%. New skills must have avg frontmatter/description score \u2265 X to keep aggregate \u2265 90. (Actual math depends on current baseline.)",
+  "assertions": []
+}

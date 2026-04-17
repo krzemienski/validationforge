@@ -1,0 +1,17 @@
+{
+  "skill_name": "stitch-integration",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Starting new feature: shopping cart redesign. Need design reference before coding. Stitch project doesn't exist yet. How do I generate initial designs?",
+      "expected_output": "Skill directs Phase 1 (create new project, save ID to stitch.json). Phase 2 generation with design system context (colors, fonts from DESIGN.md). Generates desktop and mobile cart layouts. Phase 4 captures screenshots as e2e-evidence/design-validation/reference/stitch-screen-*.png. Metadata saved for later design-validation comparison step.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Design system update: accent color changed from blue to purple. Need 3 variants of existing card component to show stakeholders. Which creative range?",
+      "expected_output": "Skill recommends EXPLORE range (moderate changes) for color variants. Shows generate_variants call with COLOR_SCHEME aspect. Produces 3 screenshots at different purple intensities. Skill explains: REFINE for fine-tuning (opacity tweak), EXPLORE for palette alternatives, REIMAGINE for radically different approaches.",
+      "files": []
+    }
+  ]
+}

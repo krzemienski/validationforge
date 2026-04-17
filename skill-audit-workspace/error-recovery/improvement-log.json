@@ -1,0 +1,30 @@
+{
+  "skill_name": "error-recovery",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with explicit trigger scenarios",
+      "implemented": true,
+      "details": "New description unpacks each of the 3 strikes inline, names the kinds of errors covered (build/crash/network/auth/DB/deps), and names the moment this skill should fire ('whenever you catch yourself about to repeat an action that just failed'). 3 new YAML triggers."
+    },
+    {
+      "fix": "Rewrite Rules with WHY instead of NEVER/ALWAYS shouting",
+      "implemented": true,
+      "details": "All 7 rules kept, but each now has a concrete consequence: 'you're just burning time'; 'mocking hides the signal; next person gets the bug without the warning'; 'silently advancing past a failure means the final verdict is a lie'; 'a 401 isn't fixed by retry if the issue is expired refresh tokens'; 'a fix you don't re-verify is a guess'; 'three attempts with no log means the next person starts from scratch'; 'top of stack trace is the symptom, middle is often the cause'. Rules are now teachers, not cops."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Body restructuring beyond rules",
+      "reason": "The 3-strike diagram and error classification table are already strong. Audit didn't flag body issues."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/error-recovery/SKILL.md"
+  ],
+  "description_before": "3-strike recovery: strike 1 (targeted fix, same step), strike 2 (alt tool/path), strike 3 (rethink assumptions). Never mock; fix real cause. Covers build fails, crashes, network/auth/DB errors.",
+  "description_after": "Use whenever a validation step fails and you're about to try again — this skill enforces a structured 3-strike protocol instead of unguided retrying. Strike 1: diagnose and apply the smallest targeted fix, re-run the same step. Strike 2: try an alternative approach (different tool, different config, docs search). Strike 3: rethink assumptions about the system, check environment and dependencies. After 3 strikes without success, escalate to the user with full error history and a root-cause hypothesis. Covers build failures, runtime crashes, network timeouts, auth errors, DB issues, missing deps. Reach for it on phrases like 'this keeps failing', 'try again', 'error recovery', 'validation failed', 'fix and retry', or whenever you catch yourself about to repeat an action that just failed.",
+  "line_count_before": 104,
+  "line_count_after": 104,
+  "self_review_notes": "Rules-with-rationale pattern makes a big difference — 'middle of stack trace is often the root cause' is a concrete thing the model can recognize and apply. Net line count unchanged because new rule length balanced by removing shouting."
+}

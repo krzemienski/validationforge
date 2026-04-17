@@ -1,0 +1,17 @@
+{
+  "skill_name": "e2e-testing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm designing an E2E journey for my React app. Users can sign up, create a post, and see it in the feed. That's three actions. Should I make it one journey or three separate journeys?",
+      "expected_output": "Explain: one journey (one user goal: 'new user creates a post'). Precondition: no account. Actions: (1) sign up, (2) create post, (3) navigate to feed. Assertion: post visible in feed. It's atomic. If you split it into three journeys, you lose the end-to-end signal and can't catch the 'post created but not in feed' bug.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My login journey passes most of the time but fails 1 out of 5 runs. Sometimes the dashboard takes forever to load. I've captured 5 runs of evidence. How do I figure out if it's a real bug or just my test being flaky?",
+      "expected_output": "Walk through the diagnosis: (1) Look at the PASS runs \u2014 does the dashboard load in <1s? (2) Look at the FAIL runs \u2014 does it take >3s? (3) Check the network tab in evidence \u2014 is the /api/dashboard endpoint actually slow on FAIL runs? If yes: real bug (API performance). If no: test issue (timing). Show how to compare screenshots and network timings, not just 'PASS' vs 'FAIL' verdicts.",
+      "files": []
+    }
+  ]
+}

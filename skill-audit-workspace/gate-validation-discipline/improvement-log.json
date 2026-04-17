@@ -1,0 +1,40 @@
+{
+  "skill_name": "gate-validation-discipline",
+  "changes_applied": [
+    {
+      "fix": "Reframe description with problem context + triggering phrases",
+      "implemented": true,
+      "details": "New description calls out the moments it applies: 'tests pass', 'build succeeded', 'looks good', sub-agent completion reports, pre-merge, pre-ship. Also states the refusal-to-approve-without-evidence stance. 3 new YAML triggers added."
+    },
+    {
+      "fix": "Add 'When to use' section clarifying solo and orchestrator use",
+      "implemented": true,
+      "details": "Explicitly says the skill applies whether you're validating yourself or reviewing a sub-agent — core move is the same. Addresses audit's finding that solo-use case was unclear."
+    },
+    {
+      "fix": "Consolidate overlapping 'The Rule' and 'Rules' sections",
+      "implemented": true,
+      "details": "The old skill had 'The Rule' (lines 20-29) and 'Rules' (lines 63-71), both stating essentially the same NEVER/ALWAYS list. Replaced the duplicate Rules section with 'Common failure modes' — a table of 6 specific anti-patterns with why each fails and what to do instead. New content rather than repeat."
+    },
+    {
+      "fix": "Soften The Rule from all-caps rhetoric, explain WHY rule #1 is the hardest",
+      "implemented": true,
+      "details": "Old version had NEVER/ALWAYS/CAPITAL shouting. New version keeps the 4-point rule but uses normal case and adds a paragraph on why rule #1 (personally examine) is the one that actually breaks down, with a concrete example (sub-agent reports 15 screenshots 'look good' — you're not done)."
+    },
+    {
+      "fix": "Vary checklist sentence starters",
+      "implemented": true,
+      "details": "Old checklist: 7 items all starting with 'Did I...'. New checklist: varied starters — 'Did I', 'Have I', 'What does', 'Can I', 'Is every', 'Have I', 'Would'. Same content, better rhythm, easier to read on the Nth invocation."
+    }
+  ],
+  "changes_skipped": [],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/gate-validation-discipline/SKILL.md"
+  ],
+  "description_before": "Evidence before completion: examine actual evidence (not reports), cite specific proof, match evidence to criteria. Read files, view screenshots, quote output.",
+  "description_after": "Use before marking any task, gate, or checkpoint as complete — especially when someone (including you) is about to claim 'tests pass', 'build succeeded', or 'looks good'. This skill forces you to examine the actual evidence (files, screenshots, response bodies, logs) instead of trusting reports about it, cite specific proof per criterion, and refuse to sign off if any criterion lacks matching evidence. Reach for it whenever a sub-agent reports completion, before merging a PR, before shipping, or any time you feel pressure to approve without having personally looked.",
+  "line_count_before": 86,
+  "line_count_after": 96,
+  "self_review_notes": "Removed the duplication between 'The Rule' and 'Rules' sections and replaced the latter with a real anti-patterns table that teaches concrete failure modes. The Verification Loop section was already strong — left untouched. Description now works harder at the 'trigger when someone's about to approve without looking' job."
+}

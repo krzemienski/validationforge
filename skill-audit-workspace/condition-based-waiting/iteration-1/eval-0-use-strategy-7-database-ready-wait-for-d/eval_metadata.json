@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "use-strategy-7-database-ready-wait-for-d",
+  "prompt": "I'm validating a fullstack app: Docker Postgres at localhost:5432, Node API at localhost:8080/health, React dev server at localhost:3000. Currently using 'sleep 60' before running tests. How do I replace that with condition-based waits?",
+  "expected_output": "Use strategy #7 (Database Ready): wait_for_database 'postgres://localhost:5432/mydb' 30. Then strategy #1 (HTTP Health): wait_for_health 'http://localhost:8080/health' 30. Then strategy #1 again for frontend: wait_for_health 'http://localhost:3000' 30. Chain them in order: DB \u2192 API \u2192 Frontend. Each waits up to 30s but returns as soon as ready. Total time: 1s (if all fast) instead of 60s. Capture evidence: which services took how long to be ready.",
+  "assertions": []
+}

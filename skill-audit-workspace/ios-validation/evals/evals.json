@@ -1,0 +1,17 @@
+{
+  "skill_name": "ios-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have an iOS app in Xcode. It builds fine, but when I try to validate it on simulator, xcodebuild fails with 'No scheme found'. How do I debug this?",
+      "expected_output": "Response should invoke ios-validation and point to Pre-flight checks (lines 22). First: 'xcodebuild -list' to see available schemes. If scheme is missing, it's not registered in the .xcodeproj file. User must add scheme in Xcode: Product \u2192 Scheme \u2192 Edit Scheme, or use 'xcodebuild -scheme MyAppName' with exact name from -list output. Then retry Build step (lines 32-56).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I built and installed the app on simulator. It launched and rendered the main screen. Now I need to test a deep link: myapp://item/123. Walk me through capturing evidence that the deep link actually works.",
+      "expected_output": "Response should invoke ios-validation, Step 7 (lines 119-140). (1) Get booted simulator UDID. (2) Open deep link: 'xcrun simctl openurl $UDID \"myapp://item/123\"'. (3) Wait 2 seconds. (4) Screenshot: 'xcrun simctl io $UDID screenshot e2e-evidence/ios-deeplink-item-123.png'. (5) Open the screenshot and describe: does it show the item detail screen? If deep link doesn't work, screenshot shows wrong screen (e.g., home screen instead of detail). THAT'S evidence.",
+      "files": []
+    }
+  ]
+}

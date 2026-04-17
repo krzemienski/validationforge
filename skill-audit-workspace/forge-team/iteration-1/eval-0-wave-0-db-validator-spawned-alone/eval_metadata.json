@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "wave-0-db-validator-spawned-alone",
+  "prompt": "Fullstack project: React + Node API + PostgreSQL. Running /forge-team. Platform detection finds all 3. Walk me through waves, parallel spawning, and dependency blocking.",
+  "expected_output": "Wave 0: DB validator spawned (alone, foundation layer). Waits for PASS. Wave 1: API validator spawned (depends on DB PASS). Waits for PASS. Wave 2: Web validator spawned (depends on API PASS). If DB FAILs in Wave 0 \u2192 API and Web are BLOCKED (never spawned). Records BLOCKED in their reports. If API FAILs in Wave 1 \u2192 Web is BLOCKED. Lead writes final report aggregating all waves with dependency chain and root causes.",
+  "assertions": []
+}

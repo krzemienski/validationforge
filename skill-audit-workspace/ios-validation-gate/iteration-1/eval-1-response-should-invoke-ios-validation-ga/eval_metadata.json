@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "response-should-invoke-ios-validation-ga",
+  "prompt": "Gate 1 (Simulator) PASSED: app builds, installs, launches, screenshots look good. Gate 2 (Backend) is failing: health endpoint returns 500. Should I stop and mark the overall feature FAIL, or keep going with Gate 3?",
+  "expected_output": "Response should invoke ios-validation-gate and explain: Run ALL three gates even if one fails (lines 14-34 architecture). Gate 2 FAIL means backend is broken, but continue to Gate 3 to see if the app's LOCAL state works (e.g., UI responds to taps even if API fails). This tells you: 'frontend works, backend broken' vs 'both broken'. Then write unified verdict: FAIL (Gate 2 critical). Fix backend health, re-run all three gates.",
+  "assertions": []
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "ai-evidence-analysis",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I captured 3 pieces of evidence for my login journey: login-page.png (screenshot), auth-response.json (API response), and build-log.txt (CLI output). I want AI to analyze all 3 and tell me if they all support a PASS verdict. What confidence scores should I be looking for?",
+      "expected_output": "Run AI analysis on all 3 files. Get individual confidence scores: screenshot should be 85+, API response should be 75+, build log should be 70+. Aggregate to journey-level score. If all are 70+, journey-level is probably 75+ (PASS). If any has CRITICAL findings, journey score drops to 50 (FAIL).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm in an air-gapped environment (no API access). Can I still use this skill? What happens to the confidence scores?",
+      "expected_output": "Set VF_AI_ANALYSIS=disabled. Skill skips all model API calls, doesn't produce analysis files, logs one notice line. Verdict writer proceeds with raw evidence only. No confidence scores generated, but validation continues.",
+      "files": []
+    }
+  ]
+}

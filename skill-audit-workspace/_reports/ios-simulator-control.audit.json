@@ -1,0 +1,77 @@
+{
+  "skill_name": "ios-simulator-control",
+  "path": "/Users/nick/Desktop/validationforge/skills/ios-simulator-control/SKILL.md",
+  "skill_md_line_count": 275,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "iOS Simulator commands: boot, install, launch, screenshot, video, logs, deep links, permissions, location, crash detection. Reference for evidence capture. Used with all iOS validation skills.",
+    "length_words": 24,
+    "issues": [
+      "OVER-TRIGGER: Reads as a command index ('boot, install, launch...') rather than pushy problem statement. Missing WHEN/WHY.",
+      "Context priority is 'reference' (correct), but description should emphasize utility: 'Commands you'll copy-paste in any iOS validation flow. Bootable reference for all iOS validation skills.'"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "low",
+        "description": "Lines 267-274: Integration section lists 3 companion skills (ios-validation, ios-validation-gate, ios-validation-runner) but these 3 skills ALSO reference ios-simulator-control. Risk of circular references. Clarity: ios-simulator-control is the FOUNDATION; others build on top. Add explicit hierarchy: 'This is the reference level. All iOS validation skills use these commands.'",
+        "location": "lines 267-274"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 256-265: Troubleshooting table includes 6 rows but lacks 'How to detect this' for some issues. E.g., 'Video file corrupted' — how would you know before it's too late? Add validation steps.",
+        "location": "lines 256-265"
+      },
+      {
+        "severity": "low",
+        "description": "Lines 99-147: Evidence Capture section (screenshots, logs, crashes) is valuable but scattered. Consider nested structure: ├── Screenshots ├── Video ├── Logs ├── Crashes. Currently reads as sequential but unrelated subsections.",
+        "location": "lines 99-147"
+      },
+      {
+        "severity": "med",
+        "description": "Lines 194-226: State Management section includes Privacy Permissions and Location Simulation. These are orthogonal to 'state management'. Organize by concern: ├── Lifecycle (boot/shutdown) ├── App Operations ├── Evidence Capture ├── Interactions (deep links, permissions, location) ├── Diagnostics (logs, crashes). Current structure: Lifecycle → App Ops → Evidence → Deep Links → Notifications → State Mgt. Misaligned.",
+        "location": "lines 194-226"
+      }
+    ],
+    "strengths": [
+      "Comprehensive command reference: 8 major sections (Lifecycle, App Ops, Evidence, Deep Links, Push, State, Container, Troubleshooting). All ~50 commands are present.",
+      "Every command is copy-paste ready with actual syntax (UDID placeholders, realistic flags). Evidence save paths included.",
+      "Troubleshooting table (lines 256-265) is honest: lists common failures, root causes, fixes. Kill -9 vs kill -INT warning is critical (lines 262, 97, 235).",
+      "Security: no hardcoded credentials, no dangerous flags like --force or -x. Commands respect simulator isolation.",
+      "Integration statement (lines 267-274) correctly positions this as reference layer."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "HIGH: This skill is 275 lines of commands. Bundling helper scripts for common workflows would add value: (1) sim-boot-and-setup.sh — boot, erase, set permissions in one call; (2) sim-capture-journey.sh — start video+logs, exercise app, stop & collect artifacts; (3) sim-verify-crash.sh — find crashes since timestamp. These could reduce friction in ios-validation, ios-validation-gate, ios-validation-runner. Currently each user must assemble commands manually.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Reorganize body sections by workflow concern, not tool (lifecycle, interactions, diagnostics, evidence), not flat tool listing. Logical flow: Setup → Execute → Capture → Diagnose.",
+    "Add 3 companion shell scripts to references/ directory: (1) sim-bootstrap.sh, (2) sim-capture-evidence.sh, (3) sim-diagnose.sh. These would embed in ios-validation, ios-validation-gate, ios-validation-runner without duplication.",
+    "Rewrite description: 'Master reference for iOS Simulator lifecycle, app operations, evidence capture, and troubleshooting. Every command copy-paste ready. Used by ios-validation, ios-validation-gate, ios-validation-runner skills.'",
+    "Add 'When to use' context for each major section (e.g., 'Use Lifecycle commands in Phase 1 SETUP before any validation; use Evidence Capture during and after Phase 3 ACT')."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I need to validate an iOS app on iPhone 16 Pro simulator but I don't know if it's currently booted or which one to use. Walk me through checking, booting if needed, and then getting it ready to capture evidence.",
+      "expected_output": "Response should invoke ios-simulator-control. Step 1: 'xcrun simctl list devices available' to see options. Step 2: 'xcrun simctl list devices booted' to check current state. Step 3: If not booted, 'xcrun simctl boot \"iPhone 16 Pro\"'. Step 4: Verify: 'open -a Simulator'. Then explain: UDID from booted list is needed for all subsequent commands. Do NOT assume 'booted' — verify."
+    },
+    {
+      "id": 2,
+      "prompt": "I'm recording video evidence of an iOS feature test. What's the right way to start and stop video recording? What mistakes should I avoid?",
+      "expected_output": "Response should invoke ios-simulator-control and explain: (1) 'xcrun simctl io $UDID recordVideo output.mp4 &' with & to background. (2) After exercising app: 'kill -INT $PID' (SIGINT, not SIGKILL). (3) Explicitly flag: DO NOT use 'kill -9' or SIGKILL — corrupts video file. Reference lines 97, 235, 262. Should also mention: capture $! before backgrounding to save PID."
+    },
+    {
+      "id": 3,
+      "prompt": "I need to capture app logs during a 15-second feature test. The app's bundle ID is com.mycompany.testapp. Show me the command and explain why the flags matter.",
+      "expected_output": "Response should invoke ios-simulator-control and provide: 'xcrun simctl spawn $UDID log stream --predicate \"subsystem == \\\"com.mycompany.testapp\\\"\" --level debug --timeout 15 > e2e-evidence/logs.txt 2>&1'. Explain: --level debug is MANDATORY (without it, app-level logging is filtered out). --predicate filters to only your app, not system noise. --timeout 15 stops after 15s. Redirect to file for evidence. Reference line 98 ('MANDATORY: Always include --level debug')."
+    }
+  ]
+}

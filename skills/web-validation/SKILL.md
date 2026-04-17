@@ -1,6 +1,6 @@
 ---
 name: web-validation
-description: "Web validation via browser automation: health checks, screenshots at 375/768/1920px, form testing, console/network validation. Detects CORS, hydration, CSS issues."
+description: "Use whenever validating a web app (React, Vue, Next.js, Django, Rails, static site) end-to-end through a real browser — not just 'it builds' or 'dev server starts'. Covers health check, screenshot-based navigation, console error detection, network request inspection, form submission, responsive layout at mobile/tablet/desktop widths, and route coverage. Reach for it on phrases like 'validate the site', 'take screenshots', 'check the console', 'responsive testing', 'does the page load', or when a frontend change needs proof that real users won't see errors."
 triggers:
   - "web validation"
   - "browser automation"
@@ -8,42 +8,68 @@ triggers:
   - "web testing"
   - "validate web app"
   - "screenshot test"
+  - "check console errors"
+  - "responsive testing"
 context_priority: standard
 ---
 
 # Web Validation
 
+## Choosing your browser tool
+
+You have two options; they do similar things via different MCPs.
+
+| Tool | Best when | Strength |
+|------|-----------|----------|
+| **Playwright MCP** | You need cross-browser testing, robust selector semantics, or headless CI runs | Mature, battle-tested, runs against Chromium/Firefox/WebKit |
+| **Chrome DevTools MCP** | You're debugging real Chrome behavior, need live DevTools features (network timing, performance), or want to inspect what a real user sees | Tied to actual Chrome — no cross-browser |
+
+If only one is connected, use that one. Examples below show both.
+
 ## Prerequisites
 
 | Requirement | How to verify |
 |-------------|---------------|
-| Dev server running | `curl -s http://localhost:PORT -o /dev/null -w "%{http_code}"` |
+| Dev server running on a known port | `curl -s http://localhost:$PORT -o /dev/null -w "%{http_code}"` |
 | Browser automation available | Playwright MCP or Chrome DevTools MCP connected |
 | Evidence directory exists | `mkdir -p e2e-evidence` |
 
 ## Step 1: Start Dev Server
 
+**Automated port+health**: `bash scripts/web-validation-harness.sh --project-dir=. --dev-log=dev.log --health-path=/ --evidence-dir=e2e-evidence/web` reads the dev-server log, extracts the listening port, and hits the health endpoint — replacing the 3-step sequence below with one command. Add `--tool=playwright|chrome-devtools` to pin the recommended follow-up MCP; omit it and the harness picks one.
+
+Detect the framework and start its dev server. Capture the port the server actually binds to — different frameworks default to different ports (Next.js 3000, Django 8000, Rails 3000, Flask 5000, Vite 5173). Don't hardcode.
+
 ```bash
-# Detect and start the appropriate dev server
+# Pick one start command based on lockfile / project markers
 if [ -f pnpm-lock.yaml ]; then
-  pnpm dev &
-elif [ -f package-lock.json ]; then
-  npm run dev &
+  pnpm dev 2>&1 | tee /tmp/dev-server.log &
 elif [ -f yarn.lock ]; then
-  yarn dev &
+  yarn dev 2>&1 | tee /tmp/dev-server.log &
+elif [ -f package-lock.json ] || [ -f package.json ]; then
+  npm run dev 2>&1 | tee /tmp/dev-server.log &
 elif [ -f manage.py ]; then
-  python manage.py runserver &
+  python manage.py runserver 2>&1 | tee /tmp/dev-server.log &
 elif [ -f Gemfile ]; then
-  bundle exec rails server &
+  bundle exec rails server 2>&1 | tee /tmp/dev-server.log &
 fi
 DEV_PID=$!
+
+# Discover the port the server actually printed. Works for most frameworks.
+sleep 2
+PORT=$(grep -Eo 'localhost:[0-9]+|127\.0\.0\.1:[0-9]+|:[0-9]{4,}' /tmp/dev-server.log | head -1 | grep -Eo '[0-9]+$')
+echo "Detected PORT=$PORT"
 ```
+
+If the detection can't find a port (e.g., server logs to a pipe that didn't flush yet), read the framework's docs — or just ask the user — and set `PORT=...` manually before proceeding.
+
+**If the `dev` script name is different** (some repos use `start`, `dev:local`, `serve`, `develop`), open `package.json` and check the `scripts` section first.
 
 Wait for server ready:
 ```bash
 for i in $(seq 1 30); do
-  if curl -s http://localhost:3000 -o /dev/null -w "%{http_code}" 2>/dev/null | grep -q "200"; then
-    echo "Server ready"
+  if curl -s "http://localhost:$PORT" -o /dev/null -w "%{http_code}" 2>/dev/null | grep -q "200"; then
+    echo "Server ready on port $PORT"
     break
   fi
   sleep 1
@@ -53,8 +79,8 @@ done
 ## Step 2: Health Check
 
 ```bash
-curl -s http://localhost:PORT | head -20 | tee e2e-evidence/web-health-check.txt
-curl -s -o /dev/null -w "Status: %{http_code}\nTime: %{time_total}s\n" http://localhost:PORT \
+curl -s "http://localhost:$PORT" | head -20 | tee e2e-evidence/web-health-check.txt
+curl -s -o /dev/null -w "Status: %{http_code}\nTime: %{time_total}s\n" "http://localhost:$PORT" \
   | tee e2e-evidence/web-health-status.txt
 ```
 
@@ -106,6 +132,14 @@ browser_network_requests  includeStatic=false  filename="e2e-evidence/web-networ
 
 ## Step 6: Form Validation
 
+**Before you pick test values:** inspect the form to know what counts as valid/invalid. Options, in order of preference:
+
+1. Read the HTML — `<input type=...>`, `required`, `minlength`, `pattern`, `min`/`max` attributes tell you the client-side rules.
+2. Trigger a bad submit first and read the error messages — they often spell out the rule.
+3. Check the API endpoint the form posts to (OpenAPI schema, Django serializer, Zod schema) for server-side rules.
+
+Use values that actually exercise the rules. `SecurePass123!` passes most rules, but if this form requires 16+ chars or a specific character class, your "valid" submit will fail and you'll misattribute the failure.
+
 Test with valid data:
 ```
 browser_snapshot                                    # Get refs for form fields
@@ -148,16 +182,24 @@ browser_take_screenshot  filename="e2e-evidence/web-responsive-desktop.png"
 
 ## Step 8: Route Coverage
 
-Navigate to every known route and verify no 404s:
+Navigate to every known route and verify no 404s. Don't maintain the route list by hand — pull it from the source of truth:
+
+- **React Router / Next.js app router**: extract from `pages/`, `app/`, or `routes.tsx`
+- **Django**: `python manage.py show_urls` (needs `django-extensions`) or parse `urls.py`
+- **Rails**: `bin/rails routes | awk '{print $3}'`
+- **Sitemap**: check `sitemap.xml` if one exists
+- **OpenAPI / Swagger**: parse the spec for documented paths
+
 ```bash
+# Example: after you've populated ROUTES from one of the sources above
 ROUTES=("/" "/about" "/dashboard" "/settings" "/login")
 for route in "${ROUTES[@]}"; do
-  STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:PORT$route")
+  STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:$PORT$route")
   echo "$route -> $STATUS" | tee -a e2e-evidence/web-route-check.txt
 done
 ```
 
-Any non-200 response (except expected redirects) is a finding.
+Any non-200 response (except expected redirects — document which ones are expected) is a finding.
 
 ## Evidence Quality
 

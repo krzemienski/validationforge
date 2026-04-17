@@ -1,0 +1,98 @@
+{
+  "skill_name": "forge-benchmark",
+  "path": "/Users/nick/Desktop/validationforge/skills/forge-benchmark/SKILL.md",
+  "skill_md_line_count": 121,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Score validation posture on 4 dimensions: Coverage (35%), Evidence Quality (30%), Enforcement (25%), Speed (10%). A-F grade via scripts/benchmark/score-project.sh.",
+    "length_words": 18,
+    "issues": [
+      "Description is purely feature-focused ('4 dimensions, A-F grade') with no strategic value. WHEN would a user run this? What do they DO with the score?",
+      "References `scripts/benchmark/score-project.sh` but doesn't explain if that script is bundled or where to find it",
+      "Lacks the key question: 'Is your validation posture improving or degrading?' This skill is about TRENDS, not just scores"
+    ],
+    "triggering_assessment": "over-triggers"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "The Dimensions section (lines 20-25) lists target values (>80, >90) but doesn't explain where these targets come from or if they're realistic. 'Evidence Quality >90' means 90% of evidence files are non-empty — is that achievable for all projects?",
+        "location": "lines 20-25"
+      },
+      {
+        "severity": "high",
+        "description": "Coverage dimension (lines 27-32) counts journey subdirs but the formula is unclear: 'journey count tiers: 0 dirs=0, ≤2=50, ≤4=70, >4=85'. Why these thresholds? Why is 5+ journeys worth only 85/100 (not 100)? The logic is opaque.",
+        "location": "lines 27-32"
+      },
+      {
+        "severity": "high",
+        "description": "Evidence Quality dimension (lines 34-38) uses 'files >10 bytes / total files × 70' but doesn't define 'files'. Are these screenshot files? JSON responses? Empty directories? The metric is ambiguous.",
+        "location": "lines 34-38"
+      },
+      {
+        "severity": "med",
+        "description": "Enforcement dimension (lines 40-47) checks for 'no jest.mock/sinon/.mock/.stub patterns' but this is a BOOLEAN check (pattern exists or doesn't), not a metric. How is this 'no mocks' metric scored 0-100 as 4 independent +20 checks?",
+        "location": "lines 40-47"
+      },
+      {
+        "severity": "med",
+        "description": "Speed dimension (lines 49-52) reads duration from `.vf/last-run.json` but that file is never mentioned anywhere else in ValidationForge. How is it created? When? Is it a requirement?",
+        "location": "lines 49-52"
+      },
+      {
+        "severity": "med",
+        "description": "The entire Benchmark Process section (lines 55-76) describes steps but doesn't show actual USAGE. No example of running the benchmark, no sample output, no 'here's what a B grade looks like.'",
+        "location": "lines 55-102"
+      },
+      {
+        "severity": "low",
+        "description": "Grade thresholds (lines 77-83) list A(90-100), B(80-89), etc. but benchmarking is introduced as contextually new — users won't have historical data to understand if 88 is 'improving' or 'degrading.' No trend guidance.",
+        "location": "lines 77-83"
+      }
+    ],
+    "strengths": [
+      "The 4-dimension model is well-chosen: Coverage (what), Evidence Quality (how good), Enforcement (discipline), Speed (time)",
+      "Weighted formula (lines 69-72) is transparent: aggregate = (coverage * 35 + evidence_quality * 30 + enforcement * 25 + speed * 10) / 100",
+      "Report format (lines 105-121) is clear and actionable with recommendations",
+      "Grade assignment (A-F) is intuitive"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "This skill SHOULD bundle score-project.sh (referenced line 12 but not present). It's not optional; it's the implementation. Also: a sample benchmark report showing a real project's score, trend analysis (is 88/100 improving from last week's 80?), and what the recommendations mean.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Rewrite description to lead with WHEN and WHY: 'Track your validation posture over time. This benchmark scores your project across 4 dimensions (Coverage, Evidence Quality, Enforcement, Speed) and assigns a grade (A-F). Use it after completing a validation run to see where you stand, or run it weekly to track trends. Example: if your grade is dropping, you're losing coverage or evidence quality — fix it before it becomes a production risk.'",
+    "In Dimensions table (lines 20-25), add JUSTIFICATION for each target: 'Coverage >80: You've validated 80%+ of user journeys (not everything, but the critical paths). Evidence Quality >90: 90% of your evidence files are substantial (non-empty) — you're not capturing useless artifacts. Enforcement >80: Hooks are active, no test files, rules enforced. Speed <120s: Your validation completes in under 2 minutes (fast feedback, not a blocker).' Make targets feel achievable, not arbitrary.",
+    "In Coverage dimension (lines 27-32), explain the tier logic: '0 journeys=0 (no validation), 1-2 journeys=50 (minimal coverage), 3-4 journeys=70 (good), 5+ journeys=85 (very good). Why cap at 85? Because even with 10+ journeys, you're likely missing edge cases (login failures, network errors, permission boundaries). 100 coverage is unachievable; 85 is the practical maximum for app-level validation. +10 bonus if you have a plans/ directory with markdown plan files (evidence that you planned before executing).'",
+    "In Evidence Quality dimension (lines 34-38), define 'files': 'Non-empty files: screenshot files >10 bytes, JSON responses, log files, any artifact >10 bytes. Empty files: zero-byte placeholder files, incomplete captures. The metric penalizes junk artifacts. Verdict bonus: +30 if any report.md or *VERDICT* file exists (evidence you reviewed the results). Example: 100 total files, 85 non-empty = (85/100)*70 + 30 = 89.5 quality score.'",
+    "In Enforcement dimension (lines 40-47), clarify that each check is BINARY (present or not), adding 20 points each. Rewrite: 'Enforcement: 0-100, checks: (1) Hooks registered (hooks/hooks.json exists?) → +20. (2) No test files (no *.test.*, *.spec.* files in src/) → +20. (3) No mock patterns (no jest.mock, sinon.stub, etc.) → +20. (4) Rules in .claude/rules/ → +20. Bonus: e2e-evidence/ exists (+10), .vf/config.json exists (+10). Max 100.' Clarify: you can't get partial credit; each check is pass/fail, adding 0 or +20.",
+    "In Speed dimension (lines 49-52), explain where `.vf/last-run.json` comes from: 'The validation command writes duration_seconds to this file after completion. If it doesn't exist (first run), default score is 80. Formula: <120s=100 (fast), <300s=80 (acceptable), <600s=60 (slow), ≥600s=40 (too slow). Why? <2 min feedback loop keeps developers engaged; >10 min becomes a blocker.' Reference that this metric assumes a 'typical project' (few journeys, average complexity).",
+    "Move Benchmark Process (lines 55-76) to a separate 'How to Run' section and add example invocation: '`bash scripts/benchmark/score-project.sh /path/to/project`' or '`vf benchmark`'. Show sample output: 'Score: 88/100 (Grade: B) | Coverage: 95, Evidence Quality: 100, Enforcement: 70, Speed: 80'.",
+    "Add a 'Trend Analysis' section: 'Run this benchmark weekly or after major validation updates. Track scores in .vf/benchmarks/benchmark-*.json. Improving grade? Great — you're building validation discipline. Degrading grade? You're losing coverage (fewer journeys) or evidence quality (empty files). Fix immediately.' Show how to compare two benchmark results.",
+    "Add a 'Sample Report' section with an EXAMPLE project: 'Project: Blog platform. Score: 88/100 (Grade: B). Coverage: 95 (8 journeys, good). Evidence Quality: 100 (all files substantial, verdict report exists). Enforcement: 70 (no test files, but only 2/4 hook groups active — install the rest). Speed: 80 (validation takes 4 min for 8 journeys — acceptable). Recommendation: +20 enforcement by installing remaining hooks.'",
+    "Clarify in the schema (lines 87-101) what 'journey_count' means: it's the number of directories in e2e-evidence/ (one per journey). Explain why 'plans_found' is a separate metric from 'journey_count': plans are pre-execution (planning phase), journeys are post-execution (evidence directories). Both matter for coverage."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I just ran /validate-benchmark on my React project and got a score of 68/100 (Grade: D). The breakdown is: Coverage 50, Evidence Quality 80, Enforcement 60, Speed 95. What does this mean? What should I fix first?",
+      "expected_output": "Breakdown: You have low coverage (≤2 journeys validated) and low enforcement (hooks not installed, maybe some test files present). Fix in this order: (1) Coverage first — you only validated login and home page. Add journeys for create, edit, delete, error cases. Each journey adds evidence quality and validates more features. (2) Enforcement — install missing hooks (.claude/hooks/), add rules files, remove any *.test.* or *.spec.* files from src/. (3) Evidence Quality is already good (80), so focus on quantity (more journeys) and discipline (hooks). Rerun benchmark in 1 week — target: 75+ grade (B range). Example: 5 journeys = 85 coverage, 100 evidence quality, 80 enforcement = 87 grade (B)."
+    },
+    {
+      "id": 2,
+      "prompt": "Our team has been validating a fullstack app. Last week's benchmark was 92/100 (Grade: A). This week it's 76/100 (Grade: C). The breakdown: Coverage 70 (was 95), Evidence Quality 60 (was 100), others stable. What happened? Why did our score drop so much?",
+      "expected_output": "You've lost coverage (fewer journeys) and evidence quality (more empty/junk files). Likely causes: (1) Someone deleted journey directories from e2e-evidence/ without re-running validation. (2) New evidence files were captured but are mostly empty (zero-byte placeholders). (3) Validation wasn't re-run this week, so old evidence is considered stale. Action: (1) Re-run validation with all original journeys + any new ones. (2) Delete empty/junk files from e2e-evidence/. (3) Check if a verdict report was generated (bonus +30 on quality). Re-benchmark — should be back to 92+ if you've captured fresh evidence."
+    },
+    {
+      "id": 3,
+      "prompt": "I want to track validation posture over the next 3 months as I'm building a new feature. What benchmark targets should I set for a project that currently has only 2 journeys validated?",
+      "expected_output": "Set realistic targets based on your scope: Month 1: Grade C (70-79). Goal: add 3-4 journeys, reach 70 coverage score. Keep enforcement high (no new test files), evidence quality high. Month 2: Grade B (80-89). Goal: 5+ journeys, 85+ coverage, same enforcement. Month 3: Grade A (90+). Goal: 6-7 journeys, maintain coverage, evidence quality >95, enforcement 80+. Track by running benchmark every Friday. If grade drops between weeks, investigate before shipping. Use the detailed breakdown (Coverage, Evidence Quality, Enforcement, Speed) to identify weak spots — focus on whichever dimension is dragging your grade down."
+    }
+  ]
+}

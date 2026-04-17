@@ -1,0 +1,15 @@
+{
+  "skill_name": "design-token-audit",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with concrete drift symptoms + triggers",
+      "implemented": true,
+      "details": "New description names the symptoms ('hardcoded hex colors sneaking in', 'spacing values not in the scale', 'fonts not matching typography system'), sources checked (DESIGN.md, tailwind.config, :root CSS vars), and drift categories. 3 new YAML triggers."
+    }
+  ],
+  "changes_skipped": [{"fix": "Body changes", "reason": "Skill is well-structured; description was the primary triggering issue."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/design-token-audit/SKILL.md"],
+  "description_before": "Audit CSS/Tailwind/inline styles against design system spec (DESIGN.md, tailwind.config, CSS vars). Detects hardcoded values, off-palette colors, non-standard spacing, typography drift.",
+  "description_after": "Use whenever you need to prove the UI code matches the design system instead of silently drifting — hardcoded hex colors sneaking in, spacing values not in the scale, fonts that don't match the typography system. Checks CSS, Tailwind classes, and inline styles against the spec sources (DESIGN.md, tailwind.config.{js,ts}, CSS custom properties in :root). Flags drift by category: color, spacing, typography, radius, shadow. Reach for it on phrases like 'design token compliance', 'design system drift', 'hardcoded hex values', 'off-palette colors', 'spacing audit', or before a design-critical release where visual consistency matters."
+}

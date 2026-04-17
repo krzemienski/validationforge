@@ -1,0 +1,17 @@
+{
+  "skill_name": "retrospective-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Last 30 days: 8 deploys, 2 reverts, 1 production incident (payment button missing on mobile). How do we assess if validation methodology prevented or missed this?",
+      "expected_output": "Skill walks Phase 1 collection: git log for deploy/revert frequency (8/2 = 25% revert rate = CONCERNING). Phase 2 analysis quantifies: incident was responsive-validation gap (button not tested at 430px viewport). Phase 3 correlation: responsive-validation skill would have caught it (Phase 4 orientation test includes mobile button validation). Confidence score reflects: high detection (caught in retrospective), low in actual (missed pre-deploy). Recommendation: add responsive-validation to pre-deploy gates.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We've been doing e2e validation for 3 months. Want to know: are we catching real bugs or generating false FAILs that waste time investigating?",
+      "expected_output": "Skill directs Phase 1 to collect past validation reports (PASS/FAIL verdicts) and deployment outcomes (incidents post-deploy). Phase 2 calculates false PASS rate (bugs found in prod that validation missed) and false FAIL rate (investigations that found nothing real). Phase 4 confidence formula weights detection (1 - false_pass_rate) and accuracy (1 - false_fail_rate). Produces report: if false FAIL >15%, validation criteria too brittle; if false PASS >5%, journeys missing.",
+      "files": []
+    }
+  ]
+}

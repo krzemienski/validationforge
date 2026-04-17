@@ -1,0 +1,53 @@
+{
+  "skill": "ai-evidence-analysis",
+  "pass": 2,
+  "stage": "stage-2",
+  "timestamp": "2026-04-17T06:21:00Z",
+  "objective": "Bundle deterministic evidence classifier so LLM analyzer skips inline extension/content detection",
+  "changes": [
+    {
+      "type": "create",
+      "path": "skills/ai-evidence-analysis/scripts/detect-evidence-type.sh",
+      "lines": 104,
+      "description": "Classifies files under --evidence-dir by extension + 200-byte content peek. Outputs TSV (file_path, category, bytes, non_empty) + per-category summary. Supports --write-tsv to persist to $EVIDENCE_DIR/_classified.tsv."
+    },
+    {
+      "type": "edit",
+      "path": "skills/ai-evidence-analysis/SKILL.md",
+      "description": "Added Pre-classify instruction to Step 1: Discover Evidence. Inline prose left intact as fallback/reference.",
+      "lines_before": 376,
+      "lines_after": 377
+    }
+  ],
+  "categories_supported": [
+    "screenshot",
+    "api_response",
+    "dom_snapshot",
+    "cli_output",
+    "log",
+    "network_trace",
+    "verdict",
+    "notes",
+    "unknown"
+  ],
+  "verification": {
+    "bash_syntax_check": "PASS (bash -n)",
+    "mock_evidence_run": "PASS — all 10 fixture files classified correctly, 2 empty files flagged (non_empty=0)",
+    "real_evidence_run": "PASS — 122 files classified under e2e-evidence/, 16.3 MB total, 0 empty",
+    "write_tsv_flag": "PASS — writes e2e-evidence/_classified.tsv only when flag passed",
+    "yaml_frontmatter": "intact (name, description, context_priority, 10 triggers)",
+    "skill_md_line_count": 377,
+    "script_line_count": 104
+  },
+  "categorization_accuracy_notes": [
+    "screenshots (.png) and verdicts (VERDICT.md / report.md) classify deterministically",
+    "JSON peek disambiguates dom_snapshot (contains \"html\" or \"document\") vs api_response",
+    "*-stderr.txt and paths containing cli/ route to cli_output; other .txt/.log default to log",
+    "21 .data / .html files in the real evidence tree fall into 'unknown' — expected, not test evidence types"
+  ],
+  "follow_ups": [
+    "Consider adding .html classification if DOM snapshots get saved as .html instead of .json",
+    "Consider extending unknown-bucket files via `file(1)` MIME detection in a future pass"
+  ],
+  "status": "complete"
+}

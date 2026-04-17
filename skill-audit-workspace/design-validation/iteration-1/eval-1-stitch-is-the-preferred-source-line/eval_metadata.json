@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "stitch-is-the-preferred-source-line",
+  "prompt": "I have both a DESIGN.md and a Stitch project for the same UI. They show slightly different colors. Which should I use as the source of truth?",
+  "expected_output": "Stitch is the preferred source (line 36: 'preferred'). Stitch is more up-to-date and auditable. Use Stitch as primary reference, document in reference/source.md. If Stitch colors differ from DESIGN.md, that indicates DESIGN.md is stale. After validation, update DESIGN.md to match Stitch to keep specs in sync. Document the discrepancy in the report under 'Deviations Found'.",
+  "assertions": []
+}

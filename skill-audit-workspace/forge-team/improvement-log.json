@@ -1,0 +1,30 @@
+{
+  "skill_name": "forge-team",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description with concrete wave example + scope vs coordinated-validation",
+      "implemented": true,
+      "details": "New description includes the actual wave numbering (Wave 0/1/2 with platforms), the BLOCKED-on-upstream-failure behavior, and concrete invocation phrases. Expanded from 25 to ~110 words. 4 new YAML triggers."
+    },
+    {
+      "fix": "Add 'When to use' clarifying relationship to coordinated-validation",
+      "implemented": true,
+      "details": "Explicit scope statement: coordinated-validation defines wave semantics + dependency graph (no agent spawning); forge-team builds on that by adding per-platform agents + BLOCKED report handling + Verdict Writer. Prevents the audit's concern about redundant coverage."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Additional body restructuring",
+      "reason": "This skill is heavy (317 lines) with substantial content that's mostly correct — architecture diagram, dependency tables, wave execution loop, BLOCKED handling, conflict resolution, report template. Major restructuring risks breaking working semantics. Focused the in-session fix on scope clarity where it overlaps with coordinated-validation."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/forge-team/SKILL.md"
+  ],
+  "description_before": "Multi-agent parallel validation with wave-based dependencies: DB/Design → API → Web/iOS. Each validator owns isolated evidence directory. Blocks downstream on upstream failure. Use for fullstack.",
+  "description_after": "Use for fullstack or multi-platform projects (2+ platforms: DB, API, Web, iOS, CLI, Design) when you want validation to run in dependency-aware waves with each platform owned by a separate validator. Wave 0 runs independent layers (DB, Design, CLI) in parallel; Wave 1 runs API (which depended on DB); Wave 2 runs Web and iOS in parallel (both depend on API). Each validator writes to its own evidence directory — no collisions. Upstream failures auto-block downstream waves with BLOCKED reports. Reach for it on phrases like 'team validation', 'parallel validation', 'validate all platforms', 'spawn per-platform validators', or when coordinated-validation alone isn't enough and you need the full multi-agent orchestration.",
+  "line_count_before": 317,
+  "line_count_after": 322,
+  "self_review_notes": "The scope clarification vs coordinated-validation is the biggest value — previously a user comparing the two descriptions couldn't tell when to pick which. Now it's a clear ladder: coordinated-validation for semantics, forge-team for actual agent spawning + reports."
+}

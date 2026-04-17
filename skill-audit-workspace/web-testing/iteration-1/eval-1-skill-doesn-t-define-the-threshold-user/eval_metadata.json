@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "skill-doesn-t-define-the-threshold-user",
+  "prompt": "Layer 4 shows the LCP is 3.8 seconds\u2014'Needs Work' range. Can we deploy, or is that a blocker?",
+  "expected_output": "Skill doesn't define the threshold. User must decide: is 3.8s acceptable for your SLA? Skill shows that <2.5s is 'Good'. User decides if Needs Work is a blocker or a warning. Recommendation: Layer 4 findings should feed into Layer 5 (verdict), but threshold is product decision, not VF decision.",
+  "assertions": []
+}

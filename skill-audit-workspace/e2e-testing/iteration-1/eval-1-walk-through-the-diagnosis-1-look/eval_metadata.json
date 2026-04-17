@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "walk-through-the-diagnosis-1-look",
+  "prompt": "My login journey passes most of the time but fails 1 out of 5 runs. Sometimes the dashboard takes forever to load. I've captured 5 runs of evidence. How do I figure out if it's a real bug or just my test being flaky?",
+  "expected_output": "Walk through the diagnosis: (1) Look at the PASS runs \u2014 does the dashboard load in <1s? (2) Look at the FAIL runs \u2014 does it take >3s? (3) Check the network tab in evidence \u2014 is the /api/dashboard endpoint actually slow on FAIL runs? If yes: real bug (API performance). If no: test issue (timing). Show how to compare screenshots and network timings, not just 'PASS' vs 'FAIL' verdicts.",
+  "assertions": []
+}

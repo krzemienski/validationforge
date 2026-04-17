@@ -1,6 +1,14 @@
 ---
 name: flutter-validation
-description: "Flutter validation: build, install, launch, screenshot, log streaming, crash detection on Android/iOS devices and emulators. Uses flutter CLI. Use before release for any Flutter project."
+description: "Use for validating Flutter apps on Android emulators, iOS simulators, and connected physical devices. Runs the protocol: flutter doctor check, pub get, analyze, build (APK/AAB for Android, .app/.ipa for iOS), install on device/emulator, launch, screenshot captures at key states, log streaming via flutter logs for os_log/adb logcat, crash detection via error markers in the log stream. Pairs with e2e-validate for orchestration or runs standalone for Flutter-only projects. Reach for it on phrases like 'validate my Flutter app', 'flutter run check', 'test on simulator', 'dart/flutter test failed', 'pub get validation', or before any Flutter release."
+triggers:
+  - "flutter validation"
+  - "flutter run"
+  - "dart validation"
+  - "flutter app test"
+  - "pub get"
+  - "flutter doctor"
+  - "flutter build apk"
 context_priority: standard
 ---
 

@@ -1,0 +1,9 @@
+{
+  "skill_name": "validate-audit-benchmarks",
+  "changes_applied": [{"fix": "Rewrite description distinguishing plugin-maintainer use from user-project use", "implemented": true, "details": "Critical clarification: this audits the plugin itself (for maintainers); forge-benchmark audits user projects. Misuse of this skill by end users would be confusing. 3 new triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "80 lines, focused."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/validate-audit-benchmarks/SKILL.md"],
+  "description_before": "Score ValidationForge primitives: hooks (60% weight), skills (20%), commands (20%). Produces A-F grade, compares against prior benchmarks. Run before releases, after modifications, during audits.",
+  "description_after": "Use for ValidationForge plugin maintainers — scores the plugin's own structural integrity, NOT a user project's validation (that's forge-benchmark). Audits the 7 hooks (60% weight — they're the enforcement layer), 48 skills (20% — check frontmatter + schema), and 17 commands (20% — check YAML + references). Produces an A-F grade with regressions flagged against prior benchmarks. Reach for it on phrases like 'audit the plugin', 'validate the validation primitives', 'are the hooks still working', 'benchmark the plugin', or before any ValidationForge release."
+}

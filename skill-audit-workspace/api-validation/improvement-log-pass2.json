@@ -1,0 +1,29 @@
+{
+  "pass": 2,
+  "skill": "api-validation",
+  "scripts_added": [
+    "skills/api-validation/scripts/crud-validator.sh",
+    "skills/api-validation/scripts/auth-test.sh"
+  ],
+  "skill_md_lines_before": 276,
+  "skill_md_lines_after": 279,
+  "script_line_counts": {
+    "crud-validator.sh": 105,
+    "auth-test.sh": 91
+  },
+  "syntax_check": {
+    "crud-validator.sh": "bash -n OK",
+    "auth-test.sh": "bash -n OK"
+  },
+  "runtime_smoke_test": {
+    "crud-validator.sh": "prints usage and exits 2 on no args",
+    "auth-test.sh": "prints usage and exits 2 on no args"
+  },
+  "skill_md_edits": [
+    "Added 'Fast path' paragraph under '## Step 2: CRUD Validation Pattern' pointing at scripts/crud-validator.sh (line 67)",
+    "Added 'Fast path' paragraph under '## Step 3: Authentication Testing' pointing at scripts/auth-test.sh (line 134)",
+    "Inline curl examples preserved as pedagogical source of truth"
+  ],
+  "frontmatter_intact": true,
+  "notes": "Both scripts use set -euo pipefail, capture both response body and HTTP status to evidence dir, and exit non-zero on unexpected status codes. auth-test.sh originally used bash 4+ ${v,,} lowercase expansion which broke on macOS bash 3.2.57 (runtime check caught it); replaced with an explicit -z guard chain for portability. Scripts follow the style of scripts/benchmark/score-project.sh (echo diagnostics, mkdir -p evidence dir, strict mode)."
+}

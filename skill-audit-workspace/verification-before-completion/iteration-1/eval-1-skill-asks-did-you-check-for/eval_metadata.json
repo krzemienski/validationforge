@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "skill-asks-did-you-check-for",
+  "prompt": "The API endpoint returns 200 and the response looks right to me. I also updated the frontend to use the new fields. Is that enough to ship?",
+  "expected_output": "Skill asks: Did you check for regressions? Did you verify the final state is actually the state you're shipping? (E.g., if you made 3 commits, did you re-capture evidence after the last one?) User must cite: e2e-evidence/api-endpoint.json with full response body, e2e-evidence/ui-with-new-fields.png showing fields rendered, regression-check.txt showing no prior journey broke.",
+  "assertions": []
+}

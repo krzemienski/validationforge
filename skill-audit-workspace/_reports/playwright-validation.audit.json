@@ -1,0 +1,79 @@
+{
+  "skill_name": "playwright-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/playwright-validation/SKILL.md",
+  "skill_md_line_count": 214,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Validate web features via real browser interaction: screenshots, DOM snapshots, form testing, responsive layouts, console/network error detection. Use for feature verification and evidence capture.",
+    "length_words": 26,
+    "issues": [
+      "Slightly short (26 words) but concrete",
+      "'Use for' provides weak temporal context - should be 'when' (e.g., before marking web features complete)",
+      "Lists outputs (screenshots, snapshots) which is good specificity"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Step 3: Exercise Features (lines 65-79) instructs interaction but lacks error recovery. No guidance if element not found, timeout occurs, or page state is unexpected. Risk: validation stops without evidence of failure.",
+        "location": "## Step 3: Exercise Features (lines 65-79)"
+      },
+      {
+        "severity": "med",
+        "description": "Common Patterns section (lines 170-197) uses generic placeholder language: 'test an auth cookie', 'Check for auth cookie/token in network tab'. Real example showing exact Playwright MCP call would be more useful.",
+        "location": "## Common Patterns (lines 170-197)"
+      },
+      {
+        "severity": "med",
+        "description": "Anti-Patterns table (lines 199-207) is advice, not detection. No script or checklist to catch bad descriptions like 'Page loads successfully' in evidence files after the fact.",
+        "location": "## Anti-Patterns (lines 199-207)"
+      },
+      {
+        "severity": "low",
+        "description": "Step 2 (lines 53-63) says 'Never just say page loaded' but doesn't model what good evidence description looks like. The example is vague.",
+        "location": "## Step 2: Navigate and Capture (lines 53-63)"
+      }
+    ],
+    "strengths": [
+      "Step-by-step structure (Steps 1-7) is clear progression",
+      "Responsive testing breakpoints table (lines 85-90) is concrete and device-realistic",
+      "Form validation example (lines 105-120) covers happy path + error cases",
+      "Console/Network verification (Steps 6-7) catches real failures that UI won't show",
+      "Anti-Patterns section names the mistakes explicitly"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "No validation script to review captured evidence files. Script could check for anti-patterns in step descriptions (grepping for 'page loaded', 'works fine', etc.) and flag weak evidence before reporting.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Add error recovery sub-step in Step 3: 'If element not found, take screenshot of current state, check browser_console_messages for errors, exit this journey with FAIL verdict'",
+    "Replace generic 'test an auth cookie' with exact Playwright MCP call: 'browser_network_requests → includeStatic=false → parse response header Set-Cookie'",
+    "Create evidence quality checklist (script or template): scan step-*.png descriptions for weak language ('page loads', 'works', 'good') and suggest rewrites",
+    "Expand Step 2 with model evidence: 'Screenshot shows a form with 3 input fields (Email, Password, Remember Me checkbox) and a green Login button. No validation errors visible.'",
+    "Add prerequisite check: Playwright MCP server availability before launching validation"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a React checkout form. The form has 8 fields. I need to test that it rejects empty email and accepts valid email. How do I structure the evidence capture?",
+      "expected_output": "Should guide: Step 1 (navigate to /checkout, screenshot initial state), Step 2 (click submit with empty email, screenshot error), Step 3 (fill valid email, click submit, screenshot success). Should emphasize: each screenshot needs description of what's visible (error message text, form state, button enabled/disabled)."
+    },
+    {
+      "id": 2,
+      "prompt": "During responsive testing at 375px, the form labels are overlapping the inputs. The app says 'page loaded' but visually it's broken. How do I capture this as evidence?",
+      "expected_output": "Should say: 'Take screenshot at 375px, describe what you see: Labels overlapping inputs, text cut off, submit button partially off-screen. This IS the evidence. Name it step-03-375px-layout-broken.png. Console errors? Network failures? Any indication the app itself is broken, not just misrendered.'"
+    },
+    {
+      "id": 3,
+      "prompt": "The network tab shows a 500 error from /api/checkout but the UI says 'Success'. How should I handle this in my evidence and verdict?",
+      "expected_output": "Should explain: 'Take screenshot of error message (or lack thereof), save network.txt showing the 500, this is a critical finding. The app is hiding a real failure. Verdict: FAIL. The error is not recoverable in the UI and users won't understand what happened.'"
+    }
+  ]
+}

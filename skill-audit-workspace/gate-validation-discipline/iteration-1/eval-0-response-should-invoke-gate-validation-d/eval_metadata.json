@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "response-should-invoke-gate-validation-d",
+  "prompt": "My iOS team says they've tested the login flow: app builds, logs in, shows dashboard. They're ready to ship. I have 10 minutes to verify before merge. What should I check?",
+  "expected_output": "Response should invoke gate-validation-discipline. Walk through Verification Loop: IDENTIFY (3 criteria: builds, logs in, shows dashboard) \u2192 LOCATE (ask for screenshots, logs, build output) \u2192 EXAMINE (read the actual files, view the screenshots) \u2192 MATCH (does each file prove one criterion?) \u2192 WRITE verdict. Flag if they say 'we ran tests' or 'build succeeded' without you seeing evidence. Mandate: 'Read the evidence, view the screenshots, quote the logs.'",
+  "assertions": []
+}

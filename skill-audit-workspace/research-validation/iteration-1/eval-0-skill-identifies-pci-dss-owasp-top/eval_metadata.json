@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "skill-identifies-pci-dss-owasp-top",
+  "prompt": "I'm starting validation on an e-commerce platform handling credit card payments. Never validated fintech before. What standards apply and which ValidationForge skills should I use?",
+  "expected_output": "Skill identifies PCI DSS, OWASP Top 10 for API injection risks, accessibility laws. Maps to: api-validation for payment endpoint auth, accessibility-audit for compliance, then suggests create-validation-plan inputs. Produces e2e-evidence/research/ with scope/standards/mapping files.",
+  "assertions": []
+}

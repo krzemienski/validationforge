@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "response-should-invoke-ios-validation-an",
+  "prompt": "I have an iOS app in Xcode. It builds fine, but when I try to validate it on simulator, xcodebuild fails with 'No scheme found'. How do I debug this?",
+  "expected_output": "Response should invoke ios-validation and point to Pre-flight checks (lines 22). First: 'xcodebuild -list' to see available schemes. If scheme is missing, it's not registered in the .xcodeproj file. User must add scheme in Xcode: Product \u2192 Scheme \u2192 Edit Scheme, or use 'xcodebuild -scheme MyAppName' with exact name from -list output. Then retry Build step (lines 32-56).",
+  "assertions": []
+}

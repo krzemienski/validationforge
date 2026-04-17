@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "wave-1-complete-with-conditional-verdict",
+  "prompt": "Web validator reports CONDITIONAL (3/5 journeys PASS, 2/5 FAIL\u2014API timeouts on pagination endpoint). API validator is already done (Wave 1). iOS validator is waiting for Wave 2. What happens?",
+  "expected_output": "Wave 1 complete with CONDITIONAL verdict. Lead evaluates: API has known failures, but core CRUD works. Adds warning to iOS validator prompt: 'Upstream Wave 1: API verdict is CONDITIONAL. Use only PASS endpoints (list, get, create, update). Avoid pagination endpoint (times out). Evidence captured in e2e-evidence/api/report.md.' iOS proceeds (not blocked), focuses on endpoints that passed upstream.",
+  "assertions": []
+}

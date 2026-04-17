@@ -1,0 +1,85 @@
+{
+  "skill_name": "e2e-testing",
+  "path": "/Users/nick/Desktop/validationforge/skills/e2e-testing/SKILL.md",
+  "skill_md_line_count": 198,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "E2E patterns: journey design (one goal per journey, precondition→action→assertion), evidence management (step-NN naming, inventory), flaky flow diagnosis (3 runs, capture delta, fix root).",
+    "length_words": 23,
+    "issues": [
+      "Description is a pure feature list — doesn't say WHY or WHEN. 'Journey design' doesn't sell the concept.",
+      "Mentions 'flaky flow diagnosis' but doesn't explain what flakiness is or why it matters to the reader",
+      "Lacks hook: 'When should I read this skill?' Answer is buried in the body ('When designing validation journeys...')"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Entire 'Journey Design Principles' section (lines 24-87) is high-level guidance but uses abstract bad examples: 'Test the login page (too narrow)' and 'Test everything (too broad)' are vague. No concrete project context (e.g., 'a SaaS app', 'mobile banking').",
+        "location": "lines 24-87"
+      },
+      {
+        "severity": "med",
+        "description": "Journey Independence (lines 70-75) states the rule but doesn't explain CONSEQUENCES of violating it. Why is dependency bad? Cascading failures? Test order dependency?",
+        "location": "lines 70-75"
+      },
+      {
+        "severity": "med",
+        "description": "Evidence Inventory section (lines 117-127) shows a bash command for listing files but doesn't explain HOW to generate the file or WHY 'verdict-writer' needs it. Feels disconnected from actual workflow.",
+        "location": "lines 117-127"
+      },
+      {
+        "severity": "high",
+        "description": "Flaky Flow Handling (lines 129-167) recommends 'run 3 times' and 'capture delta' but never shows HOW to compare deltas or WHAT to look for. No concrete example of 'what changed between PASS and FAIL run?'",
+        "location": "lines 129-167"
+      },
+      {
+        "severity": "low",
+        "description": "Quarantine Pattern (lines 150-167) is excellent but only applies to flaky flows. No guidance on regular (non-flaky) failures.",
+        "location": "lines 150-167"
+      }
+    ],
+    "strengths": [
+      "Journey Design section (lines 26-68) teaches the correct mental model: one goal per journey, clear precondition→action→assertion structure",
+      "Priority matrix (lines 80-86) is concrete and aligns with business value (P0 revenue, P1 core, P2 secondary, P3 edge)",
+      "Evidence naming convention (lines 105-115) is unambiguous and sortable (step-NN prefix)",
+      "Quarantine Pattern (lines 150-167) is a practical response to flaky tests without introducing mocks or skips",
+      "Integration with ValidationForge section (lines 192-198) properly positions this skill as strategic, not tactical"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "A script to auto-generate evidence-inventory.txt from a journey directory, or a template to help users structure their first journey (including precondition setup and cleanup).",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Rewrite description to lead with WHEN: 'Read this skill when designing validation journeys or diagnosing flaky flows. It teaches journey patterns (one goal per journey), evidence naming discipline, and root-cause diagnosis for intermittent failures — the difference between 'retry and hope' vs 'fix and verify.'",
+    "In Journey Design, replace abstract bad examples with concrete ones: '❌ Bad: \"Validate login page\" (no user goal, no PASS criteria). ✓ Good: \"User logs in with token auth and can read /api/profile/\", PASS: 200 response with email field.' Make it 2-3 real scenarios.",
+    "In Journey Independence, add: 'If Journey B depends on Journey A, and A fails, B won't even run. This masks the root cause — you'll see \"B failed\" instead of \"A failed\". Keep journeys independent.'",
+    "In Flaky Flow Handling, show a concrete DIFF: 'Run 1 (PASS): screenshot shows dashboard with data, console clean. Run 2 (FAIL): screenshot shows loading spinner, network tab shows /api/data taking 4.5s (timeout is 3s). Root cause: API slow, not test flaky. Fix: increase timeout or optimize API.'",
+    "Add section 'Non-Flaky Failures' after Quarantine Pattern: 'If a journey fails consistently, don't quarantine it — it's a real bug. Diagnose and fix with error-recovery skill.'",
+    "In Evidence Inventory section, show example output: 'e2e-evidence/new-user-signup/evidence-inventory.txt contains: 1200 step-01-navigate.png, 4800 step-02-form-filled.png, 450 step-03-api-response.json, etc. verdict-writer reads this to find all artifacts for the journey report.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm designing an E2E journey for my React app. Users can sign up, create a post, and see it in the feed. That's three actions. Should I make it one journey or three separate journeys?",
+      "expected_output": "Explain: one journey (one user goal: 'new user creates a post'). Precondition: no account. Actions: (1) sign up, (2) create post, (3) navigate to feed. Assertion: post visible in feed. It's atomic. If you split it into three journeys, you lose the end-to-end signal and can't catch the 'post created but not in feed' bug."
+    },
+    {
+      "id": 2,
+      "prompt": "My login journey passes most of the time but fails 1 out of 5 runs. Sometimes the dashboard takes forever to load. I've captured 5 runs of evidence. How do I figure out if it's a real bug or just my test being flaky?",
+      "expected_output": "Walk through the diagnosis: (1) Look at the PASS runs — does the dashboard load in <1s? (2) Look at the FAIL runs — does it take >3s? (3) Check the network tab in evidence — is the /api/dashboard endpoint actually slow on FAIL runs? If yes: real bug (API performance). If no: test issue (timing). Show how to compare screenshots and network timings, not just 'PASS' vs 'FAIL' verdicts."
+    },
+    {
+      "id": 3,
+      "prompt": "I want to organize evidence for 6 journeys in my validation. Some are P0 (checkout), some are P2 (search filters). What directory structure should I use? How do I make sure I capture the right evidence for each?",
+      "expected_output": "Show directory structure: e2e-evidence/p0-checkout/, e2e-evidence/p2-search-filters/ (or journey-slug-based: e2e-evidence/new-user-checkout/, etc). For each journey: capture step-NN files in order (step-01, step-02, etc). Naming: step-01-navigate-to-checkout.png, step-02-add-item.png, step-03-payment-form.png, step-04-confirmation.png. Emphasize: each step should be a distinct user action, with visual proof. Generate evidence-inventory.txt to track all files."
+    }
+  ]
+}

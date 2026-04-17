@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: "Block premature completion: require personally examined evidence, specific citations, criteria matching, regression checks, final state capture. Use before marking tasks done, closing gates."
+description: "Use before marking ANY task, gate, or checkpoint complete — whenever you're about to set a todo status to completed, close an issue, merge a PR, hand a verdict to a team lead, or say 'done'. This skill runs a structured 5-point check: personal examination, specific citation, criteria matching, regression scan, final-state capture. It catches the common failure where evidence was produced but never actually read. Reach for it on phrases like 'mark done', 'close this task', 'merge it', 'can I ship this', 'verify before completion', 'checklist before marking complete', or when finishing any unit of work."
 triggers:
   - "verification before completion"
   - "complete task"
@@ -8,15 +8,26 @@ triggers:
   - "mark done"
   - "evidence checklist"
   - "can i ship this"
+  - "merge it"
+  - "ready to close"
+  - "checklist before marking complete"
 context_priority: critical
 ---
 
 # Verification Before Completion
 
-## Scope
+## Scope and relationship to gate-validation-discipline
 
-This skill handles: completion verification, evidence examination, citation formatting.
-Does NOT handle: generating evidence (use `e2e-validate`), planning validation (use `create-validation-plan`).
+Handles: completion verification across any kind of task (todos, gates, PRs, issues, ship decisions), evidence examination, citation formatting.
+
+This skill is the **general form** of `gate-validation-discipline`. The difference:
+
+- `gate-validation-discipline` is for formal validation gates with PASS criteria from a plan — it's invoked by the pipeline.
+- `verification-before-completion` is for any completion moment — todo marks, PR merges, issue closures, casual "done" claims. Broader scope, same underlying discipline.
+
+Reach for whichever one matches the context. If a task both is a formal gate AND a completion moment, either will work; the rules they apply don't conflict.
+
+Does NOT handle: generating evidence (`e2e-validate`), planning validation (`create-validation-plan`).
 
 ## The Rule
 

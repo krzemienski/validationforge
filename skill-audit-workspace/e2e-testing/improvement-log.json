@@ -1,0 +1,9 @@
+{
+  "skill_name": "e2e-testing",
+  "changes_applied": [{"fix": "Rewrite description clarifying strategy vs execution + triggers", "implemented": true, "details": "New description explicitly positions this as the 'HOW-TO-THINK' layer separate from execution skills (e2e-validate, playwright-validation, ios-validation). Prevents overlap confusion. 3 new YAML triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "Skill is strategic/patterns, body is already focused."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/e2e-testing/SKILL.md"],
+  "description_before": "E2E patterns: journey design (one goal per journey, precondition→action→assertion), evidence management (step-NN naming, inventory), flaky flow diagnosis (3 runs, capture delta, fix root).",
+  "description_after": "Use when designing end-to-end validation strategy — deciding how to structure journeys, how to name evidence, how to diagnose flaky flows. This is a strategy/patterns skill (the HOW-TO-THINK layer), separate from execution skills like e2e-validate / playwright-validation / ios-validation which actually RUN the validation. Covers: one goal per journey, precondition→action→assertion structure, step-NN evidence naming, inventory files, flaky-flow diagnosis (3-run delta technique, root-cause fix patterns). Reach for it on phrases like 'how do I structure e2e tests', 'journey design patterns', 'why is this test flaky', 'e2e strategy', or when planning the shape of E2E work before executing it."
+}

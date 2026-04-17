@@ -1,0 +1,17 @@
+{
+  "skill_name": "chrome-devtools",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "My dashboard page is slow \u2014 it takes 5 seconds to load. I want to debug performance using Chrome DevTools. What should I measure, and how do I capture evidence?",
+      "expected_output": "Run Pattern 1 (Page Load Performance): navigate_page to the dashboard, performance_start_trace (with reload=true), wait for auto-stop, analyze insights for LCP (Largest Contentful Paint), INP (Interaction to Next Paint), CLS (Cumulative Layout Shift). Save trace to e2e-evidence/devtools-perf/step-01-trace.json.gz. Identify slowest phase (e.g., 'LCP delayed by slow API call'). Evidence: trace file + screenshot before and after load.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "A user says 'the sign-up form doesn't work'. I see the form on the page, but nothing happens when they submit. How do I debug this with DevTools?",
+      "expected_output": "Run Pattern 2 (Network Debugging): navigate_page to sign-up form, fill and submit the form, list_network_requests to see all API calls. Inspect the form submission request (POST to /api/signup) \u2014 check status code (should be 201), response body (should have user ID or token). Common bugs: (1) request not sent (form validation blocking), (2) request sent but fails (500 error). Get detailed request (get_network_request) and save to e2e-evidence/devtools-network/.",
+      "files": []
+    }
+  ]
+}

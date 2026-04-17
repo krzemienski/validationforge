@@ -1,0 +1,17 @@
+{
+  "skill_name": "ios-validation-runner",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm debugging a complex iOS flow: user taps a button, waits 2 seconds, gets a confirmation message, then taps 'next' to move to the next screen. A screenshot won't capture timing. How do I use ios-validation-runner?",
+      "expected_output": "Response should invoke ios-validation-runner and walk through 5 phases: (1) SETUP: Boot simulator, create evidence dir. (2) RECORD: Start video + app logs in BACKGROUND (don't interact yet). (3) ACT: Tap button, wait 2s, observe confirmation, tap next. Manually describe each action. (4) COLLECT: Stop video/logs, capture final screenshot, check for crashes. (5) VERIFY: Review video for timing/smoothness, read logs for state transitions, read screenshots for UI changes. Video will show the 2-second delay; screenshots alone wouldn't.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm in Phase 2 (RECORD) and I've started video and log streaming in the background. How do I know they're actually running? How do I make sure I capture their PIDs correctly?",
+      "expected_output": "Response should invoke ios-validation-runner, Phase 2 (lines 71-98). Explanation: (1) After backgrounding, immediately check: 'ps aux | grep recordVideo' should show the process. (2) Save $! immediately: VIDEO_PID=$!. Don't lose the PID. (3) Same for logs: LOG_PID=$!. (4) Verify: 'echo $VIDEO_PID $LOG_PID' \u2014 should show two numbers. (5) Store them in a file for safety. Phase 4 will use these PIDs to kill -INT (SIGINT, not SIGKILL) the processes gracefully.",
+      "files": []
+    }
+  ]
+}

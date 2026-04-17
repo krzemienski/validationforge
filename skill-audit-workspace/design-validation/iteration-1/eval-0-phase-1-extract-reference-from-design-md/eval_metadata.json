@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "phase-1-extract-reference-from-design-md",
+  "prompt": "I have a React component library. DESIGN.md shows Figma mockups for a Button (blue background, white text, 12px padding). I implemented it as a Tailwind Button. How do I validate design fidelity?",
+  "expected_output": "Phase 1: Extract reference from DESIGN.md (Button spec: Tailwind 'bg-blue-600 text-white px-3 py-2', expected color #2563EB, text Helvetica 12px). Save to reference/button-spec.md. Phase 2: Render live button in a test page at design viewport (e.g., 1440px), screenshot to implementation/button-screenshot.png. Extract computed styles (bg color, text color, padding) via browser tools. Phase 3: Compare: Check if computed background color matches #2563EB (PASS/FAIL), text color matches white (PASS/FAIL), padding matches 12px (PASS/FAIL). Score by category (Colors 100%, Typography 95%, etc.). Overall score determines verdict. If score >85, PASS and Button is production-ready.",
+  "assertions": []
+}

@@ -1,0 +1,25 @@
+{
+  "skill_name": "build-quality-gates",
+  "changes_applied": [
+    {
+      "fix": "Rewrite description emphasizing 'necessary but not sufficient' + triggers",
+      "implemented": true,
+      "details": "New description makes the key limitation explicit: build passing is necessary but NOT sufficient — 'it compiled' is never proof it works for users. This is the philosophical anchor of the whole skill. Adds specific pre-PR/CI triggers."
+    }
+  ],
+  "changes_skipped": [
+    {
+      "fix": "Body changes",
+      "reason": "Audit priority was low; body is well-organized (193 lines across 4 gates with clear definitions). Description was the main issue."
+    }
+  ],
+  "files_created": [],
+  "files_modified": [
+    "/Users/nick/Desktop/validationforge/skills/build-quality-gates/SKILL.md"
+  ],
+  "description_before": "4-stage pipeline: compile, lint, type-check, bundle. Each gate PASS required before next. Build gates are necessary NOT sufficient—functional validation still required. Use pre-deploy, pre-PR.",
+  "description_after": "Use for pre-deploy or pre-PR build quality enforcement through a 4-stage pipeline: compile → lint → type-check → bundle. Each stage must PASS before the next runs. Critical caveat this skill hammers home: build passing is NECESSARY but NOT SUFFICIENT — 'it compiled' is never proof that it works for users. Functional validation through real UI is always the next step. Reach for it on phrases like 'run build checks', 'pre-PR checks', 'quality gates', 'verify the build', 'is the bundle clean', or when CI needs a multi-stage build verification step before tests.",
+  "line_count_before": 193,
+  "line_count_after": 194,
+  "self_review_notes": "The 'necessary but not sufficient' point is what keeps this skill from competing with functional-validation — build gates are a prerequisite step, not a replacement."
+}

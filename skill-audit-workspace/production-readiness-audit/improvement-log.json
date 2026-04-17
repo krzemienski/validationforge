@@ -1,0 +1,9 @@
+{
+  "skill_name": "production-readiness-audit",
+  "changes_applied": [{"fix": "Rewrite description differentiating from full-functional-audit + triggers", "implemented": true, "details": "Clear ladder: production-readiness-audit is forward-looking for a deploy decision; full-functional-audit catalogs current state. 3 new ship-focused triggers."}],
+  "changes_skipped": [{"fix": "Body", "reason": "211 lines, well-organized by phase."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/production-readiness-audit/SKILL.md"],
+  "description_before": "Audit app readiness across 8 phases: code quality, security, performance, reliability, observability, documentation, deployment. Produces READY/NOT READY/CONDITIONAL verdict with blocking issues.",
+  "description_after": "Use before shipping to production to answer the specific question 'is this actually ready for real users'. Audits across 8 phases — code quality, security, performance, reliability, observability, documentation, deployment, rollback — and produces a READY / NOT READY / CONDITIONAL verdict with the specific blocking issues per phase. Different from full-functional-audit (which catalogs current state of a live app) — this one is forward-looking for a deploy decision. Reach for it on phrases like 'is this ready to ship', 'production readiness', 'ship checklist', 'pre-deploy audit', 'green light for production', or before any production-critical release."
+}

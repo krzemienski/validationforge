@@ -1,0 +1,97 @@
+{
+  "skill_name": "flutter-validation",
+  "path": "/Users/nick/Desktop/validationforge/skills/flutter-validation/SKILL.md",
+  "skill_md_line_count": 291,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "Flutter validation: build, install, launch, screenshot, log streaming, crash detection on Android/iOS devices and emulators. Uses flutter CLI. Use before release for any Flutter project.",
+    "length_words": 23,
+    "issues": [
+      "Description is purely tactical (build, launch, screenshot, crash detection) — doesn't explain WHY or WHEN. Ends with vague 'before release' with no business context.",
+      "Lacks the strategic value: what bugs does real device validation catch that unit tests miss? Why not just test in the IDE?",
+      "Doesn't distinguish between emulator vs device validation or debug vs release builds — all lumped into 'Flutter validation'"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "Prerequisites section (lines 9-41) is very long and includes emulator setup, but the actual validation steps (build, run, screenshot) don't reference back to these prerequisites. Users may skip prerequisites thinking they're optional.",
+        "location": "lines 9-41"
+      },
+      {
+        "severity": "high",
+        "description": "Steps 1-2 (dependencies, build) use generic tee logging but don't show HOW to interpret build output. Step 2 grep checks for 'Build complete' OR 'Built build/' — why are there two signals? What if neither appears?",
+        "location": "lines 39-86"
+      },
+      {
+        "severity": "med",
+        "description": "Step 3 (Run on Device) shows THREE variants (default, specific device, release mode) but doesn't guide WHICH to use WHEN. Should clarify: use debug on emulator first (fastest), then release on device (most realistic).",
+        "location": "lines 88-125"
+      },
+      {
+        "severity": "med",
+        "description": "Steps 4-7 (Screenshot, Logs, Widget Tree, Crash Detection) are presented as independent steps, but their DEPENDENCIES are implicit. Widget tree dump requires debug session active (line 197). Crash detection on Android requires adb. No clear prerequisite tree.",
+        "location": "lines 127-242"
+      },
+      {
+        "severity": "high",
+        "description": "Crash Detection (Step 7) has THREE platform-specific variants (flutter run, Android, iOS) — each using different tools (flutter logs, adb, xcrun simctl). This is a burden on users. Should prioritize: always capture flutter run output first, then platform-specific logs only if needed.",
+        "location": "lines 208-242"
+      },
+      {
+        "severity": "med",
+        "description": "Common Failures table (lines 265-278) references specific errors (gradle, xcode) but solutions are brief and point to external docs. Users may get stuck because the skill doesn't teach the diagnosis.",
+        "location": "lines 265-278"
+      },
+      {
+        "severity": "low",
+        "description": "Evidence Quality section (lines 255-263) teaches good vs bad screenshot descriptions but is the ONLY place in the skill that explains evidence standards. Should be earlier or referenced in every screenshot step.",
+        "location": "lines 255-263"
+      }
+    ],
+    "strengths": [
+      "Step-by-step structure is logical and follows the Flutter workflow (get → build → run → capture → verify)",
+      "Concrete shell commands with proper backgrounding and cleanup (flutter run backgrounded with $FLUTTER_PID and kill)",
+      "Common Failures table is comprehensive and includes root causes, not just symptoms",
+      "PASS Criteria template (lines 280-291) is a strong checklist covering dependencies, build, launch, screenshots, crashes, logs, and UI structure",
+      "Platform-specific guidance for Android, iOS, and web builds"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "A shell script that automates the entire validation sequence (pub get → build → run → capture screenshot → log streaming → crash check → kill → cleanup). This would save manual copying. Also: a diagnostic script to run `flutter doctor` and report missing tools in a structured format.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Rewrite description to lead with VALUE and WHEN: 'Before releasing a Flutter app to production, validate it runs without crashes on real devices or emulators. This skill guides you through: dependencies → build → launch → screenshot → crash detection. It catches memory leaks, layout overflow, permission errors, and platform-specific crashes that unit tests miss. Use this for any Flutter app before release, whether it targets Android, iOS, or web.'",
+    "Reorganize Prerequisites (lines 9-41): split into 'Quick Check' (flutter doctor, devices connected) and 'Setup' (emulator launch). Move setup after the Quick Check so users can skip it if they already have a running device.",
+    "In Step 2 (Build), add guidance: 'The 'Build complete' and 'Built build/' signals indicate successful build. If you see neither, read the FULL error output above. Common build failures: (1) Gradle version mismatch → update compileSdkVersion, (2) Pod install issues → run cd ios && pod install, (3) Signing issues → open ios/Runner.xcworkspace and fix in Xcode.' Make it actionable without external docs.",
+    "In Step 3 (Run on Device), add a decision tree: 'First run? Use debug mode on emulator (fastest feedback). Emulator crashing? Try release mode: `flutter run --release`. Ready for realistic test? Use a physical device: `flutter devices` (list), then `flutter run -d DEVICE_ID --release`. Always capture logs: `flutter logs -d DEVICE_ID > app-logs.txt &` in parallel.'",
+    "In Steps 4-7, clarify the prerequisite tree: 'These steps run IN PARALLEL while `flutter run` is active in the background. Step 4: Screenshot (any time). Step 5: Logs (starts immediately, run for 15s). Step 6: Widget tree (debug only; type 'w' in flutter run console). Step 7: Crash detection (check output after app stops). You don't need all 7 — start with Screenshot + Logs + Crash Detection.'",
+    "In Crash Detection (Step 7), simplify: '1. Always check `flutter-run.txt` for FlutterError or unhandled exception. 2. For Android, check adb logcat if flutter run didn't catch it. 3. For iOS, check system logs in ~/Library/Logs/DiagnosticReports/. Prioritize in this order — flutter run is most comprehensive.'",
+    "Move Evidence Quality section (lines 255-263) to the beginning (after Prerequisites). This is the standard for ALL Flutter evidence. Reference it in every screenshot step: 'Capture screenshot. Evidence quality: describe what's VISIBLE (colors, text, layout), not what you expect. Good: \"Blue AppBar with title 'My App', 3 ListTile rows, FloatingActionButton bottom-right.\" Bad: \"Screenshot captured.\"'",
+    "Add a 'Validation Checklist' section after PASS Criteria that walks through dependencies → build → run → screenshot → logs → crash detection in a single block. Make it copy-paste for quick validation."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm validating a Flutter app that I need to release tomorrow. It runs fine in debug on the iOS Simulator but I want to validate the release build. What's the right sequence of commands to ensure it won't crash in production?",
+      "expected_output": "Guide: (1) `flutter build ios --release` (build for device, not simulator). (2) `flutter run --release -d DEVICE_ID` on a physical iPhone if possible (or simulator with release build). (3) Capture logs: `flutter logs -d DEVICE_ID &` to stream output. (4) Watch for 'FlutterError', 'unhandled exception', or crash output. (5) Screenshot the main screen and any critical user flows. (6) Check for platform-specific crashes: iOS (check ~/Library/Logs/DiagnosticReports/), Android (adb logcat). If you see any error that doesn't appear in debug, that's a release-only issue (often related to optimization or asset bundling) — investigate before shipping."
+    },
+    {
+      "id": 2,
+      "prompt": "My Flutter app has a build error: 'gradle: version 7.2.0 is not supported'. I have no idea what this means. Should I just update gradle in the Gradle wrapper?",
+      "expected_output": "No — that's a symptom, not the fix. The error means your Flutter SDK expects gradle version X but your android/gradle/wrapper/gradle-wrapper.properties has version 7.2.0. Options: (1) Update compileSdkVersion in android/app/build.gradle to match your Gradle version, or (2) Update gradle wrapper to a version compatible with your compileSdkVersion. Check the Common Failures table for 'Build fails with Gradle error' — it shows the proper fix. Don't just increment versions randomly. Always check the error output for the recommended version."
+    },
+    {
+      "id": 3,
+      "prompt": "My Flutter app launches on the Android emulator but immediately crashes. I see 'FlutterError: Could not find method main in class MainActivity'. How do I fix this using the error-recovery protocol?",
+      "expected_output": "Strike 1: The error says 'main' method not found in MainActivity. Check android/app/src/main/kotlin (or java) for MainActivity.kt. Does it have a proper main() method or is the app class different? Fix by ensuring MainActivity extends FlutterActivity and has the correct class name in AndroidManifest.xml. Rebuild: `flutter clean && flutter build apk --debug`. Re-run. Strike 2: If still failing, try a fresh build: delete android/app/build/ and android/.gradle/, then rebuild. Strike 3: Check if you modified MainActivity by accident — compare to a fresh Flutter template. If all fail, escalate with the full flutter-run.txt output."
+    }
+  ]
+}

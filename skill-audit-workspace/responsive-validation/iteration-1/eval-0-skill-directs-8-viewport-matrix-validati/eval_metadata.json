@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "skill-directs-8-viewport-matrix-validati",
+  "prompt": "Just redesigned our e-commerce checkout for mobile-first. Desktop version is narrower now. Need to validate layouts don't break between 375px phones and 1920px monitors. Where do I start?",
+  "expected_output": "Skill directs 8-viewport matrix validation, emphasizes content parity (critical for checkout), touch target checks on mobile. Captures screenshots at 375/393/430 (mobile), 768/1024 (tablet), 1280/1440/1920 (desktop). Verdict checklist ensures no horizontal overflow at any size. Evidence structured per viewport with layout/touch/typography findings.",
+  "assertions": []
+}

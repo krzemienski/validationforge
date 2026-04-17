@@ -1,0 +1,17 @@
+{
+  "skill_name": "cli-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've built a Rust CLI at ~/proj/fingerd that parses nginx access logs and validates IPv4 ranges. Binary is at ~/proj/fingerd/target/release/fingerd. I need to verify it handles --help, invalid IP arguments, stdin piping, and exit codes correctly for production. Where do I start?",
+      "expected_output": "Follow Step 1 (confirm binary exists), Step 2 (--help output), Step 3 (--version), Step 4 (happy path with valid IP), Step 5 (error cases: bad IP, no args). Capture all outputs to e2e-evidence/. Then verify exit codes (0 for success, 1 for errors) and test stdin piping with `echo 'ip_list' | fingerd`. Expect evidence files: cli-help.txt, cli-version.txt, cli-happy-path.txt, cli-error-*.txt, cli-exit-codes.txt, cli-stdin.txt.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Node.js CLI shipped as npm package. ./bin/mycli produces JSON output. Tests are currently in __tests__/ mocking the output. How do I validate the real CLI without mocks?",
+      "expected_output": "Build (npm run build or direct node invocation). Run mycli with real data, capture stdout to e2e-evidence/cli-happy-path.txt. Verify JSON is valid by piping through jq: `mycli --format json | jq . | tee e2e-evidence/cli-json-output.txt`. Test error cases with invalid inputs, verify exit code is non-zero. Capture all evidence files. No test files needed\u2014use real commands and real output.",
+      "files": []
+    }
+  ]
+}

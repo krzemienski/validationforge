@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "stop-at-layer-1-pass-gate",
+  "prompt": "Django project with PostgreSQL. Starting fullstack validation. Layer 1 (DB): schema looks good, but migration shows 'pending migrations'. Do I proceed to Layer 2 or fix first?",
+  "expected_output": "STOP at Layer 1 PASS gate. Pending migrations = database state is wrong. Layer 2 (API CRUD) will fail or show incorrect data. Fix first: run `python manage.py migrate`, then verify schema again. Only after migrations complete and schema is correct proceed to Layer 2.",
+  "assertions": []
+}

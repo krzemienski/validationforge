@@ -1,6 +1,14 @@
 ---
 name: forge-execute
-description: "Execute validation journeys with autonomous fix loop: run, capture evidence, analyze, rebuild, re-execute (max 3 strikes). Use after plan exists; maintains attempt history in isolated directories."
+description: "Use after a validation plan exists to actually run the journeys and, when they fail, autonomously try to fix them. Runs each journey against the real system, captures evidence into a fresh attempt directory, analyzes failures, applies a fix, rebuilds, and re-runs — up to 3 strikes before giving up on that journey. Preserves the full attempt history (e2e-evidence/forge-attempt-N/) so you can see exactly what changed between tries. Reach for it on phrases like 'run validation', 'execute the plan', 'validate now', 'fix the failures and retry', or after forge-plan produced a plan."
+triggers:
+  - "run validation"
+  - "execute validation"
+  - "validate now"
+  - "run the plan"
+  - "execute journeys"
+  - "fix and retry"
+  - "autonomous validation loop"
 context_priority: reference
 ---
 
@@ -8,19 +16,18 @@ context_priority: reference
 
 Autonomous validation execution loop. Runs journeys, captures fresh evidence per attempt, fixes failures, rebuilds, and re-validates until all pass or the 3-strike limit is reached.
 
-## Trigger
+## When to use
 
-- "run validation", "execute validation", "validate now"
-- After a validation plan exists (run forge-plan first if needed)
+Reach for this skill after `forge-plan` (or `create-validation-plan`) has produced `e2e-evidence/validation-plan.md`. If no plan exists, run planning first — executing without a plan means you have no PASS criteria to check evidence against, and the fix loop has no target to converge on.
 
 ## Modes
 
-| Mode | Use Case | Behavior |
-|------|----------|----------|
-| full | Complete validation | All journeys, full evidence capture |
-| quick | Smoke test | Critical journeys only, minimal evidence |
-| ci | CI/CD pipeline | Non-interactive, exit codes, no fix loop |
-| targeted | Specific area | Named journeys only |
+| Mode | When to use | What changes |
+|------|-------------|--------------|
+| `full` | Default — running validation before a release or during active development | All journeys, full evidence capture, fix loop enabled |
+| `quick` | Pre-commit smoke test, "does the build basically work" | Only P0-priority journeys, minimal evidence (one screenshot, one response body per journey), fix loop enabled |
+| `ci` | Running inside CI/CD | All journeys, full evidence, **fix loop disabled** — fail fast with exit codes so a human can intervene. Auto-fixes in CI are risky because they can mutate the branch under test |
+| `targeted` | Debugging one flow, or after a partial fix | Only named journeys run, fix loop enabled |
 
 ## The Forge Loop
 
@@ -69,10 +76,20 @@ e2e-evidence/
 
 ### Phase 3: Analyze Failures
 
-For each FAIL verdict:
-1. Use sequential thinking to trace root cause
-2. Classify: code bug, config issue, environment, or flaky
-3. Determine if auto-fixable (if not, mark BLOCKED)
+For each FAIL verdict, work this order — skipping steps produces fixes that don't converge:
+
+1. **Read the actual evidence** from `forge-attempt-N/{journey}/`. Don't guess from the verdict line; open screenshots, logs, response bodies. Quote what you see.
+2. **Compare to PASS criteria** from the plan. Which criterion failed, and what was the actual vs expected value?
+3. **Classify the cause:**
+   - **code bug** — logic, typo, missing handler; needs a source-code fix
+   - **config issue** — env var, feature flag, DB URL; fix in config not code
+   - **environment** — dev server died, DB unreachable, MCP disconnected; fix the environment, don't "fix" by rebuilding
+   - **flaky** — non-deterministic; if the exact same steps pass on re-run without a code change, suspect timing/race
+4. **Decide fixable or BLOCKED:**
+   - Fixable: you can see the cause and the fix is within scope. Proceed to Phase 4.
+   - BLOCKED: cause is external (third-party API down, missing credentials, unclear requirement). Mark the journey BLOCKED, record why, move on; no strikes consumed.
+
+**Example:** Evidence shows 200 OK from POST /signup but frontend never navigates to /welcome. Classify: code bug (frontend navigation logic). Fixable: yes (navigate to signup component). Proceed to Phase 4.
 
 ### Phase 4: Fix Loop (max 3 strikes per journey)
 
@@ -90,7 +107,11 @@ if journey.verdict == FAIL:
     update_forge_state(status="aborted")
 ```
 
-**Rebuild rule:** Never re-validate after a fix without rebuilding first. A clean build is a prerequisite for re-execution.
+**The rebuild rule (non-negotiable):**
+
+- Always rebuild after a fix, before re-executing. A stale build re-runs the old code and makes the strike count lie.
+- If rebuild fails (compile error introduced by the fix), that's the new failure — strike increments, fix is the compile error.
+- Skipping rebuild invalidates the attempt. Treat it as a null strike and redo with rebuild.
 
 ### Phase 5: Verdict
 

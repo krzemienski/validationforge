@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "user-runs-assign-ownership-sh-with-proje",
+  "prompt": "Our validation scores show project-alpha at 42%, but I don't know who's supposed to be fixing the failing journeys. Assign ownership so accountability is clear.",
+  "expected_output": "User runs assign-ownership.sh with --project project-alpha --journey login-flow --owner alice for each failing journey. assign-ownership.sh appends to .vf/team/ownership.json. Next team-dashboard.sh run shows ownership column in table.",
+  "assertions": []
+}

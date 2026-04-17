@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "response-should-invoke-functional-valida",
+  "prompt": "I've built a React app with a Node.js backend that talks to Postgres. The build succeeds but I don't know if the end-to-end flow actually works. User signs up \u2192 gets email confirmation \u2192 logs in \u2192 sees dashboard. How do I validate this without unit tests?",
+  "expected_output": "Response should invoke functional-validation skill. Recommend bottom-up: database alive?, API endpoints respond?, frontend loads and can interact?. Point to 4-step protocol (Build \u2192 Exercise \u2192 Capture \u2192 Verdict). Reference fullstack-validation or e2e-validate for multi-layer orchestration. Ask about evidence capture targets (screenshots, response bodies, logs). NO mention of jest/mocha/pytest.",
+  "assertions": []
+}

@@ -1,6 +1,13 @@
 ---
 name: forge-team
-description: "Multi-agent parallel validation with wave-based dependencies: DB/Design → API → Web/iOS. Each validator owns isolated evidence directory. Blocks downstream on upstream failure. Use for fullstack."
+description: "Use for fullstack or multi-platform projects (2+ platforms: DB, API, Web, iOS, CLI, Design) when you want validation to run in dependency-aware waves with each platform owned by a separate validator. Wave 0 runs independent layers (DB, Design, CLI) in parallel; Wave 1 runs API (which depended on DB); Wave 2 runs Web and iOS in parallel (both depend on API). Each validator writes to its own evidence directory — no collisions. Upstream failures auto-block downstream waves with BLOCKED reports. Reach for it on phrases like 'team validation', 'parallel validation', 'validate all platforms', 'spawn per-platform validators', or when coordinated-validation alone isn't enough and you need the full multi-agent orchestration."
+triggers:
+  - "team validation"
+  - "parallel validation"
+  - "validate all platforms"
+  - "forge team"
+  - "multi-agent validation"
+  - "spawn validators"
 context_priority: reference
 ---
 
@@ -8,10 +15,12 @@ context_priority: reference
 
 Multi-agent parallel validation. Spawns platform-specific validators that work in parallel with strict evidence directory ownership. Uses dependency-aware wave execution so that upstream platforms (API, DB) are validated before dependent platforms (Web, iOS) launch.
 
-## Trigger
+## When to use
 
-- "team validation", "parallel validation", "validate all platforms"
-- Projects with 2+ detected platforms
+Reach for forge-team on projects with 2+ detected platforms where you want concrete agent spawning and evidence-directory ownership. This skill builds on `coordinated-validation` (which defines the wave semantics and dependency graph) by adding per-platform validator agents, BLOCKED report handling, and a Verdict Writer agent to synthesize the final report.
+
+- Load `coordinated-validation` for just the dependency-aware execution logic (no agent spawning).
+- Load this skill when you want the full orchestration including agent-per-platform with isolated evidence dirs.
 
 ## Architecture
 

@@ -1,10 +1,12 @@
 ---
 name: fullstack-validation
-description: "Validate fullstack bottom-up: DB schema/data → API CRUD → frontend rendering → integration (create→read→update→delete across layers). Use for multi-layer projects; proves data flows end-to-end."
+description: "Use whenever validating a multi-layer app where frontend depends on backend depends on database — Rails+React, Django+Vue, Next.js+Postgres, any monorepo or separate repos that share data. Runs a strict bottom-up protocol: verify DB schema and seed data first, then API CRUD, then frontend rendering, then cross-layer integration flows (create in frontend → appears in DB, insert in DB → appears in frontend, update via API → propagates everywhere, delete cascades). Reach for this when a bug could be in any layer and you need to prove which one, or before shipping a change that touches more than one layer."
 context_priority: standard
 ---
 
 # Fullstack Validation
+
+**Composed runner**: `bash scripts/fullstack-validate.sh --db-check-cmd='psql -c SELECT 1' --api-base-url=http://localhost:3000 --web-base-url=http://localhost:3000 --evidence-dir=e2e-evidence/fullstack` runs the DB → API → Web gates in order, invoking `api-validation/scripts/crud-validator.sh` for the API layer. It exits non-zero on the first gate that fails.
 
 ## The Bottom-Up Rule
 
@@ -24,14 +26,28 @@ context_priority: standard
 
 **Why bottom-up?** A frontend bug might actually be a backend bug. A backend bug might actually be a database bug. If you start at the frontend, you waste time debugging symptoms instead of root causes. Always start at the deepest dependency.
 
+**Gates matter.** Each layer has a PASS gate. If Layer 1 (DB) fails, do **not** proceed to Layer 2 — fix the DB first, or your API layer findings will be noise. Same from 2→3 and 3→4. Skipping a gate turns 20 minutes of rework into hours of chasing ghosts.
+
+## Scope vs. platform-specific skills
+
+This skill orchestrates the cross-layer flow. It does **not** replace the platform-specific skills — it composes them:
+
+- For full API endpoint coverage (error shapes, auth, pagination, rate limiting) → load `api-validation` during Layer 2.
+- For full frontend coverage (console errors, network tab, responsive, route coverage) → load `web-validation` during Layer 3.
+
+This skill covers the integration work that those skills don't: proving the same record travels through all three layers unchanged.
+
 ## Prerequisites
 
-| Requirement | How to verify |
-|-------------|---------------|
-| Database running and accessible | `psql $DATABASE_URL -c "SELECT 1"` or equivalent |
-| API server running | `curl -s http://localhost:API_PORT/health` |
-| Frontend dev server running | `curl -s http://localhost:FE_PORT -o /dev/null -w "%{http_code}"` |
-| Evidence directory exists | `mkdir -p e2e-evidence` |
+Each row is a gate — if it fails, fix the failure first. The fix hints are framework-agnostic suggestions; adapt to your stack.
+
+| Requirement | How to verify | If it fails |
+|-------------|---------------|-------------|
+| Database running and accessible | `psql $DATABASE_URL -c "SELECT 1"` or equivalent | Start DB service (`brew services start postgresql`, `docker compose up db`, etc.) |
+| API server running | `curl -s http://localhost:API_PORT/health` | Start API (`npm run dev`, `python manage.py runserver`, `bundle exec rails server`) |
+| Frontend dev server running | `curl -s http://localhost:FE_PORT -o /dev/null -w "%{http_code}"` | Start frontend (`npm run dev`, `pnpm dev`) |
+| Evidence directory exists | `test -d e2e-evidence && echo ok` | `mkdir -p e2e-evidence` |
+| Browser automation MCP available | Playwright MCP or Chrome DevTools MCP connected | Configure in `.claude/mcp.json`; see the `web-validation` skill |
 
 ## Layer 1: Database Validation
 
@@ -71,7 +87,7 @@ psql $DATABASE_URL -c "SELECT id, email FROM users LIMIT 5" | tee e2e-evidence/d
 
 ## Layer 2: API Validation
 
-After the database is verified, validate the API layer. Follow the full `api-validation` skill procedure.
+After the database is verified, validate the API layer. For full coverage — error shapes, auth, pagination, rate limiting — load the `api-validation` skill and run its protocol. The steps below are the minimum cross-layer checks that prove the API is actually talking to the database you just verified.
 
 ### Quick API health
 ```bash
@@ -97,9 +113,12 @@ Run the full CRUD pattern from `api-validation` skill against at least one resou
 
 ## Layer 3: Frontend Validation
 
-After the API is verified, validate the frontend. Follow the full `web-validation` skill procedure.
+After the API is verified, validate the frontend. For full coverage — console errors, network tab, responsive, route coverage, form testing — load the `web-validation` skill. The steps below are the minimum cross-layer checks that prove the frontend is actually rendering data from the API you just verified (not hardcoded fixtures, not cached).
 
 ### Verify frontend renders API data
+
+The commands below use Playwright MCP syntax. If you have Chrome DevTools MCP instead, the equivalents are `navigate_page` / `take_snapshot` / `take_screenshot` (see the `web-validation` skill for the mapping).
+
 ```
 browser_navigate  url="http://localhost:FE_PORT"
 browser_snapshot
@@ -193,25 +212,27 @@ Every evidence file must contain the FULL content — not just a status code or 
 
 ## Common Failures
 
-| Symptom | Layer | Likely Cause | Fix |
-|---------|-------|--------------|-----|
-| Frontend shows empty list | DB or API | No seed data, or API query wrong | Check DB seed data first, then API response |
-| API returns stale data | DB or API | Caching, connection pooling, or migration pending | Clear cache, restart server, run migrations |
-| Frontend shows data but API returns different data | Frontend | Frontend using mock/cached data | Remove mocks, verify fetch URL points to real API |
-| Create works in frontend but data missing in DB | API | Transaction not committed, or write to wrong table | Check API create handler and DB connection |
-| Data appears in DB but not in API | API | Query filter excluding new records, or wrong table | Check API query and table name |
-| 500 error only on frontend actions | API | Missing CORS headers or request format mismatch | Check API CORS config and request Content-Type |
+| Symptom | Layer | How to diagnose | Fix |
+|---------|-------|-----------------|-----|
+| Frontend shows empty list | DB or API | Run `psql $DATABASE_URL -c "SELECT count(*) FROM $TABLE"` — 0 rows means seed missing. Then curl the API endpoint; empty response means query filter wrong. | Run migrations/seeds; fix the API query |
+| API returns stale data | DB or API | Check migration status (`showmigrations`, `migrate:status`); check your server for in-memory cache; `DESCRIBE $TABLE` vs expected schema | Run pending migrations, clear cache, restart server |
+| Frontend shows data but API returns different data | Frontend | Curl the API directly and compare JSON byte-for-byte with what the browser shows; open Network tab in DevTools | Remove mocks, verify fetch URL points to real API, clear browser cache |
+| Create works in frontend but data missing in DB | API | Check API logs during the create attempt; query DB immediately after: `SELECT * FROM $TABLE ORDER BY created_at DESC LIMIT 1` | Check transaction commit; confirm the handler writes to the right table |
+| Data appears in DB but not in API | API | `SELECT id FROM $TABLE WHERE ...` returns the row, but `/api/...` doesn't include it. Read the API query. | Check API query WHERE clauses; confirm table name matches |
+| 500 error only on frontend actions | API | Browser DevTools Network tab → click the failing request → Preview/Response tab. Cross-reference with API server logs. | Check CORS config, Content-Type header, request body shape |
 
 ## PASS Criteria Template
 
+"Correctly" below means: **values match exactly** (no truncation, no formatting that changes meaning), **count matches** (if API returns 5 items, frontend shows 5 rows or paginated total of 5), and **order matches** when order is specified (sorting). For any checkbox that's a soft maybe, write the exact values you compared into the evidence file.
+
 - [ ] **Database:** Schema matches expected structure (tables, columns, types)
-- [ ] **Database:** Seed data present and correct
+- [ ] **Database:** Seed data present and correct (count and sample values cited in evidence)
 - [ ] **API:** Health endpoint returns 200
 - [ ] **API:** CRUD operations work and persist to database
 - [ ] **API:** Auth flow works (if applicable)
 - [ ] **Frontend:** Pages render without console errors
-- [ ] **Frontend:** Data from API displayed correctly
-- [ ] **Integration:** Data created in frontend appears in database
-- [ ] **Integration:** Data inserted in database appears in frontend
-- [ ] **Integration:** Updates propagate across all layers
-- [ ] **Integration:** Deletes cascade correctly across all layers
+- [ ] **Frontend:** Data from API displayed correctly (exact values quoted, count matches API response)
+- [ ] **Integration:** Data created in frontend appears in database (same ID or unique value cited at each layer)
+- [ ] **Integration:** Data inserted in database appears in frontend (same ID or unique value cited at each layer)
+- [ ] **Integration:** Updates propagate across all layers (old value vs new value cited at each layer)
+- [ ] **Integration:** Deletes cascade correctly across all layers (absence verified by count decrease and 404 responses)

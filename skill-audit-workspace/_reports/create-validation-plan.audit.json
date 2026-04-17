@@ -1,0 +1,90 @@
+{
+  "skill_name": "create-validation-plan",
+  "path": "/Users/nick/Desktop/validationforge/skills/create-validation-plan/SKILL.md",
+  "skill_md_line_count": 104,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Create BEFORE evidence capture. Defines PASS criteria per journey (P0/P1/P2 priority). Maps routes/endpoints/screens, orders by dependency, checks prerequisites. Use when starting validation.",
+    "length_words": 22,
+    "issues": [
+      "Below target (22 words, 30-80 expected). Feels prescriptive rather than problem-driven.",
+      "Missing WHY: why is upfront planning necessary? (prevents evidence waste, ensures comprehensive coverage, catches missing prerequisites early)",
+      "Missing context_priority explanation: 'critical' suggests blocking, but unclear what blocks"
+    ],
+    "triggering_assessment": "under-triggers"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "Plan Structure section (lines 33-43) lists sections but doesn't explain WHEN to create each section or in what order. 'Metadata' is vague—what metadata? Date, platform, or both?",
+        "location": "Plan Structure, lines 33-43"
+      },
+      {
+        "severity": "high",
+        "description": "Journey Discovery section (lines 47-51) is only 5 lines and references external file. Body outsources the core work to references/journey-discovery-patterns.md. Skill lacks substantial content—mostly pointers to external docs.",
+        "location": "Journey Discovery, lines 47-51"
+      },
+      {
+        "severity": "high",
+        "description": "PASS Criteria Rules section (lines 53-67) uses 'all 8 of these' table but never explains what makes a criterion 'complete' or 'falsifiable'. Bad examples are vague ('Login works' vs 'POST /login returns 200 with token'), but rationale for each rule is missing.",
+        "location": "PASS Criteria Rules, lines 53-67"
+      },
+      {
+        "severity": "med",
+        "description": "Plan Quality Checklist (lines 69-79) is a checklist, not explanatory content. Checkbox format doesn't teach users HOW to build these sections—assumes they already know what 'explicit steps' means.",
+        "location": "Plan Quality Checklist, lines 69-79"
+      },
+      {
+        "severity": "low",
+        "description": "Security Policy section (lines 88-91) warns against secrets in plans but doesn't explain what placeholder format to use. Example: '[TEST_USER_EMAIL]' is unclear—is this the literal string, or should it be replaced?",
+        "location": "Security Policy, lines 88-91"
+      },
+      {
+        "severity": "low",
+        "description": "Rules section (lines 81-86) uses strict language ('MUST be created before', 'Never skip') but doesn't explain consequences. What happens if you skip journey discovery? (Incomplete coverage, test gaps.)",
+        "location": "Rules, lines 81-86"
+      }
+    ],
+    "strengths": [
+      "Quick Start (lines 20-30) is actionable: mkdir, create file, populate. Good entry point.",
+      "Plan Structure table (lines 36-43) lists all sections and their purpose. Helps structure the artifact.",
+      "PASS Criteria Rules table (lines 58-67) provides 8 dimensions (specific, measurable, observable, complete, ordered, evidence-mapped, non-redundant, falsifiable). Comprehensive rubric.",
+      "References are well-designed: journey-discovery-patterns.md covers Web (Next.js, React, Vue, Svelte), API (Express, FastAPI, Django, Go), iOS (SwiftUI, UIKit, Storyboard), CLI (Click, argparse, Clap, Cobra, Commander) with grep patterns.",
+      "pass-criteria-examples.md provides 20 bad/good examples across Web, API, iOS, CLI with rationale. Concrete learning material.",
+      "Explicit integration section lists related skills (preflight, e2e-validate, gate-validation-discipline) with brief purpose."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 2,
+    "missing_scripts_opportunity": null,
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Expand description: 'Create a validation plan BEFORE executing validation. Discover all user journeys (routes, endpoints, screens, commands), define PASS criteria per journey, identify prerequisites, and establish execution order. Plans prevent coverage gaps and ensure evidence is captured for the right scenarios.'",
+    "Explain context_priority: 'critical' means this skill is the prerequisite for all other validation work. No evidence should be captured without a plan. Plans guide journey selection and PASS criteria definition.",
+    "Expand Journey Discovery from 5 lines to ~15 lines with inline examples: 'Scan codebase for routes (Next.js: grep app/*/page.tsx), endpoints (Express: grep app.get/post), screens (SwiftUI: grep struct.*:.*View), commands (Clap: grep #[command]). See references/journey-discovery-patterns.md for platform-specific commands.'",
+    "In PASS Criteria Rules, expand 'Complete' example: 'Bad: Happy path only. Good: Include both success (POST /login with valid creds returns 200 + token) AND error (POST /login with invalid creds returns 401 + error message).'",
+    "Add 'Plan Quality Checklist' explanation: For each journey, explicitly write steps (e.g., '1. Navigate to /login. 2. Enter email. 3. Click submit.'). For each step, write expected outcome (e.g., 'Page redirects to /dashboard'). For each outcome, write evidence command (e.g., 'Screenshot shows dashboard URL')."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm starting validation on a Next.js fullstack app with an API. I have no validation plan yet. How do I create one?",
+      "expected_output": "Step 1: Mkdir e2e-evidence, create e2e-evidence/validation-plan.md with header. Step 2: Run journey discovery (reference patterns for Next.js App Router): find app/*/page.tsx to find routes. For each route, create one journey (J1, J2, etc.) with priority (P0 for core, P1 for important). Step 3: For each journey, write 2+ PASS criteria (specific, measurable, observable). Example: J1 (Homepage): Criteria 1 = 'GET / returns 200, screenshot shows hero section', Criteria 2 = 'Hero includes CTA button linking to /about'. Step 4: Identify dependencies (API routes depend on database), list prerequisites (DB running, API health check passes). Save plan to validation-plan.md. Plan is now the blueprint for evidence capture."
+    },
+    {
+      "id": 2,
+      "prompt": "I created a PASS criterion 'Login works'. My teammate says it's bad. Why?",
+      "expected_output": "See pass-criteria-examples.md #2: 'Login works' is bad because it doesn't define success. Better: 'POST /api/login with valid creds returns 200 with JSON containing `token` string > 20 chars; GET /me with token returns current user name'. Good criteria are specific (POST /api/login, not 'Login'), measurable (token exists, not 'works'), observable (captured via curl response), and evidence-mapped (curl output proves it)."
+    },
+    {
+      "id": 3,
+      "prompt": "I discovered 50 journeys in my app but only 3 are marked P0. Should I validate all 50?",
+      "expected_output": "No. Plan should focus on P0 (core, must pass) and P1 (important, should pass) first. P2 (edge cases) are best-effort. 3 P0s might be too few—re-evaluate. Core journeys typically include: first-run/setup, happy path, invalid input handling, auth boundary, empty state, error state. Add any missing. For your app, estimate P0 (5-10), P1 (10-20), P2 (rest). Validate P0+P1 before shipping. P2 can be scheduled for later releases. Evidence requirements scale with priority: P0 needs complete evidence, P1 needs key evidence, P2 can be spot-checked."
+    }
+  ]
+}

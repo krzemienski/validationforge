@@ -1,0 +1,83 @@
+{
+  "skill_name": "visual-inspection",
+  "path": "/Users/nick/Desktop/validationforge/skills/visual-inspection/SKILL.md",
+  "skill_md_line_count": 191,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Capture rendered UI state via screenshots across breakpoints, modes, edge cases. Use before claiming frontend work done, validating responsive layouts, dark/light modes, empty/error/loading states.",
+    "length_words": 24,
+    "issues": [
+      "Assumes browser automation tools (Playwright MCP, Chrome DevTools MCP) exist—doesn't verify they're available",
+      "No mention of timeout handling for slow-rendering pages",
+      "Doesn't specify screenshot format (PNG/WebP) or quality settings (DPI, compression)"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "med",
+        "description": "The 7-category checklist (sections 1-7, lines 34-107) is comprehensive but rigid—assumes every UI has all categories (dark/light mode, forms, etc.). No guidance on skipping irrelevant categories beyond 'provably irrelevant'—subjective.",
+        "location": "Lines 30-107"
+      },
+      {
+        "severity": "med",
+        "description": "Platform-specific sections (iOS HIG, Web WCAG, lines 73-90) reference bundled checklists (ios-hig-checklist.md, web-wcag-checklist.md) but main body doesn't give a quick summary—sends users off-skill to references for basic information.",
+        "location": "Lines 73-90"
+      },
+      {
+        "severity": "med",
+        "description": "Evidence capture protocol (lines 117-140) shows commands but doesn't handle failures—what if xcrun simctl io booted screenshot fails? What if Playwright times out? Error recovery is missing.",
+        "location": "Lines 117-140"
+      },
+      {
+        "severity": "low",
+        "description": "Severity classification (lines 108-115) defines CRITICAL/HIGH/MEDIUM/LOW but the visual-inspection report template (lines 142-174) doesn't show how severity maps to verdict (PASS/FAIL threshold)—is one CRITICAL finding = FAIL journey?",
+        "location": "Lines 108-115, 142-174"
+      },
+      {
+        "severity": "low",
+        "description": "Anti-patterns section (lines 183-191) lists common mistakes but doesn't explain the reasoning—why is 'testing only one breakpoint' wrong? (Answer: responsive design changes across breakpoints.) State the why.",
+        "location": "Lines 183-191"
+      }
+    ],
+    "strengths": [
+      "The 7-category checklist is comprehensive—covers layout, typography, interactive elements, hierarchy, platform-specific, dark/light mode, edge cases",
+      "Evidence capture protocol for both Web (Playwright MCP) and iOS (xcrun simctl) is concrete and executable",
+      "Report template is structured and machine-parseable (severity, finding ID, screenshot ref, remediation)",
+      "Anti-patterns table directly addresses common mistakes—helps users avoid false negatives",
+      "References (ios-hig-checklist.md, web-wcag-checklist.md, defect-pattern-database.md) are well-curated"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 3,
+    "missing_scripts_opportunity": "capture-screenshots.sh could automate the breakpoint loop (375/768/1440px) for web, or screenshot-suite.sh could run all platform-specific captures in sequence. Reduces manual orchestration.",
+    "over_bundled": false
+  },
+  "priority": "med",
+  "top_fixes": [
+    "Inline a 1-line summary of each platform-specific checklist (HIG, WCAG) into the main body—don't send users off-skill to references for basic info",
+    "Add a decision tree: 'Does your app have dark mode? → No, skip section 6. Does it use forms? → No, skip section 3.' Reduce rigidity.",
+    "Clarify severity-to-verdict mapping: Is 1 CRITICAL finding enough to FAIL the journey, or can you PASS with remediations pending?",
+    "Add error handling: what if screenshot capture times out? Screenshot fails? Browser crashes? Provide fallback strategies."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I just redesigned the product landing page with a new hero section, feature cards, and dark mode toggle. How do I systematically inspect it visually before marking the redesign done?",
+      "expected_output": "User runs through all 7 categories: Layout (overflow at 375/768/1440px), Typography (readable at each breakpoint), Interactive (buttons hover states, dark mode toggle works), Hierarchy (hero is most prominent), Visual Separation (cards are distinct), Dark/Light Mode (both render, no invisible text), Edge Cases (long text wraps, empty states if applicable). Captures screenshots at minimum 3 breakpoints for each mode. Produces report in e2e-evidence/visual-inspection/report.md with findings by severity."
+    },
+    {
+      "id": 2,
+      "prompt": "We're testing iOS app redesign on simulator. The safe area looks correct on iPhone 12, but I need to verify it works across notched and non-notched devices. Walk me through.",
+      "expected_output": "User takes screenshots on multiple sim configs (iPhone 14 Pro Max with notch, iPhone SE no notch). Uses idb ui describe-all to check accessibility tree for safe area usage. Checklist item 5.1 (safe area respected). Reports if content is hidden behind notch or home indicator. Severity CRITICAL if hidden, HIGH if hard to use."
+    },
+    {
+      "id": 3,
+      "prompt": "My test found 2 medium-severity layout issues and 0 critical issues. The page is responsive at all breakpoints and dark mode works. Can I ship this?",
+      "expected_output": "Visual inspection alone doesn't answer 'can ship'—it identifies issues and severity. Skill shows report with MEDIUM findings (e.g., inconsistent spacing). User decides: are remediations blockers? If yes, fix before ship. If no, open backlog issues. Verdict requires judgment beyond the inspection; skill provides the evidence."
+    }
+  ]
+}

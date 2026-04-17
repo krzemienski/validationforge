@@ -1,0 +1,17 @@
+{
+  "skill_name": "research-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm starting validation on an e-commerce platform handling credit card payments. Never validated fintech before. What standards apply and which ValidationForge skills should I use?",
+      "expected_output": "Skill identifies PCI DSS, OWASP Top 10 for API injection risks, accessibility laws. Maps to: api-validation for payment endpoint auth, accessibility-audit for compliance, then suggests create-validation-plan inputs. Produces e2e-evidence/research/ with scope/standards/mapping files.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "iOS app launched 3 months ago. New feature adds deep linking. How do we validate it won't break existing journeys?",
+      "expected_output": "Skill recognizes iOS domain, suggests Apple HIG deep link handling, iOS rejection risk. Phase 4 mapping includes: ios-validation for nav state, responsive-validation for screen reflow. Evidence shows tool inventory (xcrun, idb available). Clear map of which risks \u2192 which skills.",
+      "files": []
+    }
+  ]
+}

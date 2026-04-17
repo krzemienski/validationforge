@@ -1,12 +1,15 @@
 ---
 name: accessibility-audit
-description: "Audit WCAG 2.1 AA compliance across 4 layers (Lighthouse, keyboard nav, screen reader, contrast). Use before public release, after UI changes, or on a11y complaints."
+description: "Use for WCAG 2.1 AA accessibility audits that go beyond what Lighthouse alone catches. Runs 4 layers — automated Lighthouse scan, keyboard-only navigation walk-through (tab order, focus traps, skip links), screen-reader structure check via accessibility tree, and contrast/dark-mode verification — and scores the results with severity ratings. Catches issues Lighthouse misses: keyboard traps, misused ARIA, unlabeled form fields, dynamic content not announced. Reach for it before public release, after a significant UI change, on a11y complaints from users, or on phrases like 'WCAG audit', 'keyboard navigation test', 'screen reader check', 'accessibility compliance', 'a11y review'."
 triggers:
   - "accessibility audit"
   - "a11y audit"
   - "wcag compliance"
   - "accessibility check"
   - "screen reader validation"
+  - "keyboard navigation test"
+  - "keyboard trap"
+  - "aria misuse"
 context_priority: reference
 ---
 

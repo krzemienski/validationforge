@@ -1,0 +1,17 @@
+{
+  "skill_name": "responsive-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Just redesigned our e-commerce checkout for mobile-first. Desktop version is narrower now. Need to validate layouts don't break between 375px phones and 1920px monitors. Where do I start?",
+      "expected_output": "Skill directs 8-viewport matrix validation, emphasizes content parity (critical for checkout), touch target checks on mobile. Captures screenshots at 375/393/430 (mobile), 768/1024 (tablet), 1280/1440/1920 (desktop). Verdict checklist ensures no horizontal overflow at any size. Evidence structured per viewport with layout/touch/typography findings.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Users report layout 'shifts' on iPad when rotating between portrait and landscape. Sometimes text disappears. How do I systematically test orientation changes?",
+      "expected_output": "Skill covers Phase 4 orientation testing: portrait and landscape captures at iPad viewports (768x1024 and 1024x768). Checks content reflow, navigation state consistency, no critical content cut off. Highlights safe area inset handling for notch-equipped devices. Produces evidence comparing before/after rotation.",
+      "files": []
+    }
+  ]
+}

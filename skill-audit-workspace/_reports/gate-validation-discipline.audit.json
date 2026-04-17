@@ -1,0 +1,77 @@
+{
+  "skill_name": "gate-validation-discipline",
+  "path": "/Users/nick/Desktop/validationforge/skills/gate-validation-discipline/SKILL.md",
+  "skill_md_line_count": 86,
+  "has_bundled_scripts": false,
+  "has_bundled_references": true,
+  "description": {
+    "current": "Evidence before completion: examine actual evidence (not reports), cite specific proof, match evidence to criteria. Read files, view screenshots, quote output.",
+    "length_words": 21,
+    "issues": [
+      "UNDER-TRIGGER: Lacks context cue. 'Evidence before completion' is vague — missing WHEN (before what?) or WHO (for whom?) or PROBLEM (what happens if you don't?).",
+      "Description uses imperative but feels like a mandate rather than teaching: 'examine actual evidence' → why would someone NOT do this? Needs problem framing first."
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "The Rule (lines 20-29) uses ALL-CAPS rhetoric ('NEVER', 'ALWAYS') 4 times per 10 lines. Effective for emphasis but risks tone of punishment rather than guidance. Works here because preceded by clear 4-step loop, but borders on imperative-spam.",
+        "location": "lines 20-29"
+      },
+      {
+        "severity": "low",
+        "description": "Mandatory Verification Checklist (lines 31-43) has 7 checkboxes, all start with 'DID I' — monotonous rhythm. Stronger if varied: 'DID', 'HAVE I', 'CAN I', 'IS THERE', etc. Minor style issue.",
+        "location": "lines 31-43"
+      },
+      {
+        "severity": "med",
+        "description": "Section 'Rules' (lines 63-71) restates the checklist with 'NEVER/ALWAYS' format. Duplication with earlier rule (lines 20-29) and checklist (lines 31-43). Consider merging or creating hierarchy: Rule → Checklist → Anti-patterns, not Rule → Rule → Checklist.",
+        "location": "lines 63-71"
+      },
+      {
+        "severity": "low",
+        "description": "References point to 'gate-integration-examples.md' which includes CI/CD, parallel agents, recovery — valuable but not all scenarios apply. Skill assumes reader is orchestrating; solo use case less clear.",
+        "location": "lines 73-74"
+      }
+    ],
+    "strengths": [
+      "The 5-step Verification Loop (lines 48-61) is progressive: IDENTIFY → LOCATE → EXAMINE → MATCH → WRITE. Clear dependencies between steps.",
+      "Concrete examples section (lines 45-46) and anti-patterns reference (lines 63-71) ground abstract concept. 'Would a skeptical reviewer agree?' is an excellent gut-check (line 28).",
+      "Scope boundary is crisp (lines 16-18): handles completion verification only, defers evidence generation to functional-validation, planning to create-validation-plan.",
+      "References (evidence-standards.md, gate-integration-examples.md) contain 10 anti-patterns and real CI/CD examples. High signal-to-noise.",
+      "Security policy (lines 76-79) correctly states this skill is read-only, never modifies state."
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 2,
+    "missing_scripts_opportunity": "No automation opportunity — this skill is a discipline/mindset skill, not procedural. A script that auto-validates evidence would defeat the point.",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Add problem framing to description: 'Ship incomplete work? Mocks pass but users hit crashes? This skill teaches gate discipline: examine every piece of evidence before marking complete. No reports. No delegation. No skip.'",
+    "Consolidate rules (lines 20-29, lines 63-71): create one RULE section, reference it, then show CHECKLIST as operationalization.",
+    "Rewrite Mandatory Checklist (lines 31-43) with varied sentence starters: 'DID', 'HAVE', 'CAN', 'IS', 'WHAT', 'WOULD'. Same content, better rhythm.",
+    "Clarify solo-use case: add 1-2 sentences explaining how this skill applies when you're the validator, not orchestrating agents."
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "My iOS team says they've tested the login flow: app builds, logs in, shows dashboard. They're ready to ship. I have 10 minutes to verify before merge. What should I check?",
+      "expected_output": "Response should invoke gate-validation-discipline. Walk through Verification Loop: IDENTIFY (3 criteria: builds, logs in, shows dashboard) → LOCATE (ask for screenshots, logs, build output) → EXAMINE (read the actual files, view the screenshots) → MATCH (does each file prove one criterion?) → WRITE verdict. Flag if they say 'we ran tests' or 'build succeeded' without you seeing evidence. Mandate: 'Read the evidence, view the screenshots, quote the logs.'"
+    },
+    {
+      "id": 2,
+      "prompt": "Sub-agent reports: 'API validation complete, all endpoints respond with 200 OK.' Should I mark it PASS?",
+      "expected_output": "Response should invoke gate-validation-discipline and flag as incomplete. 'Not without examining the evidence.' Ask: Did you READ the actual response bodies (not just status codes)? Do responses match expected JSON structure? Are there error objects inside 200 responses? Mandate reading evidence-standards.md example (200 OK with error body is a FAIL). Do not mark complete until you've reviewed the actual curl output or response file."
+    },
+    {
+      "id": 3,
+      "prompt": "I've captured 15 screenshots of an iOS feature. I've looked at them all. Can I mark the feature 'complete'?",
+      "expected_output": "Response should invoke gate-validation-discipline and ask: What specifically did each screenshot prove? (not 'screenshot 5 exists', but 'screenshot 5 shows login form with email field populated after entering text'). Do all criteria have matching evidence? No partial success? No crashes in the log? Emphasize: viewing exists != proof of correctness. Each screenshot must be described in detail and matched to a criterion."
+    }
+  ]
+}

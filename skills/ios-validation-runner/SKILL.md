@@ -1,11 +1,14 @@
 ---
 name: ios-validation-runner
-description: "Five-phase iOS protocol: SETUP → RECORD (video+logs) → ACT (interaction) → COLLECT (artifacts) → VERIFY (verdict). Complex flows & debug scenarios. Video catches temporal evidence screenshots miss."
+description: "Use for deep iOS validation of multi-step user flows where screenshots alone miss the timing — animations, loading states, state transitions, anything where the journey matters more than the endpoints. Runs a five-phase protocol (SETUP → RECORD → ACT → COLLECT → VERIFY) that captures video + logs in the background while you interact with the app, then analyzes everything together for a PASS/FAIL verdict. Reach for it when you need richer evidence than ios-validation-gate provides, when debugging state transitions, or when someone asks 'what actually happens between tap and result'."
 triggers:
   - "ios validation runner"
   - "run ios validation"
   - "ios test run"
   - "validate ios feature"
+  - "ios video evidence"
+  - "record ios flow"
+  - "debug ios transition"
 context_priority: reference
 ---
 
@@ -23,83 +26,91 @@ Five-phase protocol for capturing comprehensive iOS validation evidence: SETUP, 
 ## Five-Phase Protocol
 
 ```
-SETUP ──> RECORD ──> ACT ──> COLLECT ──> VERIFY
-  |          |         |         |           |
-Boot sim   Start    Exercise   Gather     Analyze
-& prepare  video +  feature    all        evidence
-evidence   logs     via UI     artifacts  & verdict
-dir
+SETUP ──► RECORD ──► ACT ──► COLLECT ──► VERIFY
+  │          │        │         │            │
+Boot sim   Start     Exercise   Stop         Analyze
+& prep     capture   feature    capture,     evidence,
+evidence   (video+   (manual    gather       produce
+dir        logs in   or idb)    artifacts    verdict
+           bg)
 ```
+
+**Key timing rule:** RECORD only *starts* the background capture — it does not exercise the app. The actual interaction happens in ACT. The capture runs the whole time from RECORD until COLLECT stops it. If you interact during RECORD, the phase boundaries get confused and the evidence narrative becomes hard to follow.
 
 ## Phase 1: SETUP
 
 Prepare the simulator and evidence directory.
 
 ```bash
-# Create evidence directory
 JOURNEY="ios-validation-run-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "e2e-evidence/$JOURNEY"
 
-# Identify simulator
-UDID=$(xcrun simctl list devices booted -j | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-for runtime, devices in data['devices'].items():
-    for d in devices:
-        if d['state'] == 'Booted':
-            print(d['udid']); sys.exit()
-")
-echo "Using simulator: $UDID" | tee "e2e-evidence/$JOURNEY/step-01-setup.txt"
+# Identify the booted simulator. jq is cleaner and more robust than inline Python.
+UDID=$(xcrun simctl list devices booted -j | jq -r '.devices | .[] | .[] | select(.state=="Booted") | .udid' | head -1)
 
-# Boot if needed
 if [ -z "$UDID" ]; then
     xcrun simctl boot "iPhone 16 Pro"
-    UDID=$(xcrun simctl list devices booted -j | python3 -c "
-    import json, sys
-    data = json.load(sys.stdin)
-    for runtime, devices in data['devices'].items():
-        for d in devices:
-            if d['state'] == 'Booted':
-                print(d['udid']); sys.exit()
-    ")
+    UDID=$(xcrun simctl list devices booted -j | jq -r '.devices | .[] | .[] | select(.state=="Booted") | .udid' | head -1)
 fi
 
-# Record simulator info
+echo "Using simulator: $UDID" | tee "e2e-evidence/$JOURNEY/step-01-setup.txt"
 xcrun simctl list devices booted >> "e2e-evidence/$JOURNEY/step-01-setup.txt"
 ```
 
 ## Phase 2: RECORD
 
-Start continuous capture BEFORE interacting with the app.
+Start continuous capture **before** interacting with the app. Both commands below run in the background and produce files that grow for the whole run — you stop them in Phase 4 COLLECT.
+
+PIDs matter: save `$!` immediately after each backgrounding. You need the PIDs later to stop the captures cleanly. If you lose the PID, `pkill -INT -f recordVideo` is a fallback, but saving them explicitly is safer.
 
 ### Video Recording
 
 ```bash
-# Start video recording in background
 xcrun simctl io "$UDID" recordVideo "e2e-evidence/$JOURNEY/step-02-recording.mp4" &
 VIDEO_PID=$!
 echo "Video recording PID: $VIDEO_PID" > "e2e-evidence/$JOURNEY/step-02-video-pid.txt"
+
+# Sanity check: process should be alive
+sleep 1
+if ! kill -0 $VIDEO_PID 2>/dev/null; then
+  echo "WARNING: video recorder exited immediately. Check permissions / simulator state." >&2
+fi
 ```
 
-**CRITICAL:** Stop video with `kill -INT $VIDEO_PID` (SIGINT), NEVER `kill -9`. SIGKILL corrupts the video file.
+**Why SIGINT, not SIGKILL?** `xcrun simctl io recordVideo` finalizes the MP4 container when it receives SIGINT — muxing headers, writing the index, closing cleanly. SIGKILL (`kill -9`) bypasses that, leaving a truncated file that many players refuse to open. Phase 4 uses `kill -INT`.
 
 ### Log Streaming
 
 ```bash
-# Start log streaming in background — MUST use --info --debug
 xcrun simctl spawn "$UDID" log stream \
   --predicate "subsystem == \"$BUNDLE_ID\"" \
   --level debug \
   > "e2e-evidence/$JOURNEY/step-02-logs.txt" 2>&1 &
 LOG_PID=$!
 echo "Log stream PID: $LOG_PID" > "e2e-evidence/$JOURNEY/step-02-log-pid.txt"
+
+sleep 1
+if ! kill -0 $LOG_PID 2>/dev/null; then
+  echo "WARNING: log stream exited immediately. Check BUNDLE_ID is correct." >&2
+fi
 ```
 
-**MANDATORY:** Always include `--level debug`. Without it, you miss most app-level logging.
+**Why `--level debug`?** Without it, the stream only surfaces `default` and `info`-priority logs, which misses most app-level `os_log`-style debug output — exactly the signals you need to correlate with UI state during a flow.
 
 ## Phase 3: ACT
 
 Exercise the feature through the real UI. Capture screenshots at each significant state.
+
+### Check idb availability first
+
+```bash
+if ! command -v idb >/dev/null 2>&1; then
+  echo "idb not found. Install with: brew tap facebook/fb && brew install idb-companion"
+  echo "Falling back to manual interaction + screenshots."
+fi
+```
+
+If idb is available, use the CLI approach below for reproducible automation. If not, drive the simulator manually (UI clicks in the Simulator window) and follow the **manual description** section — still capture screenshots after each action.
 
 ### Using idb (preferred for automation)
 
@@ -236,7 +247,7 @@ Save to `e2e-evidence/$JOURNEY/report.md`.
 | `--level info` without `--debug` | Misses app-level debug logging |
 | Screenshot without describing content | "Screenshot captured" is NOT evidence |
 | Skipping Phase 5 (VERIFY) | Collecting evidence without analyzing it is theater |
-| Deleting evidence after PASS | Keep all evidence for audit trail |
+| Deleting evidence after PASS | Keep all evidence for audit trail. After verdict, commit the evidence directory to version control so the artifact lives beyond the session: `git add e2e-evidence/$JOURNEY && git commit -m "ios-validation-run evidence"` |
 | Running ACT phase without RECORD phase | No video/log evidence of what happened |
 
 ## Integration with ValidationForge

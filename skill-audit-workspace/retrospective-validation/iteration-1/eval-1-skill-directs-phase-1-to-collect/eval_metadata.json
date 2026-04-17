@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "skill-directs-phase-1-to-collect",
+  "prompt": "We've been doing e2e validation for 3 months. Want to know: are we catching real bugs or generating false FAILs that waste time investigating?",
+  "expected_output": "Skill directs Phase 1 to collect past validation reports (PASS/FAIL verdicts) and deployment outcomes (incidents post-deploy). Phase 2 calculates false PASS rate (bugs found in prod that validation missed) and false FAIL rate (investigations that found nothing real). Phase 4 confidence formula weights detection (1 - false_pass_rate) and accuracy (1 - false_fail_rate). Produces report: if false FAIL >15%, validation criteria too brittle; if false PASS >5%, journeys missing.",
+  "assertions": []
+}

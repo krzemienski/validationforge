@@ -1,12 +1,15 @@
 ---
 name: ios-validation
-description: "iOS/macOS validation: Xcode build → simulator install/launch → screenshot/video/logs/deep links/accessibility tree. 9-step protocol from build through crash detection."
+description: "Use as the standard protocol for validating iOS or macOS apps end-to-end: Xcode build → simulator install → launch → screenshots at each state → log streaming → deep-link routing check → accessibility tree check → crash detection. Runs a 9-step protocol suitable for most iOS validation needs. For deeper temporal evidence (video recording, multi-step flow debugging), use ios-validation-runner instead; for gate-based validation with explicit PASS/FAIL gates, use ios-validation-gate. Reach for it on phrases like 'validate the iOS app', 'iOS build test', 'does the iOS simulator launch', 'check deep link', 'iOS crash detection', or for any iOS app change that needs proof before release."
 triggers:
   - "ios feature validation"
   - "xcode build simulator"
   - "ios ui testing"
   - "deep link validation"
   - "ios accessibility testing"
+  - "validate iOS app"
+  - "macOS validation"
+  - "iOS release check"
 context_priority: reference
 ---
 
@@ -56,6 +59,8 @@ echo "App bundle: $APP_PATH"
 ```
 
 ## Step 2: Install
+
+**Fast path**: `bash scripts/ios-runner.sh --scheme=MyApp --workspace-or-project=MyApp.xcworkspace --bundle-id=com.example.myapp --evidence-dir=e2e-evidence/ios` runs build + install + launch + screenshot in one shot. The inline steps below let you stop between phases for inspection.
 
 ```bash
 xcrun simctl install booted "$APP_PATH" 2>&1 | tee e2e-evidence/ios-install-output.txt

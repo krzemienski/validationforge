@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "response-should-invoke-ios-simulator-con",
+  "prompt": "I'm recording video evidence of an iOS feature test. What's the right way to start and stop video recording? What mistakes should I avoid?",
+  "expected_output": "Response should invoke ios-simulator-control and explain: (1) 'xcrun simctl io $UDID recordVideo output.mp4 &' with & to background. (2) After exercising app: 'kill -INT $PID' (SIGINT, not SIGKILL). (3) Explicitly flag: DO NOT use 'kill -9' or SIGKILL \u2014 corrupts video file. Reference lines 97, 235, 262. Should also mention: capture $! before backgrounding to save PID.",
+  "assertions": []
+}

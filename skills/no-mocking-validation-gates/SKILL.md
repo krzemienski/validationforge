@@ -1,33 +1,48 @@
 ---
 name: no-mocking-validation-gates
-description: "Iron rule: no mocks/stubs/test files. Hook blocks *.test.ts, __tests__/, jest.mock(), etc. When mocking tempts: diagnose why real system unavailable, fix it, validate real system instead."
+description: "Use whenever someone is about to write a mock, stub, test double, or test file — or is already tempted to. This skill explains why mocking creates false confidence (mock drift), shows what gets blocked and what doesn't, and redirects to real-system validation via a concrete DIAGNOSE → FIX → VERIFY flow. Trigger on phrases like 'just mock it', 'stub out the API', 'add a test file', 'jest.mock', 'unittest.mock', 'sinon', 'XCTest', 'vitest', 'staging is slow so I'll fake it', or whenever the real system feels inconvenient."
 triggers:
   - "block test file"
   - "mock detection"
   - "prevent mocking"
   - "test double elimination"
   - "real system validation redirect"
+  - "jest.mock"
+  - "unittest.mock"
+  - "just mock it"
+  - "stub the api"
 context_priority: critical
 ---
 
 # No-Mocking Validation Gates
 
-## Scope
+## When to use this skill
 
-This skill handles: blocking mock/test file creation, detecting mock code patterns, redirecting to real validation.
-Does NOT handle: how to validate (use `functional-validation`), evidence examination (use `gate-validation-discipline`).
+Load this skill whenever the urge to mock rises: a flaky API, a slow dependency, a dev DB that isn't up, "we just need a quick test". Those are all real problems, but mocks solve them by hiding reality. This skill shows the pattern for fixing the real system instead.
+
+Handles: blocking mock/test file creation, detecting mock code patterns, redirecting to real validation.
+Does NOT handle: how to validate once you're committed (`functional-validation`), evidence examination (`gate-validation-discipline`).
 
 ## The Iron Rule
 
 Mocking creates **false confidence**. Mock drift is the silent killer:
 
 ```
-Month 1: API returns {"data": [...]}          Mock returns {"data": [...]}       MATCH
-Month 3: API adds {"data": [...], "meta": {}} Mock still returns {"data": [...]} DRIFT
-Month 6: Code crashes on missing "meta"       Tests still pass                   BUG HIDDEN
+Jan:  API returns {"data": [...]}              Mock returns {"data": [...]}        MATCH
+Mar:  API adds {"data": [...], "meta": {...}}  Mock still returns {"data": [...]}  DRIFT
+Jun:  Prod: code crashes on missing "meta"     Tests: still green                  BUG SHIPPED
 ```
 
 The tests pass. The code is broken. The mock is lying.
+
+Real scenario this keeps catching: API field renamed in staging (`users` → `data`), every mocked test still returns `users` and passes, frontend that reads `.data` crashes the moment it hits the real staging server. The test suite said green. Production said red. Only real-system validation catches this.
+
+## Automated scan
+
+`bash scripts/scan-for-mocks.sh --project-dir=. --scan-scope='src lib'` surfaces the
+violations the rules below describe (jest.mock, sinon, vi.mock, MagicMock/mock.patch,
+gomock, OHHTTPStubs/Cuckoo, generic `.stub()/.mock()`, and test-named files). Use in
+pre-commit hooks or CI; exits 1 on any match when `--fail-on-find=true` (default).
 
 ## What Gets Blocked
 
@@ -39,8 +54,39 @@ The pre-tool-use hook rejects Write/Edit operations targeting:
 | Test dirs | `__tests__/`, `__mocks__/`, `mocks/`, `stubs/`, `fixtures/` |
 | Mock code | `jest.mock()`, `vi.fn()`, `sinon.stub()`, `unittest.mock`, `XCTest`, `gomock` |
 
-For the complete pattern catalog (12 thought patterns, all blocked file patterns,
-all blocked code patterns by language), see `references/mock-pattern-catalog.md`.
+### Patterns that get blocked inline
+
+These are all rejected — don't even stage them:
+
+```javascript
+// JavaScript / TypeScript
+jest.mock('./payment-api');
+const mockFetch = vi.fn().mockResolvedValue({ ok: true });
+sinon.stub(db, 'query').returns([]);
+```
+
+```python
+# Python
+from unittest.mock import patch, MagicMock
+with patch('app.services.stripe.charge') as mock_charge:
+    mock_charge.return_value = {"status": "ok"}
+```
+
+```swift
+// Swift
+class MockAPIClient: APIClientProtocol {
+    func fetch() -> Data { return Data() }
+}
+```
+
+```go
+// Go
+ctrl := gomock.NewController(t)
+mockDB := mocks.NewMockDatabase(ctrl)
+mockDB.EXPECT().Query(gomock.Any()).Return(rows, nil)
+```
+
+For the complete pattern catalog (12 thought patterns that lead to mocking, all blocked file patterns, all blocked code patterns by language), see `references/mock-pattern-catalog.md`.
 
 ## What Is NOT Blocked
 

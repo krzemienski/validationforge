@@ -1,0 +1,17 @@
+{
+  "skill_name": "functional-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've built a React app with a Node.js backend that talks to Postgres. The build succeeds but I don't know if the end-to-end flow actually works. User signs up \u2192 gets email confirmation \u2192 logs in \u2192 sees dashboard. How do I validate this without unit tests?",
+      "expected_output": "Response should invoke functional-validation skill. Recommend bottom-up: database alive?, API endpoints respond?, frontend loads and can interact?. Point to 4-step protocol (Build \u2192 Exercise \u2192 Capture \u2192 Verdict). Reference fullstack-validation or e2e-validate for multi-layer orchestration. Ask about evidence capture targets (screenshots, response bodies, logs). NO mention of jest/mocha/pytest.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our iOS app ships, users complain it crashes on deep links. We have unit tests passing. What evidence should I capture to prove deep links work?",
+      "expected_output": "Response should invoke functional-validation skill, then ios-validation skill. Emphasize: unit tests didn't catch this (real system failure). Recommend: boot simulator, install actual .app, test actual deep links via xcrun simctl openurl, capture screenshots of landing screens, capture logs. Point to ios-validation skill for 9-step protocol. Mention idb accessibility tree if UI automation needed.",
+      "files": []
+    }
+  ]
+}

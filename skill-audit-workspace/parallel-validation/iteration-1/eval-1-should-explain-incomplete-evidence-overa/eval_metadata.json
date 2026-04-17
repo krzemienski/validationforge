@@ -1,0 +1,7 @@
+{
+  "eval_id": 1,
+  "eval_name": "should-explain-incomplete-evidence-overa",
+  "prompt": "One of my parallel agents failed midway through. I have evidence from 2 other agents. Can I merge the reports, or do I need to rerun all 3?",
+  "expected_output": "Should explain incomplete evidence = overall FAIL verdict (per aggregation rules). Should advise running only the failed agent again (file ownership ensures clean isolation), then re-aggregating all 3 verdicts. Should clarify that partial success is not acceptable for deployment decisions.",
+  "assertions": []
+}

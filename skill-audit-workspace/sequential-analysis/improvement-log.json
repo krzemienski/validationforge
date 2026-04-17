@@ -1,0 +1,9 @@
+{
+  "skill_name": "sequential-analysis",
+  "changes_applied": [{"fix": "Rewrite description distinguishing from error-recovery + triggers", "implemented": true, "details": "sequential-analysis = diagnosis; error-recovery = fix loop. Clear ladder. 3 new triggers targeting the 'error doesn't make sense' moment."}],
+  "changes_skipped": [{"fix": "Body", "reason": "192 lines, well-structured."}],
+  "files_created": [],
+  "files_modified": ["/Users/nick/Desktop/validationforge/skills/sequential-analysis/SKILL.md"],
+  "description_before": "Root cause analysis for FAIL verdicts: structured hypothesis testing, evidence investigation, sequential thinking. Use when validation fails unexpectedly or errors are ambiguous.",
+  "description_after": "Use when a validation FAIL verdict is unexpected or the error is ambiguous — when you can't tell from the evidence alone what actually went wrong. Runs structured step-by-step hypothesis testing via the sequential-thinking MCP tool: form a hypothesis from the evidence, test it against other evidence, refine, repeat until root cause is pinned. Produces a traceable reasoning chain, not just a guess. Different from error-recovery (which handles the 3-strike fix loop) — this skill is for diagnosis, not fixing. Reach for it on phrases like 'why did this fail', 'trace the root cause', 'help me debug this validation', 'the error doesn't make sense', 'ambiguous failure'."
+}

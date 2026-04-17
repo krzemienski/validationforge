@@ -1,0 +1,7 @@
+{
+  "eval_id": 0,
+  "eval_name": "response-should-invoke-ios-validation-ga",
+  "prompt": "I'm implementing a new iOS feature: users can bookmark articles. After implementing it, I need to validate the feature is complete. Walk me through ios-validation-gate.",
+  "expected_output": "Response should invoke ios-validation-gate. (1) Gate 1 Simulator: Build app, install, launch, screenshot home screen, tap bookmark button, screenshot saved state, capture accessibility tree. Check: no crashes, app responsive, UI reflects bookmark action. (2) Gate 2 Backend: Is there a backend? If yes, verify bookmark API endpoint returns 200 and response contains bookmark status. If no backend (local-only), mark PASS N/A. (3) Gate 3 Analysis: Correlate \u2014 do logs show bookmark API call when user taps? Do screenshots show UI change (e.g., heart icon fill)? All three gates PASS? Overall PASS. One fails? Overall FAIL.",
+  "assertions": []
+}

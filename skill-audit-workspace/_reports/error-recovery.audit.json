@@ -1,0 +1,86 @@
+{
+  "skill_name": "error-recovery",
+  "path": "/Users/nick/Desktop/validationforge/skills/error-recovery/SKILL.md",
+  "skill_md_line_count": 104,
+  "has_bundled_scripts": false,
+  "has_bundled_references": false,
+  "description": {
+    "current": "3-strike recovery: strike 1 (targeted fix, same step), strike 2 (alt tool/path), strike 3 (rethink assumptions). Never mock; fix real cause. Covers build fails, crashes, network/auth/DB errors.",
+    "length_words": 26,
+    "issues": [
+      "Description reads as feature list: 'strike 1, strike 2, strike 3' — technical jargon without context. WHEN would user read this? WHAT problem does it solve?",
+      "Closes with 'Never mock' but doesn't explain why this matters in the context of the skill. Is this the main point or a guardrail?",
+      "Missing: what's the success signal at each strike? When do you KNOW you've fixed it?"
+    ],
+    "triggering_assessment": "ok"
+  },
+  "body": {
+    "issues": [
+      {
+        "severity": "high",
+        "description": "The 3-Strike flowchart (lines 20-64) is brilliant but uses PASS → Continue as the exit criterion for each strike. However, it doesn't define what PASS means here. Does 're-validate the SAME step' mean running the exact test again? Or running the real system again? Ambiguous.",
+        "location": "lines 20-64"
+      },
+      {
+        "severity": "med",
+        "description": "Error Classification table (lines 66-78) is solid but references two external files (recovery-commands.md, error-log-template.md) that aren't bundled or linked. Readers will look for these and not find them.",
+        "location": "lines 66-78, 80"
+      },
+      {
+        "severity": "med",
+        "description": "Rules section (lines 83-91) is imperative but lacks examples. Rule 1 ('NEVER repeat the exact same failing action') is the core discipline, but no examples of what 'changing something' means. Increase timeout? Different tool? Different assertion?",
+        "location": "lines 83-91"
+      },
+      {
+        "severity": "low",
+        "description": "Security Policy section (lines 93-97) mentions 'never works around auth errors by lowering security' but this skill isn't about security posture — it's about recovery. The policy feels like a warning inserted elsewhere. Should be in a parent skill or rules file.",
+        "location": "lines 93-97"
+      },
+      {
+        "severity": "low",
+        "description": "Skill is very short (104 lines) — it's more of a protocol than a teachable skill. Related Skills section (lines 99-104) is the longest section relative to core content.",
+        "location": "lines 99-104"
+      }
+    ],
+    "strengths": [
+      "The 3-Strike flowchart is the clearest visual representation of a disciplined recovery protocol — it's the right abstraction",
+      "Rule set (lines 83-91) is unambiguous: never repeat, never mock, always fix, always log, always re-validate",
+      "Iron Rule alignment: e2e-validate's 'never mock' is reinforced here with concrete practice",
+      "Error Classification table is actionable — each error type has a 'First Action' that points directly to the fix path"
+    ]
+  },
+  "bundled_resources": {
+    "script_count": 0,
+    "reference_count": 0,
+    "missing_scripts_opportunity": "This skill SHOULD bundle: (1) error-log-template.md (referenced but not present), (2) recovery-commands.md for common errors (also referenced but not present). These are dependencies, not optional. Also: a worked example of all 3 strikes applied to a real error (e.g., 'Django migration fails → strike 1: check SQL → strike 2: roll back and re-migrate → strike 3: review migration logic').",
+    "over_bundled": false
+  },
+  "priority": "high",
+  "top_fixes": [
+    "Rewrite description to lead with WHEN and WHY: 'When a validation step fails, use this 3-strike protocol to diagnose and fix the ROOT CAUSE. Strike 1: targeted fix to the failing step. Strike 2: alternative approach (different tool, different config). Strike 3: rethink assumptions. The protocol prevents thrashing (retrying the same thing) and mocking (working around the problem). Use this when error-recovery skill is triggered during e2e-validate or when a test suite fails.'",
+    "In the 3-Strike flowchart (lines 20-64), define PASS at each strike explicitly: 'PASS means the REAL system behaves correctly. Re-validate by: (1) Rerunning the exact same step (curl command, network request, UI interaction). (2) Checking the evidence (screenshot, response body, exit code). (3) Confirming the PASS Criteria from the validation plan are met (not just \"no error\" but \"correct state\").'",
+    "Replace the Error Classification table reference to external files (lines 80) with inline brief guidance. Or provide short recovery commands inline: 'Build failure: re-read error at file:line, fix code, rebuild. Network timeout: verify server running (curl -i http://localhost:PORT). Auth 403: check headers, token expiry, CSRF tokens. Database connection error: verify DB running, migrations applied, credentials in .env.'",
+    "In Rules section, add examples for Rule 1: '❌ Strike 1 failed? Don't run the same curl command again. ✓ Strike 2: Try with different timeout (curl --max-time 10), different auth method (add -H \"Authorization: Bearer TOKEN\"), or different tool (httpie instead of curl). ❌ Strike 3 still failing? Don't keep retrying. ✓ Instead: re-read the code path, check environment vars, verify the service is actually running (not just \"no error\").'",
+    "Move Security Policy (lines 93-97) out of this skill. It's a constraint, not a recovery protocol. It belongs in e2e-validate or in a rules file.",
+    "Add a 'What PASS Looks Like' section after the flowchart: 'After strike 1/2/3 succeeds, you should see: (1) The step re-runs without errors. (2) The evidence changes (e.g., screenshot shows data now, HTTP 200 instead of 500). (3) The PASS criterion is met (not just \"no error\" but the actual expected state). If you see no change in evidence, the fix didn't work — you haven't actually fixed the root cause.'",
+    "Add a worked example of all 3 strikes: 'Scenario: Django migration fails with \"relation does not exist\". Strike 1: Read error → migration references wrong table name → edit migration → retry → still fails. Strike 2: Different approach → roll back: `python manage.py migrate app 0001` → re-apply: `python manage.py migrate` → passes. Root cause: migration was out of order. Strike 3 not needed because Strike 2 fixed it.' Show the actual commands and expected output.",
+    "Clarify the 'error-log.md' requirement in Rule 6: 'Log means: date, step that failed, error message (full output, not summary), what you tried on strike 1, what you tried on strike 2, whether it passed or escalated. Example: [2026-04-11] Step 5: Django migration failed. Error: \"relation \\\"auth_user\\\" does not exist\". Strike 1: Edited migration file, re-ran migrate, same error. Strike 2: Rolled back to 0001, re-applied all, passed. Root cause: migration generated in wrong order. No Strike 3 needed.'"
+  ],
+  "test_prompts": [
+    {
+      "id": 1,
+      "prompt": "I'm running a Flutter validation on iOS Simulator. The app crashes on launch with 'Fatal Exception: java.lang.NullPointerException'. I've re-run it 5 times and it still crashes. What should I do according to the error-recovery skill?",
+      "expected_output": "Walk through the 3-strike protocol: Strike 1: Read the FULL error (Java NullPointerException is the symptom, but WHERE is null?). Check flutter-run.txt for the stack trace — it should show the file and line number of the null access. Fix that code, rebuild, re-run the exact same launch. If it still crashes, Strike 2: Try a different approach (clean Flutter cache: `flutter clean`, rebuild, re-run). If still crashes, Strike 3: Rethink — is the emulator out of space? Is a required permission missing? Is the environment variable set correctly? Check flutter doctor. Never just 'run it again' without changing something. Always log what you tried."
+    },
+    {
+      "id": 2,
+      "prompt": "My validation script is trying to POST to /api/users/ but getting 401 Unauthorized even though I'm passing a token. I tried 3 times and it still fails. I'm thinking of hardcoding the token instead of reading from env. Is that the right fix?",
+      "expected_output": "NO. Hardcoding is a workaround (like mocking). Strike 1: Read the error fully — is the token format correct? Are you sending `Authorization: Bearer TOKEN` or just `TOKEN`? Check the API docs. Fix the command. Strike 2: Try a different auth method (maybe the endpoint needs session auth instead of token auth?). Strike 3: Rethink — is the token expired? Can you verify the token is valid by calling /api/auth/verify/? Does the user have permission for this endpoint? Never hardcode. Always fix the real issue (token format, auth method, permissions) and log what you found."
+    },
+    {
+      "id": 3,
+      "prompt": "I'm validating a Django project. The database migration fails with 'OperationalError: no such table: auth_user'. I've run `python manage.py migrate` but it still fails. Should I recreate the database and start over?",
+      "expected_output": "No, that's a workaround (equivalent to mocking the database). Use the 3-strike protocol: Strike 1: Read the error — the migration itself may be referencing a table that doesn't exist yet. Check the migration files in order. Fix the migration that has the bad reference (edit it or create a new one). Strike 2: If Strike 1 doesn't work, try rolling back: `python manage.py migrate app 0001` (go to the first migration), then re-apply all: `python manage.py migrate`. This identifies if a later migration broke an earlier one. Strike 3: If still failing, check if the database is in a corrupt state. Show the `python manage.py showmigrations` output — which migrations are marked as applied? Are there any [ ] (unapplied)? Log all 3 attempts and escalate with the full error output."
+    }
+  ]
+}
