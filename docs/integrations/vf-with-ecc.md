@@ -29,25 +29,39 @@ Use this table to decide which plugin owns which phase of the loop. The rule of 
 The handoff lives at the "ECC's static and unit gates are green" boundary. ECC owns the compile-and-lint pipeline up to that point; VF owns the validate-against-the-real-system pipeline after it. The explicit boundary: **ECC stops at compile + unit-pass. VF starts at real-system behavior.**
 
 ```mermaid
-graph LR
-    U[User reports defect or requests feature] -->|describe goal| ECC["ECC<br/>(language rules, build-error-resolver,<br/>security-reviewer, TDD)"]
-    ECC -->|compile clean + unit tests green| BOUND{{"Boundary:<br/>ECC stops here,<br/>VF starts here"}}
-    BOUND -->|real-system handoff| VF["/validate<br/>(VF: preflight + execute + verdict)"]
-    VF -->|report.md| D{PASS?}
+graph TD
+    U[User reports defect or requests feature] -->|describe goal| BER["ECC /build-error-resolver<br/>(language-aware compile fixes)"]
+    BER --> SR["ECC /security-review<br/>(secret, injection, input checks)"]
+    SR --> REF["ECC refactor + /tdd-guide<br/>(idiomatic patterns, unit tests ≥80%)"]
+    REF --> GATE{{"Compile clean?<br/>Unit tests green?"}}
+    GATE -->|No: still red| BER
+    GATE -->|Yes: all green| BOUND[["Boundary:<br/>ECC stops at compile + unit-pass.<br/>VF starts at real-system behavior."]]
+    BOUND -->|real-system handoff| VAL["VF /validate<br/>(real-system functional check:<br/>preflight → execute → verdict)"]
+    VAL -->|report.md| D{PASS?}
     D -->|Yes| SHIP[SHIP]
-    D -->|No: FAIL| VFS["/validate-sweep<br/>(VF: autonomous fix loop, 3-strike cap)"]
-    VFS -->|re-run journeys| VF
+    D -->|No: FAIL| VFS["VF /validate-sweep<br/>(autonomous fix loop,<br/>3-strike cap, fresh evidence)"]
+    VFS -->|re-run journeys against real system| VAL
+
+    classDef ecc fill:#e8f4ff,stroke:#1f6feb,color:#0b3d91
+    classDef vf fill:#fff4e6,stroke:#d97706,color:#7c2d12
+    classDef boundary fill:#f0fdf4,stroke:#16a34a,color:#14532d,font-weight:bold
+    classDef terminal fill:#f3e8ff,stroke:#7c3aed,color:#3b0764
+    class BER,SR,REF,GATE ecc
+    class VAL,VFS vf
+    class BOUND boundary
+    class U,SHIP terminal
 ```
 
 **Step-by-step annotation:**
 
-1. **describe goal** (User → ECC) — The user either reports a defect or requests a new feature. ECC's proactive-trigger hooks activate the right agents: `build-error-resolver` for red builds, `security-reviewer` for new endpoints, language-specialist agents (`golang-patterns`, `swift-concurrency`, `python-typing`, etc.) for idiomatic enforcement, and `tdd-guide` for the red/green/improve loop.
-2. **compile clean + unit tests green** (ECC → Boundary) — ECC iterates until the build compiles, the language rules are satisfied, the security scan is clean, and the unit tests pass with ≥80% coverage. At this point ECC considers the task complete.
-3. **real-system handoff** (Boundary → `/validate`) — This is the line VF was built for. Compile success is not validation (Iron Rule 8). ECC does not boot the service, hit endpoints, render UI, or compare against a real database. VF's `/validate` takes over: `platform-detector` identifies the stack, validators run real journeys, and `verdict-writer` synthesizes evidence into `e2e-evidence/report.md`.
-4. **report.md** (`/validate` → PASS?) — VF writes PASS/FAIL verdicts per journey, each backed by cited evidence (response bodies, screenshots, logs with timestamps).
-5. **Yes** (PASS? → SHIP) — A PASS verdict moves to the production-readiness audit and the feature ships.
-6. **No: FAIL** (PASS? → `/validate-sweep`) — A FAIL verdict triggers VF's autonomous fix loop, which fixes the real system in place (no mocks) with a 3-strike cap per journey.
-7. **re-run journeys** (`/validate-sweep` → `/validate`) — After each fix attempt, the sweep re-invokes the validate pipeline against the real system and captures fresh evidence under `e2e-evidence/attempt-N/`.
+1. **describe goal** (User → ECC `/build-error-resolver`) — The user either reports a defect or requests a new feature. ECC's proactive-trigger hooks activate `build-error-resolver` for red builds first; it parses compiler diagnostics and applies language-aware patches (TypeScript narrowings, Python typing fixes, Go error-wrapping, Swift concurrency annotations, etc.).
+2. **ECC fix loop** (`/build-error-resolver` → `/security-review` → refactor + `/tdd-guide`) — Once the build is green, `/security-review` scans for secrets, injection, and unsafe input handling. Language-specialist agents (`golang-patterns`, `swift-concurrency`, `python-typing`, etc.) refactor toward idiomatic patterns, and `/tdd-guide` runs the red/green/improve loop to ≥80% unit-test coverage. If the gate detects a still-red build or failing tests, control returns to `/build-error-resolver` and the loop repeats.
+3. **Boundary: ECC stops at compile + unit-pass. VF starts at real-system behavior.** — When the compile is clean *and* the unit tests are green, ECC considers the task complete. This is the explicit handoff line. Compile success is not validation (Iron Rule 8). ECC does not boot the service, hit endpoints, render UI, or compare against a real database.
+4. **real-system handoff** (Boundary → VF `/validate`) — VF's `/validate` takes over as a real-system functional check: `platform-detector` identifies the stack, preflight boots the service, validators run real journeys against the live process, and `verdict-writer` synthesizes evidence into `e2e-evidence/report.md`.
+5. **report.md** (`/validate` → PASS?) — VF writes PASS/FAIL verdicts per journey, each backed by cited evidence (response bodies, screenshots, logs with timestamps).
+6. **Yes** (PASS? → SHIP) — A PASS verdict moves to the production-readiness audit and the feature ships.
+7. **No: FAIL** (PASS? → VF `/validate-sweep`) — A FAIL verdict triggers VF's autonomous fix loop, which fixes the real system in place (no mocks) with a 3-strike cap per journey.
+8. **re-run journeys against real system** (`/validate-sweep` → `/validate`) — After each fix attempt, the sweep re-invokes the validate pipeline against the real system and captures fresh evidence under `e2e-evidence/attempt-N/`.
 
 ## Installation and Configuration
 
