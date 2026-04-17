@@ -206,7 +206,8 @@ adb pull /sdcard/ui-dump.xml e2e-evidence/flutter-widget-tree.xml
 adb shell rm /sdcard/ui-dump.xml
 
 # iOS Simulator accessibility tree (if idb available)
-idb ui describe-all --udid booted 2>&1 | tee e2e-evidence/flutter-accessibility-tree.txt
+UDID=$(xcrun simctl list devices booted | grep -Eo '[0-9A-F-]{36}' | head -1)
+idb ui describe-all --udid "$UDID" 2>&1 | tee e2e-evidence/flutter-accessibility-tree.txt
 ```
 
 ## Crash Detection
