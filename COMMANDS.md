@@ -1,8 +1,8 @@
 # ValidationForge Commands Index
 
-18 slash commands across 2 families.
+19 slash commands across 2 families.
 
-## Validation Commands (12)
+## Validation Commands (13)
 
 | # | Command | Description |
 |---|---------|-------------|
@@ -16,19 +16,20 @@
 | 8 | `/validate-sweep` | Autonomous validation loop -- detect, validate, fix, re-validate until PASS or max attempts. |
 | 9 | `/validate-benchmark` | Benchmark validation coverage, speed, and evidence quality against baseline metrics. |
 | 10 | `/validate-consensus` | Multi-agent CONSENSUS validation -- spawns independent validators, synthesizes verdicts, resolves disagreements with confidence scoring. |
-| 11 | `/vf-setup` | Setup and configure ValidationForge for a project or globally. |
-| 12 | `/vf-telemetry` | Manage opt-in usage telemetry — enable, disable, show, or check status. |
+| 11 | `/validate-dashboard` | Generate or regenerate the evidence summary dashboard from e2e-evidence/. |
+| 12 | `/vf-setup` | Setup and configure ValidationForge for a project or globally. |
+| 13 | `/vf-telemetry` | Manage opt-in usage telemetry — enable, disable, show, or check status. |
 
 ## Forge Commands (6)
 
 | # | Command | Description | Allowed Tools |
 |---|---------|-------------|---------------|
-| 13 | `/forge-setup` | Initialize ValidationForge for this project | Read, Write, Edit, Bash, Glob, Grep, Agent |
-| 14 | `/forge-plan` | Generate a validation plan with journey discovery and PASS criteria | Read, Write, Bash, Glob, Grep, Agent |
-| 15 | `/forge-execute` | [planned V2.0] Run validation journeys against the real system with fix-and-retry loop | Read, Write, Edit, Bash, Glob, Grep, Agent |
-| 16 | `/forge-team` | Multi-agent parallel validation across platforms | Read, Write, Bash, Glob, Grep, Agent |
-| 17 | `/forge-benchmark` | Measure validation posture across 5 dimensions with trend tracking | Read, Write, Bash, Glob, Grep |
-| 18 | `/forge-install-rules` | Install ValidationForge rules to .claude/rules/ for cross-session enforcement | Read, Write, Bash, Glob |
+| 14 | `/forge-setup` | Initialize ValidationForge for this project | Read, Write, Edit, Bash, Glob, Grep, Agent |
+| 15 | `/forge-plan` | Generate a validation plan with journey discovery and PASS criteria | Read, Write, Bash, Glob, Grep, Agent |
+| 16 | `/forge-execute` | [planned V2.0] Run validation journeys against the real system with fix-and-retry loop | Read, Write, Edit, Bash, Glob, Grep, Agent |
+| 17 | `/forge-team` | Multi-agent parallel validation across platforms | Read, Write, Bash, Glob, Grep, Agent |
+| 18 | `/forge-benchmark` | Measure validation posture across 5 dimensions with trend tracking | Read, Write, Bash, Glob, Grep |
+| 19 | `/forge-install-rules` | Install ValidationForge rules to .claude/rules/ for cross-session enforcement | Read, Write, Bash, Glob |
 
 ## Command Pipeline Matrix
 
