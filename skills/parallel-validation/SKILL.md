@@ -1,6 +1,6 @@
 ---
 name: parallel-validation
-description: "Multi-agent parallel validation: iOS+Web+API simultaneously on independent journeys. Strict file ownership prevents conflicts. Verdict aggregation: any FAIL=FAIL. Use for large apps, CI/CD, multi-platform."
+description: "Multi-agent parallel validation: iOS+Web+API simultaneously on independent journeys. Strict file ownership prevents conflicts. Verdict aggregation: any FAIL=FAIL. For large apps, multi-platform."
 triggers:
   - "parallel validation"
   - "validate in parallel"

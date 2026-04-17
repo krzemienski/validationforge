@@ -1,0 +1,7 @@
+=== VF_PROFILE=strict
+=== exit=2
+=== stdout ===
+=== stderr ===
+[ValidationForge] mock-detection [strict]: Mock/test pattern detected in code being written.
+ValidationForge Iron Rule: Never create mocks, stubs, or test harnesses.
+Fix the real system instead. Run /validate for proper validation.

@@ -1,6 +1,6 @@
 ---
 name: sequential-analysis
-description: "Root cause analysis for FAIL verdicts: structured hypothesis testing, evidence investigation, sequential thinking. Use when validation fails unexpectedly, errors are ambiguous, or journeys share causes."
+description: "Root cause analysis for FAIL verdicts: structured hypothesis testing, evidence investigation, sequential thinking. Use when validation fails unexpectedly or errors are ambiguous."
 triggers:
   - "sequential analysis"
   - "root cause analysis"

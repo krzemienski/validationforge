@@ -1,0 +1,30 @@
+diff --git a/CAMPAIGN_STATE.md b/CAMPAIGN_STATE.md
+index adc0b0b..cddc5a7 100644
+--- a/CAMPAIGN_STATE.md
++++ b/CAMPAIGN_STATE.md
+@@ -44,7 +44,7 @@
+ | Wave 1 | COMPLETE | Specs 001, 002 merged |
+ | Wave 2 | COMPLETE | Spec 007 SKIPPED; 009, 010 merged |
+ | Wave 3 | COMPLETE | Specs 011, 012, 013, 014 merged |
+-| Wave 4 | COMPLETE | Spec 015 QUARANTINED, 016 SKIPPED, 018/021/023/024 merged |
++| Wave 4 | COMPLETE | Spec 015 DROPPED, 016 SKIPPED, 018/021/023/024 merged |
+ | Wave 5 | COMPLETE | Specs 008, 017 merged (quality normalization) |
+ 
+ ## Stash Disposition
+@@ -55,12 +55,11 @@
+ 
+ ## Post-Campaign Decisions (Phase 7, plan 260411-2242)
+ 
+-### Spec 015 Quarantine Exit Criteria [M9]
++### Spec 015 Quarantine Exit Criteria [M9] — CLOSED
+ - Quarantined: 2026-04-09
+-- Revisit by: 2026-07-01 (3 months)
+-- Drop by: 2026-10-01 (6 months) if not revisited
+-- Revisit requires: manual diff review, selective cherry-pick of the
+-  history-tracking skill subset without protected-path deletions
++- Disposition: DROPPED 2026-04-16 (per U3 decision, plan 260416-1713-gap-remediation-loop)
++- Rationale: Branch already deleted from remote; merged content isolated to `site/` (documentation site). No cherry-pick needed.
++- Historical reference: docs/SPEC-015-DISPOSITION.md
+ 
+ ### Spec 016 + 020 Skip Rationale [M10]
+ - 016: Destructive — +1164/-9748 lines, deletes uninstall.sh,

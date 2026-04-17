@@ -46,7 +46,7 @@ ValidationForge is the first Claude Code plugin dedicated to **functional valida
 | Hooks | 5 |
 | Agents | 3 |
 | Platform references | 6 |
-| Bugs caught (benchmark) | 5/5 (vs 0/5 for unit tests) |
+| Bugs caught (benchmark) | planned target: all-5 vs none-for-unit-tests (see docs/ENGINES-DEFERRED.md) |
 | Evidence tiers | 3 |
 | Config profiles | 3 |
 
@@ -97,7 +97,7 @@ Unit tests verify code in isolation with mocks. Mocks drift from reality. Valida
 | DB migration with duplicate emails | PASS (clean in-memory DB) | **FAIL** (real migration fails on duplicates) |
 | CSS grid overflow on small screens | PASS (no visual rendering) | **FAIL** (Playwright screenshot shows overflow) |
 
-Score: Unit tests 0/5. ValidationForge 5/5.
+Score: Unit tests caught none. ValidationForge caught all. (planned benchmark target — see docs/ENGINES-DEFERRED.md)
 
 ---
 
@@ -607,7 +607,7 @@ HN/Reddit     →    Case studies     →    /validate-audit →  Team onboardin
 - **Technical but accessible** — engineers trust precision, not marketing speak
 - **Opinionated** — no-mock is a STANCE, not just a feature
 - **Evidence-based** — practice what we preach (all claims backed by data)
-- **Honest about limitations** — "VF catches 5/5 integration bugs, but 0/5 logic errors in isolated functions"
+- **Honest about limitations** — "VF targets catching integration bugs that unit tests miss; 0/5 logic errors in isolated functions"
 
 ### 8.3 Visual Identity
 
@@ -633,7 +633,7 @@ Extending the Midnight Observatory design system:
 **For Individual Developers:**
 - Pain: "You shipped AI code that broke in production"
 - Solution: "ValidationForge catches the bugs that unit tests miss"
-- Proof: "5/5 integration bugs caught vs 0/5 for unit tests"
+- Proof: "planned benchmark target: all integration bugs caught vs none for unit tests (see docs/ENGINES-DEFERRED.md)"
 
 **For Teams:**
 - Pain: "Nobody reviews AI-generated code properly"
@@ -866,7 +866,7 @@ This is the "PostgreSQL strategy" — free core builds community trust and adopt
 ```
 | Metric                    | Unit Tests | VF VALIDATE | VF + CONSENSUS | Manual QA |
 |---------------------------|:----------:|:-----------:|:--------------:|:---------:|
-| Bugs caught (of 5)        | 0/5        | 5/5         | 5/5            | 4/5       |
+| Bugs caught (of 5)        | 0/5        | target: all | target: all    | 4/5       |
 | Avg time to detect        | —          | 53 sec      | 68 sec         | 4.4 min   |
 | False confidence events   | 5          | 0           | 0              | 0         |
 | Integration bugs caught   | 0/3        | 3/3         | 3/3            | 2/3       |
@@ -1053,7 +1053,7 @@ validationforge/                          68 files, 9,593 lines
 | Blue ocean = unproven demand | Medium | High | **HIGH** | Blog series (23,479 sessions) proves methodology. Free Lite tier reduces trial friction. ProductHunt validates demand. |
 | Anthropic builds natively | Low | High | **MEDIUM** | VF is a plugin. Anthropic adding basic validation validates the category. VF positions as advanced tier. 9,593 lines unlikely replicated in built-in. |
 | Platform diversity challenge | Medium | Medium | **MEDIUM** | Launch with strongest platforms (Web, API). Community contributions for others. References are knowledge, not code. |
-| "No unit tests" is controversial | Medium | Low | **LOW** | Position as "AND" not "OR." Permissive config allows coexistence. Benchmark data (5/5 vs 0/5) is the argument. |
+| "No unit tests" is controversial | Medium | Low | **LOW** | Position as "AND" not "OR." Permissive config allows coexistence. Planned benchmark data will be the argument once proven (see docs/ENGINES-DEFERRED.md). |
 | ClaudeKit adds validation | Low | Medium | **LOW** | 18-month head start in depth. ClaudeKit's identity is breadth. Hooks are enforcement, not suggestions. |
 | Evidence reliability concerns | Low | Medium | **LOW** | 3-tier confidence system explicitly acknowledges reliability. Verdict-writer notes discrepancies. 3-strike handles false negatives. |
 | CI/CD integration complexity | Low | Low | **LOW** | V1 launches without CI. V2.0 adds GitHub Actions first. /validate-ci produces standard exit codes any CI can consume. |

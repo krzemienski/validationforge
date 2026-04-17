@@ -1,0 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index bfd5b64..23a81f5 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -5,7 +5,7 @@ dist/
+ .omc/
+ .remember/
+ audit-artifacts/
+-# e2e-evidence - exclude all evidence files but preserve inventory and reports
++# e2e-evidence - exclude all evidence files but preserve inventory and reports (policy: rules/evidence-management.md)
+ e2e-evidence/**
+ !e2e-evidence/dashboard.html
+ !e2e-evidence/evidence-inventory.txt

@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: "Block premature completion: require personally examined evidence, specific citations, criteria matching, regression checks, final state capture. Use before marking tasks done, closing gates, merging code."
+description: "Block premature completion: require personally examined evidence, specific citations, criteria matching, regression checks, final state capture. Use before marking tasks done, closing gates."
 triggers:
   - "verification before completion"
   - "complete task"

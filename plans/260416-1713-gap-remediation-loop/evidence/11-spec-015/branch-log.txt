@@ -1,0 +1,8 @@
+0c66723 merge: spec 015a — landing page documentation site (Astro + Starlight)
+b3adbbd auto-claude: subtask-2-2 - Add demo section to landing page showing the 5 sce
+cd19f18 auto-claude: subtask-2-1 - Create src/pages/index.astro — the main landing page with hero section (tagline 'Ship verified code, not it compiled code'), value proposition paragraph, and install CTA button
+4478f8b auto-claude: subtask-1-1 - Create site/ directory and scaffold Astro + Starli
+6ff749f auto-claude: subtask-1-2 - Verify Astro + Starlight builds successfully
+0c66723bbbbe0d9d1f91f100937be0f543b26f06
+merge: spec 015a — landing page documentation site (Astro + Starlight)
+

@@ -1,0 +1,10 @@
+6-.remember/
+7-audit-artifacts/
+8:# e2e-evidence - exclude all evidence files but preserve inventory and reports (policy: rules/evidence-management.md)
+9:e2e-evidence/**
+10:!e2e-evidence/dashboard.html
+11:!e2e-evidence/evidence-inventory.txt
+12:!e2e-evidence/report.md
+13:!e2e-evidence/**/evidence-inventory.txt
+14-.DS_Store
+15-*.log

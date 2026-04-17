@@ -1,0 +1,43 @@
+INVENTORY DISCREPANCY REPORT
+Date: 2026-04-16
+Source: P00 preflight scan
+
+=== COMMANDS ===
+CLAUDE.md claims: 16
+Disk count: 17
+Delta: +1 (mismatch)
+Note: One additional command file exists on disk beyond CLAUDE.md list
+
+=== SKILLS ===
+CLAUDE.md claims: 46
+Disk count: 48
+Delta: +2 (mismatch)
+Note: Two additional skill directories exist on disk beyond CLAUDE.md list
+
+=== HOOKS ===
+CLAUDE.md claims: 7
+Disk count: 10
+Delta: +3 (mismatch)
+Note: GAP-REGISTER identifies 3 orphan hooks (H-ORPH-1, H-ORPH-2, H-ORPH-3):
+  - config-loader.js (42 lines, not in hooks.json registry)
+  - patterns.js (28 lines, not in hooks.json registry)
+  - verify-e2e.js (64 lines, not in hooks.json registry)
+Phase 02 will remediate orphan hook registration.
+
+=== AGENTS ===
+CLAUDE.md claims: 5
+Disk count: 5
+Status: ✓ Matches
+
+=== RULES ===
+CLAUDE.md claims: 8
+Disk count: 8
+Status: ✓ Matches
+
+=== SUMMARY ===
+Total CLAUDE.md claimed items: 16+46+7+5+8 = 82
+Total disk items: 17+48+10+5+8 = 88
+Gap: 6 items (undocumented in CLAUDE.md)
+
+Impact: Inventory section of CLAUDE.md will be updated in P03 (docs remediation).
+Action: DO NOT edit CLAUDE.md in P00. P00 is read-only; differences captured as evidence only.

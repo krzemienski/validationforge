@@ -1,0 +1,17 @@
+=== Forbidden phrase 1: engine ships/works claim ===
+(no matches)
+=== Forbidden phrase 2: 3-reviewer unanimous/voting ===
+(no matches)
+=== Forbidden phrase 3: autonomous fix loop ===
+README.md:131:/forge-execute               # Run journeys with autonomous fix loop
+CLAUDE.md:11:5. **Autonomous Fix Loop** — Don't just find defects, fix them and re-validate
+COMMANDS.md:27:| 14 | `/forge-execute` | Run validation journeys against the real system with autonomous fix loop | Read, Write, Edit, Bash, Glob, Grep, Agent |
+docs/competitive-analysis.md:88:| **Autonomous fix loop** | validate-sweep with 3-strike limit | Ralph loop | No |
+docs/README.md:89:| `/forge-execute` | Run validation journeys against the real system with autonomous fix loop |
+=== Forbidden phrase 4: 5/5 or 5 of 5 ===
+SPECIFICATION.md:49:| Bugs caught (benchmark) | 5/5 (vs 0/5 for unit tests) |
+SPECIFICATION.md:100:Score: Unit tests 0/5. ValidationForge 5/5.
+SPECIFICATION.md:610:- **Honest about limitations** — "VF catches 5/5 integration bugs, but 0/5 logic errors in isolated functions"
+SPECIFICATION.md:636:- Proof: "5/5 integration bugs caught vs 0/5 for unit tests"
+SPECIFICATION.md:869:| Bugs caught (of 5)        | 0/5        | 5/5         | 5/5            | 4/5       |
+SPECIFICATION.md:1056:| "No unit tests" is controversial | Medium | Low | **LOW** | Position as "AND" not "OR." Permissive config allows coexistence. Benchmark data (5/5 vs 0/5) is the argument. |

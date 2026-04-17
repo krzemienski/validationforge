@@ -1,0 +1,35 @@
+diff --git a/VALIDATION_MATRIX.md b/VALIDATION_MATRIX.md
+index 3104e97..726ea5d 100644
+--- a/VALIDATION_MATRIX.md
++++ b/VALIDATION_MATRIX.md
+@@ -9,7 +9,7 @@
+ | Status | Count | Specs |
+ |--------|------:|-------|
+ | MERGED | 14 | 001, 002, 008, 009, 010, 011, 012, 013, 014, 017, 018, 021, 023, 024 |
+-| QUARANTINED | 1 | 015 |
++| DROPPED | 1 | 015 |
+ | SKIPPED (destructive) | 2 | 016, 020 |
+ | SKIPPED (empty/no-code) | 3 | 007, 022, 025 |
+ | PRE-EXISTING | 5 | 003, 004, 005, 006, 019 |
+@@ -37,7 +37,7 @@ Legend:
+ | 012 | Pin OpenCode Plugin Dependencies | MERGED | Branch `auto-claude/012-*` merged at `b3c9aa4`. Pins all deps in .opencode package.json. | VG-4 PASS. No `^` or `~` in pinned versions. Post-merge fix for typescript `5.5.4`. |
+ | 013 | GitHub Actions Starter Workflow | MERGED | Branch `auto-claude/013-*` merged at `95721e0`. Adds CI template for validation in GH Actions. | VG-4 PASS. Template YAML is valid. |
+ | 014 | NPM Package Distribution | MERGED | Branch `auto-claude/014-*` merged at `3342cdd`. Adds package.json files array, bin/, npm pack support. | VG-4 PASS. `npm pack --dry-run` lists expected files. |
+-| 015 | Persistent Validation History & Trends | QUARANTINED | Branch preserved at `auto-claude/015-*`. Worktree at `.auto-claude/worktrees/tasks/015-*`. **Not merged.** | 256 files changed, +2375/-17723. Deletes protected files (config-loader.js, verify-e2e.js, uninstall.sh). Too destructive to merge. Preserved for future cherry-pick. |
++| 015 | Landing Page Documentation Site | DROPPED | Branch `auto-claude/015-*` merged at `0c66723`. Remote branch deleted. Disposition: 2026-04-16 per U3. | Merged content isolated to `site/` directory (Astro + Starlight docs, 15 files, +8294 lines). U3 decision closed gap M6. See docs/SPEC-015-DISPOSITION.md. |
+ | 016 | Consensus Engine Multi-Reviewer | SKIPPED | Branch deleted. 113 files changed, +1164/-9748. Same destructive deletion pattern as 015. | Diff reviewed: net-negative, deletes more than it adds. No unique value beyond 015. |
+ | 017 | Context Window Budget Optimization | MERGED | Branch `auto-claude/017-*` merged at `4e75626`. Adds context budget skill + optimization guide. | VG-5 PASS. Skill file exists, frontmatter valid. |
+ | 018 | Benchmark Scoring Algorithm | MERGED | Branch `auto-claude/018-*` merged at `7cbf486`. Adds scoring scripts + benchmark report template. | VG-5 PASS. `bash -n` on all benchmark scripts. |
+@@ -68,9 +68,11 @@ Legend:
+ 
+ ## Quarantine Registry
+ 
++*No active quarantines. Spec 015 was DROPPED per U3 decision (2026-04-16). See docs/SPEC-015-DISPOSITION.md.*
++
+ | Spec | Branch | Worktree | Reason | Future Action |
+ |------|--------|----------|--------|---------------|
+-| 015 | `auto-claude/015-persistent-validation-history-trend-tracking` | `.auto-claude/worktrees/tasks/015-*` | 17K net deletions destroy protected files | Cherry-pick history/trend features after manual review |
++| *(none)* | | | | |
+ 
+ ## Post-Merge Fixes Applied
+ 

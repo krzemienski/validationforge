@@ -1,6 +1,6 @@
 ---
 name: ios-validation
-description: "iOS/macOS validation: Xcode build → simulator install/launch → screenshot/video/logs/deep links/accessibility tree. 9-step protocol from build through crash detection. Use for all iOS feature validation."
+description: "iOS/macOS validation: Xcode build → simulator install/launch → screenshot/video/logs/deep links/accessibility tree. 9-step protocol from build through crash detection."
 triggers:
   - "ios feature validation"
   - "xcode build simulator"

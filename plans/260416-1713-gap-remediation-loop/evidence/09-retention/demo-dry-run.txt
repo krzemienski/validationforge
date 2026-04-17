@@ -1,0 +1,3 @@
+[evidence-clean] retention=30d (from standard.json) | root=/tmp/vf-cleanup-demo/e2e-evidence | dry-run=true
+[evidence-clean] DRY-RUN would delete: /tmp/vf-cleanup-demo/e2e-evidence/fake-old-journey (mtime=2026-03-17T00:43:33.000Z)
+[evidence-clean] dry-run complete. 1 dir(s) scanned, 1 eligible for removal.

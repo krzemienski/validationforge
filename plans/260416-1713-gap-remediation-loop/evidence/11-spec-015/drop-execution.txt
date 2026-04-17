@@ -1,0 +1,66 @@
+Phase 11 — Spec 015 DROP Execution Log
+======================================
+
+Date: 2026-04-16
+Decision: U3 = DROP (from plans/260416-1713-gap-remediation-loop/logs/decisions.md)
+Executor: researcher
+
+Branch Discovery
+----------------
+git branch -a output:
+  * main
+    master
+    remotes/origin/HEAD -> origin/audit/plugin-improvements
+    remotes/origin/audit/plugin-improvements
+
+Branch status: NO LOCAL OR REMOTE BRANCH FOUND
+Branch name from reflog: auto-claude/015-landing-page-documentation-site
+Merge commit: 0c66723bbbbe0d9d1f91f100937be0f543b26f06
+Merge status: ALREADY MERGED INTO MAIN (2026-04-11 per reflog HEAD@{23})
+
+Git Reflog Search
+-----------------
+Found reference in reflog:
+  0c66723 HEAD@{23}: merge auto-claude/015-landing-page-documentation-site: Merge made by the 'ort' strategy.
+
+Commit details:
+  commit 0c66723bbbbe0d9d1f91f100937be0f543b26f06
+  subject: merge: spec 015a — landing page documentation site (Astro + Starlight)
+
+Drop Action Outcome
+-------------------
+Status: NO-OP (branch already absent from local and remote)
+
+Analysis:
+  - No local branch to delete (git branch -a returned no match)
+  - No remote branch to force-delete (origin/<branch> not found)
+  - Merge already applied to main; no revert taken
+  - Remote branch was deleted sometime between merge and Phase 11 execution
+  - This is consistent with U3 intent: branch is gone, disposition is DROP
+
+Disposition
+-----------
+Spec 015: DROPPED
+  - Branch: auto-claude/015-persistent-validation-history-trend-tracking (deleted)
+  - Merge commit: 0c66723 (on main)
+  - Merged content: `site/` directory (Astro + Starlight documentation site)
+  - Date: 2026-04-16 (Phase 11 closure)
+  - Rationale: U3 decision; no cherry-pick required
+
+Files Updated
+-------------
+  ✓ VALIDATION_MATRIX.md: Status QUARANTINED → DROPPED
+  ✓ CAMPAIGN_STATE.md: Wave 4 status updated; Spec 015 removed from quarantine registry
+  ✓ docs/SPEC-015-DISPOSITION.md: Created with full decision rationale
+
+Evidence Files Created
+----------------------
+  ✓ evidence/11-spec-015/branch-discovery.txt
+  ✓ evidence/11-spec-015/branch-log.txt
+  ✓ evidence/11-spec-015/branch-diff-stat.txt
+  ✓ evidence/11-spec-015/diff-review.md
+  ✓ evidence/11-spec-015/drop-execution.txt (this file)
+  ✓ evidence/11-spec-015/matrix-diff.patch
+  ✓ evidence/11-spec-015/state-diff.patch
+
+Exit Status: SUCCESS (0)

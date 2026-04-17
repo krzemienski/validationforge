@@ -1,0 +1,7 @@
+ M .DS_Store
+ M .vf/benchmarks/benchmark-2026-04-11.json
+?? plans/260411-2305-gap-validation/
+?? plans/260416-1713-gap-remediation-loop/
+?? plans/reports/researcher-260416-1707-inventory-audit.md
+?? plans/reports/researcher-260416-1707-plan-progress-audit.md
+?? plans/reports/researcher-260416-1707-state-doc-scan.md

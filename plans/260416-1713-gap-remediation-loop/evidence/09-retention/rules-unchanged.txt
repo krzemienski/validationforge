@@ -1,0 +1,2 @@
+exit=0
+rules/evidence-management.md is unchanged (no diff)

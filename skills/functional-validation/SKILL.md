@@ -1,6 +1,6 @@
 ---
 name: functional-validation
-description: "Build & validate real systems (iOS, Web, API, CLI, fullstack)—never mocks or test files. Capture evidence from browser, simulator, CLI, cURL. Platform detection, 4-step protocol, verdict with evidence."
+description: "Build & validate real systems (iOS, Web, API, CLI, fullstack)—never mocks or test files. Capture evidence from browser, simulator, CLI, cURL. Platform detection, 4-step protocol."
 context_priority: critical
 ---
 

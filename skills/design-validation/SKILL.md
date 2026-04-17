@@ -1,6 +1,6 @@
 ---
 name: design-validation
-description: "Compare implementation screenshots against design refs (Stitch, DESIGN.md, Figma). Scores colors, typography, spacing, layout, interactions across 5 categories. Use after UI implementation, before release."
+description: "Compare implementation screenshots against design refs (Stitch, DESIGN.md, Figma). Scores colors, typography, spacing, layout, interactions across 5 categories. Use after UI implementation."
 triggers:
   - "design validation"
   - "validate design"

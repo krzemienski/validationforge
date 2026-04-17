@@ -7,8 +7,8 @@
 //   warn     → write warning to stderr but exit(0) (advisory only)
 //   disabled → exit immediately, no action
 
-const { COMPLETION_PATTERNS } = require('./patterns');
-const { loadConfig } = require('./config-loader');
+const { COMPLETION_PATTERNS } = require('./lib/patterns');
+const { loadConfig } = require('./lib/config-loader');
 const fs = require('fs');
 
 const EVIDENCE_DIR = 'e2e-evidence';

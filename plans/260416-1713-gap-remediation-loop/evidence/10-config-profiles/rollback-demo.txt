@@ -1,0 +1,12 @@
+=== After git stash (P10 code reverted)
+stash exit=0
+hook exit=0
+stdout: {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: \"/Users/nick/Desktop/myproject/src/auth.test.ts\" matches a test/mock/stub file pattern.
+ValidationForge Iron Rule: Never create test files, mock files, or stub files.
+Instead: Build and run the real system. Validate through actual user interfaces.
+Run /validate to start the correct validation workflow."}}
+stderr: 
+
+=== After git stash pop (P10 code restored)
+pop exit=0
+Hook behavior re-activated; no residual state changes.

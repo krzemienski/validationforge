@@ -1,0 +1,4 @@
+=== DISABLE_OMC=1 VF_PROFILE=strict
+=== exit=0  (expect 0 — override wins)
+=== stdout ===
+=== stderr ===

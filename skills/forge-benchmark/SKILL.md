@@ -1,6 +1,6 @@
 ---
 name: forge-benchmark
-description: "Score validation posture on 4 dimensions: Coverage (35%), Evidence Quality (30%), Enforcement (25%), Speed (10%). Produces A-F grade via scripts/benchmark/score-project.sh. Use after validation, pre-release."
+description: "Score validation posture on 4 dimensions: Coverage (35%), Evidence Quality (30%), Enforcement (25%), Speed (10%). A-F grade via scripts/benchmark/score-project.sh."
 context_priority: reference
 ---
 

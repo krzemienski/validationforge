@@ -1,6 +1,6 @@
 ---
 name: error-recovery
-description: "3-strike recovery: strike 1 (targeted fix, same step), strike 2 (alt tool/path), strike 3 (rethink assumptions). Never mock; fix real cause. Use on build fails, crashes, network/auth/DB errors, flaky flows."
+description: "3-strike recovery: strike 1 (targeted fix, same step), strike 2 (alt tool/path), strike 3 (rethink assumptions). Never mock; fix real cause. Covers build fails, crashes, network/auth/DB errors."
 triggers:
   - "error recovery protocol"
   - "fix validation failures"

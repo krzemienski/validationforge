@@ -1,0 +1,13 @@
+=== Command: VF_EVIDENCE_ROOT=/tmp/vf-cleanup-demo/e2e-evidence node scripts/evidence-clean.js
+=== Exit code: 1 (expect non-zero)
+=== stdout ===
+=== stderr ===
+[evidence-clean] validation in progress (pid=85014 is live). Aborting cleanup.
+=== Contains 'validation in progress'? ===
+1
+=== Target dir still present? ===
+total 8
+drwxr-xr-x@ 3 nick  wheel   96 Mar 17 00:45 .
+drwxr-xr-x@ 4 nick  wheel  128 Apr 16 20:45 ..
+-rw-r--r--@ 1 nick  wheel   10 Apr 16 20:45 step-01.txt
+YES — preserved

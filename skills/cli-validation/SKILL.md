@@ -1,6 +1,6 @@
 ---
 name: cli-validation
-description: "Validate CLI binaries: build, help/version output, happy path, error cases (bad flags, missing args), exit codes, stdin/pipe, output format (JSON/CSV). Capture full stdout/stderr. Use on binary changes."
+description: "Validate CLI binaries: build, help/version output, happy path, error cases (bad flags, missing args), exit codes, stdin/pipe, output format (JSON/CSV). Captures stdout/stderr."
 triggers:
   - "binary validation"
   - "CLI testing"

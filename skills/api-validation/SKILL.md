@@ -1,6 +1,6 @@
 ---
 name: api-validation
-description: "Validate APIs via curl: health checks, CRUD cycles (create/read/update/delete), auth (token, 401/403), error responses, pagination. Capture JSON bodies and status codes. Use on API changes, before deploy."
+description: "Validate APIs via curl: health checks, CRUD cycles (create/read/update/delete), auth (token, 401/403), error responses, pagination. Captures JSON bodies and status codes. Use on API changes."
 triggers:
   - "api testing"
   - "curl validation"

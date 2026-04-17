@@ -7,7 +7,7 @@
 //   warn     → inject evidence checklist (advisory, same as enabled)
 //   disabled → exit immediately, no action
 
-const { loadConfig } = require('./config-loader');
+const { loadConfig } = require('./lib/config-loader');
 
 let input = '';
 process.stdin.setEncoding('utf8');

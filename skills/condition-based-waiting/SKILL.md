@@ -1,6 +1,6 @@
 ---
 name: condition-based-waiting
-description: "Wait for conditions, not time: HTTP health polls, port availability, file existence, process readiness, browser content, iOS simulator, DB ready, log patterns. Every wait must timeout. Never bare sleep."
+description: "Wait for conditions, not time: HTTP health polls, port availability, file existence, process readiness, browser content, iOS simulator, DB ready, log patterns. Every wait must timeout."
 triggers:
   - "wait for server"
   - "async operation"

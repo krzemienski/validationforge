@@ -86,7 +86,7 @@ ValidationForge provides 15 slash commands split between the validation pipeline
 |---------|-------------|
 | `/forge-setup` | Initialize ValidationForge for this project |
 | `/forge-plan` | Generate a validation plan with journey discovery and PASS criteria |
-| `/forge-execute` | Run validation journeys against the real system with autonomous fix loop |
+| `/forge-execute` | [planned V2.0] Run validation journeys against the real system with fix-and-retry loop |
 | `/forge-team` | Multi-agent parallel validation across platforms |
 | `/forge-benchmark` | Measure validation posture across 5 dimensions with trend tracking |
 | `/forge-install-rules` | Install ValidationForge rules to `.claude/rules/` for cross-session enforcement |

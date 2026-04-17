@@ -1,0 +1,35 @@
+# R4 Context Bloat Trim — 2026-04-16
+
+## Objective
+Trim total SKILL description chars to ≤9,000 (was 9,385).
+
+## Approach
+Trimmed 17 descriptions that were >180 chars.
+Preserved: skill name, key techniques, tools, trigger phrases.
+Removed: redundant 'Use for/after/before...' tails where core meaning was retained.
+
+## Skills Trimmed
+
+| Skill | Old | New | Saved |
+|-------|-----|-----|-------|
+| forge-benchmark | 207 | 163 | 44 |
+| full-functional-audit | 207 | 188 | 19 |
+| error-recovery | 206 | 193 | 13 |
+| design-validation | 205 | 189 | 16 |
+| parallel-validation | 205 | 194 | 11 |
+| api-validation | 204 | 190 | 14 |
+| coordinated-validation | 204 | 189 | 15 |
+| verification-before-completion | 204 | 190 | 14 |
+| ios-validation | 203 | 167 | 36 |
+| cli-validation | 202 | 175 | 27 |
+| condition-based-waiting | 202 | 184 | 18 |
+| forge-plan | 202 | 176 | 26 |
+| gate-validation-discipline | 202 | 159 | 43 |
+| sequential-analysis | 202 | 178 | 24 |
+| functional-validation | 201 | 178 | 23 |
+| ai-evidence-analysis | 199 | 164 | 35 |
+| web-validation | 198 | 163 | 35 |
+
+**Total saved: 413 chars**
+**Pre-trim total: 9,385**
+**Post-trim total: 8972**

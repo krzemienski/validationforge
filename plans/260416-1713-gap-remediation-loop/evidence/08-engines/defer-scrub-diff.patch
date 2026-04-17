@@ -1,0 +1,155 @@
+diff --git a/CLAUDE.md b/CLAUDE.md
+index 2fef8a1..e5a619a 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -8,7 +8,7 @@ No-mock validation platform for Claude Code. Ship verified code, not "it compile
+ 2. **Evidence-Based Verdicts** — Every PASS/FAIL cites specific evidence (screenshots, logs, responses)
+ 3. **Real System Validation** — Build, run, and interact with the actual application
+ 4. **Gate Discipline** — Never claim completion without personally examining evidence
+-5. **Autonomous Fix Loop** — Don't just find defects, fix them and re-validate
++5. **Fix-and-Revalidate Loop** — Planned (V2.0): automated fix-and-revalidate with 3-strike cap
+ 6. **Benchmark Everything** — Measure validation effectiveness with real metrics
+ 
+ ## Quick Start
+@@ -127,15 +127,16 @@ History tracked in `.vf/benchmarks/`.
+ 
+ ## Inventory
+ 
+-### Commands (16)
++### Commands (17)
+ 
+ **Validation Commands**
+-vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-team-dashboard, validate-sweep, validate-benchmark
++vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-team-dashboard, validate-sweep, validate-benchmark, vf-telemetry
+ 
+ **Forge Commands**
+-forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, forge-install-rules
++forge-setup, forge-plan, forge-benchmark, forge-install-rules
++forge-execute (planned V2.0), forge-team (planned V1.5)
+ 
+-### Skills (46)
++### Skills (48)
+ 
+ **Platform Validation (15)**
+ ios-validation, ios-validation-gate, ios-validation-runner, ios-simulator-control, playwright-validation, web-validation, web-testing, chrome-devtools, api-validation, cli-validation, fullstack-validation, react-native-validation, flutter-validation, django-validation, rust-cli-validation
+@@ -149,8 +150,8 @@ design-validation, design-token-audit, stitch-integration, visual-inspection
+ **Analysis & Research (4)**
+ sequential-analysis, research-validation, retrospective-validation, ai-evidence-analysis
+ 
+-**Specialized (6)**
+-accessibility-audit, responsive-validation, parallel-validation, e2e-testing, e2e-validate, create-validation-plan
++**Specialized (7)**
++accessibility-audit, responsive-validation, parallel-validation, coordinated-validation, e2e-testing, e2e-validate, create-validation-plan
+ 
+ **Operational (5)**
+ baseline-quality-assessment, condition-based-waiting, error-recovery, production-readiness-audit, full-functional-audit
+diff --git a/COMMANDS.md b/COMMANDS.md
+index 29f1fa7..cfe1929 100644
+--- a/COMMANDS.md
++++ b/COMMANDS.md
+@@ -24,7 +24,7 @@
+ |---|---------|-------------|---------------|
+ | 12 | `/forge-setup` | Initialize ValidationForge for this project | Read, Write, Edit, Bash, Glob, Grep, Agent |
+ | 13 | `/forge-plan` | Generate a validation plan with journey discovery and PASS criteria | Read, Write, Bash, Glob, Grep, Agent |
+-| 14 | `/forge-execute` | Run validation journeys against the real system with autonomous fix loop | Read, Write, Edit, Bash, Glob, Grep, Agent |
++| 14 | `/forge-execute` | [planned V2.0] Run validation journeys against the real system with fix-and-retry loop | Read, Write, Edit, Bash, Glob, Grep, Agent |
+ | 15 | `/forge-team` | Multi-agent parallel validation across platforms | Read, Write, Bash, Glob, Grep, Agent |
+ | 16 | `/forge-benchmark` | Measure validation posture across 5 dimensions with trend tracking | Read, Write, Bash, Glob, Grep |
+ | 17 | `/forge-install-rules` | Install ValidationForge rules to .claude/rules/ for cross-session enforcement | Read, Write, Bash, Glob |
+diff --git a/README.md b/README.md
+index 21638ac..0f8d980 100644
+--- a/README.md
++++ b/README.md
+@@ -128,7 +128,7 @@ The uninstaller removes `~/.claude/plugins/validationforge`, deletes all copied
+ ```bash
+ /forge-setup                 # Initialize VF for current project
+ /forge-plan                  # Generate validation plan with journey discovery
+-/forge-execute               # Run journeys with autonomous fix loop
++/forge-execute               # [planned V2.0] Run journeys with fix-and-retry loop (3-strike)
+ /forge-team                  # Multi-agent parallel validation across platforms
+ /forge-benchmark             # Measure posture across 5 dimensions
+ /forge-install-rules         # Install rules to .claude/rules/
+diff --git a/SPECIFICATION.md b/SPECIFICATION.md
+index 5fdb87f..8a24674 100644
+--- a/SPECIFICATION.md
++++ b/SPECIFICATION.md
+@@ -46,7 +46,7 @@ ValidationForge is the first Claude Code plugin dedicated to **functional valida
+ | Hooks | 5 |
+ | Agents | 3 |
+ | Platform references | 6 |
+-| Bugs caught (benchmark) | 5/5 (vs 0/5 for unit tests) |
++| Bugs caught (benchmark) | planned target: all-5 vs none-for-unit-tests (see docs/ENGINES-DEFERRED.md) |
+ | Evidence tiers | 3 |
+ | Config profiles | 3 |
+ 
+@@ -97,7 +97,7 @@ Unit tests verify code in isolation with mocks. Mocks drift from reality. Valida
+ | DB migration with duplicate emails | PASS (clean in-memory DB) | **FAIL** (real migration fails on duplicates) |
+ | CSS grid overflow on small screens | PASS (no visual rendering) | **FAIL** (Playwright screenshot shows overflow) |
+ 
+-Score: Unit tests 0/5. ValidationForge 5/5.
++Score: Unit tests caught none. ValidationForge caught all. (planned benchmark target — see docs/ENGINES-DEFERRED.md)
+ 
+ ---
+ 
+@@ -607,7 +607,7 @@ HN/Reddit     →    Case studies     →    /validate-audit →  Team onboardin
+ - **Technical but accessible** — engineers trust precision, not marketing speak
+ - **Opinionated** — no-mock is a STANCE, not just a feature
+ - **Evidence-based** — practice what we preach (all claims backed by data)
+-- **Honest about limitations** — "VF catches 5/5 integration bugs, but 0/5 logic errors in isolated functions"
++- **Honest about limitations** — "VF targets catching integration bugs that unit tests miss; 0/5 logic errors in isolated functions"
+ 
+ ### 8.3 Visual Identity
+ 
+@@ -633,7 +633,7 @@ Extending the Midnight Observatory design system:
+ **For Individual Developers:**
+ - Pain: "You shipped AI code that broke in production"
+ - Solution: "ValidationForge catches the bugs that unit tests miss"
+-- Proof: "5/5 integration bugs caught vs 0/5 for unit tests"
++- Proof: "planned benchmark target: all integration bugs caught vs none for unit tests (see docs/ENGINES-DEFERRED.md)"
+ 
+ **For Teams:**
+ - Pain: "Nobody reviews AI-generated code properly"
+@@ -866,7 +866,7 @@ This is the "PostgreSQL strategy" — free core builds community trust and adopt
+ ```
+ | Metric                    | Unit Tests | VF VALIDATE | VF + CONSENSUS | Manual QA |
+ |---------------------------|:----------:|:-----------:|:--------------:|:---------:|
+-| Bugs caught (of 5)        | 0/5        | 5/5         | 5/5            | 4/5       |
++| Bugs caught (of 5)        | 0/5        | target: all | target: all    | 4/5       |
+ | Avg time to detect        | —          | 53 sec      | 68 sec         | 4.4 min   |
+ | False confidence events   | 5          | 0           | 0              | 0         |
+ | Integration bugs caught   | 0/3        | 3/3         | 3/3            | 2/3       |
+@@ -1053,7 +1053,7 @@ validationforge/                          68 files, 9,593 lines
+ | Blue ocean = unproven demand | Medium | High | **HIGH** | Blog series (23,479 sessions) proves methodology. Free Lite tier reduces trial friction. ProductHunt validates demand. |
+ | Anthropic builds natively | Low | High | **MEDIUM** | VF is a plugin. Anthropic adding basic validation validates the category. VF positions as advanced tier. 9,593 lines unlikely replicated in built-in. |
+ | Platform diversity challenge | Medium | Medium | **MEDIUM** | Launch with strongest platforms (Web, API). Community contributions for others. References are knowledge, not code. |
+-| "No unit tests" is controversial | Medium | Low | **LOW** | Position as "AND" not "OR." Permissive config allows coexistence. Benchmark data (5/5 vs 0/5) is the argument. |
++| "No unit tests" is controversial | Medium | Low | **LOW** | Position as "AND" not "OR." Permissive config allows coexistence. Planned benchmark data will be the argument once proven (see docs/ENGINES-DEFERRED.md). |
+ | ClaudeKit adds validation | Low | Medium | **LOW** | 18-month head start in depth. ClaudeKit's identity is breadth. Hooks are enforcement, not suggestions. |
+ | Evidence reliability concerns | Low | Medium | **LOW** | 3-tier confidence system explicitly acknowledges reliability. Verdict-writer notes discrepancies. 3-strike handles false negatives. |
+ | CI/CD integration complexity | Low | Low | **LOW** | V1 launches without CI. V2.0 adds GitHub Actions first. /validate-ci produces standard exit codes any CI can consume. |
+diff --git a/docs/README.md b/docs/README.md
+index 581b449..ea7a6fb 100644
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -86,7 +86,7 @@ ValidationForge provides 15 slash commands split between the validation pipeline
+ |---------|-------------|
+ | `/forge-setup` | Initialize ValidationForge for this project |
+ | `/forge-plan` | Generate a validation plan with journey discovery and PASS criteria |
+-| `/forge-execute` | Run validation journeys against the real system with autonomous fix loop |
++| `/forge-execute` | [planned V2.0] Run validation journeys against the real system with fix-and-retry loop |
+ | `/forge-team` | Multi-agent parallel validation across platforms |
+ | `/forge-benchmark` | Measure validation posture across 5 dimensions with trend tracking |
+ | `/forge-install-rules` | Install ValidationForge rules to `.claude/rules/` for cross-session enforcement |
+diff --git a/docs/competitive-analysis.md b/docs/competitive-analysis.md
+index 5c747a2..c534c3e 100644
+--- a/docs/competitive-analysis.md
++++ b/docs/competitive-analysis.md
+@@ -85,7 +85,7 @@ ValidationForge occupies a unique position in the Claude Code plugin ecosystem:
+ | **Evidence management** | Structured e2e-evidence/ | No | No |
+ | **Validation benchmarking** | 4-dimension scoring (A-F grades) | No | No |
+ | **Team validation** | Platform-specific validator agents | General team | No |
+-| **Autonomous fix loop** | validate-sweep with 3-strike limit | Ralph loop | No |
++| **Fix-and-retry loop** | planned V2.0 (validate-sweep with 3-strike limit) | Ralph loop | No |
+ | **Setup command** | vf-setup with platform detection | omc-setup | install.sh |
+ | **Rules installation** | 5 validation-focused rules | CLAUDE.md injection | 29 language rules |
+ | **CI/CD mode** | Exit codes, machine-readable JSON | No | No |

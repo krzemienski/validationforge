@@ -1,0 +1,5 @@
+skills=48
+commands=17
+hooks=7
+agents=5
+rules=8

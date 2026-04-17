@@ -1,0 +1,113 @@
+diff --git a/hooks/block-test-files.js b/hooks/block-test-files.js
+index 023a31a..7a4ec35 100755
+--- a/hooks/block-test-files.js
++++ b/hooks/block-test-files.js
+@@ -12,8 +12,8 @@
+ //
+ // Protocol: hookSpecificOutput.permissionDecision = "deny" (current CC spec)
+ 
+-const { TEST_PATTERNS, ALLOWLIST } = require('./patterns');
+-const { loadConfig } = require('./config-loader');
++const { TEST_PATTERNS, ALLOWLIST } = require('./lib/patterns');
++const { loadConfig } = require('./lib/config-loader');
+ 
+ let input = '';
+ process.stdin.setEncoding('utf8');
+diff --git a/hooks/completion-claim-validator.js b/hooks/completion-claim-validator.js
+index 573de17..466947b 100755
+--- a/hooks/completion-claim-validator.js
++++ b/hooks/completion-claim-validator.js
+@@ -7,8 +7,8 @@
+ //   warn     → write warning to stderr but exit(0) (advisory only)
+ //   disabled → exit immediately, no action
+ 
+-const { COMPLETION_PATTERNS } = require('./patterns');
+-const { loadConfig } = require('./config-loader');
++const { COMPLETION_PATTERNS } = require('./lib/patterns');
++const { loadConfig } = require('./lib/config-loader');
+ const fs = require('fs');
+ 
+ const EVIDENCE_DIR = 'e2e-evidence';
+diff --git a/hooks/evidence-gate-reminder.js b/hooks/evidence-gate-reminder.js
+index 316e71d..d386f12 100755
+--- a/hooks/evidence-gate-reminder.js
++++ b/hooks/evidence-gate-reminder.js
+@@ -7,7 +7,7 @@
+ //   warn     → inject evidence checklist (advisory, same as enabled)
+ //   disabled → exit immediately, no action
+ 
+-const { loadConfig } = require('./config-loader');
++const { loadConfig } = require('./lib/config-loader');
+ 
+ let input = '';
+ process.stdin.setEncoding('utf8');
+diff --git a/hooks/evidence-quality-check.js b/hooks/evidence-quality-check.js
+index 1af2d68..33dee7e 100755
+--- a/hooks/evidence-quality-check.js
++++ b/hooks/evidence-quality-check.js
+@@ -8,7 +8,7 @@
+ //   warn     → warn to stderr but exit(0) (advisory only)
+ //   disabled → exit immediately, no action
+ 
+-const { loadConfig } = require('./config-loader');
++const { loadConfig } = require('./lib/config-loader');
+ 
+ let input = '';
+ process.stdin.setEncoding('utf8');
+diff --git a/hooks/config-loader.js b/hooks/lib/config-loader.js
+similarity index 100%
+rename from hooks/config-loader.js
+rename to hooks/lib/config-loader.js
+diff --git a/hooks/patterns.js b/hooks/lib/patterns.js
+similarity index 100%
+rename from hooks/patterns.js
+rename to hooks/lib/patterns.js
+diff --git a/hooks/mock-detection.js b/hooks/mock-detection.js
+index 2925873..379d355 100755
+--- a/hooks/mock-detection.js
++++ b/hooks/mock-detection.js
+@@ -7,8 +7,8 @@
+ //   warn     → warn to stderr but exit(0) (advisory only)
+ //   disabled → exit immediately, no action
+ 
+-const { MOCK_PATTERNS } = require('./patterns');
+-const { loadConfig } = require('./config-loader');
++const { MOCK_PATTERNS } = require('./lib/patterns');
++const { loadConfig } = require('./lib/config-loader');
+ 
+ let input = '';
+ process.stdin.setEncoding('utf8');
+diff --git a/hooks/validation-not-compilation.js b/hooks/validation-not-compilation.js
+index dec432a..482fee3 100755
+--- a/hooks/validation-not-compilation.js
++++ b/hooks/validation-not-compilation.js
+@@ -7,8 +7,8 @@
+ //   warn     → write warning to stderr but exit(0) (advisory only)
+ //   disabled → exit immediately, no action
+ 
+-const { BUILD_PATTERNS } = require('./patterns');
+-const { loadConfig } = require('./config-loader');
++const { BUILD_PATTERNS } = require('./lib/patterns');
++const { loadConfig } = require('./lib/config-loader');
+ 
+ let input = '';
+ process.stdin.setEncoding('utf8');
+diff --git a/hooks/validation-state-tracker.js b/hooks/validation-state-tracker.js
+index 8255278..1cba720 100755
+--- a/hooks/validation-state-tracker.js
++++ b/hooks/validation-state-tracker.js
+@@ -8,8 +8,8 @@
+ //   warn     → write warning to stderr but exit(0) (advisory only)
+ //   disabled → exit immediately, no action
+ 
+-const { VALIDATION_COMMAND_PATTERNS } = require('./patterns');
+-const { loadConfig } = require('./config-loader');
++const { VALIDATION_COMMAND_PATTERNS } = require('./lib/patterns');
++const { loadConfig } = require('./lib/config-loader');
+ 
+ let input = '';
+ process.stdin.setEncoding('utf8');
+diff --git a/hooks/verify-e2e.js b/scripts/verify-e2e.js
+similarity index 100%
+rename from hooks/verify-e2e.js
+rename to scripts/verify-e2e.js

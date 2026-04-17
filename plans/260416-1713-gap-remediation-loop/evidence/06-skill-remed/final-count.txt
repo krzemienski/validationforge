@@ -1,0 +1,62 @@
+POST-TRIM CHAR COUNTS — 2026-04-16
+==================================================
+Skills scanned: 48
+Total description chars: 8972
+Total body chars: 287785
+Budget target: <=9,000 description chars
+Budget met: YES
+Pre-trim total: 9,385
+Chars trimmed: 413
+
+skill                                 desc    body
+----------------------------------- ------ -------
+chrome-devtools                        197    6233
+django-validation                      197   10550
+ios-validation-runner                  197    6776
+playwright-validation                  197    5555
+react-native-validation                197   10684
+stitch-integration                     197    5057
+visual-inspection                      197    7226
+forge-execute                          196    4102
+responsive-validation                  196    5160
+team-validation-dashboard              196    4854
+forge-team                             195   10940
+ios-validation-gate                    195    6736
+production-readiness-audit             195    7795
+validate-audit-benchmarks              195    2113
+web-testing                            195    5910
+e2e-validate                           194    7652
+parallel-validation                    194    5962
+preflight                              194    3052
+research-validation                    194    6103
+error-recovery                         193    3717
+fullstack-validation                   193    8708
+build-quality-gates                    192    5809
+ios-simulator-control                  192    5957
+create-validation-plan                 191    3987
+api-validation                         190    7281
+verification-before-completion         190    2872
+coordinated-validation                 189   11115
+design-validation                      189    6579
+baseline-quality-assessment            188    3662
+e2e-testing                            188    6077
+full-functional-audit                  188    4258
+no-mocking-validation-gates            187    2966
+flutter-validation                     186    9279
+forge-setup                            186    3338
+design-token-audit                     185    5614
+condition-based-waiting                184    2671
+retrospective-validation               184    6493
+functional-validation                  178    4066
+sequential-analysis                    178    5621
+forge-plan                             176    2915
+cli-validation                         175    6973
+rust-cli-validation                    171    6814
+ios-validation                         167    6359
+accessibility-audit                    165    7316
+ai-evidence-analysis                   164   12611
+forge-benchmark                        163    3302
+web-validation                         163    5674
+gate-validation-discipline             159    3291
+
+TOTAL                                 8972  287785

@@ -53,3 +53,150 @@ F3: PASS
 [23:34:31] --- PHASE G START ---
 [23:34:31] --- PHASE G END (0s) ---
 [23:34:31] --- PHASE H START ---
+On branch main
+Your branch is ahead of 'origin/audit/plugin-improvements' by 287 commits.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   TECHNICAL-DEBT.md
+	new file:   plans/260411-2305-gap-validation/GAP-VALIDATION-REPORT.md
+	new file:   plans/260411-2305-gap-validation/evidence/A1-disk-counts.txt
+	new file:   plans/260411-2305-gap-validation/evidence/A2-claimed-counts.txt
+	new file:   plans/260411-2305-gap-validation/evidence/A3-inventory-drift.md
+	new file:   plans/260411-2305-gap-validation/evidence/B1-plan-index.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M1-response.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M1-turn.md
+	new file:   plans/260411-2305-gap-validation/evidence/C-M2-disk-check.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M2-fallback-direct-hook.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M2-response.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M2-turn.md
+	new file:   plans/260411-2305-gap-validation/evidence/C-M3-response.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M3-turn.md
+	new file:   plans/260411-2305-gap-validation/evidence/C-M4-response.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M4-skill-events.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M4-turn.md
+	new file:   plans/260411-2305-gap-validation/evidence/C-M5-response.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M5-turn.md
+	new file:   plans/260411-2305-gap-validation/evidence/C-M6-response.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-M6-turn.md
+	new file:   plans/260411-2305-gap-validation/evidence/C-launch-result.json
+	new file:   plans/260411-2305-gap-validation/evidence/C-results.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C-scratch-path.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C1-current-symlink.txt
+	new file:   plans/260411-2305-gap-validation/evidence/C3-live-transcript.md
+	new file:   plans/260411-2305-gap-validation/evidence/D-launch-primary.json
+	new file:   plans/260411-2305-gap-validation/evidence/D-launch-secondary.json
+	new file:   plans/260411-2305-gap-validation/evidence/D-results.txt
+	new file:   plans/260411-2305-gap-validation/evidence/D-start-timestamp.txt
+	new file:   plans/260411-2305-gap-validation/evidence/D-verdict-primary.md
+	new file:   plans/260411-2305-gap-validation/evidence/D1-targets.txt
+	new file:   plans/260411-2305-gap-validation/evidence/D2-validate-response.txt
+	new file:   plans/260411-2305-gap-validation/evidence/D2-validate-secondary-response.txt
+	new file:   plans/260411-2305-gap-validation/evidence/D2-validate-secondary-transcript.md
+	new file:   plans/260411-2305-gap-validation/evidence/D2-validate-transcript.md
+	new file:   plans/260411-2305-gap-validation/evidence/D4-pipeline-trace.md
+	new file:   plans/260411-2305-gap-validation/evidence/E-targets.txt
+	new file:   plans/260411-2305-gap-validation/evidence/E-verdict.txt
+	new file:   plans/260411-2305-gap-validation/evidence/E2-node-nextjs.txt
+	new file:   plans/260411-2305-gap-validation/evidence/E2-python-flask.txt
+	new file:   plans/260411-2305-gap-validation/evidence/E2-swift-ios.txt
+	new file:   plans/260411-2305-gap-validation/evidence/E3-delta.md
+	new file:   plans/260411-2305-gap-validation/evidence/F-results.txt
+	new file:   plans/260411-2305-gap-validation/evidence/F1-design.md
+	new file:   plans/260411-2305-gap-validation/evidence/F3-analyzer-output.json
+	new file:   plans/260411-2305-gap-validation/evidence/F3-analyzer-stderr.txt
+	new file:   plans/260411-2305-gap-validation/evidence/G-results.txt
+	new file:   plans/260411-2305-gap-validation/evidence/backup-path.txt
+	new file:   plans/260411-2305-gap-validation/evidence/preflight.txt
+	new file:   plans/260411-2305-gap-validation/evidence/run-log.txt
+	new file:   plans/260411-2305-gap-validation/evidence/scope-drift.md
+	new file:   plans/260411-2305-gap-validation/plan-diffs/260307-unified-validationforge-product.md
+	new file:   plans/260411-2305-gap-validation/plan-diffs/260408-1313-hybrid-opencode-audit.md
+	new file:   plans/260411-2305-gap-validation/plan-diffs/260408-1522-vf-dual-platform-rewrite.md
+	new file:   plans/260411-2305-gap-validation/plan-diffs/260411-1731-skill-optimization-remediation.md
+	new file:   plans/260411-2305-gap-validation/plan-diffs/260411-1747-vf-grade-a-push.md
+	new file:   plans/260411-2305-gap-validation/plan-diffs/260411-2230-gap-analysis.md
+	new file:   plans/260411-2305-gap-validation/plan-diffs/260411-2242-vf-gap-closure.md
+	new file:   plans/260411-2305-gap-validation/run.sh
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .DS_Store
+	modified:   .vf/benchmarks/benchmark-2026-04-11.json
+	modified:   site/.astro/content-modules.mjs
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.vf/.gap-validation.lock
+	demo/python-api/.venv/
+	plans/260416-1713-gap-remediation-loop/
+	plans/reports/researcher-260416-1707-inventory-audit.md
+	plans/reports/researcher-260416-1707-plan-progress-audit.md
+	plans/reports/researcher-260416-1707-state-doc-scan.md
+
+[main 7b85a9d] docs(plans): gap validation — plans vs reality audit closure
+ 60 files changed, 3780 insertions(+)
+ create mode 100644 plans/260411-2305-gap-validation/GAP-VALIDATION-REPORT.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/A1-disk-counts.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/A2-claimed-counts.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/A3-inventory-drift.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/B1-plan-index.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M1-response.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M1-turn.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M2-disk-check.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M2-fallback-direct-hook.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M2-response.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M2-turn.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M3-response.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M3-turn.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M4-response.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M4-skill-events.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M4-turn.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M5-response.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M5-turn.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M6-response.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-M6-turn.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-launch-result.json
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-results.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C-scratch-path.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C1-current-symlink.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/C3-live-transcript.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D-launch-primary.json
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D-launch-secondary.json
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D-results.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D-start-timestamp.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D-verdict-primary.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D1-targets.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D2-validate-response.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D2-validate-secondary-response.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D2-validate-secondary-transcript.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D2-validate-transcript.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/D4-pipeline-trace.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/E-targets.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/E-verdict.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/E2-node-nextjs.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/E2-python-flask.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/E2-swift-ios.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/E3-delta.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/F-results.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/F1-design.md
+ create mode 100644 plans/260411-2305-gap-validation/evidence/F3-analyzer-output.json
+ create mode 100644 plans/260411-2305-gap-validation/evidence/F3-analyzer-stderr.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/G-results.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/backup-path.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/preflight.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/run-log.txt
+ create mode 100644 plans/260411-2305-gap-validation/evidence/scope-drift.md
+ create mode 100644 plans/260411-2305-gap-validation/plan-diffs/260307-unified-validationforge-product.md
+ create mode 100644 plans/260411-2305-gap-validation/plan-diffs/260408-1313-hybrid-opencode-audit.md
+ create mode 100644 plans/260411-2305-gap-validation/plan-diffs/260408-1522-vf-dual-platform-rewrite.md
+ create mode 100644 plans/260411-2305-gap-validation/plan-diffs/260411-1731-skill-optimization-remediation.md
+ create mode 100644 plans/260411-2305-gap-validation/plan-diffs/260411-1747-vf-grade-a-push.md
+ create mode 100644 plans/260411-2305-gap-validation/plan-diffs/260411-2230-gap-analysis.md
+ create mode 100644 plans/260411-2305-gap-validation/plan-diffs/260411-2242-vf-gap-closure.md
+ create mode 100755 plans/260411-2305-gap-validation/run.sh
+plan.md frontmatter updated
+[23:34:31] --- PHASE H END (0s) ---
+[23:34:31] === Gap validation run complete 2026-04-16T23:34:31Z ===

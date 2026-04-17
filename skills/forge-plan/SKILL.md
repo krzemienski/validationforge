@@ -1,6 +1,6 @@
 ---
 name: forge-plan
-description: "Create validation plan: discover journeys, define PASS criteria per step, specify evidence types. Modes: quick (small projects), standard (medium), consensus (critical/multi-team). Use before /validate."
+description: "Create validation plan: discover journeys, define PASS criteria per step, specify evidence types. Modes: quick, standard, consensus (critical/multi-team). Use before /validate."
 context_priority: reference
 ---
 

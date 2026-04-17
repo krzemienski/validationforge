@@ -1,0 +1,12 @@
+=== Command: VF_EVIDENCE_ROOT=/tmp/vf-cleanup-demo/e2e-evidence node scripts/evidence-clean.js
+=== Exit code: 0 (expect 0 — proceeds)
+=== stdout ===
+[evidence-clean] retention=30d (from standard.json) | root=/tmp/vf-cleanup-demo/e2e-evidence | dry-run=false
+[evidence-clean] deleted: /tmp/vf-cleanup-demo/e2e-evidence/fake-old-journey (mtime=2026-03-17T04:45:20.000Z)
+[evidence-clean] done. removed=1 skipped=0
+=== stderr ===
+[evidence-clean] WARN: stale lock ignored (pid=999999, age=120min)
+=== WARN logged? ===
+/tmp/stale-stderr.txt:[evidence-clean] WARN: stale lock ignored (pid=999999, age=120min)
+=== Target dir deleted? ===
+YES — deleted

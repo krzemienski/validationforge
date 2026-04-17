@@ -1,0 +1,3 @@
+[evidence-clean] retention=30d (from standard.json) | root=/tmp/vf-cleanup-demo/e2e-evidence | dry-run=false
+[evidence-clean] deleted: /tmp/vf-cleanup-demo/e2e-evidence/fake-old-journey (mtime=2026-03-17T00:43:33.000Z)
+[evidence-clean] done. removed=1 skipped=0

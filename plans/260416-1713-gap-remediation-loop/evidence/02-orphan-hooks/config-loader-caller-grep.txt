@@ -1,0 +1,31 @@
+=== rg config-loader across repo ===
+./scripts/verify-plugin-structure.js:83:  'config-loader.js',
+./CAMPAIGN_STATE.md:29:| 016 | SKIPPED | +1164/-9748 lines, 113 files changed; deletes uninstall.sh, hooks/config-loader.js, hooks/verify-e2e.js, 18+ scripts; too destructive |
+./CAMPAIGN_STATE.md:67:  hooks/config-loader.js, hooks/verify-e2e.js, 18+ scripts. No unique
+./hooks/validation-not-compilation.js:5:// Config-driven enforcement via config-loader.js:
+./hooks/validation-not-compilation.js:11:const { loadConfig } = require('./config-loader');
+./hooks/block-test-files.js:8:// Config-driven enforcement via config-loader.js:
+./hooks/block-test-files.js:16:const { loadConfig } = require('./config-loader');
+./hooks/evidence-gate-reminder.js:5:// Config-driven enforcement via config-loader.js:
+./hooks/evidence-gate-reminder.js:10:const { loadConfig } = require('./config-loader');
+./hooks/validation-state-tracker.js:6:// Config-driven enforcement via config-loader.js:
+./hooks/validation-state-tracker.js:12:const { loadConfig } = require('./config-loader');
+./hooks/mock-detection.js:5:// Config-driven enforcement via config-loader.js:
+./hooks/mock-detection.js:11:const { loadConfig } = require('./config-loader');
+./hooks/completion-claim-validator.js:5:// Config-driven enforcement via config-loader.js:
+./hooks/completion-claim-validator.js:11:const { loadConfig } = require('./config-loader');
+./hooks/evidence-quality-check.js:6:// Config-driven enforcement via config-loader.js:
+./hooks/evidence-quality-check.js:11:const { loadConfig } = require('./config-loader');
+./MERGE_REPORT.md:36:| 016 | SKIPPED | +1164/-9748 lines, 113 files changed; deletes uninstall.sh, hooks/config-loader.js, hooks/verify-e2e.js, 18+ scripts; to... |
+./MERGE_REPORT.md:106:- **016 (consensus engine):** +1164/-9748 lines, deletes `uninstall.sh`, `hooks/config-loader.js`, `hooks/verify-e2e.js`, 18 scripts. Too destructive. Superseded by coordinated-validation + forge-team skills delivered in spec 018.
+./VALIDATION_MATRIX.md:34:| 009 | Config-Driven Hook Enforcement | MERGED | Branch `auto-claude/009-*` merged at `2a61768`. Adds config-loader.js + 3 enforcement profiles. | VG-3 PASS. config-loader.js loads strict/standard/permissive profiles. |
+./VALIDATION_MATRIX.md:40:| 015 | Persistent Validation History & Trends | QUARANTINED | Branch preserved at `auto-claude/015-*`. Worktree at `.auto-claude/worktrees/tasks/015-*`. **Not merged.** | 256 files changed, +2375/-17723. Deletes protected files (config-loader.js, verify-e2e.js, uninstall.sh). Too destructive to merge. Preserved for future cherry-pick. |
+
+=== Callers via require('./config-loader') in hooks/ ===
+hooks/validation-not-compilation.js:11:const { loadConfig } = require('./config-loader');
+hooks/block-test-files.js:16:const { loadConfig } = require('./config-loader');
+hooks/validation-state-tracker.js:12:const { loadConfig } = require('./config-loader');
+hooks/evidence-quality-check.js:11:const { loadConfig } = require('./config-loader');
+hooks/completion-claim-validator.js:11:const { loadConfig } = require('./config-loader');
+hooks/evidence-gate-reminder.js:10:const { loadConfig } = require('./config-loader');
+hooks/mock-detection.js:11:const { loadConfig } = require('./config-loader');

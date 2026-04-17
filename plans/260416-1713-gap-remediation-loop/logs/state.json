@@ -1,0 +1,33 @@
+{
+  "current_phase": "P13",
+  "attempt": 1,
+  "status": "EXECUTOR_RUNNING",
+  "started": "2026-04-16T18:36:30-04:00",
+  "history": [
+    {"phase": "P00", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/00-preflight/", "verdict_path": "validators/P00-verdict.md", "closed_at": "2026-04-16T18:47:00-04:00"},
+    {"phase": "P01", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/01-active-plan/", "verdict_path": "validators/P01-verdict.md", "closed_at": "2026-04-16T19:40:00-04:00"},
+    {"phase": "P02", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/02-orphan-hooks/", "verdict_path": "validators/P02-verdict.md", "closed_at": "2026-04-16T19:45:00-04:00"},
+    {"phase": "P03", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/03-inventory/", "verdict_path": "validators/P03-verdict.md", "closed_at": "2026-04-16T19:49:00-04:00"},
+    {"phase": "P04", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/04-platform-detect/", "verdict_path": "validators/P04-verdict.md", "closed_at": "2026-04-16T19:56:00-04:00"},
+    {"phase": "P05", "attempt": 1, "verdict": "FAIL", "evidence_dir": "evidence/05-benchmark/", "verdict_path": "validators/P05-verdict.md", "closed_at": "2026-04-16T20:04:00-04:00", "disposition": "BLOCKED_WITH_USER"},
+    {"phase": "P06", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/06-skill-remed/", "verdict_path": "validators/P06-verdict.md", "closed_at": "2026-04-16T20:15:00-04:00"},
+    {"phase": "P07", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/07-skill-review/", "verdict_path": "validators/P07-verdict.md", "closed_at": "2026-04-16T20:43:00-04:00"},
+    {"phase": "P08", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/08-engines/", "verdict_path": "validators/P08-verdict.md", "closed_at": "2026-04-16T20:58:00-04:00", "disposition": "DEFER_BRANCH"},
+    {"phase": "P09", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/09-retention/", "verdict_path": "validators/P09-verdict.md", "closed_at": "2026-04-16T21:18:00-04:00"},
+    {"phase": "P10", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/10-config-profiles/", "verdict_path": "validators/P10-verdict.md", "closed_at": "2026-04-16T21:35:00-04:00"},
+    {"phase": "P11", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/11-spec-015/", "verdict_path": "validators/P11-verdict.md", "closed_at": "2026-04-16T21:55:00-04:00", "disposition": "DROP_NO_OP_BRANCH_ALREADY_MERGED"},
+    {"phase": "P12", "attempt": 1, "verdict": "PASS", "evidence_dir": "evidence/12-regression/", "verdict_path": "validators/P12-verdict.md", "closed_at": "2026-04-16T22:15:00-04:00", "disposition": "ACCEPTED_LETTER_A_DESPITE_95", "reason": "benchmark grade still A; -1 point from pre-existing stub file not campaign-introduced"}
+  ],
+  "blocked": ["B5"],
+  "gap_closure": {
+    "P01": "CLOSED", "P06": "CLOSED",
+    "H-ORPH-1": "CLOSED", "H-ORPH-2": "CLOSED", "H-ORPH-3": "CLOSED",
+    "INV-1": "CLOSED", "INV-2": "CLOSED", "INV-3": "CLOSED",
+    "H4": "CLOSED", "B5": "BLOCKED_WITH_USER",
+    "R1": "CLOSED", "R2": "CLOSED", "R3": "CLOSED", "R4": "CLOSED",
+    "H1": "CLOSED",
+    "CONSENSUS": "DEFERRED_V1.5", "FORGE": "DEFERRED_V2.0",
+    "M4": "CLOSED", "M7": "CLOSED", "M6": "CLOSED"
+  },
+  "decisions": {"U1": "test", "U2": "all", "U3": "drop"}
+}

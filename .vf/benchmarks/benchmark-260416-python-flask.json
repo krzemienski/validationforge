@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-04-16T23:34:30Z",
+  "project_dir": "/Users/nick/Desktop/validationforge/benchmark/scaffolds/python-flask",
+  "dimensions": {
+    "coverage": {
+      "score": 0,
+      "weight": 35,
+      "journey_count": 0,
+      "plans_found": 0
+    },
+    "evidence_quality": {
+      "score": 0,
+      "weight": 30
+    },
+    "enforcement": {
+      "score": 40,
+      "weight": 25
+    },
+    "speed": {
+      "score": 80,
+      "weight": 10
+    }
+  },
+  "aggregate": 18,
+  "grade": "F"
+}

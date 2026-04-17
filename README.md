@@ -128,7 +128,7 @@ The uninstaller removes `~/.claude/plugins/validationforge`, deletes all copied 
 ```bash
 /forge-setup                 # Initialize VF for current project
 /forge-plan                  # Generate validation plan with journey discovery
-/forge-execute               # Run journeys with autonomous fix loop
+/forge-execute               # [planned V2.0] Run journeys with fix-and-retry loop (3-strike)
 /forge-team                  # Multi-agent parallel validation across platforms
 /forge-benchmark             # Measure posture across 5 dimensions
 /forge-install-rules         # Install rules to .claude/rules/

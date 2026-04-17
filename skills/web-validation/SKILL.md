@@ -1,6 +1,6 @@
 ---
 name: web-validation
-description: "Web validation via browser automation: health checks, screenshots at 375/768/1920px, form testing, console/network validation. Detects CORS, hydration, CSS issues. PASS: no console errors, <3s load."
+description: "Web validation via browser automation: health checks, screenshots at 375/768/1920px, form testing, console/network validation. Detects CORS, hydration, CSS issues."
 triggers:
   - "web validation"
   - "browser automation"

@@ -1,0 +1,25 @@
+diff --git a/commands/validate.md b/commands/validate.md
+index 6ccea10..7509cb1 100644
+--- a/commands/validate.md
++++ b/commands/validate.md
+@@ -118,11 +118,18 @@ if [ -n "${FLAG_CLEAN:-}" ]; then
+ 
+   echo "[vf] --clean flag detected — removing evidence older than ${RETENTION_DAYS} days from ${EVIDENCE_DIR}/"
+ 
+-  if [ -f "scripts/evidence-cleanup.sh" ]; then
++  # Primary: Node.js script with PID-based lock detection and exact audit log format.
++  # Fallback: legacy bash script if evidence-clean.js is absent.
++  if [ -f "scripts/evidence-clean.js" ]; then
++    VF_EVIDENCE_ROOT="$EVIDENCE_DIR" node scripts/evidence-clean.js
++  elif [ -f "scripts/evidence-cleanup.sh" ]; then
+     bash scripts/evidence-cleanup.sh "$EVIDENCE_DIR" "$RETENTION_DAYS"
+   else
+-    echo "[vf] WARNING: scripts/evidence-cleanup.sh not found — skipping cleanup." >&2
++    echo "[vf] WARNING: scripts/evidence-clean.js not found — skipping cleanup." >&2
+   fi
++
++  # Dry-run preview (no deletion):
++  # VF_EVIDENCE_ROOT="$EVIDENCE_DIR" node scripts/evidence-clean.js --dry-run
+ fi
+ ```
+ 

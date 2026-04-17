@@ -7,8 +7,8 @@
 //   warn     → write warning to stderr but exit(0) (advisory only)
 //   disabled → exit immediately, no action
 
-const { BUILD_PATTERNS } = require('./patterns');
-const { loadConfig } = require('./config-loader');
+const { BUILD_PATTERNS } = require('./lib/patterns');
+const { loadConfig } = require('./lib/config-loader');
 
 let input = '';
 process.stdin.setEncoding('utf8');

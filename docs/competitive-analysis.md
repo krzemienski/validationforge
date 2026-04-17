@@ -85,7 +85,7 @@ ValidationForge occupies a unique position in the Claude Code plugin ecosystem: 
 | **Evidence management** | Structured e2e-evidence/ | No | No |
 | **Validation benchmarking** | 4-dimension scoring (A-F grades) | No | No |
 | **Team validation** | Platform-specific validator agents | General team | No |
-| **Autonomous fix loop** | validate-sweep with 3-strike limit | Ralph loop | No |
+| **Fix-and-retry loop** | planned V2.0 (validate-sweep with 3-strike limit) | Ralph loop | No |
 | **Setup command** | vf-setup with platform detection | omc-setup | install.sh |
 | **Rules installation** | 5 validation-focused rules | CLAUDE.md injection | 29 language rules |
 | **CI/CD mode** | Exit codes, machine-readable JSON | No | No |

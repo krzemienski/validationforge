@@ -1,0 +1,15 @@
+# R3 forge-benchmark Body Check — 2026-04-16
+
+## Status: NO CHANGE REQUIRED
+
+The forge-benchmark SKILL.md body already contains the correct 4-dimension table:
+
+| Dimension       | Weight |
+|-----------------|--------|
+| Coverage        | 35%    |
+| Evidence Quality| 30%    |
+| Enforcement     | 25%    |
+| Speed           | 10%    |
+
+This matches scripts/benchmark/score-project.sh exactly.
+No 5-dimension references found. R3 is satisfied without modification.

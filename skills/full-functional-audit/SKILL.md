@@ -1,6 +1,6 @@
 ---
 name: full-functional-audit
-description: "Audit project health without code changes: exercise all features, capture evidence, classify findings by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Use for pre-release gates, compliance, baseline assessments."
+description: "Audit project health without code changes: exercise all features, capture evidence, classify findings by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO). Pre-release gates, compliance, baselines."
 context_priority: standard
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: gate-validation-discipline
-description: "Evidence before completion: examine actual evidence (not reports), cite specific proof, match evidence to criteria. Read files, view screenshots, quote output. Use before any checkpoint or gate closure."
+description: "Evidence before completion: examine actual evidence (not reports), cite specific proof, match evidence to criteria. Read files, view screenshots, quote output."
 triggers:
   - "evidence examination"
   - "before completion"

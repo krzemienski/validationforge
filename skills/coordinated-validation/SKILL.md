@@ -1,6 +1,6 @@
 ---
 name: coordinated-validation
-description: "Multi-platform validation respecting cross-platform dependencies: DB→API→Web/iOS. Parallelizes independent layers, blocks downstream on failure, coordinates evidence. Use for fullstack, mobile+API, CI/CD."
+description: "Multi-platform validation respecting dependencies: DB→API→Web/iOS. Parallelizes independent layers, blocks downstream on failure, coordinates evidence. Use for fullstack, mobile+API, CI/CD."
 triggers:
   - "coordinated validation"
   - "dependency-aware validation"
