@@ -10,8 +10,29 @@
 const { COMPLETION_PATTERNS } = require('./lib/patterns');
 const { loadConfig } = require('./lib/config-loader');
 const fs = require('fs');
+const path = require('path');
 
-const EVIDENCE_DIR = 'e2e-evidence';
+const EVIDENCE_SUBDIR = 'e2e-evidence';
+
+// Review finding M4: never resolve EVIDENCE_DIR against a relative CWD —
+// an attacker or a drive-by `cd` in a Bash tool call could redirect the
+// gate to an unrelated directory. Prefer, in order:
+//   1. CLAUDE_PROJECT_ROOT env var (set by Claude Code for the active project)
+//   2. The `cwd` field on the hook JSON payload (project root per CC hook spec)
+//   3. process.cwd() as a last-resort fallback
+function resolveEvidenceDir(data) {
+  const candidates = [
+    process.env.CLAUDE_PROJECT_ROOT,
+    data && data.cwd,
+    process.cwd(),
+  ].filter(Boolean);
+  for (const root of candidates) {
+    try {
+      if (fs.existsSync(root)) return path.join(root, EVIDENCE_SUBDIR);
+    } catch (_) { /* unreadable → try next */ }
+  }
+  return path.join(process.cwd(), EVIDENCE_SUBDIR);
+}
 
 let input = '';
 process.stdin.setEncoding('utf8');
@@ -34,15 +55,19 @@ process.stdin.on('end', () => {
     const isCompletionClaim = COMPLETION_PATTERNS.some(p => p.test(output));
 
     if (isCompletionClaim) {
-      // Check evidence exists AND is recent (within last 24 hours)
+      // Resolve evidence dir against the project root, not the hook's CWD.
+      const evidenceDir = resolveEvidenceDir(data);
+
+      // Check evidence exists AND is recent (within last 24 hours) AND
+      // non-empty (empty files fail the quality gate — review M4 tightening).
       let hasFreshEvidence = false;
-      if (fs.existsSync(EVIDENCE_DIR)) {
-        const entries = fs.readdirSync(EVIDENCE_DIR);
+      if (fs.existsSync(evidenceDir)) {
+        const entries = fs.readdirSync(evidenceDir);
         const cutoff = Date.now() - 24 * 60 * 60 * 1000;
         hasFreshEvidence = entries.some(entry => {
           try {
-            const stat = fs.statSync(`${EVIDENCE_DIR}/${entry}`);
-            return stat.mtimeMs > cutoff;
+            const stat = fs.statSync(path.join(evidenceDir, entry));
+            return stat.mtimeMs > cutoff && stat.size > 0;
           } catch { return false; }
         });
       }

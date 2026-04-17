@@ -55,11 +55,11 @@ exports.MOCK_PATTERNS = [
     /gomock\.NewController/,
     /XCTestCase/,
     /@testable import/,
-    /class.*Tests.*XCTestCase/,
-    /func test.*\(\)/,
-    /describe\(['"].*['"],\s*\(\)\s*=>/,
-    /it\(['"].*['"],\s*\(\)\s*=>/,
-    /expect\(.*\)\.(to|not)/,
+    /class[^\n]{0,200}Tests[^\n]{0,200}XCTestCase/,
+    /func test[^\n]{0,120}\(\)/,
+    /describe\(['"][^'"]{0,200}['"],\s*\(\)\s*=>/,
+    /it\(['"][^'"]{0,200}['"],\s*\(\)\s*=>/,
+    /expect\([^)]{0,500}\)\.(to|not)/,
     /assert\.\w+\(/,
 ];
 exports.BUILD_PATTERNS = [

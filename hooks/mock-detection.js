@@ -35,13 +35,22 @@ process.stdin.on('end', () => {
 
     const data      = JSON.parse(input);
     const toolInput = data.tool_input || {};
-    const content   = toolInput.content || toolInput.new_string || '';
+    const rawContent = toolInput.content || toolInput.new_string || '';
 
-    if (!content) process.exit(0);
+    if (!rawContent) process.exit(0);
 
-    const detectedPatterns = MOCK_PATTERNS.filter(p => p.test(content));
+    // Review finding M3 + M7: cap input size to prevent ReDoS on adversarial
+    // large writes (bundled JS, minified output). 200KB is well past any
+    // handwritten source file; beyond that we short-circuit the scan.
+    const MAX_SCAN_BYTES = 200 * 1024;
+    const content = rawContent.length > MAX_SCAN_BYTES
+      ? rawContent.slice(0, MAX_SCAN_BYTES)
+      : rawContent;
 
-    if (detectedPatterns.length > 0) {
+    // Use `.some()` for short-circuit on first match (review finding M7).
+    const hasMatch = MOCK_PATTERNS.some(p => p.test(content));
+
+    if (hasMatch) {
       process.stderr.write(
         `[ValidationForge] mock-detection [${profile.name}]: Mock/test pattern detected in code being written.\n` +
         'ValidationForge Iron Rule: Never create mocks, stubs, or test harnesses.\n' +
