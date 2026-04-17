@@ -1,0 +1,20 @@
+=== API Platform Checklist ===
+--- 1. Server running ---
+exit: 7
+--- 2. Database running (pg_isready) ---
+localhost:5432 - no response
+exit: 2
+/opt/homebrew/bin/pg_isready
+--- 3. Database seeded (would need running server) ---
+(skipped - requires running server)
+--- 4. Auth tokens available ---
+       0
+--- 5. curl available ---
+/usr/bin/curl
+--- 6. jq available ---
+/opt/homebrew/bin/jq
+--- 7. Health endpoint responding ---
+(skipped - no server)
+--- 8. Evidence directory exists ---
+e2e-evidence/
+exit: 0

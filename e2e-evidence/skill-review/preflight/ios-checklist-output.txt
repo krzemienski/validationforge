@@ -1,0 +1,18 @@
+=== iOS Platform Checklist ===
+--- 1. Xcode installed ---
+Xcode 26.4
+Build version 17E192
+exit: 0
+--- 2. Xcode CLI tools ---
+/Applications/Xcode.app/Contents/Developer
+exit: 0
+--- 3. Simulator runtime ---
+(grep exit stored above if present)
+--- 4. Simulator booted ---
+(empty means none booted)
+--- 5. Scheme exists (no xcodeproj in worktree) ---
+2026-04-17 01:53:02.504 xcodebuild[38303:2705877]  DVTFilePathFSEvents: Failed to start fs event stream.
+2026-04-17 01:53:02.804 xcodebuild[38303:2705878] CoreSimulatorService connection became invalid.  Simulator services will no longer be available.
+2026-04-17 01:53:02.804 xcodebuild[38303:2705906] Logging connecton invalid: <OS_xpc_error: <dictionary: 0x1f7e51280> { count = 1, transaction: 0, voucher = 0x0, contents =
+	"XPCErrorDescription" => <string: 0x1f7e513c0> { string cache = 0x0, length = 18, contents = "Connection invalid" }
+}>

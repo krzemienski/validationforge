@@ -2,7 +2,7 @@
   "feature": "Skill Deep Review (Top 10)",
   "description": "Deep-review the 10 most critical ValidationForge skills (5 priority + 5 platform-routing). Read every SKILL.md plus its reference/workflow files line-by-line. Verify every command, every cross-reference, every PASS criterion. Fix broken instructions, stale references, and inaccurate PASS criteria. Document per-skill findings and consolidate into a summary report.",
   "created_at": "2026-04-11T02:22:17.031Z",
-  "updated_at": "2026-04-17T05:42:15.292Z",
+  "updated_at": "2026-04-17T05:51:16.892Z",
   "status": "in_progress",
   "planStatus": "in_progress",
   "xstateState": "ready",
@@ -144,7 +144,7 @@
         {
           "id": "phase-1-subtask-4",
           "name": "Review preflight skill",
-          "status": "pending",
+          "status": "completed",
           "activeForm": "Reviewing preflight skill",
           "parallel_safe": true,
           "files_involved": [
@@ -168,7 +168,9 @@
             "At least 10 checklist commands executed and outputs recorded",
             "Auto-fix safety review performed for each row"
           ],
-          "description": "No description"
+          "description": "No description",
+          "notes": "Deep-reviewed preflight skill. Findings in e2e-evidence/skill-review/preflight/findings.md (317 lines). 1 CRITICAL issue (platform-detection bash script uses `[ -d \"*.xcodeproj\" ]` with quoted glob — never matches real iOS projects; empirically confirmed in platform-detection-test.txt Test 2 where MyApp.xcodeproj dir detects as 'unknown'), 2 HIGH (`ls node_modules/.package-lock.json` Dependencies check fails for pnpm/yarn/bun projects; `xcode-select --install` auto-fix row directly contradicts Rule 3 \"NEVER auto-fix by installing major tools\"), 7 MEDIUM (hardcoded postgresql@16, iPhone 15/16 simulator names, Fullstack has no command table unlike other 4 platforms, PASS/FAIL/WARN↔severity mapping never bound, .env check ignores .env.local/.env.development, Design platform missing from checklist+detection script, docker-compose precedence shadowed by next.config.js), 5 LOW (sleep 3 vs condition-based-waiting inconsistency, jq brew install gray-area under Rule 3, destructive migration auto-fix unguarded, PORT template literal, report-example check-count inconsistency). No CRITICAL mock/test-file creation. All 5 Related Skills verified reciprocal. 19 checklist commands executed across Web/API/iOS/CLI with transcripts saved. Auto-fix safety reviewed for 9 of 12 rows (3 are trivial templates). Evidence files: web-checklist-output.txt, api-checklist-output.txt, ios-checklist-output.txt, cli-checklist-output.txt, platform-detection-test.txt, env-file-check.txt, deps-check-analysis.txt, autofix-review.txt, simctl-devices.txt, crossref-check.txt.",
+          "updated_at": "2026-04-17T05:58:27.418193+00:00"
         },
         {
           "id": "phase-1-subtask-5",
@@ -536,5 +538,5 @@
     "last_completed_subtask": null,
     "next_subtask": "phase-1-subtask-1"
   },
-  "last_updated": "2026-04-17T05:39:35.176619+00:00"
+  "last_updated": "2026-04-17T05:58:27.418198+00:00"
 }

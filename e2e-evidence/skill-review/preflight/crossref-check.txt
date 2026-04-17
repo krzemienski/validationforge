@@ -1,0 +1,21 @@
+=== Reciprocal cross-reference check ===
+--- create-validation-plan/SKILL.md mentions preflight? ---
+./skills/create-validation-plan/SKILL.md
+- **preflight** — Verify prerequisites listed in this plan are met
+
+--- baseline-quality-assessment/SKILL.md mentions preflight? ---
+./skills/baseline-quality-assessment/SKILL.md
+- **preflight** — Ensure system is ready before baseline capture
+
+--- e2e-validate/SKILL.md mentions preflight? ---
+./skills/e2e-validate/SKILL.md
+| `preflight` | Environment checks before execution |
+
+--- error-recovery/SKILL.md mentions preflight? ---
+./skills/error-recovery/SKILL.md
+- `preflight` — Prevent many errors by verifying prerequisites first
+
+--- condition-based-waiting/SKILL.md mentions preflight? ---
+./skills/condition-based-waiting/SKILL.md
+- `preflight` — Uses condition-based waiting to verify prerequisites
+

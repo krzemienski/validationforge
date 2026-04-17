@@ -1,0 +1,45 @@
+=== Auto-fix command safety review ===
+--- 1. Port in use: lsof -ti:PORT | xargs kill -9 ---
+  Safety: DESTRUCTIVE. Kills arbitrary processes owned by user (not restricted to dev server).
+  Example failure: if user has a system daemon bound to port, this kills it.
+  Idempotent? Yes (re-run is no-op if nothing bound).
+  'PORT' literal is unresolved — user must substitute. Not a script, a template. Should note this.
+
+--- 2. Dev server not running: pnpm dev > /tmp/dev-server.log 2>&1 & then sleep 3 ---
+  Safety: Assumes pnpm as package manager. npm/yarn/bun-only projects fail.
+  'sleep 3' is arbitrary and often too short (Next.js cold start often 5-15s).
+  Idempotent? No — every run spawns a new background process that leaks if not tracked.
+  condition-based-waiting skill should be used for readiness, per SKILL.md's Related Skills note.
+
+--- 3. Database not running: brew services start postgresql@16 or sudo systemctl start postgresql ---
+  Safety: brew services mutates system state (managed service). sudo needs password.
+  Version '16' is hardcoded — users with postgresql@14, @15, @17 fail.
+  Idempotent? Mostly — brew services start is no-op if already running.
+
+--- 4. Database not seeded: npx prisma db seed || npm run seed ---
+  Safety: prisma db seed may drop/recreate data depending on seed script. NOT idempotent for data.
+  Does not support drizzle, typeorm, sequelize, raw SQL seed.
+
+--- 5. Simulator not booted: xcrun simctl boot 'iPhone 16' || xcrun simctl boot 'iPhone 15' ---
+  Safety: booting a simulator is destructive to current simulator state (none booted yet, so OK).
+  Hardcoded device names. Xcode 26 (current) default simulators may be iPhone 17.
+  Idempotent? Partial — second boot returns 'Unable to boot device in current state: Booted'.
+
+--- 6. jq not installed: brew install jq ---
+  Safety: Installs software. Per Rule 3 ('NEVER auto-fix by installing major tools'), this is a gray area.
+  Rule 3 specifically names Xcode/Docker as examples. jq is small so this likely permissible, but policy unclear.
+  brew must exist. Linux users have no auto-fix path.
+
+--- 7. Binary not built: pnpm build || cargo build || go build ---
+  Safety: OK. Idempotent (rebuild from cache).
+  Chain assumes pnpm first, then cargo, then go. A Rust project with pnpm installed would wrongly try pnpm build.
+
+--- 8. Xcode CLI tools missing: xcode-select --install ---
+  Safety: TRIGGERS GUI prompt (user must click), BLOCKS shell while download happens.
+  Per Rule 3, this should be BLOCKED not auto-fixed — Xcode CLI IS a major tool.
+  CONTRADICTION with Rule 3.
+
+--- 9. Migrations pending: npx prisma migrate deploy || npx drizzle-kit push ---
+  Safety: migrate deploy is MUTATING production-style — applies pending migrations irreversibly.
+  drizzle-kit push pushes schema without migration history — can cause data loss.
+  This auto-fix is HIGH RISK in dev-with-real-data scenarios.

@@ -1,0 +1,71 @@
+=== Platform Detection Script Test ===
+--- Test 1: Current worktree (no xcodeproj, no Cargo.toml, no next.config) ---
+Detected platform: unknown
+
+--- Test 2: Simulated iOS project (directory named *.xcodeproj present) ---
+
+--- Test 3: [ -d '*.xcodeproj' ] direct glob behavior ---
+total 568
+drwxr-xr-x@ 43 nick  staff   1376 Apr 16 23:06 .
+drwxr-xr-x@  9 nick  staff    288 Apr 16 23:07 ..
+-rw-r--r--@  1 nick  staff   6148 Apr 16 23:06 .DS_Store
+drwxr-xr-x@  3 nick  staff     96 Apr 16 23:06 .auto-claude
+-rw-r--r--@  1 nick  staff   2867 Apr 17 01:15 .auto-claude-security.json
+-rw-r--r--@  1 nick  staff    456 Apr 17 01:51 .auto-claude-status
+lrwxr-xr-x@  1 nick  staff     19 Apr 16 23:06 .claude -> ../../../../.claude
+drwxr-xr-x@  4 nick  staff    128 Apr 16 23:06 .claude-plugin
+-rw-r--r--@  1 nick  staff   2018 Apr 17 01:51 .claude_settings.json
+-rw-r--r--@  1 nick  staff     88 Apr 16 23:06 .git
+-rw-r--r--@  1 nick  staff    387 Apr 16 23:06 .gitignore
+drwxr-xr-x@  5 nick  staff    160 Apr 16 23:06 .opencode
+-rw-r--r--@  1 nick  staff  15998 Apr 16 23:06 ARCHITECTURE.md
+-rw-r--r--@  1 nick  staff   7801 Apr 16 23:06 CLAUDE.md
+-rw-r--r--@  1 nick  staff   3305 Apr 16 23:06 COMMANDS.md
+-rw-r--r--@  1 nick  staff  12015 Apr 16 23:06 COMPETITIVE-ANALYSIS.md
+-rw-r--r--@  1 nick  staff  10581 Apr 16 23:06 LAUNCH-PLAN.md
+-rw-r--r--@  1 nick  staff  11566 Apr 16 23:06 MARKETING-INTEGRATION.md
+-rw-r--r--@  1 nick  staff  44454 Apr 16 23:06 PRD.md
+-rw-r--r--@  1 nick  staff  18631 Apr 16 23:06 README.md
+-rw-r--r--@  1 nick  staff   7370 Apr 16 23:06 SKILLS.md
+-rw-r--r--@  1 nick  staff  59443 Apr 16 23:06 SPECIFICATION.md
+-rw-r--r--@  1 nick  staff  13580 Apr 16 23:06 TECHNICAL-DEBT.md
+drwxr-xr-x@  7 nick  staff    224 Apr 16 23:06 agents
+drwxr-xr-x@ 17 nick  staff    544 Apr 16 23:06 commands
+drwxr-xr-x@  5 nick  staff    160 Apr 16 23:06 config
+drwxr-xr-x@  3 nick  staff     96 Apr 16 23:06 demo
+drwxr-xr-x@  7 nick  staff    224 Apr 16 23:06 docs
+drwxr-xr-x@  4 nick  staff    128 Apr 17 01:29 e2e-evidence
+-rw-r--r--@  1 nick  staff   6035 Apr 16 23:06 findings.md
+drwxr-xr-x@ 11 nick  staff    352 Apr 16 23:06 hooks
+-rwxr-xr-x@  1 nick  staff   2706 Apr 16 23:06 install.sh
+lrwxr-xr-x@  1 nick  staff     24 Apr 16 23:06 node_modules -> ../../../../node_modules
+-rw-r--r--@  1 nick  staff    118 Apr 16 23:06 opencode.json
+-rw-r--r--@  1 nick  staff    778 Apr 16 23:06 package.json
+drwxr-xr-x@  7 nick  staff    224 Apr 16 23:06 plans
+-rw-r--r--@  1 nick  staff   4344 Apr 16 23:06 progress.md
+drwxr-xr-x@ 10 nick  staff    320 Apr 16 23:06 rules
+drwxr-xr-x@  8 nick  staff    256 Apr 16 23:06 scripts
+drwxr-xr-x@ 44 nick  staff   1408 Apr 16 23:06 skills
+-rw-r--r--@  1 nick  staff   3690 Apr 16 23:06 task_plan.md
+drwxr-xr-x@  6 nick  staff    192 Apr 16 23:06 templates
+-rw-r--r--@  1 nick  staff  11717 Apr 16 23:06 whats-next.md
+quoted glob DID NOT match (literal name check)
+UNQUOTED -d did not
+
+--- Test 4: Fullstack project with docker-compose.yml AND next.config.js (precedence) ---
+Detected platform: web
+
+--- Test 2 (retry): Simulated iOS project with MyApp.xcodeproj directory ---
+total 8
+drwxr-xr-x@ 4 nick  wheel  128 Apr 17 01:54 .
+drwxr-xr-x@ 3 nick  wheel   96 Apr 17 01:54 ..
+drwxr-xr-x@ 2 nick  wheel   64 Apr 17 01:54 MyApp.xcodeproj
+-rw-r--r--@ 1 nick  wheel  741 Apr 17 01:54 preflight-detect-test.sh
+Detected platform: unknown
+
+--- Test 3 (retry): [ -d '*.xcodeproj' ] direct glob behavior in iOS-like dir ---
+quoted glob -d DID NOT match
+
+--- Test 4: docker-compose.yml + next.config.js in same project ---
+Detected platform: web
+(Expected for fullstack: should detect 'fullstack'; actual: 'web' due to elif precedence)

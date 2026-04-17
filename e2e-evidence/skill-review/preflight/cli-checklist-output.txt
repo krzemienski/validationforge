@@ -1,0 +1,11 @@
+=== CLI Platform Checklist ===
+--- 1. Build tool installed (cargo/go/python3) ---
+/opt/homebrew/bin/cargo
+/opt/homebrew/bin/go
+python3: aliased to /opt/homebrew/bin/python3.12
+--- 2. Binary compiles test (would require source) ---
+(skipped - no CLI source in repo)
+--- 3. python3 -c 'import main' evaluation ---
+exit: 1
+--- 4. ./target/debug/cli --version (needs cargo binary) ---
+(skipped - no Rust project here)

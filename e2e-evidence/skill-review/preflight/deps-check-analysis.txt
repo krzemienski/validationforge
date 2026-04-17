@@ -1,0 +1,21 @@
+=== Dependencies-installed check analysis ===
+--- Actual files that indicate deps installed ---
+total 8
+drwxr-xr-x@  4 nick  staff   128 Apr 11 18:32 .
+drwxr-xr-x@ 64 nick  staff  2048 Apr 16 21:02 ..
+drwxr-xr-x@  2 nick  staff    64 Apr 11 18:32 .bin
+-rw-r--r--@  1 nick  staff   116 Apr 11 18:32 .package-lock.json
+
+--- node_modules/.package-lock.json check (SKILL.md's check) ---
+-rw-r--r--@ 1 nick  staff  116 Apr 11 18:32 node_modules/.package-lock.json
+
+--- Common alternative files by package manager ---
+pnpm creates:  node_modules/.modules.yaml
+yarn creates:  node_modules/.yarn-state.yml or .yarn-integrity
+bun creates:   node_modules/.bun-tag, bun.lockb (root)
+
+--- This worktree's root lockfiles ---
+ls: bun.lockb: No such file or directory
+ls: package-lock.json: No such file or directory
+ls: pnpm-lock.yaml: No such file or directory
+ls: yarn.lock: No such file or directory

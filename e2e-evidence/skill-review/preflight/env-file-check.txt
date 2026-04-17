@@ -1,0 +1,17 @@
+=== .env missing-file behavior test ===
+--- Behavior when .env DOES NOT exist ---
+1
+pipeline exit: 0
+
+--- With cat redirecting stderr suppressed (bare SKILL.md command behavior) ---
+0
+pipeline exit: 1
+(Note: grep -c with no matches returns '0' to stdout and exit code 1)
+
+--- With empty .env ---
+0
+pipeline exit: 1
+
+--- With valid .env-like content ---
+2
+pipeline exit: 0

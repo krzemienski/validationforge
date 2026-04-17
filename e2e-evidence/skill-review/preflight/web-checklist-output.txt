@@ -1,0 +1,25 @@
+=== Web Platform Checklist ===
+--- 1. Node.js installed ---
+v25.9.0
+exit: 0
+--- 2. Package manager available ---
+10.33.0
+exit: 0
+--- 3. Dependencies installed (SKILL.md literal command) ---
+node_modules/.package-lock.json
+exit: 0
+Actual dir contents:
+-rw-r--r--@ 1 nick  staff  116 Apr 11 18:32 node_modules/.package-lock.json
+--- 4. Dev server running ---
+curl exit: 7
+--- 5. Dev server port available ---
+(empty)
+--- 6. Browser automation available ---
+playwright not found
+(not found)
+--- 7. Environment variables set (SKILL.md literal) ---
+cat .env | grep -c '='
+0
+--- 8. Evidence directory exists ---
+e2e-evidence/
+exit: 0
