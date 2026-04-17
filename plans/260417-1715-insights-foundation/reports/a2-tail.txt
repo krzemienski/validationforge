@@ -1,0 +1,25 @@
+
+Add prints before/after each filter step in unified_phase2_analyzer.py.
+Compare segments before and after to find which filter modified them.
+
+## For Y-tracker state issues
+
+Feed Phase 1 data through an isolated YPositionTracker and log state changes.
+This is faster than reasoning about the state machine theoretically.
+
+## Anti-pattern: Theoretical code path tracing
+
+Session 2026-03-26 spent 2+ hours reasoning about motion_analyzer code paths for the A7 boundary. A 5-line TRACE_APPEND instrumentation found the answer in 10 minutes: the boundary came from the trim_ad_boundaries filter, not the motion_analyzer.
+
+**Empirical > Theoretical. Instrument > Reason.**
+
+## Root-Cause-First Protocol (added 2026-04-17)
+Before ANY code change on a bug:
+1. State observed symptom (exact input + expected vs actual output)
+2. State hypothesis (ONE function/line named as suspected root cause)
+3. Design ONE experiment (log, print, frame dump) that confirms/denies the hypothesis
+4. Run the experiment; record evidence path
+5. Only then propose a fix
+
+If fix fails: document WHY in `.debug/<issue-id>/failed-approaches.md` before next attempt.
+Two failed attempts on the same hypothesis → stop and rethink, don't retry.

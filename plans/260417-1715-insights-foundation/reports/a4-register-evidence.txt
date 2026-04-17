@@ -1,0 +1,4 @@
+matcher= | node "$HOME/.claude/hooks/dev-rules-reminder.cjs" ; node "$HOME/.claude/hooks/documentation-context-check.js" ; node "$HOME/.claude/hooks/skill-activation-forced-eval.js" ; node ~/.claude/hooks/context-threshold-warn.js
+matcher=(empty) | node "$HOME/.claude/hooks/usage-quota-cache-refresh.cjs" ; node ~/.claude/hooks/context-threshold-warn.js
+matcher= | node "$HOME/.claude/hooks/dev-rules-reminder.cjs" ; node "$HOME/.claude/hooks/documentation-context-check.js" ; node "$HOME/.claude/hooks/skill-activation-forced-eval.js" ; node ~/.claude/hooks/context-threshold-warn.js
+matcher=MISSING | node "$HOME/.claude/hooks/usage-quota-cache-refresh.cjs"
