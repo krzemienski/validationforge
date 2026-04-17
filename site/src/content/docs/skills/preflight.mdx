@@ -40,8 +40,16 @@ Does **not** execute validations itself (use
    after.
 4. **Produce report** — save a structured report to
    `e2e-evidence/preflight-report.md`.
-5. **Verdict** — `CLEAR` (proceed), `BLOCKED` (manual fix needed), or `WARN`
-   (proceed with caution).
+5. **Verdict** — `CLEAR` (proceed), `WARN` (proceed with caution), or
+   `BLOCKED` (manual fix needed). Only these three values are valid; there is
+   no `PASS` / `FAIL` verdict at the preflight level.
+
+<Aside type="caution" title="Iron Rule #4 — NEVER skip preflight">
+  Per CLAUDE.md Iron Rule #4: **NEVER skip preflight — if it fails, STOP.**
+  A `BLOCKED` verdict halts the pipeline until a human resolves the failing
+  check. Do not proceed to `/validate` or `/forge-execute` on a `BLOCKED`
+  preflight.
+</Aside>
 
 <Aside type="note" title="Platform checklists and auto-fix actions live in the repo">
   For the full platform-specific checklists (Web, API, iOS, CLI, Fullstack) see
@@ -56,7 +64,7 @@ Does **not** execute validations itself (use
 PREFLIGHT CHECK: [PROJECT_NAME]
 Platform: [DETECTED]
 Time: [YYYY-MM-DD HH:MM]
-Status: CLEAR | BLOCKED
+Status: CLEAR | WARN | BLOCKED
 
 ---
 ## Results
