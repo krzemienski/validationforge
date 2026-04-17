@@ -1,8 +1,9 @@
 ---
 title: ValidationForge
-description: No-mock functional validation for Claude Code and OpenCode. Ship verified code, not "it compiled" code.
+description: No-mock functional validation for Claude Code and OpenCode. Ship verified code, not "it compiled" code — enforced through hooks, skills, and evidence-backed verdicts.
 template: splash
 hero:
+  title: ValidationForge
   tagline: No-mock functional validation for Claude Code and OpenCode. Ship verified code, not "it compiled" code.
   actions:
     - text: Get Started
@@ -15,7 +16,7 @@ hero:
       variant: minimal
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 <Aside type="danger" title="The Iron Rule">
   **IF the real system doesn't work, FIX THE REAL SYSTEM.**
@@ -29,5 +30,57 @@ ValidationForge enforces the Iron Rule through hooks that block test file
 creation, skills that guide real-system validation, and agents that capture
 and review evidence through actual user interfaces.
 
-This site is a placeholder — real documentation content lands in the next
-phase of the build.
+## Why Not Unit Tests?
+
+Unit tests verify code in isolation with mocks. Mocks drift from reality.
+ValidationForge verifies **systems in production** through the same
+interfaces your users experience.
+
+| Scenario                                     | Unit Tests                       | ValidationForge                                           |
+| -------------------------------------------- | -------------------------------- | --------------------------------------------------------- |
+| API field renamed (`users` → `data`)         | PASS (mock returns old field)    | **FAIL** (curl shows new field, frontend crashes)         |
+| JWT expiry reduced to 15 min                 | PASS (mock time, never wait)     | **FAIL** (real token expires, refresh fails)              |
+| iOS deep link after nav refactor             | PASS (mock URL handler)          | **FAIL** (`simctl openurl` → wrong screen)                |
+| DB migration with duplicate emails           | PASS (clean in-memory DB)        | **FAIL** (real migration fails on duplicates)             |
+| CSS grid overflow on small screens           | PASS (no visual rendering)       | **FAIL** (Playwright screenshot shows overflow)           |
+
+These are design scenarios where mock-based testing is structurally blind.
+ValidationForge targets exactly these gaps by validating against live
+systems.
+
+## Explore the Docs
+
+<CardGrid>
+  <LinkCard
+    title="Getting Started"
+    description="Install the plugin, run /vf-setup, and ship your first evidence-backed verdict."
+    href="/getting-started/"
+  />
+  <LinkCard
+    title="Commands"
+    description="The 15 slash commands that drive the 7-phase pipeline end to end."
+    href="/commands/"
+  />
+  <LinkCard
+    title="Skills"
+    description="41 skills across platform validation, quality gates, analysis, and operations."
+    href="/skills/"
+  />
+  <LinkCard
+    title="Configuration"
+    description="Three enforcement profiles — strict, standard, and permissive — for every team."
+    href="/configuration/"
+  />
+</CardGrid>
+
+## Install
+
+```bash
+# Claude Code — quick install via curl
+curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
+```
+
+Then restart Claude Code and run `/vf-setup` in your project to scaffold
+evidence, install rules, and pick an enforcement profile. See
+[Getting Started](/getting-started/) for the full walkthrough, including
+manual clone and OpenCode installation.
