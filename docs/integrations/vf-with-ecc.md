@@ -184,6 +184,95 @@ This is the exact class of defect ECC could not detect — compile clean, unit t
 
 Once `report.md` shows all PASS, the production-readiness audit runs and the feature ships. `e2e-evidence/` is the contract — ECC's unit test file (`tests/projects.spec.ts`) lives in the unit-test layer; VF's `e2e-evidence/create-project-missing-name/step-02-response-400.json` lives in the system-validation layer. Both layers are preserved; neither overwrites the other.
 
+## Worked Example — Next.js API route: clear the build, then catch a field-name mismatch
+
+The previous example focused on an HTTP status-code contract bug. This one walks through a different class of defect that the README's comparison table calls out explicitly: **API field renamed (`users` → `data`) | unit tests PASS (mock returns old field) | VF FAIL (curl shows new field, frontend crashes)**. Unit tests mock the response shape, so they never notice the rename. Only a real-system validator, hitting the real endpoint and rendering the real page, catches the break.
+
+Scenario: the team merged a refactor that renamed the top-level response field in `app/api/users/route.ts` from `users` to `data`. The Next.js build is red because a stale response type in `lib/api-types.ts` still references the old name, and the consuming page at `app/users/page.tsx` was not updated either. ECC will clear the build; VF will catch the runtime contract break.
+
+### Phase 1 — ECC clears the TypeScript build error
+
+```bash
+# ECC's proactive triggers fire on the red Next.js build
+/build-error-resolver
+```
+
+Illustrative session output — ECC's `build-error-resolver` against the Next.js project:
+
+```text
+# Illustrative session output — ECC /build-error-resolver (Next.js API route)
+[ecc][typescript-strict] app/api/users/route.ts:22: Type '{ data: User[] }' is not assignable to type '{ users: User[] }'.
+[ecc][build-error-resolver] Inspecting handler signature and call sites for `UsersResponse`…
+[ecc][build-error-resolver] Updated UsersResponse in lib/api-types.ts: renamed field `users` → `data` to match the handler.
+[ecc][typescript-strict] Rebuild: `pnpm next build` → 0 type errors.
+[ecc][security-reviewer]  No new input-handling vectors; handler still reads from Next's typed `NextRequest`.
+[ecc][tdd-guide] Updated tests/api/users.spec.ts fixture to return `{ data: [...] }` — 4 cases green (82% branch coverage).
+[ecc] Done. Hand off to validation.
+```
+
+ECC has made the Next.js build compile and made the unit tests green against the renamed field. **It has not booted `next dev`, hit `/api/users` from a browser, or verified that `app/users/page.tsx` still matches the contract.** The unit tests mocked the response shape, so the frontend's stale `body.users` read is still lurking — exactly the scenario the README's comparison table flags.
+
+### Phase 2 — VF proves the route actually returns the right JSON (and catches the mismatch ECC missed)
+
+```bash
+/validate --platform api
+```
+
+VF's `platform-detector` sees `app/api/users/route.ts` next to `next.config.*` and loads `api-validation` alongside `web-validation` (because the page renders the response). Preflight boots `next dev`, waits for readiness, then runs the discovered journeys against the live process.
+
+Illustrative session output — VF's `/validate --platform api` against the live Next.js dev server:
+
+```text
+# Illustrative session output — /validate --platform api (Next.js)
+[validate][phase 2 preflight]  ✓ next dev → http://localhost:3000 ready in 2.1s
+[validate][phase 3 execute]
+  ✓ list-users-api-contract   GET /api/users → 200
+       Body starts: {"data":[{"id":"u_001","email":"ada@example.com"}, …]}
+       Evidence: e2e-evidence/list-users-api-contract/step-02-response-200.json
+  ✗ frontend-users-list       Renders empty <tbody>; DevTools console shows:
+       TypeError: Cannot read properties of undefined (reading 'map')
+           at UsersPage (app/users/page.tsx:14:22)
+       Expected: table with 3 rows from the API response
+       Observed: empty table, client-side crash
+       Root cause: /api/users now returns {"data": [...]} but app/users/page.tsx
+                   still reads `body.users` (the old pre-refactor field name).
+       Evidence: e2e-evidence/frontend-users-list/step-02-screenshot.png
+                 e2e-evidence/frontend-users-list/step-03-console-error.log
+[validate][phase 5 verdict]
+  1/2 journeys PASS, 1/2 FAIL — see e2e-evidence/report.md
+```
+
+This is precisely the "API field renamed" row from the README in action. ECC's unit tests were green because the fixture was updated to `{ data: [...] }`, but the real page component was never touched — and unit tests cannot see that, because they mock `fetch`. VF, hitting the real endpoint from a real browser against the real Next.js dev server, catches the mismatch. `/validate-sweep` then updates `app/users/page.tsx` to read `body.data`, re-runs the journey, and writes fresh evidence under `e2e-evidence/attempt-2/frontend-users-list/` (Iron Rule 7 — no reused evidence across attempts).
+
+### Example `e2e-evidence/` directory tree after VF finishes
+
+The directory layout after `/validate` + one sweep iteration:
+
+```text
+e2e-evidence/
+├── list-users-api-contract/
+│   ├── step-01-curl-request.txt           # exact curl invocation
+│   ├── step-02-response-200.json          # real response body (not a mock)
+│   ├── step-03-response-headers.txt       # content-type, cache-control, …
+│   └── evidence-inventory.txt             # file → description map
+├── frontend-users-list/
+│   ├── step-01-navigate-to-users.png      # pre-render: route loaded
+│   ├── step-02-screenshot.png             # empty tbody — the defect
+│   ├── step-03-console-error.log          # TypeError with timestamp
+│   ├── step-04-network-trace.har          # /api/users round-trip
+│   └── evidence-inventory.txt
+├── attempt-2/                              # VF /validate-sweep fix iteration
+│   └── frontend-users-list/
+│       ├── step-01-navigate-to-users.png
+│       ├── step-02-screenshot.png         # 3 rows now visible
+│       ├── step-03-console-error.log      # empty — no runtime errors
+│       ├── step-04-network-trace.har
+│       └── evidence-inventory.txt
+└── report.md                               # unified PASS/FAIL verdict, all citations
+```
+
+The `attempt-2/` subtree is how VF's fix loop preserves per-iteration evidence without overwriting the original FAIL capture — a mandated property of the sweep loop (Iron Rule 7). `report.md` at the root is the single document the verdict-writer produces; every PASS or FAIL inside it cites one of the files above.
+
 ## Evidence of Coexistence
 
 The snippets below show both plugins active in the same session. They are illustrative, copy-pasteable reconstructions grounded in documented ECC and VF behavior, not live runtime captures.
