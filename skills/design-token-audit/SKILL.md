@@ -101,7 +101,7 @@ Save to `e2e-evidence/design-tokens/step-01-spec-tokens.md`.
 ### Color Scan
 
 ```sh
-# Find hardcoded hex colors (POSIX sh — no brace expansion)
+# POSIX-compatible grep (ERE) — {3,8} is regex quantifier, not shell brace expansion
 grep -rEn "#[0-9a-fA-F]{3,8}" src/ \
   --include="*.css" --include="*.scss" --include="*.tsx" --include="*.jsx" \
   --include="*.html" --include="*.svelte" --include="*.vue"
