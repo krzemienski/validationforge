@@ -160,6 +160,161 @@ If `report.md` is all PASS, the production-readiness audit runs and the feature 
 
 Sweep writes each attempt's evidence to `e2e-evidence/attempt-N/` so the trail of what was tried and what changed is preserved.
 
+## Expanded Worked Example — Shipping `POST /api/users`
+
+This second walkthrough goes deeper into the handoff for a realistic, second-service feature: adding a `POST /api/users` endpoint with email-uniqueness enforcement. It expands the previous example with full command invocations for both plugins, illustrative session transcripts, a complete evidence directory tree, and a sample final verdict. Every transcript below is marked as illustrative — it reconstructs documented OMC and VF behavior for readers and is not a live runtime capture, per the evidence-of-coexistence strategy for this guide.
+
+### 1. Command invocations
+
+The full command sequence for this feature looks like this. Commands are intentionally minimal — both plugins take care of wiring the rest.
+
+```bash
+# Phase 1 — OMC: consensus plan + execution loop
+/ralplan "Add POST /api/users endpoint with email uniqueness. Accept {email, name, password}, return 201 with the new user record (no password), return 409 if email already exists, return 400 on malformed input."
+
+# Kick off OMC's persistent execution loop to implement the plan
+/ralph
+
+# Phase 2 — VF: validate against the real API platform
+/validate --platform api
+
+# Phase 3 — If any journey FAILs, hand off to the autonomous fix loop
+/validate-sweep
+```
+
+`/ralplan` runs OMC's Planner/Architect/Critic consensus loop and writes `.omc/plans/users-endpoint.md`. `/ralph` picks up that plan and runs until the verify stage reports done. `/validate --platform api` forces the API validation path even if auto-detection would have picked something else; this is useful when the repository also contains a Web frontend and you want to scope this run to the new endpoint.
+
+### 2. Illustrative session transcripts
+
+#### OMC `/ralplan` output (illustrative session output)
+
+```text
+# Illustrative session output — OMC /ralplan
+> /ralplan "Add POST /api/users endpoint with email uniqueness..."
+
+[ralplan][planner]   Drafting plan for POST /api/users...
+[ralplan][architect] Reviewing for architectural fit: repository already has src/routes/reports.ts, db layer uses Prisma, auth middleware exists.
+[ralplan][critic]    Two concerns: (1) password hashing algorithm not specified, (2) 409 vs 422 for duplicate email.
+[ralplan][planner]   Revised plan: use bcrypt (cost 12) for password hashing; use 409 Conflict for duplicate email per RFC 7231.
+[ralplan][consensus] PASSED after 1 revision round.
+[ralplan] Wrote .omc/plans/users-endpoint.md (plan v1, 4 tasks).
+```
+
+#### OMC `/ralph` execution loop (illustrative session output)
+
+```text
+# Illustrative session output — OMC /ralph
+> /ralph
+
+[ralph] Loaded plan: .omc/plans/users-endpoint.md (4 tasks).
+[ralph] Iteration 1: executor creates src/schemas/user.ts (Zod schema: email, name, password).
+[ralph] Iteration 2: executor creates src/routes/users.ts (POST handler + email-unique check via Prisma).
+[ralph] Iteration 3: executor wires src/routes/users.ts into src/app.ts router.
+[ralph] Iteration 4: architect reviews; flags missing password hashing. Debugger patches to add bcrypt.hash(pw, 12).
+[ralph] Iteration 5: verify stage runs `pnpm tsc --noEmit` → 0 errors; `pnpm build` → success.
+[ralph] Stage 'verify' PASSED. Reporting done.
+[ralph] Shipping artifacts: src/routes/users.ts, src/schemas/user.ts, src/app.ts
+[ralph] Done. Hand off to validation.
+```
+
+At this point OMC has built and compiled the feature but has not hit the running endpoint even once. VF takes over next.
+
+#### VF `/validate --platform api` run (illustrative session output)
+
+```text
+# Illustrative session output — VF /validate --platform api
+> /validate --platform api
+
+[validate][phase 0 research]   Loaded api-validation skill, RFC 7231 status-code guidance.
+[validate][phase 1 plan]       Journeys drafted:
+                                 - create-user-happy-path
+                                 - create-user-duplicate-email
+                                 - create-user-missing-email
+                                 - create-user-malformed-json
+                                 - create-user-password-not-echoed
+[validate][phase 2 preflight]  pnpm build → success. pnpm dev → listening on :3000. /health → 200 OK.
+[validate][phase 3 execute]    Running 5 journeys against http://localhost:3000 ...
+  ✓ create-user-happy-path           POST → 201, body echoes {id, email, name} (no password). Evidence: e2e-evidence/create-user-happy-path/
+  ✓ create-user-duplicate-email      POST same email twice → 409 Conflict + {"error":"email_exists"}.
+  ✓ create-user-missing-email        POST without email → 400 + zod error detail.
+  ✓ create-user-malformed-json       POST "not-json" → 400 + parse-error detail.
+  ✓ create-user-password-not-echoed  Response body audited: no `password` key present.
+[validate][phase 4 analyze]    No FAILs to analyze.
+[validate][phase 5 verdict]    All 5 journeys PASS. Writing e2e-evidence/report.md.
+[validate][phase 6 ship]       Production-readiness audit: OK. Ready to ship.
+```
+
+### 3. Sample evidence directory tree
+
+VF captures every request, response, and assertion under `e2e-evidence/`, one subdirectory per journey. The tree below shows what `/validate --platform api` would produce for the five `/api/users` journeys above.
+
+```text
+e2e-evidence/
+  create-user-happy-path/
+    step-01-post-valid-body.json           # full curl request: headers, body {email, name, password}
+    step-02-response-201.json              # status line + response headers + body {id, email, name}
+    step-03-assert-no-password.txt         # jq '.password' → null, quoted inline
+    evidence-inventory.txt                 # journey checklist: 3/3 steps captured
+  create-user-duplicate-email/
+    step-01-post-first-user.json
+    step-02-response-201.json
+    step-03-post-same-email.json
+    step-04-response-409.json              # quoted: "HTTP/1.1 409 Conflict" + body {"error":"email_exists"}
+    evidence-inventory.txt
+  create-user-missing-email/
+    step-01-post-no-email.json
+    step-02-response-400.json              # body has zod issues[] array, quoted
+    evidence-inventory.txt
+  create-user-malformed-json/
+    step-01-post-garbage.txt               # raw request body "not-json"
+    step-02-response-400.json              # express json-parser error, quoted
+    evidence-inventory.txt
+  create-user-password-not-echoed/
+    step-01-audit-response.json            # reuses happy-path response
+    step-02-jq-filter.txt                  # `jq 'has("password")'` → false, quoted
+    evidence-inventory.txt
+  report.md                                # unified PASS/FAIL verdict with citations
+```
+
+Every file under `e2e-evidence/` is non-empty and contains the actual response body or log line — per VF's evidence quality rule, `0-byte files are INVALID evidence`.
+
+### 4. Sample final verdict
+
+`report.md` is what ships with the PR. It cites evidence files for every claim. The excerpt below is illustrative but matches the format `verdict-writer` produces in the real pipeline.
+
+```text
+# Illustrative session output — e2e-evidence/report.md
+# Validation Report — POST /api/users
+
+**Overall verdict:** PASS (5/5 journeys)
+**Platform:** api
+**Run date:** 2026-04-16
+**Build:** src/routes/users.ts @ a1b2c3d
+
+## Journey verdicts
+
+| Journey | Verdict | Evidence |
+|---------|:-------:|----------|
+| create-user-happy-path          | PASS | `create-user-happy-path/step-02-response-201.json` — status `HTTP/1.1 201 Created`, body contains `{id, email, name}`, no `password` key. |
+| create-user-duplicate-email     | PASS | `create-user-duplicate-email/step-04-response-409.json` — status `HTTP/1.1 409 Conflict`, body `{"error":"email_exists"}`. |
+| create-user-missing-email       | PASS | `create-user-missing-email/step-02-response-400.json` — status `400`, body `issues:[{path:["email"],message:"Required"}]`. |
+| create-user-malformed-json      | PASS | `create-user-malformed-json/step-02-response-400.json` — status `400`, body references express.json parser error. |
+| create-user-password-not-echoed | PASS | `create-user-password-not-echoed/step-02-jq-filter.txt` — `jq 'has("password")'` emitted `false`. |
+
+## Ship decision
+
+PASS verdict → production-readiness audit → **SHIP**.
+```
+
+If any journey had returned FAIL, the verdict row would cite the specific evidence file and line that contradicted the PASS criterion, and the ship decision would flip to `DO NOT SHIP — run /validate-sweep`. Example FAIL row for illustration:
+
+```text
+# Illustrative session output — FAIL row (what the same report would look like if the duplicate-email check regressed)
+| create-user-duplicate-email | **FAIL** | `create-user-duplicate-email/step-04-response-409.json` — expected `HTTP/1.1 409 Conflict`, observed `HTTP/1.1 500 Internal Server Error` with body `"PrismaClientKnownRequestError: Unique constraint failed"`. Root cause: handler catches nothing; the raw Prisma error leaks to the client. Fix: wrap insert in try/catch and translate `P2002` to 409. |
+```
+
+All transcripts, tree listings, and report excerpts in this expanded example are **illustrative session output** — they reconstruct documented OMC and VF behavior for readers of this guide. The real evidence written by `/validate` on your own repo will cite your real response bodies, your real file paths, and your real timestamps.
+
 ## Evidence of Coexistence
 
 The following snippets show both plugins active in the same session. They are illustrative, copy-pasteable reconstructions grounded in documented OMC and VF behavior, not live runtime captures.
