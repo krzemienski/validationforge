@@ -1,0 +1,44 @@
+=== subtask-2-3: evidence-gate-reminder.js ===
+Date: 2026-04-17T11:24:03Z
+
+--- Case: status=completed (expect: fire) ---
+Input: {"tool_name":"TaskUpdate","tool_input":{"status":"completed"}}
+Exit: 0
+Stdout-bytes: 500
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"ValidationForge Evidence Gate:\n[ ] Did you PERSONALLY examine the evidence (not just receive a report)?\n[ ] Did you VIEW screenshots and confirm their CONTENT (not just existence)?\n[ ] Did you EXAMINE command output (not just exit codes)?\n[ ] Can you CITE specific evidence for each validation criterion?\n[ ] Would a skeptical reviewer agree this is complete?\n\nIf ANY checkbox is unchecked, run /validate --fix first."}}
+Stderr:
+
+ASSERTION: PASS (additionalContext with evidence checklist fired)
+
+--- Case: status=in_progress (expect: silent) ---
+Input: {"tool_name":"TaskUpdate","tool_input":{"status":"in_progress"}}
+Exit: 0
+Stdout-bytes: 0
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS (silent as expected)
+
+--- Case: status=pending (expect: silent) ---
+Input: {"tool_name":"TaskUpdate","tool_input":{"status":"pending"}}
+Exit: 0
+Stdout-bytes: 0
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS (silent as expected)
+
+--- Case: status=missing (expect: silent) ---
+Input: {"tool_name":"TaskUpdate","tool_input":{}}
+Exit: 0
+Stdout-bytes: 0
+Stdout:
+
+Stderr:
+
+ASSERTION: PASS (silent as expected)
+
+=== done ===

@@ -1,0 +1,37 @@
+ValidationForge Plugin - Hook Script Syntax Verification
+=========================================================
+Verification command: for f in hooks/*.js; do node --check "$f" && echo "OK $f" || echo "FAIL $f"; done
+Node runtime: syntactic parse via `node --check` (no execution)
+
+Raw Output
+----------
+OK hooks/block-test-files.js
+OK hooks/completion-claim-validator.js
+OK hooks/evidence-gate-reminder.js
+OK hooks/evidence-quality-check.js
+OK hooks/mock-detection.js
+OK hooks/patterns.js
+OK hooks/validation-not-compilation.js
+OK hooks/validation-state-tracker.js
+
+Pass/Fail Table
+---------------
+| #  | File                                 | Status |
+|----|--------------------------------------|--------|
+| 1  | hooks/block-test-files.js            | PASS   |
+| 2  | hooks/completion-claim-validator.js  | PASS   |
+| 3  | hooks/evidence-gate-reminder.js      | PASS   |
+| 4  | hooks/evidence-quality-check.js      | PASS   |
+| 5  | hooks/mock-detection.js              | PASS   |
+| 6  | hooks/patterns.js                    | PASS   |
+| 7  | hooks/validation-not-compilation.js  | PASS   |
+| 8  | hooks/validation-state-tracker.js    | PASS   |
+
+Summary
+-------
+Total files checked: 8
+Passed:              8
+Failed:              0
+
+Verdict: PASS - All hook scripts are syntactically valid JavaScript.
+Expected line "OK hooks/block-test-files.js" is present in raw output.

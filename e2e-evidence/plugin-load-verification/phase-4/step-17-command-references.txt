@@ -1,0 +1,70 @@
+=== phase-4 subtask-4-1 (static substitute): command primitive references ===
+Date: 2026-04-17T11:28:38Z
+
+Expected 15 user-facing commands. Validating each exists as commands/<name>.md:
+  PASS  commands/validate.md (size=7497)
+  PASS  commands/validate-plan.md (size=4789)
+  PASS  commands/validate-audit.md (size=3506)
+  PASS  commands/validate-fix.md (size=3319)
+  PASS  commands/validate-ci.md (size=5007)
+  PASS  commands/validate-team.md (size=6533)
+  PASS  commands/validate-sweep.md (size=6037)
+  PASS  commands/validate-benchmark.md (size=6267)
+  PASS  commands/vf-setup.md (size=13568)
+  PASS  commands/forge-setup.md (size=905)
+  PASS  commands/forge-plan.md (size=748)
+  PASS  commands/forge-execute.md (size=889)
+  PASS  commands/forge-team.md (size=743)
+  PASS  commands/forge-benchmark.md (size=808)
+  PASS  commands/forge-install-rules.md (size=1753)
+
+Total: 15 PASS, 0 FAIL (of 15)
+
+--- Per-command primitive references (skills/hooks/agents/scripts) ---
+
+### validate ###
+  (no primitive references in this command markdown)
+
+### validate-plan ###
+  (no primitive references in this command markdown)
+
+### validate-audit ###
+  (no primitive references in this command markdown)
+
+### validate-fix ###
+  (no primitive references in this command markdown)
+
+### validate-ci ###
+  (no primitive references in this command markdown)
+
+### validate-team ###
+  (no primitive references in this command markdown)
+
+### validate-sweep ###
+  (no primitive references in this command markdown)
+
+### validate-benchmark ###
+  (no primitive references in this command markdown)
+
+### vf-setup ###
+  (no primitive references in this command markdown)
+
+### forge-setup ###
+  (no primitive references in this command markdown)
+
+### forge-plan ###
+  (no primitive references in this command markdown)
+
+### forge-execute ###
+  (no primitive references in this command markdown)
+
+### forge-team ###
+  (no primitive references in this command markdown)
+
+### forge-benchmark ###
+  (no primitive references in this command markdown)
+
+### forge-install-rules ###
+  (no primitive references in this command markdown)
+
+=== done ===

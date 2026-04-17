@@ -1,0 +1,59 @@
+=== subtask-2-1: block-test-files.js DENY path ===
+Date: 2026-04-17T11:23:12Z
+Hook: hooks/block-test-files.js
+
+--- Case: .test.ts ---
+Input: {"tool_name":"Write","tool_input":{"file_path":"src/foo.test.ts"}}
+Exit: 0
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: \"src/foo.test.ts\" matches a test/mock/stub file pattern.\nValidationForge Iron Rule: Never create test files, mock files, or stub files.\nInstead: Build and run the real system. Validate through actual user interfaces.\nRun /validate to start the correct validation workflow."}}
+Stderr:
+
+ASSERTION: PASS (permissionDecision=deny present)
+
+--- Case: .spec.ts ---
+Input: {"tool_name":"Write","tool_input":{"file_path":"src/foo.spec.ts"}}
+Exit: 0
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: \"src/foo.spec.ts\" matches a test/mock/stub file pattern.\nValidationForge Iron Rule: Never create test files, mock files, or stub files.\nInstead: Build and run the real system. Validate through actual user interfaces.\nRun /validate to start the correct validation workflow."}}
+Stderr:
+
+ASSERTION: PASS (permissionDecision=deny present)
+
+--- Case: __tests__ ---
+Input: {"tool_name":"Write","tool_input":{"file_path":"src/__tests__/foo.ts"}}
+Exit: 0
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: \"src/__tests__/foo.ts\" matches a test/mock/stub file pattern.\nValidationForge Iron Rule: Never create test files, mock files, or stub files.\nInstead: Build and run the real system. Validate through actual user interfaces.\nRun /validate to start the correct validation workflow."}}
+Stderr:
+
+ASSERTION: PASS (permissionDecision=deny present)
+
+--- Case: .mock.js ---
+Input: {"tool_name":"Write","tool_input":{"file_path":"src/user.mock.js"}}
+Exit: 0
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: \"src/user.mock.js\" matches a test/mock/stub file pattern.\nValidationForge Iron Rule: Never create test files, mock files, or stub files.\nInstead: Build and run the real system. Validate through actual user interfaces.\nRun /validate to start the correct validation workflow."}}
+Stderr:
+
+ASSERTION: PASS (permissionDecision=deny present)
+
+--- Case: Tests.swift ---
+Input: {"tool_name":"Write","tool_input":{"file_path":"Tests/UserTests.swift"}}
+Exit: 0
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: \"Tests/UserTests.swift\" matches a test/mock/stub file pattern.\nValidationForge Iron Rule: Never create test files, mock files, or stub files.\nInstead: Build and run the real system. Validate through actual user interfaces.\nRun /validate to start the correct validation workflow."}}
+Stderr:
+
+ASSERTION: PASS (permissionDecision=deny present)
+
+--- Case: test_file.py ---
+Input: {"tool_name":"Write","tool_input":{"file_path":"src/test_login.py"}}
+Exit: 0
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: \"src/test_login.py\" matches a test/mock/stub file pattern.\nValidationForge Iron Rule: Never create test files, mock files, or stub files.\nInstead: Build and run the real system. Validate through actual user interfaces.\nRun /validate to start the correct validation workflow."}}
+Stderr:
+
+ASSERTION: PASS (permissionDecision=deny present)
+
+=== done ===

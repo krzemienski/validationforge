@@ -1,0 +1,63 @@
+{
+  "captured_at": "2026-04-17T06:06:44Z",
+  "step": "step-01-plugin-registered",
+  "description": "Capture the validationforge plugin registration from the Claude Code installed-plugins registry (~/.claude/installed_plugins.json) and verify the on-disk path the registry points to exists.",
+  "registry": {
+    "file": "/Users/nick/.claude/installed_plugins.json",
+    "mtime": "2026-04-08T22:30:17-0400",
+    "size_bytes": 200,
+    "raw_contents": {
+      "validationforge@validationforge": {
+        "path": "/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0",
+        "scope": "user",
+        "installedAt": "2026-04-09T02:30:17.034Z"
+      }
+    }
+  },
+  "entry": {
+    "key": "validationforge@validationforge",
+    "path": "/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0",
+    "scope": "user",
+    "installedAt": "2026-04-09T02:30:17.034Z"
+  },
+  "plugin_path_stat": {
+    "exists": true,
+    "is_directory": true,
+    "mtime": "2026-04-08T22:30:16-0400",
+    "mode": "drwxr-xr-x",
+    "owner": "nick",
+    "group": "staff"
+  },
+  "plugin_path_contents": [
+    ".claude-plugin",
+    "agents",
+    "commands",
+    "config",
+    "docs",
+    "hooks",
+    "plans",
+    "rules",
+    "scripts",
+    "skills",
+    "templates"
+  ],
+  "manifest": {
+    "exists": true,
+    "file": "/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/.claude-plugin/plugin.json",
+    "name": "validationforge",
+    "version": "1.0.0",
+    "description": "No-mock validation platform for Claude Code. Ship verified code, not 'it compiled' code."
+  },
+  "verification": {
+    "command": "node -e \"const fs=require('fs');const p=JSON.parse(fs.readFileSync(process.env.HOME+'/.claude/installed_plugins.json','utf8'));const entry=p['validationforge@validationforge'];if(!entry)process.exit(1);if(!fs.existsSync(entry.path))process.exit(2);console.log('OK: plugin registered at',entry.path)\"",
+    "expected_output": "OK: plugin registered at /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0",
+    "status": "PASS"
+  },
+  "observations": [
+    "The registry at ~/.claude/installed_plugins.json contains exactly one entry keyed 'validationforge@validationforge'.",
+    "The 'path' field points to /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0, which exists on disk as a directory.",
+    "The plugin directory contains the expected top-level subtrees: .claude-plugin/, agents/, commands/, config/, docs/, hooks/, plans/, rules/, scripts/, skills/, templates/.",
+    "The manifest .claude-plugin/plugin.json declares name='validationforge' and version='1.0.0', matching the registry key suffix and the last path segment.",
+    "The installedAt timestamp (2026-04-09T02:30:17.034Z) aligns with the registry mtime (2026-04-08T22:30:17-0400 = 2026-04-09T02:30:17Z) within one second, confirming the entry was written atomically by the install step."
+  ]
+}

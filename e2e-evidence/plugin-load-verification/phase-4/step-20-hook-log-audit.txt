@@ -1,0 +1,44 @@
+=== phase-4 subtask-4-5 (proxy): aggregate hook stderr audit ===
+Date: 2026-04-17T11:28:14Z
+
+Installed plugin root: /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0
+
+--- Aggregated stderr across all installed hooks (benign payload) ---
+Full aggregated stderr (from benign payloads; should be empty):
+[block-test-files.js]
+
+[evidence-gate-reminder.js]
+
+[validation-not-compilation.js]
+
+[completion-claim-validator.js]
+
+[validation-state-tracker.js]
+
+[mock-detection.js]
+
+[evidence-quality-check.js]
+
+
+--- Grep for error signatures ---
+  pattern '\[ValidationForge\].*error' matches: 0
+  pattern 'ENOENT' matches: 0
+  pattern 'Cannot find' matches: 0
+  pattern '^Error: ' matches: 0
+  pattern 'TypeError' matches: 0
+  pattern 'SyntaxError' matches: 0
+  pattern 'ReferenceError' matches: 0
+  pattern 'Using inline fallback' matches: 0
+
+Total error-signature lines: 0
+ASSERTION subtask-4-5: PASS (zero error signatures across all 7 installed hooks)
+
+--- Also scan Phase 2/3 captured stderr for the same signatures ---
+  step-11-standalone-hook-block-test-deny.txt: error-signature lines in Stderr blocks = 0
+  step-12-standalone-hook-block-test-allow.txt: error-signature lines in Stderr blocks = 0
+  step-13-standalone-hook-evidence-gate.txt: error-signature lines in Stderr blocks = 0
+  step-14-standalone-hook-remaining.txt: error-signature lines in Stderr blocks = 0
+  step-15-plugin-root-resolution.txt: error-signature lines in Stderr blocks = 0
+  step-16-installed-hook-invoke.txt: error-signature lines in Stderr blocks = 0
+
+=== done ===

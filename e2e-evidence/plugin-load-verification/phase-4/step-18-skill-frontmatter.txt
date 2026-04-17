@@ -1,0 +1,55 @@
+=== phase-4 subtask-4-2 (static substitute): skill frontmatter validation ===
+Date: 2026-04-17T11:27:30Z
+
+Total skills directories: 41
+
+  PASS  accessibility-audit/SKILL.md  name="accessibility-audit"  desc="Deep WCAG 2.1 AA accessibility audit with Lighthouse, keyboard navigation, and s..."
+  PASS  api-validation/SKILL.md  name="api-validation"  desc=">..."
+  PASS  baseline-quality-assessment/SKILL.md  name="baseline-quality-assessment"  desc=">..."
+  PASS  build-quality-gates/SKILL.md  name="build-quality-gates"  desc="Multi-stage build quality enforcement — compile, lint, type-check, bundle analys..."
+  PASS  chrome-devtools/SKILL.md  name="chrome-devtools"  desc="Chrome DevTools MCP integration for deep browser inspection and evidence capture..."
+  PASS  cli-validation/SKILL.md  name="cli-validation"  desc=">..."
+  PASS  condition-based-waiting/SKILL.md  name="condition-based-waiting"  desc=">..."
+  PASS  create-validation-plan/SKILL.md  name="create-validation-plan"  desc=">..."
+  PASS  design-token-audit/SKILL.md  name="design-token-audit"  desc="Verify CSS and Tailwind tokens match the project's design system specification..."
+  PASS  design-validation/SKILL.md  name="design-validation"  desc="Validate implementation fidelity against design specifications and Stitch-genera..."
+  PASS  e2e-testing/SKILL.md  name="e2e-testing"  desc="End-to-end validation patterns — journey design, evidence management, flaky flow..."
+  PASS  e2e-validate/SKILL.md  name="e2e-validate"  desc=">..."
+  PASS  error-recovery/SKILL.md  name="error-recovery"  desc=">..."
+  PASS  forge-benchmark/SKILL.md  name="forge-benchmark"  desc="Measure validation posture across five dimensions. Track trends over time and co..."
+  PASS  forge-execute/SKILL.md  name="forge-execute"  desc="Autonomous validation execution loop. Runs validation journeys against the real ..."
+  PASS  forge-plan/SKILL.md  name="forge-plan"  desc="Generate a validation plan with journey discovery, PASS criteria, and evidence r..."
+  PASS  forge-setup/SKILL.md  name="forge-setup"  desc="Initialize ValidationForge for a project. Detects platforms, scaffolds directori..."
+  PASS  forge-team/SKILL.md  name="forge-team"  desc="Multi-agent parallel validation. Spawns platform-specific validators that work i..."
+  PASS  full-functional-audit/SKILL.md  name="full-functional-audit"  desc=">..."
+  PASS  fullstack-validation/SKILL.md  name="fullstack-validation"  desc=">..."
+  PASS  functional-validation/SKILL.md  name="functional-validation"  desc=">..."
+  PASS  gate-validation-discipline/SKILL.md  name="gate-validation-discipline"  desc=">..."
+  PASS  ios-simulator-control/SKILL.md  name="ios-simulator-control"  desc="iOS Simulator lifecycle management — boot, install, launch, screenshot, logs, re..."
+  PASS  ios-validation/SKILL.md  name="ios-validation"  desc=">..."
+  PASS  ios-validation-gate/SKILL.md  name="ios-validation-gate"  desc="Three-gate iOS validation — Simulator, Backend, Analysis — all must PASS..."
+  PASS  ios-validation-runner/SKILL.md  name="ios-validation-runner"  desc="Five-phase iOS validation with video recording, log streaming, and evidence coll..."
+  PASS  no-mocking-validation-gates/SKILL.md  name="no-mocking-validation-gates"  desc=">..."
+  PASS  parallel-validation/SKILL.md  name="parallel-validation"  desc="Orchestrate multiple validation agents in parallel across independent journeys o..."
+  PASS  playwright-validation/SKILL.md  name="playwright-validation"  desc="Browser-based validation using Playwright MCP — real browser interaction, eviden..."
+  PASS  preflight/SKILL.md  name="preflight"  desc=">..."
+  PASS  production-readiness-audit/SKILL.md  name="production-readiness-audit"  desc="Systematic audit of application readiness for production deployment..."
+  PASS  research-validation/SKILL.md  name="research-validation"  desc="Research standards, best practices, and tools before designing validation strate..."
+  PASS  responsive-validation/SKILL.md  name="responsive-validation"  desc="Systematic viewport matrix testing with device-specific validation checks..."
+  PASS  retrospective-validation/SKILL.md  name="retrospective-validation"  desc="Validate methodologies and approaches using historical evidence and past results..."
+  PASS  sequential-analysis/SKILL.md  name="sequential-analysis"  desc="Systematic root cause analysis for validation failures using step-by-step reason..."
+  PASS  stitch-integration/SKILL.md  name="stitch-integration"  desc="Stitch MCP workflow for design generation, iteration, and design-to-code validat..."
+  PASS  validate-audit-benchmarks/SKILL.md  name="validate-audit-benchmarks"  desc="Run automated benchmark suite to score hook correctness, skill/command structura..."
+  PASS  verification-before-completion/SKILL.md  name="verification-before-completion"  desc=">..."
+  PASS  visual-inspection/SKILL.md  name="visual-inspection"  desc="Evidence-based visual inspection of running UIs — captures what IS, not what SHO..."
+  PASS  web-testing/SKILL.md  name="web-testing"  desc="Comprehensive web validation strategy — integration, E2E, accessibility, perform..."
+  PASS  web-validation/SKILL.md  name="web-validation"  desc=">..."
+
+SUMMARY: 41 PASS, 0 FAIL (of 41)
+
+Spec-required skills (subtask-4-2):
+  PASS  web-validation — present
+  PASS  api-validation — present
+  PASS  preflight — present
+
+=== done ===
