@@ -243,9 +243,10 @@ Designed grade thresholds (pending empirical calibration): A (90+), B (80–89),
 | OC Plugin Files | 2 | `.opencode/plugins/validationforge/{index.ts,patterns.ts}` |
 | Config Profiles | 3 | `config/*.json` |
 | Report Templates | 4 | `templates/*.md` |
+| Integration Guides | 3 | `docs/integrations/vf-with-{omc,ecc,superpowers}.md` |
 | Installer | 1 | `install.sh` |
 
-Full indexes: [SKILLS.md](./SKILLS.md) | [COMMANDS.md](./COMMANDS.md) | [ARCHITECTURE.md](./ARCHITECTURE.md)
+Full indexes: [SKILLS.md](./SKILLS.md) | [COMMANDS.md](./COMMANDS.md) | [ARCHITECTURE.md](./ARCHITECTURE.md) | [Integrations Hub](./docs/integrations/README.md)
 
 ## File Structure
 
@@ -267,6 +268,7 @@ validationforge/
 +-- config/                           3 enforcement profiles
 +-- templates/                        4 report templates
 +-- scripts/                          4 core + 4 benchmark shell scripts
++-- docs/integrations/                3 integration guides + hub (OMC, ECC, Superpowers)
 +-- install.sh                        Global installer (curl-pipe safe)
 +-- CLAUDE.md                         Master reference document
 +-- README.md                         This file
