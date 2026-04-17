@@ -1,0 +1,23 @@
+=== ValidationForge Command Structural Validation ===
+
+PASS: forge-benchmark (33 lines)
+PASS: forge-execute (36 lines)
+PASS: forge-install-rules (41 lines)
+PASS: forge-plan (26 lines)
+PASS: forge-setup (27 lines)
+PASS: forge-team (30 lines)
+PASS: validate-audit (108 lines)
+PASS: validate-benchmark (255 lines)
+PASS: validate-ci (167 lines)
+PASS: validate-consensus (282 lines)
+PASS: validate-fix (101 lines)
+PASS: validate-plan (134 lines)
+PASS: validate-sweep (160 lines)
+PASS: validate-team (188 lines)
+PASS: validate (159 lines)
+PASS: vf-setup (449 lines)
+
+=== SUMMARY ===
+Total: 16  Pass: 16  Fail: 0
+{"total":16,"pass":16,"fail":0}
+EXIT: 0
