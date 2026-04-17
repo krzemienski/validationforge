@@ -22,9 +22,18 @@ catches bugs that unit tests miss."
    test file patterns.
 
 3. **Set up `e2e-evidence/` directory.** All validation evidence goes here.
+   Ignore the binary captures (screenshots, recordings, response dumps) but keep
+   the verdict artifacts (`report.md`, `evidence-inventory.txt`) in source
+   control so PR reviewers and post-mortems can see the verdicts without the
+   heavy binaries. Append this block to `.gitignore`:
    ```bash
    mkdir -p e2e-evidence
-   echo "e2e-evidence/" >> .gitignore  # Evidence is ephemeral, not committed
+   cat >> .gitignore <<'EOF'
+   # ValidationForge evidence: ignore binary captures, keep verdict artifacts
+   e2e-evidence/**
+   !e2e-evidence/**/report.md
+   !e2e-evidence/**/evidence-inventory.txt
+   EOF
    ```
 
 ## Phase 2: Teach the Protocol (Week 1)
