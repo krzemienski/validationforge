@@ -614,10 +614,65 @@ if [ "$FORMAT" = "html" ] || [ "$FORMAT" = "both" ]; then
   render_template "$TMPL_HTML" "$OUT_HTML" 1
 fi
 
-# History archival hook (phase 2 will implement). Present here so the
-# --no-history flag has an observable effect even at this stage.
+# ------------------------------------------------------------------
+# History archival
+# ------------------------------------------------------------------
+# Snapshot each run to $EVIDENCE_DIR/.history/run-<timestamp>.json so
+# the dashboard can render trend deltas across runs. Disabled with
+# --no-history. Snapshots are local-only by default: we write a
+# .gitignore inside .history/ on first use mirroring the repo's
+# existing e2e-evidence/*.json pattern. Teams that want to share
+# trend data can delete or relax that .gitignore.
 if [ "$NO_HISTORY" -eq 0 ]; then
-  : # archival is implemented in subtask-2-1-history-archival
+  HIST_DIR_WRITE="$EVIDENCE_DIR/.history"
+  mkdir -p "$HIST_DIR_WRITE"
+
+  HIST_GITIGNORE="$HIST_DIR_WRITE/.gitignore"
+  if [ ! -f "$HIST_GITIGNORE" ]; then
+    cat > "$HIST_GITIGNORE" <<'GITIGNORE'
+# ValidationForge history snapshots — local-only by default.
+# Remove this file (or add explicit allow rules) if your team wants
+# to commit snapshots so trend data travels with the repo.
+run-*.json
+GITIGNORE
+  fi
+
+  # Filename-safe timestamp: strip colons so the file works on every FS.
+  HIST_STAMP="${RUN_DATE//:/-}"
+  HIST_FILE="$HIST_DIR_WRITE/run-${HIST_STAMP}.json"
+
+  # Assemble per-journey JSON entries.
+  hist_journeys_json=""
+  for i in "${!J_NAMES[@]}"; do
+    jn_j="$(json_escape "${J_NAMES[$i]}")"
+    jv_j="$(json_escape "${J_VERDICTS[$i]}")"
+    jc_j="$(json_escape "${J_CONFIDENCES[$i]}")"
+    je_j="${J_EVIDENCE_COUNTS[$i]}"
+    jq_j="${J_QUALITY_SCORES[$i]}"
+    entry=$(printf '{"name":"%s","verdict":"%s","confidence":"%s","evidence_count":%d,"quality_score":%d}' \
+      "$jn_j" "$jv_j" "$jc_j" "$je_j" "$jq_j")
+    if [ -z "$hist_journeys_json" ]; then
+      hist_journeys_json="$entry"
+    else
+      hist_journeys_json="$hist_journeys_json,$entry"
+    fi
+  done
+
+  hist_project_json="$(json_escape "$PROJECT_NAME")"
+  hist_verdict_json="$(json_escape "$OVERALL_VERDICT")"
+  hist_grade_json="$(json_escape "$GRADE")"
+
+  printf '{"timestamp":"%s","project_name":"%s","overall_verdict":"%s","pass_count":%d,"fail_count":%d,"total_journeys":%d,"aggregate_quality_score":%d,"grade":"%s","journeys":[%s]}\n' \
+    "$RUN_DATE" \
+    "$hist_project_json" \
+    "$hist_verdict_json" \
+    "$PASS_COUNT" \
+    "$FAIL_COUNT" \
+    "$TOTAL" \
+    "$AGG_QUALITY" \
+    "$hist_grade_json" \
+    "$hist_journeys_json" \
+    > "$HIST_FILE"
 fi
 
 # ------------------------------------------------------------------
