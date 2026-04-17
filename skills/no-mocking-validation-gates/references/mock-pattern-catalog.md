@@ -21,25 +21,44 @@ If you catch yourself thinking any of these, STOP and apply the correction.
 
 ## Blocked File Patterns
 
-The pre-tool-use hook blocks creation of files matching these patterns.
+The pre-tool-use hook (`hooks/lib/patterns.js` → `TEST_PATTERNS`) blocks creation of
+files matching these patterns. This list is the authoritative hook surface — if a
+pattern is not here, the hook does NOT block it.
 
 | Pattern | Language/Framework | What It Usually Contains |
 |---------|-------------------|------------------------|
 | `*.test.ts`, `*.test.js`, `*.test.tsx`, `*.test.jsx` | JavaScript/TypeScript | Jest, Vitest, or Mocha test suites |
 | `*.spec.ts`, `*.spec.js`, `*.spec.tsx`, `*.spec.jsx` | JavaScript/TypeScript | Jasmine or Angular test specs |
 | `*_test.go` | Go | Go testing package tests |
-| `*_test.py`, `test_*.py` | Python | pytest or unittest tests |
-| `*Tests.swift` | Swift | XCTest test classes |
-| `*Test.java`, `*Test.kt` | Java/Kotlin | JUnit test classes |
-| `*_test.rs` | Rust | `#[cfg(test)]` modules |
+| `test_*.py` | Python | pytest `test_*.py` prefix convention |
+| `*.test.py` | Python | alternate `.test.py` convention |
+| `*Tests.swift`, `*Test.swift` | Swift | XCTest test classes |
 | `__tests__/` | JavaScript/TypeScript | Jest test directory convention |
-| `__mocks__/` | JavaScript/TypeScript | Jest manual mock directory |
+| `/test/**` | Any | any path containing a `/test/` segment |
+| `*.mock.{js,ts,tsx,jsx}` | JavaScript/TypeScript | `.mock.` file suffix |
+| `*.stub.{js,ts,tsx,jsx}` | JavaScript/TypeScript | `.stub.` file suffix |
 | `mocks/`, `stubs/` | Any | Mock and stub modules |
 | `fixtures/` | Any | Test fixture data |
-| `test-utils/`, `testing/` | Any | Test utility modules |
+| `test-utils/` | Any | Test utility modules |
 | `*.stories.tsx`, `*.stories.js` | React | Storybook stories (isolated rendering) |
-| `conftest.py` | Python | pytest configuration and fixtures |
-| `factories/` | Any | Test data factory patterns |
+
+## Iron Rule (not hook-enforced)
+
+These patterns violate the no-mocks Iron Rule but are NOT caught by
+`hooks/lib/patterns.js`. They must be enforced by code review, the
+`mock-detection` post-edit hook (content scan, not filename scan), or the project
+benchmark. Treat creating any of these as a ValidationForge violation even though
+the Write/Edit hook will not block them.
+
+| Pattern | Language/Framework | What It Usually Contains | Why Not Hook-Enforced |
+|---------|-------------------|------------------------|-----------------------|
+| `*_test.py` | Python | pytest `_test.py` suffix convention | Hook enforces `test_*.py` prefix only |
+| `*Test.java`, `*Test.kt` | Java/Kotlin | JUnit test classes | Not in `TEST_PATTERNS` |
+| `*_test.rs` | Rust | `#[cfg(test)]` modules | Not in `TEST_PATTERNS` |
+| `__mocks__/` | JavaScript/TypeScript | Jest manual mock directory | Not in `TEST_PATTERNS` (only `__tests__/` is) |
+| `conftest.py` | Python | pytest configuration and fixtures | Not in `TEST_PATTERNS` |
+| `testing/` | Any | Test utility modules | Not in `TEST_PATTERNS` (only `test-utils/` is) |
+| `factories/` | Any | Test data factory patterns | Not in `TEST_PATTERNS` |
 
 ## Blocked Code Patterns by Language
 
