@@ -1,0 +1,58 @@
+{
+  "skill": "django-validation",
+  "pass": 2,
+  "stage": "stage-3-body-restructure",
+  "timestamp": "2026-04-17T06:27:00Z",
+  "before": {
+    "skill_md_lines": 339
+  },
+  "after": {
+    "skill_md_lines": 145,
+    "references": {
+      "setup-validation.md": 91,
+      "server-startup.md": 72,
+      "endpoint-testing-crud.md": 66,
+      "auth-admin-testing.md": 61
+    },
+    "total_lines": 435
+  },
+  "decomposition": [
+    {
+      "reference": "references/setup-validation.md",
+      "supports_steps": ["Step 1: Install Dependencies", "Step 2: Django System Check", "Step 3: Migration Status"],
+      "pattern_taught": "Run setup commands with tee, grep output for known-good marker before proceeding"
+    },
+    {
+      "reference": "references/server-startup.md",
+      "supports_steps": ["Step 4: Start the Server", "Step 5: Health and Root Endpoint Check"],
+      "pattern_taught": "Background server boot + curl probe; Django and Flask variants preserved separately"
+    },
+    {
+      "reference": "references/endpoint-testing-crud.md",
+      "supports_steps": ["Step 6: Endpoint Testing with curl"],
+      "pattern_taught": "curl per REST verb, save body to evidence file, chain created resource ID through later requests"
+    },
+    {
+      "reference": "references/auth-admin-testing.md",
+      "supports_steps": ["Step 7: Authentication Testing", "Step 8: Django Admin Check"],
+      "pattern_taught": "Obtain DRF/JWT token, verify unauthed 401/403, check admin 200/302"
+    }
+  ],
+  "skill_md_retained": [
+    "YAML frontmatter (verbatim)",
+    "Prerequisites checklist (concept only)",
+    "Step overview (title + 1-2 sentence purpose per step)",
+    "Pointer to each reference file per step",
+    "Evidence Quality section",
+    "Common Failures table",
+    "PASS Criteria checklist",
+    "Step 9 inline (trivial 3-line server stop)"
+  ],
+  "yaml_frontmatter_intact": true,
+  "verification": {
+    "wc_command": "wc -l skills/django-validation/SKILL.md skills/django-validation/references/*.md",
+    "target_skill_md_lines": 240,
+    "actual_skill_md_lines": 145,
+    "under_target": true
+  }
+}

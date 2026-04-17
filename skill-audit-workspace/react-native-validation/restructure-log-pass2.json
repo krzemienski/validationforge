@@ -1,0 +1,41 @@
+{
+  "skill": "react-native-validation",
+  "pass": 2,
+  "stage": 3,
+  "date": "2026-04-17",
+  "before": {
+    "skill_md_lines": 363,
+    "references_exist": false,
+    "reference_files": []
+  },
+  "after": {
+    "skill_md_lines": 138,
+    "reference_pointer_count": 7,
+    "references_dir": "skills/react-native-validation/references/",
+    "reference_files": [
+      { "path": "references/metro-bundler-setup.md", "lines": 114, "covers": "Steps 1-3 (Metro startup, RN CLI build, Expo CLI build) + cleanup" },
+      { "path": "references/screenshot-capture.md", "lines": 28, "covers": "Step 4 (iOS simctl + Android adb screenshot commands)" },
+      { "path": "references/log-streaming.md", "lines": 49, "covers": "Step 5 (iOS log stream, Android logcat, Metro error grep)" },
+      { "path": "references/deeplink-testing.md", "lines": 62, "covers": "Step 6 (iOS openurl, Android am start, universal/app links)" },
+      { "path": "references/crash-detection.md", "lines": 38, "covers": "Step 7 (iOS DiagnosticReports, Android FATAL, Metro Red Screen)" }
+    ]
+  },
+  "kept_in_skill_md": [
+    "YAML frontmatter (verbatim)",
+    "Prerequisites checklist",
+    "Simulator/emulator boot commands",
+    "Step overview (7 steps, 1-line description + expected outcome + reference pointer)",
+    "Evidence Quality section",
+    "Common Failures table",
+    "PASS Criteria Template"
+  ],
+  "verification": {
+    "yaml_frontmatter_intact": true,
+    "reference_pointer_count_ge_5": true,
+    "reference_pointer_count_actual": 7,
+    "skill_md_line_delta": -225,
+    "total_lines_across_files": 429,
+    "all_reference_files_created": true
+  },
+  "notes": "Cleanup block (Metro kill) kept in metro-bundler-setup.md since it pairs with startup. All 5 reference files follow H1 + 1-2 line context pattern. No new content invented — every command moved verbatim."
+}

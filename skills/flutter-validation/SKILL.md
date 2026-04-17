@@ -44,6 +44,18 @@ Confirm a device is now connected:
 flutter devices
 ```
 
+## Which Build Variant When?
+
+Pick the variant that matches the journey you're validating before you start.
+
+- **debug + simulator/emulator** — fastest; use for most functional journeys (UI, routing, state)
+- **debug + physical device** — required for camera, biometrics, Bluetooth, sensors, real network conditions
+- **release + simulator/emulator** — validates release-mode assertions are stripped, asset bundling, tree-shaking
+- **release + physical device** — final pre-ship check; closest to production
+- **appbundle (Android)** — Play Store submission artifact; validate via internal track only
+
+If unsure, start with **debug + simulator/emulator** and escalate to device or release only when a journey demands it.
+
 ## Step 1: Install Dependencies
 
 ```bash
@@ -63,23 +75,11 @@ fi
 
 ## Step 2: Build
 
-Choose the target platform and build mode:
+Pick the target platform and mode, then run the matching command. Full command matrix (Android APK/AAB, iOS debug/release, Web) in `references/build-variants.md`.
 
 ```bash
-# Android APK (debug)
+# Example: Android debug APK
 flutter build apk --debug 2>&1 | tee e2e-evidence/flutter-build.txt
-
-# Android APK (release)
-flutter build apk --release 2>&1 | tee e2e-evidence/flutter-build.txt
-
-# iOS (debug, simulator)
-flutter build ios --debug --simulator 2>&1 | tee e2e-evidence/flutter-build.txt
-
-# iOS (release, device)
-flutter build ios --release 2>&1 | tee e2e-evidence/flutter-build.txt
-
-# Web
-flutter build web 2>&1 | tee e2e-evidence/flutter-build.txt
 ```
 
 Check result:
@@ -98,29 +98,12 @@ fi
 Launch the app on the connected device or emulator:
 
 ```bash
-# Run on the default connected device (foreground, streams logs)
 flutter run 2>&1 | tee e2e-evidence/flutter-run.txt &
 FLUTTER_PID=$!
 sleep 10   # Wait for app to fully launch
 ```
 
-To target a specific device:
-```bash
-# Get device ID
-flutter devices
-
-# Run on specific device
-flutter run -d DEVICE_ID 2>&1 | tee e2e-evidence/flutter-run.txt &
-FLUTTER_PID=$!
-sleep 10
-```
-
-To run in release mode (closer to production):
-```bash
-flutter run --release -d DEVICE_ID 2>&1 | tee e2e-evidence/flutter-run.txt &
-FLUTTER_PID=$!
-sleep 10
-```
+To target a specific device, use `flutter devices` to list IDs, then `flutter run -d DEVICE_ID`. Device selection guidance (simulator vs emulator vs physical) is in `references/device-and-run.md`.
 
 Verify the app launched:
 ```bash
@@ -134,12 +117,10 @@ fi
 
 ## Step 4: Screenshot Capture
 
-Capture screenshots using the `flutter screenshot` command while the app is running:
+Capture screenshots using `flutter screenshot` while the app is running:
 
 ```bash
-# Capture screenshot of current app state
 flutter screenshot --out e2e-evidence/flutter-01-launch-screen.png -d DEVICE_ID
-echo "Exit code: $?" >> e2e-evidence/flutter-01-launch-screen.png.txt
 ```
 
 Capture sequential screenshots at each validation point:
@@ -149,41 +130,18 @@ flutter screenshot --out e2e-evidence/flutter-02-main-view.png -d DEVICE_ID
 flutter screenshot --out e2e-evidence/flutter-03-interaction-result.png -d DEVICE_ID
 ```
 
-For iOS Simulator targets, you can also use simctl directly:
-```bash
-xcrun simctl io booted screenshot e2e-evidence/flutter-01-launch-screen.png
-```
-
-For Android emulators via adb:
-```bash
-adb shell screencap -p /sdcard/screenshot.png
-adb pull /sdcard/screenshot.png e2e-evidence/flutter-01-launch-screen.png
-```
+Platform alternatives (iOS simctl, Android adb) in `references/flutter-logs-crashes.md`.
 
 ## Step 5: Log Streaming
 
 Stream Flutter framework and app logs while the app runs:
 
 ```bash
-# Stream logs from connected device (all Flutter output)
 flutter logs -d DEVICE_ID 2>&1 | tee e2e-evidence/flutter-app-logs.txt &
 LOG_PID=$!
-sleep 15   # Capture logs during interaction
+sleep 15
 kill $LOG_PID
 wait $LOG_PID 2>/dev/null
-```
-
-For Android, capture logcat filtered to Flutter:
-```bash
-adb logcat flutter:V *:S 2>&1 | head -200 | tee e2e-evidence/flutter-logcat.txt
-```
-
-For iOS Simulator, capture system logs:
-```bash
-xcrun simctl spawn booted log stream \
-  --predicate 'process == "Runner"' \
-  --level debug \
-  --timeout 15 2>&1 | tee e2e-evidence/flutter-ios-logs.txt
 ```
 
 Check for errors in captured logs:
@@ -195,29 +153,16 @@ else
 fi
 ```
 
+Platform-specific alternatives (`adb logcat flutter:V`, `xcrun simctl spawn booted log stream`) in `references/flutter-logs-crashes.md`.
+
 ## Step 6: Widget Tree Inspection
 
-Capture the widget tree for structural validation (requires debug mode):
-
-```bash
-# Using flutter inspector via CLI (requires debug session active)
-# Press 'w' in the flutter run console to dump the widget tree, or:
-flutter run --debug -d DEVICE_ID 2>&1 &
-sleep 10
-# Send 'w' command to dump widget hierarchy to stdout
-```
-
-Alternatively, capture accessibility tree on Android via adb:
-```bash
-adb shell uiautomator dump /sdcard/ui-dump.xml
-adb pull /sdcard/ui-dump.xml e2e-evidence/flutter-widget-tree.xml
-```
+Capture the widget tree for structural validation (debug mode only). Press `w` in the `flutter run` console to dump the widget hierarchy, or use `adb shell uiautomator dump` for an accessibility-tree equivalent. Commands in `references/flutter-logs-crashes.md`.
 
 ## Step 7: Crash Detection
 
-Check for crash output in logs:
+Check for crash output in `flutter run` logs:
 ```bash
-# Check flutter run output for unhandled exceptions
 if grep -iE "unhandled exception|FlutterError|RenderFlex overflowed|null check operator" \
    e2e-evidence/flutter-run.txt; then
   echo "FAIL: Crash or render error detected in flutter run output"
@@ -226,28 +171,7 @@ else
 fi
 ```
 
-For Android crash logs:
-```bash
-adb logcat -d -s AndroidRuntime:E 2>&1 | tee e2e-evidence/flutter-android-crashes.txt
-if grep -q "FATAL EXCEPTION" e2e-evidence/flutter-android-crashes.txt; then
-  echo "FAIL: Android fatal exception detected"
-else
-  echo "PASS: No Android fatal exceptions found"
-fi
-```
-
-For iOS Simulator crash logs:
-```bash
-CRASH_DIR="$HOME/Library/Logs/DiagnosticReports"
-RECENT_CRASHES=$(find "$CRASH_DIR" -name "Runner*.ips" -newer e2e-evidence/flutter-build.txt 2>/dev/null)
-if [ -n "$RECENT_CRASHES" ]; then
-  echo "FAIL: iOS crash logs found:"
-  echo "$RECENT_CRASHES"
-  cp $RECENT_CRASHES e2e-evidence/
-else
-  echo "PASS: No iOS crash logs detected"
-fi
-```
+Platform crash log locations (Android `AndroidRuntime:E` logcat, iOS `~/Library/Logs/DiagnosticReports/Runner*.ips`) and their check commands are in `references/flutter-logs-crashes.md`.
 
 ## Step 8: Stop the App
 

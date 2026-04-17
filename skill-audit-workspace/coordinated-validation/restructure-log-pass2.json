@@ -1,0 +1,67 @@
+{
+  "skill": "coordinated-validation",
+  "pass": 2,
+  "date": "2026-04-17",
+  "stage": "stage-3-body-restructure",
+  "before": {
+    "skill_md_lines": 364,
+    "references": []
+  },
+  "after": {
+    "skill_md_lines": 193,
+    "references": [
+      {
+        "path": "references/wave-execution-detail.md",
+        "lines": 97,
+        "purpose": "Phase 3 full wave walkthrough (Wave 0/1/2), Phase 4 evidence coordination, Phase 5 unified report, evidence directory structure"
+      },
+      {
+        "path": "references/coordinated-report-format.md",
+        "lines": 64,
+        "purpose": "Full markdown template for Verdict Writer to produce coordinated-report.md",
+        "note": "Originally named report-template.md but blocked by descriptive-name hook; renamed to coordinated-report-format.md"
+      },
+      {
+        "path": "references/troubleshooting.md",
+        "lines": 32,
+        "purpose": "Common Failures table (5 scenarios) + Performance Guidelines with wall-clock formulas"
+      }
+    ]
+  },
+  "reduction": {
+    "lines_removed_from_skill_md": 171,
+    "percent_reduction": 47,
+    "target_was": 260,
+    "achieved": 193
+  },
+  "preserved_in_skill_md": [
+    "YAML frontmatter (verbatim)",
+    "When to Use",
+    "Dependency Graph + Standard Dependency Rules + Parallel-Safe Combinations",
+    "Wave Execution Rules (summary only)",
+    "Failure Blocking Matrix (load-bearing core policy)",
+    "Orchestration Protocol Phase 1 (Dependency Graph Analysis)",
+    "Orchestration Protocol Phase 2 (Member Assignment with full table)",
+    "Orchestration Protocol Phase 3 (summary with pointer to reference)",
+    "Agent Prompt Template (full)",
+    "Verdict Aggregation (Per-Wave + Overall tables)"
+  ],
+  "pointers_added": [
+    "After Wave Execution Rules summary: explicit pointer to references/wave-execution-detail.md with 'read this before running the first wave'",
+    "Report Output section: pointer to references/coordinated-report-format.md with 'load it when synthesizing the final report'",
+    "Troubleshooting and Performance section: pointer to references/troubleshooting.md with 'load it when you hit a wave failure, cross-platform inconsistency, or need to estimate total validation time'"
+  ],
+  "verification": {
+    "yaml_frontmatter_intact": true,
+    "first_three_lines_are_yaml": true,
+    "all_references_have_h1_heading": true,
+    "all_references_have_loaded_by_context": true,
+    "line_count_under_260_target": true
+  },
+  "issues": [
+    {
+      "severity": "resolved",
+      "detail": "Write tool refused to create references/report-template.md — the descriptive-name hook flagged 'template' as a report-file name. Renamed to coordinated-report-format.md and updated SKILL.md pointer."
+    }
+  ]
+}

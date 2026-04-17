@@ -70,162 +70,21 @@ Bad patterns that show up when this skill is misused:
 | `api-response` | `.json` | LLM text analysis | Schema compliance, required field presence, error code correctness, edge case coverage |
 | `cli-output` | `.txt`, `.log` | LLM text analysis | Error indicators, success markers, unexpected warnings, exit code patterns |
 
-## Analysis Output Schema
+## Analysis Output
 
-Every evidence item analyzed produces an `AnalysisResult` with the following structure:
+Every evidence item analyzed produces an `AnalysisResult` JSON object containing `evidence_file`, `evidence_type`, a 0–100 `confidence` score, a `verdict_label` (PASS/WARN/FAIL), a list of `findings` with severity, a 1–3 sentence `summary`, and an `analyzed_at` timestamp. Verdict labels are derived from confidence thresholds and finding severity — a CRITICAL finding forces FAIL regardless of score.
 
-```json
-{
-  "evidence_file": "e2e-evidence/journey-slug/step-03-login-response.json",
-  "evidence_type": "api-response",
-  "confidence": 87,
-  "verdict_label": "PASS",
-  "findings": [
-    {
-      "severity": "LOW",
-      "finding": "Response includes deprecated field `legacy_token`",
-      "recommendation": "Remove `legacy_token` from response; it is not part of current schema"
-    }
-  ],
-  "summary": "API response matches expected schema. Authentication token present. One deprecated field detected.",
-  "analyzed_at": "2025-01-15T14:32:00Z"
-}
-```
-
-### Field Definitions
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `evidence_file` | string | Relative path to the evidence file analyzed |
-| `evidence_type` | `"screenshot"` \| `"api-response"` \| `"cli-output"` | Detected or specified evidence type |
-| `confidence` | integer 0–100 | AI confidence that the evidence supports a PASS verdict |
-| `verdict_label` | `"PASS"` \| `"FAIL"` \| `"WARN"` | Recommended verdict for this evidence item |
-| `findings` | Finding[] | Array of specific observations (may be empty for clean evidence) |
-| `summary` | string | 1–3 sentence human-readable summary of the analysis |
-| `analyzed_at` | ISO 8601 string | Timestamp of when analysis was performed |
-
-### Confidence Score Interpretation
-
-| Score | Label | Meaning |
-|-------|-------|---------|
-| 90–100 | PASS | Strong evidence the feature works correctly |
-| 70–89 | PASS (with notes) | Evidence is good; minor issues detected |
-| 50–69 | WARN | Evidence is ambiguous; human review needed |
-| 30–49 | FAIL | Evidence suggests functional problems |
-| 0–29 | FAIL | Evidence clearly shows failure or is invalid |
-
-### Finding Schema
-
-```json
-{
-  "severity": "CRITICAL | HIGH | MEDIUM | LOW",
-  "finding": "Specific observation about the evidence",
-  "recommendation": "Suggested remediation or follow-up action"
-}
-```
-
-### Verdict Label Rules
-
-- **PASS**: `confidence >= 70` AND no CRITICAL findings
-- **WARN**: `confidence >= 50` AND no CRITICAL findings, but MEDIUM or HIGH findings present
-- **FAIL**: `confidence < 50` OR any CRITICAL finding present
+> For the full field-by-field schema, confidence-to-verdict mapping table, and `Finding` sub-schema, see `references/schema-definitions.md`. Load that file when writing the JSON output or validating an existing analysis file.
 
 ## Analysis Protocol
 
-### Step 1: Discover Evidence
+The analysis pipeline has five sequential steps. Steps 1–3 (discover, classify, analyze) are the heavy-lift portion — their details live in a reference file so the core SKILL.md stays lean. Steps 4–5 (save results, generate summary) define the output structure the verdict-writer depends on and live inline below.
 
-```bash
-find e2e-evidence/ -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.json" -o -name "*.txt" -o -name "*.log" \) \
-  | sort > e2e-evidence/evidence-inventory.txt
-cat e2e-evidence/evidence-inventory.txt
-```
+### Steps 1–3: Discover, Classify, Analyze
 
-Skip files that are 0 bytes — empty evidence files are invalid and should be noted as failures.
+**Fast path**: `bash scripts/detect-evidence-type.sh --evidence-dir=e2e-evidence --write-tsv` produces `e2e-evidence/_classified.tsv` that pre-classifies every evidence file by category. Read that TSV to skip inline extension/content heuristics; fall back to the reference-file heuristics only when the script is unavailable.
 
-**Pre-classify with**: `bash scripts/detect-evidence-type.sh --evidence-dir=e2e-evidence --write-tsv` produces `e2e-evidence/_classified.tsv` that subsequent steps can read to skip the extension-based classification logic inline. The TSV columns are `file_path\tcategory\tbytes\tnon_empty` where `category` ∈ {screenshot, api_response, dom_snapshot, cli_output, log, network_trace, verdict, notes, unknown} and `non_empty=1` when size > 10 bytes. Downstream steps only need to filter by category; the heuristics below remain as a reference / fallback when the script is unavailable.
-
-### Step 2: Classify Evidence Types
-
-Determine evidence type using **both file extension and content inspection**:
-
-#### By File Extension (primary detection)
-
-| Extension | Evidence Type | Analysis Model |
-|-----------|--------------|----------------|
-| `.png`, `.jpg`, `.jpeg`, `.webp` | `screenshot` | Vision (claude-sonnet with vision) |
-| `.json` | `api-response` | LLM text analysis |
-| `.txt`, `.log` | `cli-output` | LLM text analysis |
-
-#### By Content (fallback when extension is ambiguous)
-
-When the extension is missing or generic (e.g., no extension, `.out`, `.data`), inspect the first 512 bytes of the file:
-
-```bash
-file_head=$(head -c 512 "$evidence_file")
-
-# Detect JSON
-if echo "$file_head" | python3 -c "import sys,json; json.load(sys.stdin)" 2>/dev/null; then
-  evidence_type="api-response"
-# Detect image magic bytes (PNG: \x89PNG, JPEG: \xFF\xD8)
-elif xxd -l 4 "$evidence_file" | grep -qE "8950 4e47|ffd8 ffe"; then
-  evidence_type="screenshot"
-# Default to CLI output for readable text
-else
-  evidence_type="cli-output"
-fi
-```
-
-Skip analysis (and flag as invalid) for:
-- Files that are 0 bytes
-- Files that cannot be read (permissions error)
-- Binary files with no detected image magic bytes
-
-### Step 3: Analyze by Type
-
-#### Screenshot Analysis (Vision Model)
-
-Provide the screenshot to the vision model with a structured prompt:
-
-```
-Analyze this screenshot as validation evidence. Answer the following:
-1. Is the page fully rendered (no blank areas, spinners, or loading states)?
-2. Are there any visible error messages or error states?
-3. What key UI elements are visible? List them specifically.
-4. Are there any layout defects (overlapping elements, cut-off text, broken images)?
-5. Overall: does this screenshot constitute positive evidence that the feature is working?
-
-Respond in JSON matching the AnalysisResult schema.
-```
-
-#### API Response Analysis (LLM)
-
-Provide the JSON response body with this prompt:
-
-```
-Analyze this API response as validation evidence. Check:
-1. Is the HTTP response a success status (2xx)?
-2. Are all expected fields present and non-null?
-3. Do field values match expected types and formats?
-4. Are there any error objects, empty required arrays, or null required fields?
-5. Overall: does this response confirm the API is functioning correctly?
-
-Respond in JSON matching the AnalysisResult schema.
-```
-
-#### CLI Output Analysis (LLM)
-
-Provide the CLI output text with this prompt:
-
-```
-Analyze this CLI output as validation evidence. Check:
-1. Are there any ERROR, FATAL, or PANIC lines?
-2. Are there unexpected WARNING lines that indicate problems?
-3. Is there a success indicator (exit 0, "Done", "Success", "Passed")?
-4. Are there any stack traces or exception messages?
-5. Overall: does this output indicate successful execution?
-
-Respond in JSON matching the AnalysisResult schema.
-```
+> For Steps 1–3 detail (the `find` discovery snippet, the extension + magic-byte classification branches, and the exact model prompts for screenshot / api-response / cli-output analysis), see `references/analysis-protocol.md`. Load that file when you're about to invoke a model on an evidence item.
 
 ### Step 4: Save Analysis Results
 

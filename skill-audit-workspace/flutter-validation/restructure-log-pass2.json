@@ -1,0 +1,59 @@
+{
+  "skill": "flutter-validation",
+  "pass": 2,
+  "stage": 3,
+  "date": "2026-04-17",
+  "original_lines": 300,
+  "final_lines": {
+    "SKILL.md": 223,
+    "references/build-variants.md": 61,
+    "references/device-and-run.md": 48,
+    "references/flutter-logs-crashes.md": 126
+  },
+  "target_range": "240-270 (soft) / 200-250 (acceptable)",
+  "final_in_range": true,
+  "yaml_frontmatter_intact": true,
+  "yaml_fields_preserved": ["name", "description", "triggers", "context_priority"],
+  "decision_tree_added": true,
+  "decision_tree_location": "'Which Build Variant When?' section, placed before Step 1",
+  "audit_finding_resolved": "Decision tree for build variant selection (debug/emulator vs debug/device vs release) now present inline",
+  "extractions": [
+    {
+      "reference": "references/build-variants.md",
+      "content": "Full Step 1 (pub get with gate) and Step 2 (Android APK/AAB debug/release, iOS debug/release, Web build commands + gates) plus 'When to Pick Which Variant' guidance",
+      "inline_retained": "Step 1 kept fully inline; Step 2 retains canonical example (debug APK) + pass/fail gate, references file for full matrix"
+    },
+    {
+      "reference": "references/device-and-run.md",
+      "content": "Specific-device targeting, release-mode run, launch verification gate, device selection guidance",
+      "inline_retained": "Default flutter run command + launch verification gate; specific-device + release variants referenced out"
+    },
+    {
+      "reference": "references/flutter-logs-crashes.md",
+      "content": "Steps 4-7 combined — screenshot platform alternatives (simctl, adb), flutter logs + adb logcat + xcrun simctl spawn, widget tree dump via uiautomator, Android AndroidRuntime crash check, iOS DiagnosticReports crash scan",
+      "inline_retained": "Canonical flutter screenshot, flutter logs, flutter run crash grep kept inline; platform-specific variants extracted"
+    }
+  ],
+  "sections_kept_in_SKILL.md": [
+    "YAML frontmatter",
+    "Prerequisites (full table + emulator launch block)",
+    "Which Build Variant When? (NEW — decision tree)",
+    "Step 1: Install Dependencies (full)",
+    "Step 2: Build (canonical command + gate, reference pointer)",
+    "Step 3: Run on Device (default run + gate, reference pointer)",
+    "Step 4: Screenshot Capture (flutter screenshot + sequential, reference pointer)",
+    "Step 5: Log Streaming (flutter logs + grep gate, reference pointer)",
+    "Step 6: Widget Tree Inspection (summary + reference pointer)",
+    "Step 7: Crash Detection (flutter run grep + reference pointer)",
+    "Step 8: Stop the App (full)",
+    "Evidence Quality (full)",
+    "Common Failures table (full, 10 rows)",
+    "PASS Criteria Template (full, 10 criteria)"
+  ],
+  "rationale": "flutter-validation was already close to target; per instructions, erred on the side of moving less. First pass over-extracted to 136 lines; restored canonical inline command + pass/fail gate per step, pushing only true platform-variant detail (multi-target build matrix, device-selection guidance, iOS/Android log + crash variants) into references. Decision tree for build variant selection added inline as audit finding required.",
+  "verification": {
+    "wc_output": "223 SKILL.md / 61 build-variants.md / 48 device-and-run.md / 126 flutter-logs-crashes.md",
+    "yaml_head_14_checked": true,
+    "reference_pointers_in_skill": 6
+  }
+}

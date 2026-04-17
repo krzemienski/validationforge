@@ -1,0 +1,47 @@
+{
+  "skill": "ai-evidence-analysis",
+  "pass": 2,
+  "phase": "stage-3-body-restructure",
+  "timestamp": "2026-04-17T06:27:00Z",
+  "before": {
+    "SKILL.md": 377
+  },
+  "after": {
+    "SKILL.md": 236,
+    "references/analysis-protocol.md": 98,
+    "references/schema-definitions.md": 63
+  },
+  "reference_files_created": [
+    "skills/ai-evidence-analysis/references/analysis-protocol.md",
+    "skills/ai-evidence-analysis/references/schema-definitions.md"
+  ],
+  "content_moved": {
+    "analysis-protocol.md": "Steps 1-3 of Analysis Protocol (Discover Evidence, Classify Evidence Types, Analyze by Type) including bash discovery snippet, extension+content-inspection classification heuristics, and per-type model prompts (screenshot vision / api-response LLM / cli-output LLM)",
+    "schema-definitions.md": "Analysis Output Schema block, Field Definitions table, Confidence Score Interpretation table, Finding Schema JSON, and Verdict Label Rules"
+  },
+  "content_preserved_in_SKILL.md": [
+    "YAML frontmatter (unchanged verbatim)",
+    "When to Use / How to Disable / Common Mistakes / Scope",
+    "Supported Evidence Types table",
+    "Analysis Output high-level intro (pointer to schema-definitions.md)",
+    "Fast-path script reference: scripts/detect-evidence-type.sh --evidence-dir=... --write-tsv",
+    "Steps 4-5 (Save Analysis Results + Generate Analysis Summary) inline",
+    "Enabling and Disabling Analysis section",
+    "Integration with ValidationForge Pipeline",
+    "Anti-Patterns table",
+    "Related Skills"
+  ],
+  "pointers_added": [
+    "Analysis Output section -> references/schema-definitions.md",
+    "Analysis Protocol Steps 1-3 -> references/analysis-protocol.md"
+  ],
+  "verification": {
+    "yaml_frontmatter_intact": true,
+    "script_reference_count": 1,
+    "script_reference_line_context": "scripts/detect-evidence-type.sh --evidence-dir=e2e-evidence --write-tsv (preserved in Steps 1-3 fast-path pointer)",
+    "target_line_range": "200-250",
+    "final_SKILL_md_lines": 236,
+    "within_target": true
+  },
+  "content_not_cleanly_moved": []
+}

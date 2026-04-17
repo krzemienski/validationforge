@@ -28,264 +28,71 @@ context_priority: standard
 | Migrations applied | `python manage.py showmigrations` (Django) |
 | Evidence directory exists | `mkdir -p e2e-evidence` |
 
-If using a virtual environment, activate it first:
-```bash
-# Create virtualenv
-python -m venv venv
+If using a virtual environment, activate it before starting the protocol. See
+`references/setup-validation.md` for the full virtualenv bootstrap script.
 
-# Activate (Linux/macOS)
-source venv/bin/activate
+## Step Overview
 
-# Activate (Windows)
-venv\Scripts\activate
+### Step 1: Install Dependencies
 
-# Verify activation
-which python
-```
+Install packages from `requirements.txt` (or via `pip-tools`) and capture the
+pip log as evidence, grepping for a success marker.
 
-## Step 1: Install Dependencies
+> Full bash + evidence pattern: `references/setup-validation.md`
 
-```bash
-# Install from requirements file
-pip install -r requirements.txt 2>&1 | tee e2e-evidence/django-pip-install.txt
+### Step 2: Django System Check
 
-# Or with pip-tools
-pip install pip-tools && pip-sync requirements.txt 2>&1 | tee e2e-evidence/django-pip-install.txt
-```
+Run `python manage.py check` to catch configuration errors before booting the
+server. For deployment readiness, add `--deploy`.
 
-Check result:
-```bash
-if grep -qE "Successfully installed|already satisfied" e2e-evidence/django-pip-install.txt; then
-  echo "PASS: Dependencies installed"
-else
-  echo "FAIL: pip install failed — check requirements.txt and Python version"
-  cat e2e-evidence/django-pip-install.txt
-  exit 1
-fi
-```
+> Full bash + evidence pattern: `references/setup-validation.md`
 
-## Step 2: Django System Check
+### Step 3: Migration Status
 
-Run Django's built-in system check to catch configuration errors before starting:
+Confirm all database migrations are applied via `showmigrations`, then run
+`migrate` for any outstanding items.
 
-```bash
-python manage.py check 2>&1 | tee e2e-evidence/django-check.txt
-```
+> Full bash + evidence pattern: `references/setup-validation.md`
 
-Check result:
-```bash
-if grep -q "System check identified no issues" e2e-evidence/django-check.txt; then
-  echo "PASS: Django system check clean"
-else
-  echo "FAIL: Django system check found issues"
-  cat e2e-evidence/django-check.txt
-  exit 1
-fi
-```
+### Step 4: Start the Server
 
-For deployment-readiness check:
-```bash
-python manage.py check --deploy 2>&1 | tee e2e-evidence/django-check-deploy.txt
-```
+Boot the dev server in the background and wait briefly before probing it.
+Django uses `manage.py runserver`; Flask uses `flask run` or `gunicorn` with
+`FLASK_APP` / `FLASK_ENV` env vars.
 
-## Step 3: Migration Status
+> Django and Flask variants: `references/server-startup.md`
 
-Verify all database migrations are applied:
+### Step 5: Health and Root Endpoint Check
 
-```bash
-python manage.py showmigrations 2>&1 | tee e2e-evidence/django-migrations.txt
-```
+`curl` the root, API root, and/or custom `/health/` endpoint; capture response
+bodies and HTTP status codes.
 
-Check for unapplied migrations:
-```bash
-if grep -q "[ ]" e2e-evidence/django-migrations.txt; then
-  echo "FAIL: Unapplied migrations found — run 'python manage.py migrate'"
-  grep "[ ]" e2e-evidence/django-migrations.txt
-else
-  echo "PASS: All migrations applied"
-fi
-```
+> Full bash + curl patterns: `references/server-startup.md`
 
-Apply any outstanding migrations:
-```bash
-python manage.py migrate 2>&1 | tee e2e-evidence/django-migrate.txt
-```
+### Step 6: Endpoint Testing with curl
 
-## Step 4: Start the Server
+Exercise GET list, POST create, GET detail, PUT update, and DELETE flows for
+at least one primary resource. Chain the created resource ID through subsequent
+requests, and verify DELETE is persistent by re-reading and expecting 404.
 
-### Django
+> Full curl patterns per verb: `references/endpoint-testing-crud.md`
 
-```bash
-# Start development server (background)
-python manage.py runserver 0.0.0.0:8000 2>&1 | tee e2e-evidence/django-server.txt &
-SERVER_PID=$!
-sleep 3
+### Step 7: Authentication Testing
 
-# Verify server is accepting connections
-curl -sf http://localhost:8000/ > /dev/null 2>&1 && \
-  echo "PASS: Django server is running" || \
-  echo "FAIL: Django server did not start — check e2e-evidence/django-server.txt"
-```
+Obtain a DRF token or JWT access token from the login endpoint, store it in an
+env var, and confirm unauthenticated requests to protected routes return 401
+or 403.
 
-### Flask
+> Full auth bash patterns: `references/auth-admin-testing.md`
 
-```bash
-# Set required environment variables
-export FLASK_APP=app.py  # or your app module
-export FLASK_ENV=development
+### Step 8: Django Admin Check
 
-# Start Flask development server (background)
-flask run --host=0.0.0.0 --port=5000 2>&1 | tee e2e-evidence/flask-server.txt &
-SERVER_PID=$!
-sleep 3
+Confirm `/admin/` returns 200 or a 302 login redirect. If needed, pre-seed a
+superuser via `manage.py shell`.
 
-# Or with Gunicorn (production-like)
-gunicorn app:app --bind 0.0.0.0:5000 --workers 2 \
-  2>&1 | tee e2e-evidence/flask-server.txt &
-SERVER_PID=$!
-sleep 3
+> Full admin check + superuser snippet: `references/auth-admin-testing.md`
 
-# Verify server is accepting connections
-curl -sf http://localhost:5000/ > /dev/null 2>&1 && \
-  echo "PASS: Flask server is running" || \
-  echo "FAIL: Flask server did not start — check e2e-evidence/flask-server.txt"
-```
-
-## Step 5: Health and Root Endpoint Check
-
-```bash
-# Root or health endpoint
-curl -s -w "\nHTTP_STATUS:%{http_code}" http://localhost:8000/ \
-  | tee e2e-evidence/django-health.txt
-echo ""
-
-# Django REST Framework API root (if applicable)
-curl -s http://localhost:8000/api/ \
-  -H "Accept: application/json" \
-  | tee e2e-evidence/django-api-root.json | python -m json.tool
-
-# Custom health endpoint
-curl -s http://localhost:8000/health/ \
-  | tee e2e-evidence/django-health.json | python -m json.tool
-```
-
-## Step 6: Endpoint Testing with curl
-
-### GET list endpoint
-
-```bash
-curl -s http://localhost:8000/api/RESOURCE/ \
-  -H "Accept: application/json" \
-  | tee e2e-evidence/django-list-RESOURCE.json | python -m json.tool
-
-echo "HTTP Status: $(curl -s -o /dev/null -w '%{http_code}' http://localhost:8000/api/RESOURCE/)" \
-  >> e2e-evidence/django-list-RESOURCE.json
-```
-
-### POST create endpoint
-
-```bash
-curl -s -X POST http://localhost:8000/api/RESOURCE/ \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Token $AUTH_TOKEN" \
-  -d '{"name": "Test Item", "description": "Created during validation"}' \
-  | tee e2e-evidence/django-create-RESOURCE.json | python -m json.tool
-
-RESOURCE_ID=$(python -c "import sys, json; d=json.load(open('e2e-evidence/django-create-RESOURCE.json')); print(d.get('id', d.get('pk', '')))")
-echo "Created ID: $RESOURCE_ID"
-```
-
-### GET detail endpoint
-
-```bash
-curl -s http://localhost:8000/api/RESOURCE/$RESOURCE_ID/ \
-  -H "Accept: application/json" \
-  -H "Authorization: Token $AUTH_TOKEN" \
-  | tee e2e-evidence/django-detail-RESOURCE.json | python -m json.tool
-```
-
-### PUT update endpoint
-
-```bash
-curl -s -X PUT http://localhost:8000/api/RESOURCE/$RESOURCE_ID/ \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Token $AUTH_TOKEN" \
-  -d '{"name": "Updated Item", "description": "Modified during validation"}' \
-  | tee e2e-evidence/django-update-RESOURCE.json | python -m json.tool
-```
-
-### DELETE endpoint
-
-```bash
-curl -s -X DELETE http://localhost:8000/api/RESOURCE/$RESOURCE_ID/ \
-  -H "Authorization: Token $AUTH_TOKEN" \
-  -w "\nHTTP_STATUS:%{http_code}" \
-  | tee e2e-evidence/django-delete-RESOURCE.txt
-
-# Verify 404 on subsequent read
-curl -s -w "\nHTTP_STATUS:%{http_code}" \
-  http://localhost:8000/api/RESOURCE/$RESOURCE_ID/ \
-  -H "Authorization: Token $AUTH_TOKEN" \
-  | tee e2e-evidence/django-deleted-RESOURCE.txt
-```
-
-## Step 7: Authentication Testing
-
-### Obtain token (Django REST Framework token auth)
-
-```bash
-AUTH_TOKEN=$(curl -s -X POST http://localhost:8000/api/auth/token/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "testuser", "password": "testpassword"}' \
-  | tee e2e-evidence/django-auth-login.json \
-  | python -c "import sys, json; print(json.load(sys.stdin).get('token',''))")
-echo "Token: $AUTH_TOKEN"
-```
-
-### JWT auth (if using simplejwt)
-
-```bash
-ACCESS_TOKEN=$(curl -s -X POST http://localhost:8000/api/token/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "testuser", "password": "testpassword"}' \
-  | tee e2e-evidence/django-auth-jwt.json \
-  | python -c "import sys, json; print(json.load(sys.stdin).get('access',''))")
-echo "Access token: $ACCESS_TOKEN"
-```
-
-### Unauthenticated request (expect 401/403)
-
-```bash
-curl -s -w "\nHTTP_STATUS:%{http_code}" http://localhost:8000/api/protected/ \
-  | tee e2e-evidence/django-auth-unauthed.txt
-```
-
-## Step 8: Django Admin Check
-
-Verify Django admin is accessible (if used):
-
-```bash
-curl -s -w "\nHTTP_STATUS:%{http_code}" http://localhost:8000/admin/ \
-  | tee e2e-evidence/django-admin-check.txt
-
-if grep -q "HTTP_STATUS:200" e2e-evidence/django-admin-check.txt || \
-   grep -q "HTTP_STATUS:302" e2e-evidence/django-admin-check.txt; then
-  echo "PASS: Django admin accessible"
-else
-  echo "FAIL: Django admin not reachable"
-fi
-```
-
-Create superuser for admin access (if needed):
-```bash
-echo "from django.contrib.auth import get_user_model; \
-User = get_user_model(); \
-User.objects.filter(username='admin').exists() or \
-User.objects.create_superuser('admin', 'admin@example.com', 'adminpassword')" \
-| python manage.py shell 2>&1 | tee e2e-evidence/django-create-superuser.txt
-```
-
-## Step 9: Stop the Server
+### Step 9: Stop the Server
 
 ```bash
 kill $SERVER_PID
