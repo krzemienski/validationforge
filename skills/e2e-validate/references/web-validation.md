@@ -41,7 +41,7 @@ browser_take_screenshot type="png"            # Visual capture
 browser_click ref="button-submit"             # Click element by ref
 browser_type ref="input-email" text="user@example.com"
 browser_console_messages level="error"        # Check for JS errors
-browser_network_requests includeStatic=false  # Check API calls
+browser_network_requests static=false  # Check API calls
 browser_snapshot                              # Get refs for form fields
 browser_fill  ref="FIELD_REF"  value="value" # Fill each field individually
 ```
