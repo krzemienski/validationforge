@@ -1,0 +1,27 @@
+=== subtask-3-2: invoke hook from installed plugin root ===
+Date: 2026-04-17T11:25:12Z
+
+Installed root: /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0
+
+--- Stat of installed hook ---
+mode=-rwxr-xr-x size=1908 path=/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/block-test-files.js
+
+--- Invoke .test.ts DENY from installed path ---
+Exit: 0
+Stdout:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED: \"scratch/foo.test.ts\" matches a test/mock/stub file pattern.\nValidationForge Iron Rule: Never create test files, mock files, or stub files.\nInstead: Build and run the real system. Validate through actual user interfaces.\nRun /validate to start the correct validation workflow."}}
+Stderr:
+
+ASSERTION 3-2a: PASS (permissionDecision=deny emitted from installed path)
+
+--- Confirm patterns.js loaded from .opencode (no fallback stderr) ---
+ASSERTION 3-2b: PASS (patterns.js loaded external patterns.ts without fallback)
+
+--- Allowlist case from installed path: e2e-evidence/foo.test.md ---
+Exit: 0
+Stdout-bytes: 0
+Stderr:
+
+ASSERTION 3-2c: PASS (allowlisted path, silent exit 0)
+
+=== done ===

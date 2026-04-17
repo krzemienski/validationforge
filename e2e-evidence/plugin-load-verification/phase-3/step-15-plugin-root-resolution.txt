@@ -1,0 +1,111 @@
+=== subtask-3-1: ${CLAUDE_PLUGIN_ROOT} path resolution ===
+Date: 2026-04-17T11:25:11Z
+
+INSTALLED_ROOT = /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0
+
+--- Stat of installed root ---
+mode=drwxr-xr-x size=416 mtime=Apr  8 22:30:16 2026 path=/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0
+
+--- All ${CLAUDE_PLUGIN_ROOT} references across plugin manifests ---
+hooks/hooks.json:10:            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-test-files.js"
+hooks/hooks.json:19:            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/evidence-gate-reminder.js"
+hooks/hooks.json:30:            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validation-not-compilation.js"
+hooks/hooks.json:34:            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/completion-claim-validator.js"
+hooks/hooks.json:38:            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validation-state-tracker.js"
+hooks/hooks.json:47:            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/mock-detection.js"
+hooks/hooks.json:51:            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/evidence-quality-check.js"
+
+Total refs: 7
+
+--- Per-reference resolution & stat ---
+  [PreToolUse]
+    matcher:       Write|Edit|MultiEdit
+    template:      ${CLAUDE_PLUGIN_ROOT}/hooks/block-test-files.js
+    substituted:   /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/block-test-files.js
+    exists:        true
+    size:          1908
+    mode:          0755
+    first-line:    #!/usr/bin/env node
+
+  [PreToolUse]
+    matcher:       TaskUpdate
+    template:      ${CLAUDE_PLUGIN_ROOT}/hooks/evidence-gate-reminder.js
+    substituted:   /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/evidence-gate-reminder.js
+    exists:        true
+    size:          1300
+    mode:          0755
+    first-line:    #!/usr/bin/env node
+
+  [PostToolUse]
+    matcher:       Bash
+    template:      ${CLAUDE_PLUGIN_ROOT}/hooks/validation-not-compilation.js
+    substituted:   /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/validation-not-compilation.js
+    exists:        true
+    size:          1068
+    mode:          0755
+    first-line:    #!/usr/bin/env node
+
+  [PostToolUse]
+    matcher:       Bash
+    template:      ${CLAUDE_PLUGIN_ROOT}/hooks/completion-claim-validator.js
+    substituted:   /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/completion-claim-validator.js
+    exists:        true
+    size:          1420
+    mode:          0755
+    first-line:    #!/usr/bin/env node
+
+  [PostToolUse]
+    matcher:       Bash
+    template:      ${CLAUDE_PLUGIN_ROOT}/hooks/validation-state-tracker.js
+    substituted:   /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/validation-state-tracker.js
+    exists:        true
+    size:          996
+    mode:          0755
+    first-line:    #!/usr/bin/env node
+
+  [PostToolUse]
+    matcher:       Edit|Write|MultiEdit
+    template:      ${CLAUDE_PLUGIN_ROOT}/hooks/mock-detection.js
+    substituted:   /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/mock-detection.js
+    exists:        true
+    size:          1089
+    mode:          0755
+    first-line:    #!/usr/bin/env node
+
+  [PostToolUse]
+    matcher:       Edit|Write|MultiEdit
+    template:      ${CLAUDE_PLUGIN_ROOT}/hooks/evidence-quality-check.js
+    substituted:   /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/evidence-quality-check.js
+    exists:        true
+    size:          1186
+    mode:          0755
+    first-line:    #!/usr/bin/env node
+
+SUMMARY: total-refs=7 resolved=7 failed=0
+
+--- patterns.ts companion file in installed root (not ${CLAUDE_PLUGIN_ROOT} substituted but required by patterns.js) ---
+MISSING: /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/.opencode/plugins/validationforge/patterns.ts
+
+=== done ===
+
+--- ADDENDUM: installed patterns.js differs from worktree ---
+The worktree hooks/patterns.js attempts to load .opencode/plugins/validationforge/patterns.ts
+via a TS->JS strip-and-vm-eval bridge; if the .ts file is missing it emits a
+"Using inline fallback" warning and uses built-in patterns.
+
+The INSTALLED hooks/patterns.js at
+/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/patterns.js
+is a different, self-contained implementation that exports patterns inline without any
+external file dependency. The header reads:
+  "Self-contained ValidationForge patterns — no external file dependencies."
+
+Stat of the installed patterns.js:
+mode=-rw-r--r-- size=1800 mtime=Apr 10 16:21:55 2026 path=/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/hooks/patterns.js
+
+TEST_PATTERNS count when loading installed patterns.js: 15 (verified via
+`cd /Users/nick/.claude/plugins/cache/.../1.0.0 && node -e 'console.log(require("./hooks/patterns").TEST_PATTERNS.length)'`)
+
+Conclusion: the plugin ships a SELF-CONTAINED patterns.js at install time, so the
+missing .opencode/plugins/validationforge/patterns.ts is not a load-path defect —
+it's simply unused in the installed form. The runtime path has no missing file
+and no fallback warning is emitted.
