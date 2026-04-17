@@ -2,7 +2,7 @@
 
 **No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
 
-> **41 skills | 15 commands | 7 hooks | 5 agents | 8 rules | 8 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
+> **44 skills | 16 commands | 7 hooks | 7 agents | 8 rules | 8 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
 
 ## The Iron Rule
 
@@ -93,6 +93,7 @@ Setup detects your platform, selects enforcement level, scaffolds `e2e-evidence/
 /validate-team               # Multi-agent parallel platform validation
 /validate-sweep              # Autonomous fix-and-revalidate loop until PASS
 /validate-benchmark          # Measure validation posture (coverage, evidence, speed)
+/validate-consensus          # Multi-agent CONSENSUS validation with synthesized verdict and confidence scoring
 ```
 
 ### Forge Commands
@@ -108,7 +109,7 @@ Setup detects your platform, selects enforcement level, scaffolds `e2e-evidence/
 
 ### Skills
 
-Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 41 skills across 7 categories.
+Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 44 skills across 8 categories.
 
 ### Hooks
 
@@ -149,6 +150,7 @@ Hooks enforce discipline automatically. See [ARCHITECTURE.md](./ARCHITECTURE.md)
 | `/validate-team` | yes | yes | yes | parallel | yes | unified | -- |
 | `/validate-sweep` | -- | -- | -- | loop | loop | loop | -- |
 | `/validate-benchmark` | -- | -- | -- | -- | score | report | -- |
+| `/validate-consensus` | -- | reuse | yes | N validators | disagreement | synthesized | -- |
 
 ## Platform Auto-Detection
 
@@ -222,10 +224,10 @@ Designed grade thresholds (pending empirical calibration): A (90+), B (80–89),
 
 | Primitive | Count | Location |
 |-----------|------:|----------|
-| Skills | 41 | `skills/*/SKILL.md` |
-| Commands | 15 | `commands/*.md` |
+| Skills | 44 | `skills/*/SKILL.md` |
+| Commands | 16 | `commands/*.md` |
 | CC Hooks | 8 | `hooks/*.js` + `hooks/hooks.json` |
-| Agents | 5 | `agents/*.md` |
+| Agents | 7 | `agents/*.md` |
 | Rules | 8 | `rules/*.md` |
 | Shell Scripts | 8 | `scripts/*.sh` + `scripts/benchmark/*.sh` |
 | OC Plugin Files | 2 | `.opencode/plugins/validationforge/{index.ts,patterns.ts}` |
@@ -245,12 +247,12 @@ validationforge/
 |   +-- patterns.ts                   Shared regex patterns (source of truth)
 |   +-- package.json                  Package manifest
 |   +-- tsconfig.json                 TypeScript config
-+-- skills/                           41 skills (SKILL.md frontmatter)
-+-- commands/                         15 slash commands
++-- skills/                           44 skills (SKILL.md frontmatter), incl. 3 consensus-engine skills
++-- commands/                         16 slash commands (incl. /validate-consensus)
 +-- hooks/                            7 enforcement hooks + 1 patterns bridge
 |   +-- hooks.json                    Hook registration manifest
 |   +-- patterns.js                   CommonJS bridge to patterns.ts
-+-- agents/                           5 specialist agents
++-- agents/                           7 specialist agents (incl. consensus-validator, consensus-synthesizer)
 +-- rules/                            8 enforcement rules
 +-- config/                           3 enforcement profiles
 +-- templates/                        4 report templates

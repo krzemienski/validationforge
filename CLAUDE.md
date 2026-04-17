@@ -10,6 +10,7 @@ No-mock validation platform for Claude Code. Ship verified code, not "it compile
 4. **Gate Discipline** — Never claim completion without personally examining evidence
 5. **Autonomous Fix Loop** — Don't just find defects, fix them and re-validate
 6. **Benchmark Everything** — Measure validation effectiveness with real metrics
+7. **Consensus Engine** — For high-stakes features, spawn N independent validators, synthesize their verdicts into a single confidence-scored CONSENSUS verdict, and resolve disagreements through sequential analysis
 
 ## Quick Start
 
@@ -23,6 +24,7 @@ No-mock validation platform for Claude Code. Ship verified code, not "it compile
 /validate-team               # Multi-agent parallel platform validation
 /validate-sweep              # Autonomous fix-and-revalidate loop until PASS
 /validate-benchmark          # Measure validation posture (coverage, evidence, enforcement, speed)
+/validate-consensus          # Multi-agent CONSENSUS validation with synthesized verdict and confidence scoring
 ```
 
 ## The 7-Phase Pipeline
@@ -121,15 +123,15 @@ History tracked in `.vf/benchmarks/`.
 
 ## Inventory
 
-### Commands (15)
+### Commands (16)
 
 **Validation Commands**
-vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-sweep, validate-benchmark
+vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-sweep, validate-benchmark, validate-consensus
 
 **Forge Commands**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, forge-install-rules
 
-### Skills (41)
+### Skills (44)
 
 **Platform Validation (11)**
 ios-validation, ios-validation-gate, ios-validation-runner, ios-simulator-control, playwright-validation, web-validation, web-testing, chrome-devtools, api-validation, cli-validation, fullstack-validation
@@ -152,7 +154,10 @@ baseline-quality-assessment, condition-based-waiting, error-recovery, production
 **Forge Orchestration (6)**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, validate-audit-benchmarks
 
-### Agents (5)
+**Consensus Engine (3)**
+consensus-engine, consensus-synthesis, consensus-disagreement-analysis
+
+### Agents (7)
 
 | Agent | Purpose |
 |-------|---------|
@@ -161,6 +166,8 @@ forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, validate-au
 | verdict-writer | Synthesize evidence into PASS/FAIL verdicts |
 | validation-lead | Orchestrate multi-agent validation teams |
 | sweep-controller | Control autonomous fix-and-revalidate loops |
+| consensus-validator | Independent validator in CONSENSUS engine; owns an isolated evidence subdirectory |
+| consensus-synthesizer | Synthesize N validator verdicts into a single confidence-scored CONSENSUS verdict |
 
 ### Hooks (7)
 
