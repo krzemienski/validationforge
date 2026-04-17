@@ -1,12 +1,19 @@
 ---
 name: consensus-engine
-description: Orchestrate N independent validator agents assessing the same feature; synthesize verdicts into a single consensus report with confidence scoring.
+description: "Use when a single-validator PASS is not enough confidence — high-stakes features (payments, auth, data migrations, security surfaces), pre-ship release gates, regression review on large refactors, flake hunting, and audit trails for regulated work. Spawns N (≥2, default 3) independent validator agents against the same journey list, each with its own isolated evidence subdirectory, then synthesizes their per-journey verdicts into a single consensus verdict with a confidence score (UNANIMOUS → HIGH, MAJORITY → MEDIUM, SPLIT → LOW). Disagreements trigger root-cause investigation before the final verdict is emitted. Reach for it on phrases like 'consensus validation', 'multi-agent verdict', 'get a second opinion', 'validate with N agents', 'pre-ship gate', 'confidence-scored verdict', 'agreement-based review', or when you want to catch flaky behavior with parallel independent runs. Not for coverage fan-out (use parallel-validation or forge-team); not without a validation plan (run create-validation-plan first); not on a failing preflight."
 triggers:
   - "consensus validation"
   - "multi-reviewer validation"
+  - "multi-agent validation"
   - "validate with consensus"
   - "unanimous validation"
   - "consensus verdict"
+  - "get a second opinion"
+  - "confidence score"
+  - "confidence-scored verdict"
+  - "N independent validators"
+  - "pre-ship gate"
+  - "flake hunting"
 ---
 
 # Consensus Engine

@@ -137,7 +137,7 @@ vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, va
 
 **Forge Commands**
 forge-setup, forge-plan, forge-benchmark, forge-install-rules
-forge-execute (planned V2.0), forge-team (planned V1.5)
+forge-execute, forge-team
 
 ### Skills (52)
 

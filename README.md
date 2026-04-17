@@ -181,7 +181,7 @@ The `/validate-dashboard` command aggregates the most recent validation run into
 ```bash
 /forge-setup                 # Initialize VF for current project
 /forge-plan                  # Generate validation plan with journey discovery
-/forge-execute               # [planned V2.0] Run journeys with fix-and-retry loop (3-strike)
+/forge-execute               # Run journeys with fix-and-retry loop (3-strike cap)
 /forge-team                  # Multi-agent parallel validation across platforms
 /forge-benchmark             # Measure posture across 5 dimensions
 /forge-install-rules         # Install rules to .claude/rules/
