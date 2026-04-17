@@ -1,0 +1,610 @@
+{
+  "feature": "CONSENSUS Engine",
+  "description": "Implement the CONSENSUS validation engine where multiple independent validator agents assess the same feature and a verdict is synthesized from their agreement or disagreement. Disagreements trigger deeper investigation via sequential analysis.",
+  "workflow_type": "feature",
+  "workflow_rationale": "This is a feature workflow (not refactor, investigation, or migration). It introduces a brand-new validation engine (CONSENSUS) as a peer to the existing VALIDATE and FORGE engines defined in SPECIFICATION.md §3.1. The work adds new primitives (skills, agents, command, rule, template) that compose with existing primitives (parallel-validation, sequential-analysis, verdict-writer). No existing primitive is refactored or deprecated; old /validate flows continue working unchanged. Phases follow the ValidationForge primitive-dependency order: Rules → Skills → Agents → Command → Templates/Scripts → Integration/Dogfood, because higher-layer primitives reference lower-layer primitives by name.",
+  "phases": [
+    {
+      "id": "phase-1-rules-and-spec",
+      "name": "Rules, Specification, and Contract",
+      "type": "setup",
+      "description": "Codify the consensus engine contract before any skill/agent references it. Produces rules/consensus-engine.md (the authoritative contract for all downstream primitives) and updates SPECIFICATION.md §3.1 Engine 2 to reflect the implemented behavior. This phase must complete first because every skill/agent/command in later phases cites this rule file.",
+      "depends_on": [],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-1-1",
+          "description": "Create rules/consensus-engine.md. This is the authoritative consensus contract. Required sections: (1) Engine Identity (role in the FORGE → VALIDATE → CONSENSUS triad, peer to rules/team-validation.md). (2) Roles table: Coordinator, Validator-N (≥2, default 3), Synthesizer. (3) File Ownership: each validator owns e2e-evidence/consensus/validator-{N}/ exclusively; synthesizer owns e2e-evidence/consensus/report.md; coordinator owns nothing. (4) Synthesis States table: UNANIMOUS_PASS → PASS (HIGH), UNANIMOUS_FAIL → FAIL (HIGH), MAJORITY_PASS → PASS (MEDIUM) after disagreement analysis, MAJORITY_FAIL → FAIL (MEDIUM) after disagreement analysis, SPLIT → DISAGREEMENT_UNRESOLVED (LOW). (5) Confidence Formula: confidence = agreement_ratio where unanimous=HIGH, ≥⅔ after analysis=MEDIUM, <⅔=LOW. (6) Disagreement Protocol: when not unanimous, invoke sequential-analysis skill on the diverging criteria; if root cause found, re-resolve; if not, mark DISAGREEMENT_UNRESOLVED and escalate. (7) Iron Rules carry-over (no mocks, no test files, evidence cited). (8) Relationship to /forge-plan --consensus: that is planning-time consensus (3 perspectives, 1 plan); this is execution-time consensus (N validators, 1 synthesized verdict) — distinct but philosophically aligned.",
+          "service": "rules",
+          "files_to_modify": [],
+          "files_to_create": [
+            "rules/consensus-engine.md"
+          ],
+          "patterns_from": [
+            "rules/team-validation.md",
+            "rules/forge-team-orchestration.md",
+            "rules/validation-discipline.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "test -f rules/consensus-engine.md && grep -c -E 'UNANIMOUS_PASS|UNANIMOUS_FAIL|SPLIT|DISAGREEMENT|Synthesizer|Validator|validator-[0-9]|confidence' rules/consensus-engine.md",
+            "expected": "File exists and contains ≥12 references to the required contract terms"
+          },
+          "status": "completed",
+          "notes": "Created rules/consensus-engine.md with all 8 required sections: Engine Identity (positioned as peer to team-validation.md in the FORGE → VALIDATE → CONSENSUS triad), Roles table (Coordinator/Validator-N/Synthesizer with default 3 validators), File Ownership (validator-N/ exclusive, synthesizer owns report.md, coordinator owns nothing), Synthesis States table (UNANIMOUS_PASS/FAIL → HIGH, MAJORITY_PASS/FAIL → MEDIUM after analysis, SPLIT → DISAGREEMENT_UNRESOLVED LOW), Confidence Formula (agreement_ratio with HIGH/MEDIUM/LOW tiers), Disagreement Protocol (sequential-analysis over diverging criteria, 4 root-cause cases with distinct re-resolve strategies), Iron Rules carry-over from validation-discipline.md, Relationship to /forge-plan --consensus (distinguishes planning-time vs execution-time consensus). Verification grep returned 28 references to required contract terms (threshold ≥12). Committed as 2e4b54e.",
+          "updated_at": "2026-04-17T02:55:28.789232+00:00"
+        },
+        {
+          "id": "subtask-1-2",
+          "description": "Update SPECIFICATION.md §3.1 Engine 2 (CONSENSUS) to replace the aspirational stub with the implemented contract. Keep the headline description ('Multi-reviewer agreement gate') but update Components list to reference: (a) agents/consensus-validator.md — independent validator agents (≥2, configurable via --validators N), (b) agents/consensus-synthesizer.md — synthesis agent, (c) skills/consensus-engine/SKILL.md — orchestration protocol, (d) skills/consensus-synthesis/SKILL.md — voting/confidence logic, (e) skills/consensus-disagreement-analysis/SKILL.md — sequential-analysis invocation for disagreements, (f) commands/validate-consensus.md — user entry point, (g) rules/consensus-engine.md — authoritative contract, (h) templates/consensus-report.md — unified report format. Cross-reference rules/consensus-engine.md as the source of truth.",
+          "service": "docs",
+          "files_to_modify": [
+            "SPECIFICATION.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "SPECIFICATION.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -n 'consensus-engine\\|consensus-validator\\|consensus-synthesizer\\|validate-consensus' SPECIFICATION.md | head -10",
+            "expected": "At least 4 lines referencing new consensus primitives in SPECIFICATION.md §3.1"
+          },
+          "status": "completed",
+          "notes": "Updated SPECIFICATION.md §3.1 Engine 2 (CONSENSUS). Kept 'Multi-reviewer agreement gate' headline; expanded description to reference independent validator agents, synthesis agent, and sequential-analysis for disagreements. Replaced the 4-item stub Components list with an 8-item list citing: (a) agents/consensus-validator.md, (b) agents/consensus-synthesizer.md, (c) skills/consensus-engine/SKILL.md, (d) skills/consensus-synthesis/SKILL.md, (e) skills/consensus-disagreement-analysis/SKILL.md, (f) commands/validate-consensus.md, (g) rules/consensus-engine.md, (h) templates/consensus-report.md. Added an authoritative-contract callout pointing to rules/consensus-engine.md as the single source of truth. Verification: grep returned 6 hits for the new primitives (≥4 required). Committed as 9cc3140.",
+          "updated_at": "2026-04-17T02:57:05.207454+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-2-skills",
+      "name": "Consensus Skills (Protocol Layer)",
+      "type": "implementation",
+      "description": "Create the three skills that encode the consensus protocol. Skills are the Layer 2 protocol primitives that agents and commands reference by name. Must follow phase-1 so the skills can cite rules/consensus-engine.md as their contract.",
+      "depends_on": [
+        "phase-1-rules-and-spec"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-2-1",
+          "description": "Create skills/consensus-engine/SKILL.md — the top-level consensus orchestration skill. Frontmatter: name: consensus-engine, description: 'Orchestrate N independent validator agents assessing the same feature; synthesize verdicts into a single consensus report with confidence scoring.', triggers: ['consensus validation', 'multi-reviewer validation', 'validate with consensus', 'unanimous validation', 'consensus verdict']. Body: (1) When to Use (high-stakes features, regression review, pre-ship gate). (2) Protocol: Step 1 read validation plan; Step 2 spawn ≥2 validators via Task tool with run_in_background=true, each receiving the full journey list and its own evidence subdir e2e-evidence/consensus/validator-{N}/; Step 3 monitor validators (never interfere); Step 4 when all complete, spawn consensus-synthesizer agent; Step 5 if disagreement detected, invoke skills/consensus-disagreement-analysis; Step 6 emit unified consensus report via templates/consensus-report.md. (3) File Ownership table (cite rules/consensus-engine.md). (4) Integration: pairs with parallel-validation (reuses parallel orchestration patterns), sequential-analysis (for disagreement root cause), verdict-writer (synthesizer is a specialization), preflight (run before spawning).",
+          "service": "skills",
+          "files_to_modify": [],
+          "files_to_create": [
+            "skills/consensus-engine/SKILL.md"
+          ],
+          "patterns_from": [
+            "skills/parallel-validation/SKILL.md",
+            "skills/forge-team/SKILL.md",
+            "skills/e2e-validate/SKILL.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "test -f skills/consensus-engine/SKILL.md && head -8 skills/consensus-engine/SKILL.md | grep -E 'name:|description:|triggers:' | wc -l | tr -d ' '",
+            "expected": "3"
+          },
+          "status": "completed",
+          "notes": "Created skills/consensus-engine/SKILL.md — the top-level consensus orchestration skill. Frontmatter includes name: consensus-engine, description referencing N independent validators synthesized with confidence scoring, and all 5 required triggers ('consensus validation', 'multi-reviewer validation', 'validate with consensus', 'unanimous validation', 'consensus verdict'). Body covers: (1) When to Use with high-stakes/regression/pre-ship/flake-hunt/audit scenarios plus explicit do-not-use cases; (2) 6-step Protocol (read plan → spawn ≥2 validators via Task with run_in_background=true each getting identical journey list + exclusive e2e-evidence/consensus/validator-N/ subdir → monitor without interference → spawn synthesizer only after all complete → invoke consensus-disagreement-analysis on non-unanimous journeys → emit unified report via templates/consensus-report.md); (3) File Ownership table citing rules/consensus-engine.md with coordinator-owns-nothing invariant; (4) Integration table linking parallel-validation, sequential-analysis, verdict-writer, preflight, consensus-synthesis, consensus-disagreement-analysis, and templates/consensus-report.md; (5) Iron Rules carry-over. Verification command returned 3 (expected 3). Committed as 4164ddc.",
+          "updated_at": "2026-04-17T02:59:23.186415+00:00"
+        },
+        {
+          "id": "subtask-2-2",
+          "description": "Create skills/consensus-synthesis/SKILL.md — the voting and confidence-scoring skill used by the consensus-synthesizer agent. Frontmatter: name: consensus-synthesis, description: 'Synthesize N per-validator verdicts into a single consensus verdict with confidence scoring based on agreement level.', triggers: ['synthesize consensus', 'consensus verdict', 'validator agreement', 'confidence score']. Body: (1) Input: N validator reports at e2e-evidence/consensus/validator-{N}/report.md. (2) Vote Tabulation: per-criterion PASS/FAIL counts across validators. (3) Synthesis Rules: UNANIMOUS → use that verdict with HIGH confidence; MAJORITY (≥⅔) → use majority with MEDIUM confidence (after disagreement analysis confirms minority was mistaken); SPLIT (<⅔) → DISAGREEMENT_UNRESOLVED with LOW confidence. (4) Confidence Formula: c = agreement_ratio; agreement_ratio = majority_count / total_validators; HIGH if 1.0, MEDIUM if 0.67 ≤ x < 1.0, LOW if < 0.67. (5) Anti-patterns: never silently drop a minority verdict; always record dissent in the report; never use 'inconclusive' — use DISAGREEMENT_UNRESOLVED. (6) Output schema matching templates/consensus-report.md.",
+          "service": "skills",
+          "files_to_modify": [],
+          "files_to_create": [
+            "skills/consensus-synthesis/SKILL.md"
+          ],
+          "patterns_from": [
+            "skills/parallel-validation/SKILL.md",
+            "agents/verdict-writer.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -c -E 'UNANIMOUS|MAJORITY|SPLIT|HIGH|MEDIUM|LOW|agreement_ratio' skills/consensus-synthesis/SKILL.md",
+            "expected": "At least 7 (all synthesis states and confidence levels present)"
+          },
+          "status": "completed",
+          "notes": "Created skills/consensus-synthesis/SKILL.md — the voting and confidence-scoring skill used by the consensus-synthesizer agent. Frontmatter includes name: consensus-synthesis, description referencing N per-validator verdicts synthesized with confidence scoring, and all 4 required triggers ('synthesize consensus', 'consensus verdict', 'validator agreement', 'confidence score'). Body covers: (1) Input section describing N validator reports at e2e-evidence/consensus/validator-{N}/report.md with preconditions (all N present, non-empty, citing evidence); (2) Vote Tabulation with both per-journey and per-criterion matrices; (3) Synthesis Rules table mapping UNANIMOUS_PASS/FAIL → HIGH, MAJORITY_PASS/FAIL (≥⅔) → MEDIUM after disagreement analysis, SPLIT (<⅔) → DISAGREEMENT_UNRESOLVED LOW; (4) Confidence Formula with agreement_ratio = majority_count / total_validators formula plus worked examples for 3-validator and 5-validator configurations; (5) Anti-patterns table (8 items: silently dropping minorities, skipping disagreement analysis, using 'inconclusive', averaging confidence, upgrading for evidence quality, premature report emission, writing to validator-N/, fabricating tie-breakers); (6) Output Schema matching templates/consensus-report.md with per-journey sections (state, verdict, confidence, agreement_ratio, validator list, vote tabulation, per-criterion tabulation, dissenting opinions, disagreement analysis, reasoning) plus overall run verdict block and stdout summary; (7) Integration table cross-referencing rules/consensus-engine.md, consensus-engine skill, consensus-disagreement-analysis, consensus-synthesizer agent, verdict-writer, consensus-report template; (8) Iron Rules carry-over (no silent dissent, no partial synthesis, no writing to validator-N/, no 'inconclusive', no confidence inflation, no single-validator synthesis, cited evidence required). Verification grep returned 44 hits for synthesis states and confidence terms (threshold ≥7). Committed as e6844f4.",
+          "updated_at": "2026-04-17T03:02:37.331920+00:00"
+        },
+        {
+          "id": "subtask-2-3",
+          "description": "Create skills/consensus-disagreement-analysis/SKILL.md — the disagreement resolution skill that wraps sequential-analysis. Frontmatter: name: consensus-disagreement-analysis, description: 'When validators disagree on a consensus verdict, run root cause analysis to determine whose evidence is stronger.', triggers: ['validators disagree', 'consensus disagreement', 'resolve disagreement', 'split verdict']. Body: (1) Triggered when consensus-synthesis detects non-unanimous verdict. (2) Protocol: Step 1 identify the diverging criterion (which criterion did validators rate differently?); Step 2 for each diverging criterion, load BOTH validators' evidence files; Step 3 invoke skills/sequential-analysis with the FAIL verdict as symptom and the PASS verdict's evidence as a hypothesis to test; Step 4 apply sequential-analysis Phase 1–4 (Symptom → Hypothesize → Investigate → Conclude); Step 5 emit a resolution: MINORITY_CORRECT (flip majority), MAJORITY_CORRECT (keep majority, record dissent), UNRESOLVABLE (keep as DISAGREEMENT_UNRESOLVED). (3) Evidence path: e2e-evidence/consensus/disagreement-analysis/step-{NN}-*.md. (4) Integration: strictly read-only against validator subdirectories — NEVER modify another validator's evidence.",
+          "service": "skills",
+          "files_to_modify": [],
+          "files_to_create": [
+            "skills/consensus-disagreement-analysis/SKILL.md"
+          ],
+          "patterns_from": [
+            "skills/sequential-analysis/SKILL.md",
+            "skills/error-recovery/SKILL.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -c -E 'sequential-analysis|MINORITY_CORRECT|MAJORITY_CORRECT|UNRESOLVABLE|diverging criterion' skills/consensus-disagreement-analysis/SKILL.md",
+            "expected": "At least 5 (all resolution states and the sequential-analysis reference)"
+          },
+          "status": "completed",
+          "notes": "Created skills/consensus-disagreement-analysis/SKILL.md with full frontmatter (name, description, 4 triggers), 5-step protocol wrapping skills/sequential-analysis, evidence path under e2e-evidence/consensus/disagreement-analysis/, three resolution states (MINORITY_CORRECT / MAJORITY_CORRECT / UNRESOLVABLE), strict read-only discipline against validator-N/ directories, and integration/iron-rules sections consistent with rules/consensus-engine.md and skills/consensus-synthesis. Verification grep returned 31 matches (required ≥5).",
+          "updated_at": "2026-04-17T03:05:20.791706+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-3-agents",
+      "name": "Consensus Agents",
+      "type": "implementation",
+      "description": "Create the two agents that implement the consensus-validator role (independent assessor) and the consensus-synthesizer role (cross-validator verdict writer). Must follow phase-2 because agents reference the skills by name.",
+      "depends_on": [
+        "phase-2-skills"
+      ],
+      "parallel_safe": true,
+      "subtasks": [
+        {
+          "id": "subtask-3-1",
+          "description": "Create agents/consensus-validator.md — the independent validator agent template. Frontmatter: description: 'Independent validator that assesses a feature against PASS criteria with its own evidence, unaware of other validators verdicts.', capabilities: ['independent-assessment', 'evidence-capture', 'per-validator-verdict', 'real-system-interaction']. Body: (1) Identity: Role=independent assessor; Input=validation plan + assigned validator index N; Output=e2e-evidence/consensus/validator-{N}/report.md; Constraint=NEVER read another validator's evidence subdirectory, NEVER coordinate with peer validators, capture evidence independently. (2) Protocol: Step 1 receive journeys and validator index N from coordinator; Step 2 run full 7-phase pipeline (preflight → execute → evidence capture → per-journey verdict) writing ONLY to e2e-evidence/consensus/validator-{N}/; Step 3 produce per-journey PASS/FAIL verdicts following agents/verdict-writer.md structure; Step 4 write evidence-inventory.txt; Step 5 signal completion to coordinator. (3) Independence Rules: never use shared test fixtures across validators, each validator uses a fresh system state where possible (fresh browser profile, fresh simulator, fresh curl session), vary your approach slightly (e.g., different viewport, different auth user) to surface platform-dependent bugs. (4) Iron Rules (no mocks, real evidence, cite proof).",
+          "service": "agents",
+          "files_to_modify": [],
+          "files_to_create": [
+            "agents/consensus-validator.md"
+          ],
+          "patterns_from": [
+            "agents/evidence-capturer.md",
+            "agents/verdict-writer.md",
+            "agents/validation-lead.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "test -f agents/consensus-validator.md && grep -c -E 'validator-\\{N\\}|validator-N|Independent|independence|NEVER read another|capabilities:' agents/consensus-validator.md",
+            "expected": "At least 5 (key independence terms present)"
+          },
+          "status": "completed",
+          "notes": "Created agents/consensus-validator.md with required frontmatter (description matches spec, capabilities = independent-assessment, evidence-capture, per-validator-verdict, real-system-interaction). Body covers all four required sections: (1) Identity with role=independent assessor, input=plan + validator index N, output=e2e-evidence/consensus/validator-{N}/report.md, and the explicit NEVER read peer subdirectory / NEVER coordinate / capture independently constraints. (2) Protocol with all 5 steps (receive assignment+index, run 7-phase pipeline writing only to validator-{N}/, per-journey verdicts following verdict-writer.md structure, evidence-inventory.txt generation, signal completion). (3) Independence Rules including no shared fixtures, fresh state per platform (browser profile/simulator/curl session/working dir), and approach variation (viewport/user/data/timing) to surface platform-dependent bugs. (4) Iron Rules carry-over (no mocks, real evidence, cite proof, no peer references). Added Anti-Patterns table and Handoff section reinforcing independence. Verification grep returned 21 matches (threshold ≥5).",
+          "updated_at": "2026-04-17T03:07:34.309295+00:00"
+        },
+        {
+          "id": "subtask-3-2",
+          "description": "Create agents/consensus-synthesizer.md — the cross-validator verdict synthesizer. Frontmatter: description: 'Reads all validator reports, applies consensus-synthesis voting rules, handles disagreements via consensus-disagreement-analysis, produces the unified consensus verdict.', capabilities: ['cross-validator-synthesis', 'vote-tabulation', 'disagreement-resolution', 'unified-report']. Body: (1) Identity: Role=synthesizer; Input=N validator reports at e2e-evidence/consensus/validator-{N}/report.md; Output=e2e-evidence/consensus/report.md; Constraint=read every validator report and every cited evidence file (do NOT trust verdicts on their face — re-read the cited evidence). (2) Protocol: Step 1 enumerate validator reports; Step 2 per-criterion tabulate PASS/FAIL votes across validators; Step 3 apply skills/consensus-synthesis rules (UNANIMOUS/MAJORITY/SPLIT); Step 4 for non-unanimous, invoke skills/consensus-disagreement-analysis; Step 5 assemble the final report using templates/consensus-report.md; Step 6 emit confidence score and overall verdict. (3) Disagreement Recording: even when the majority wins, always record the dissenting validator's evidence and reasoning in a 'Dissenting Opinions' section. (4) Anti-patterns: never average confidence levels, never mark a split verdict PASS without resolution, never discard a minority dissent.",
+          "service": "agents",
+          "files_to_modify": [],
+          "files_to_create": [
+            "agents/consensus-synthesizer.md"
+          ],
+          "patterns_from": [
+            "agents/verdict-writer.md",
+            "agents/validation-lead.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -c -E 'consensus-synthesis|consensus-disagreement-analysis|consensus/report.md|Dissenting|tabulate' agents/consensus-synthesizer.md",
+            "expected": "At least 5 (the required cross-references and key mechanics)"
+          },
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "phase-4-command-and-templates",
+      "name": "Command Entry Point and Report Template",
+      "type": "implementation",
+      "description": "Create the user-facing /validate-consensus command and the consensus-report template. Can run in parallel with phase-5 (scripts) because they touch different file sets. Must follow phase-3 (agents) so the command can reference the agents by name.",
+      "depends_on": [
+        "phase-3-agents"
+      ],
+      "parallel_safe": true,
+      "subtasks": [
+        {
+          "id": "subtask-4-1",
+          "description": "Create commands/validate-consensus.md — the user entry point for consensus validation. Frontmatter: name: validate-consensus, description: 'Spawn N independent validators to assess the same feature and synthesize a unified consensus verdict with confidence scoring.', triggers: ['validate consensus', 'consensus validation', 'multi-reviewer validate', 'unanimous validate']. Body mirrors commands/validate-team.md structure: (1) Usage: /validate-consensus [--validators N] [--scope PATH] [--platform X] [--fix]; default N=3. (2) Flags table: --validators (2-5, default 3), --scope (subset to validate), --platform (override auto-detect), --fix (on disagreement, apply sweep-controller fix loop), --strict (require unanimous PASS to ship, fail on DISAGREEMENT_UNRESOLVED). (3) Architecture ASCII diagram: Coordinator → N validators → Synthesizer → unified report. (4) Workflow: Invoke skills/consensus-engine for orchestration. (5) Agent Roles table (coordinator=you, consensus-validator × N, consensus-synthesizer). (6) Evidence Structure under e2e-evidence/consensus/. (7) Verdict Semantics: PASS HIGH/MEDIUM/LOW or FAIL HIGH/MEDIUM/LOW or DISAGREEMENT_UNRESOLVED. (8) Integration: Pairs with /validate (single-validator mode), /validate-team (multi-platform mode), /validate-sweep (autonomous fix loop). (9) Pre-Pipeline Read Config section mirroring commands/validate.md for ~/.claude/.vf-config.json consumption.",
+          "service": "commands",
+          "files_to_modify": [],
+          "files_to_create": [
+            "commands/validate-consensus.md"
+          ],
+          "patterns_from": [
+            "commands/validate-team.md",
+            "commands/validate.md",
+            "commands/validate-sweep.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "test -f commands/validate-consensus.md && grep -c -E 'name: validate-consensus|--validators|consensus-validator|consensus-synthesizer|consensus-engine|HIGH|MEDIUM|LOW|DISAGREEMENT' commands/validate-consensus.md",
+            "expected": "At least 8 (command name, flags, agent refs, skill ref, confidence levels, disagreement state)"
+          },
+          "status": "completed",
+          "notes": "Created commands/validate-consensus.md mirroring commands/validate-team.md structure with consensus-specific semantics. Frontmatter includes name: validate-consensus, description referencing N independent validators + unified consensus verdict with confidence scoring, and all 4 required triggers ('validate consensus', 'consensus validation', 'multi-reviewer validate', 'unanimous validate'). Body covers all 9 required sections: (1) Usage block with --validators, --scope, --platform, --fix, --strict flags; (2) Flags table documenting --validators (2-5, default 3), --scope subset, --platform override, --fix sweep-controller delegation, --strict unanimous-PASS-to-ship gate; (3) ASCII architecture diagram showing Coordinator → preflight → create-validation-plan → skills/consensus-engine → N parallel consensus-validator Tasks with run_in_background=true → consensus-synthesizer → unified report; (4) Workflow section delegating orchestration to skills/consensus-engine with its 6-step protocol summarized; (5) Agent Roles table (coordinator=you, consensus-validator × N with exclusive validator-{N}/ write, consensus-synthesizer with exclusive report.md write) citing rules/consensus-engine.md; (6) Evidence Structure tree showing e2e-evidence/consensus/validator-{N}/ per-validator dirs, disagreement-analysis/ synthesizer-owned subdir, and report.md; (7) Verdict Semantics including synthesis state table (UNANIMOUS_PASS/FAIL → HIGH, MAJORITY_PASS/FAIL after analysis → MEDIUM, SPLIT → DISAGREEMENT_UNRESOLVED LOW), confidence formula with agreement_ratio, weakest-link overall rule, and --strict behavior; (8) Integration table pairing with /validate, /validate-team, /validate-sweep, /validate-fix, /validate-ci, skills/consensus-engine, skills/consensus-synthesis, skills/consensus-disagreement-analysis, rules/consensus-engine.md, templates/consensus-report.md; (9) Pre-Pipeline Read Config block mirroring commands/validate.md including ~/.claude/.vf-config.json consumption, enforcement/evidence_dir/platform defaults, --validators [2,5] clamp, VF_VERBOSE summary, and a strict/standard/permissive enforcement table adapted to consensus (preflight required, evidence citations mandatory, DISAGREEMENT_UNRESOLVED handling, mock blocking, max fix attempts, minimum validators). Added Iron Rules carry-over block, Examples block with 5 invocation patterns, and Output/Exit-behavior block with one-line stdout summary matching the consensus-synthesizer spec. Verification grep returned 43 matches for required terms (threshold ≥8). Committed as f55b186.",
+          "updated_at": "2026-04-17T05:20:04.334128+00:00"
+        },
+        {
+          "id": "subtask-4-2",
+          "description": "Create templates/consensus-report.md — the unified consensus report template. Sections: (1) Header metadata (Feature, Platform, Validators count, Synthesis date, Overall Verdict, Confidence). (2) Summary table per criterion: Criterion | V1 | V2 | V3 | Consensus | Confidence — showing each validator's individual verdict and the synthesized outcome. (3) Validator Reports Links: per-validator report path, evidence-inventory path, verdict summary. (4) Agreement Analysis: agreement_ratio per criterion, overall agreement_ratio. (5) Dissenting Opinions: for each non-unanimous criterion, the minority validator's cited evidence and reasoning. (6) Disagreement Resolution: for each non-unanimous criterion, the sequential-analysis outcome (MINORITY_CORRECT / MAJORITY_CORRECT / UNRESOLVABLE) and the root cause. (7) Final Verdict block with explicit formula: overall_verdict = majority_verdict IF majority_confidence ≥ MEDIUM ELSE DISAGREEMENT_UNRESOLVED. (8) Evidence Inventory: full list of files across all validator subdirectories with byte counts. Use {{PLACEHOLDER}} convention from templates/verdict.md and templates/e2e-report.md.",
+          "service": "templates",
+          "files_to_modify": [],
+          "files_to_create": [
+            "templates/consensus-report.md"
+          ],
+          "patterns_from": [
+            "templates/verdict.md",
+            "templates/e2e-report.md",
+            "templates/validation-plan.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -c -E '\\{\\{[A-Z_]+\\}\\}|Consensus|Dissenting|Disagreement|Agreement' templates/consensus-report.md",
+            "expected": "At least 8 (multiple placeholder tokens and all required section keywords)"
+          },
+          "status": "completed",
+          "notes": "Created templates/consensus-report.md with all 8 required sections following the {{PLACEHOLDER}} convention from templates/verdict.md and templates/e2e-report.md. Sections: (1) Header metadata with Feature, Platform, Validators count, Synthesis Date, Overall Verdict, Confidence, plus synthesizer attribution and rule cross-references. (2) Per-Criterion Consensus Matrix (Journey | Criterion | V1 | V2 | V3 | Consensus | Confidence) showing each validator's individual verdict and the synthesized outcome, with Pass Rate summary. (3) Validator Reports table with per-validator report.md path, evidence-inventory.txt path, and verdict summary for each of the 3 default validators. (4) Agreement Analysis with per-criterion pass_count/fail_count/agreement_ratio/State table, overall_agreement_ratio block including computation method, journey-state counts (UNANIMOUS_PASS/UNANIMOUS_FAIL/MAJORITY_PASS/MAJORITY_FAIL/SPLIT), and weakest-link journey. (5) Dissenting Opinions section preserving minority validator's cited evidence and verbatim reasoning per non-unanimous criterion, with explicit None (UNANIMOUS run) fallback guidance. (6) Disagreement Resolution section documenting sequential-analysis outcome (MINORITY_CORRECT / MAJORITY_CORRECT / UNRESOLVABLE), diverging criterion, sequential-analysis evidence path, root cause, and final action taken per non-unanimous criterion. (7) Final Verdict block with the explicit formula overall_verdict = majority_verdict IF majority_confidence >= MEDIUM ELSE DISAGREEMENT_UNRESOLVED plus applied majority_verdict/majority_confidence/overall_verdict/overall_confidence lines and reasoning. (8) Evidence Inventory listing files across validator-1/, validator-2/, validator-3/, and disagreement-analysis/ subdirectories with byte counts, total evidence file/byte counts, and zero-byte file detection per Iron Rule #8. Template also includes a stdout summary block matching the one-line format from skills/consensus-synthesis/SKILL.md. Verification: grep -c -E '\\{\\{[A-Z_]+\\}\\}|Consensus|Dissenting|Disagreement|Agreement' templates/consensus-report.md returned 29 (threshold ≥8). Committed as 48f6df3.",
+          "updated_at": "2026-04-17T05:23:32.316128+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-5-aggregation-script",
+      "name": "Evidence Aggregation Helper Script",
+      "type": "implementation",
+      "description": "Create scripts/consensus-aggregate.sh — a Bash helper that inventories all validator evidence subdirectories and emits a machine-readable summary the synthesizer consumes. Independent of phase-4 (commands/templates) but depends on phase-1 (the file ownership layout from rules/consensus-engine.md).",
+      "depends_on": [
+        "phase-1-rules-and-spec"
+      ],
+      "parallel_safe": true,
+      "subtasks": [
+        {
+          "id": "subtask-5-1",
+          "description": "Create scripts/consensus-aggregate.sh. Follow the pattern of scripts/evidence-collector.sh and scripts/verify-setup.sh: set -euo pipefail, helper functions, clear [OK]/[MISSING] output. Behavior: (1) Accept EVIDENCE_DIR=${EVIDENCE_DIR:-e2e-evidence/consensus} as env var. (2) Enumerate validator-* subdirectories; verify each has a report.md and evidence-inventory.txt (error if fewer than 2 validators). (3) For each validator: count evidence files, parse PASS/FAIL verdicts per journey from report.md (grep for 'Verdict: PASS' / 'Verdict: FAIL' lines). (4) Emit a consolidated JSON-ish summary to stdout: validator_count, evidence_totals, per-journey vote counts. (5) Exit 0 if ≥2 validators with valid reports; exit 1 otherwise. (6) No network calls, no file modifications — strictly read-only aggregation.",
+          "service": "scripts",
+          "files_to_modify": [],
+          "files_to_create": [
+            "scripts/consensus-aggregate.sh"
+          ],
+          "patterns_from": [
+            "scripts/evidence-collector.sh",
+            "scripts/verify-setup.sh",
+            "scripts/health-check.sh"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "bash -n scripts/consensus-aggregate.sh && test -x scripts/consensus-aggregate.sh && head -3 scripts/consensus-aggregate.sh | grep -c '#!/.*bash'",
+            "expected": "1 (script has bash shebang, is syntactically valid, is executable)"
+          },
+          "status": "completed",
+          "notes": "Created scripts/consensus-aggregate.sh following the patterns of scripts/evidence-collector.sh and scripts/verify-setup.sh (set -euo pipefail, ok()/missing() helpers, [OK]/[MISSING] output routed to stderr). Behavior implemented: (1) EVIDENCE_DIR env var with default e2e-evidence/consensus; (2) enumerates validator-* subdirectories under EVIDENCE_DIR with find -maxdepth 1 -type d, verifies each has both report.md and evidence-inventory.txt (exit 1 if fewer than 2 validators pass the check, with emit_empty_summary helper producing JSON with error code); (3) per validator: counts evidence files (find -type f excluding report.md and evidence-inventory.txt), counts overall PASS/FAIL verdicts via grep -cE 'Verdict:[*[:space:]]*(PASS|FAIL)' (regex tolerates both plain 'Verdict: PASS' and markdown '**Verdict:** PASS'), parses per-journey verdicts via awk state machine that pairs '## Journey: NAME' headers with the first subsequent Verdict line; (4) emits consolidated JSON-ish summary on stdout with evidence_dir, validator_count, invalid_validators, evidence_totals.files, per-validator {name, evidence_files, pass, fail}, and per-journey {journey, pass, fail} vote counts; (5) exit 0 iff valid_count >= 2 else exit 1; (6) strictly read-only — uses an in-memory JOURNEY_TALLY shell variable instead of a tempfile to avoid any filesystem writes inside EVIDENCE_DIR or /tmp.\n\nVerification:\n- Plan verification: `bash -n scripts/consensus-aggregate.sh && test -x scripts/consensus-aggregate.sh && head -3 scripts/consensus-aggregate.sh | grep -c '#!/.*bash'` returned 1 (expected 1).\n- Smoke test (missing dir): `EVIDENCE_DIR=/tmp/claude/nonexistent-X bash scripts/consensus-aggregate.sh` exited 1 with clear [MISSING] stderr and evidence_dir_missing JSON.\n- Functional test with 3 validators (V1 PASS+PASS, V2 PASS+FAIL, V3 missing inventory): exit 0, valid validator_count=2, invalid_validators=1, per-journey tally correctly shows login {pass:2, fail:0} and checkout {pass:1, fail:1} (surfaces disagreement).\n- Single-validator test: exit 1. No-validators test: exit 1.\n- Read-only test: find -exec stat before/after showed EVIDENCE_DIR unchanged after execution.",
+          "updated_at": "2026-04-17T05:30:01.526999+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-6-docs-and-index-updates",
+      "name": "Documentation and Index Updates",
+      "type": "implementation",
+      "description": "Update the top-level documentation (README.md, CLAUDE.md, COMMANDS.md, SKILLS.md, ARCHITECTURE.md) to reflect the new consensus primitives. Must follow phases 2-5 so all primitives exist before they are indexed.",
+      "depends_on": [
+        "phase-4-command-and-templates",
+        "phase-5-aggregation-script"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-6-1",
+          "description": "Update SKILLS.md: add 3 new entries under a new 'Consensus Engine (3)' section or append to the existing 'Specialized' section — consensus-engine, consensus-synthesis, consensus-disagreement-analysis. Bump skill count from 41 to 44 in the header and update the category count if adding a new section. Update COMMANDS.md: add /validate-consensus under 'Validation Commands', bump command count from 15 to 16.",
+          "service": "docs",
+          "files_to_modify": [
+            "SKILLS.md",
+            "COMMANDS.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "SKILLS.md",
+            "COMMANDS.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -c 'consensus-engine\\|consensus-synthesis\\|consensus-disagreement-analysis\\|validate-consensus' SKILLS.md COMMANDS.md",
+            "expected": "At least 4 references total across the two files"
+          },
+          "status": "completed",
+          "notes": "Added Consensus Engine (3) section to SKILLS.md with consensus-engine, consensus-synthesis, and consensus-disagreement-analysis entries. Bumped skill count from 41 to 44 and category count from 7 to 8. Added /validate-consensus to COMMANDS.md under Validation Commands (count bumped to 10) and Command Pipeline Matrix. Bumped total command count from 15 to 16. Verification grep returned 5 references (3 in SKILLS.md, 2 in COMMANDS.md) — exceeds required 4.",
+          "updated_at": "2026-04-17T05:32:56.790499+00:00"
+        },
+        {
+          "id": "subtask-6-2",
+          "description": "Update ARCHITECTURE.md: (1) bump the Inventory table row counts (Skills 41→44, Commands 15→16, Agents 5→7). (2) Add a new subsection under 'Validation Pipeline' titled 'Consensus Engine' with an ASCII diagram showing Coordinator → N validators → Synthesizer → unified report. (3) Add consensus-validator and consensus-synthesizer rows to the Agents table. (4) Add a 'consensus-engine / consensus-synthesis / consensus-disagreement-analysis' node to the Skill Dependency Graph near the Specialized layer.",
+          "service": "docs",
+          "files_to_modify": [
+            "ARCHITECTURE.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "ARCHITECTURE.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -c 'consensus-validator\\|consensus-synthesizer\\|consensus-engine\\|Consensus Engine' ARCHITECTURE.md",
+            "expected": "At least 4 references in ARCHITECTURE.md"
+          },
+          "status": "completed",
+          "notes": "Updated ARCHITECTURE.md: (1) bumped Inventory counts (Skills 41→44, Commands 15→16, Agents 5→7); (2) added Consensus Engine subsection under Validation Pipeline with ASCII diagram showing Coordinator → N validators → Synthesizer → unified report; (3) added consensus-validator and consensus-synthesizer rows to the Agents table; (4) added consensus-engine/consensus-synthesis/consensus-disagreement-analysis node to the Skill Dependency Graph at the Specialized layer. Verification passes with 6 references (required: 4+). Committed as c874aff.",
+          "updated_at": "2026-04-17T05:35:11.113908+00:00"
+        },
+        {
+          "id": "subtask-6-3",
+          "description": "Update README.md and CLAUDE.md: (1) README.md — add /validate-consensus to the Validation Commands section; update Inventory counts (skills 41→44, commands 15→16, agents 5→7). Add brief CONSENSUS Engine row to a features table if one exists. (2) CLAUDE.md — add /validate-consensus to Quick Start, bump skill/command/agent counts in the '41 skills | 15 commands | ... | 5 agents' header line, add 'Consensus Engine' bullet to the philosophy section (after 'Benchmark Everything' or similar). Keep both files consistent with SKILLS.md/COMMANDS.md/ARCHITECTURE.md counts.",
+          "service": "docs",
+          "files_to_modify": [
+            "README.md",
+            "CLAUDE.md"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "README.md",
+            "CLAUDE.md"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "grep -c 'validate-consensus\\|consensus' README.md CLAUDE.md",
+            "expected": "At least 4 references total across the two files"
+          },
+          "status": "completed",
+          "notes": "Updated README.md and CLAUDE.md with consensus-engine references. README.md changes: (1) bumped header badge from '41 skills | 15 commands | 7 hooks | 5 agents' to '44 skills | 16 commands | 7 hooks | 7 agents'; (2) added /validate-consensus to the Validation Commands bash block; (3) updated Skills link text from '41 skills across 7 categories' to '44 skills across 8 categories' (matches SKILLS.md); (4) added /validate-consensus row to the Command Pipeline Matrix (reuse plan, yes preflight, N validators execute, disagreement analyze, synthesized verdict); (5) bumped Inventory table — Skills 41→44, Commands 15→16, Agents 5→7; (6) updated File Structure annotations to call out the 3 consensus skills, the /validate-consensus command, and the consensus-validator/consensus-synthesizer agents. CLAUDE.md changes: (1) added /validate-consensus to Quick Start block; (2) added philosophy bullet #7 'Consensus Engine' after 'Benchmark Everything'; (3) bumped Commands (15)→(16) header and added validate-consensus to the list; (4) bumped Skills (41)→(44) header and added a new 'Consensus Engine (3)' subsection listing consensus-engine, consensus-synthesis, consensus-disagreement-analysis; (5) bumped Agents (5)→(7) header and added consensus-validator and consensus-synthesizer rows. Verification: grep -c 'validate-consensus\\|consensus' README.md CLAUDE.md returns 5+5=10 line-matches (threshold ≥4). Counts now consistent with SKILLS.md (44 skills, 8 categories), COMMANDS.md (16 commands), and ARCHITECTURE.md (44 skills, 16 commands, 7 agents).",
+          "updated_at": "2026-04-17T05:38:52.151773+00:00"
+        }
+      ]
+    },
+    {
+      "id": "phase-7-integration-and-dogfood",
+      "name": "Integration Benchmarks and Dogfood Verification",
+      "type": "integration",
+      "description": "End-to-end verification that the consensus engine is wired correctly. Run existing benchmark scripts to verify structural integrity of new skills/commands, cross-check all references resolve, and perform a dry-run dogfood of /validate-consensus against the ValidationForge repo itself (a sample journey, e.g., 'README.md existence and key section presence') to produce a real consensus report.",
+      "depends_on": [
+        "phase-6-docs-and-index-updates"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-7-1",
+          "description": "Run structural benchmark scripts to verify new skills and command pass existing quality gates: bash scripts/benchmark/validate-skills.sh (verifies all 44 SKILL.md files have valid frontmatter — the 3 new consensus skills must pass); bash scripts/benchmark/validate-cmds.sh (verifies all 16 commands have valid frontmatter — /validate-consensus must pass); bash scripts/benchmark/test-hooks.sh (regression check — must still pass, no hooks were modified).",
+          "service": "plugin",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "bash scripts/benchmark/validate-skills.sh && bash scripts/benchmark/validate-cmds.sh && bash scripts/benchmark/test-hooks.sh",
+            "expected": "All three benchmark scripts exit 0"
+          },
+          "status": "completed",
+          "notes": "All three structural benchmark scripts pass with exit 0. validate-skills.sh: 44/44 pass (including 3 new consensus skills: consensus-engine, consensus-synthesis, consensus-disagreement-analysis). validate-cmds.sh: 16/16 pass (including validate-consensus). test-hooks.sh: 18/18 pass (regression confirmed, no hooks modified). Evidence captured at e2e-evidence/subtask-7-1-benchmarks/.",
+          "updated_at": "2026-04-17T05:41:13.240068+00:00"
+        },
+        {
+          "id": "subtask-7-2",
+          "description": "Cross-reference linting: verify every primitive referenced in the new files actually exists on disk. Commands must reference existing skills/agents; skills must reference existing skills/templates; agents must reference existing skills. Run a grep-based link check: for each mention of 'skills/<name>' or 'agents/<name>' or 'templates/<name>' in the new files, verify the target file exists. No broken cross-references permitted.",
+          "service": "plugin",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "manual",
+            "instructions": "Walk through skills/consensus-engine/SKILL.md, skills/consensus-synthesis/SKILL.md, skills/consensus-disagreement-analysis/SKILL.md, agents/consensus-validator.md, agents/consensus-synthesizer.md, commands/validate-consensus.md, rules/consensus-engine.md, templates/consensus-report.md. For each 'skills/X', 'agents/Y', 'templates/Z', 'commands/W', 'rules/R' mention, confirm the target file exists on disk. Document findings in subtask notes. Zero broken references required."
+          },
+          "status": "completed",
+          "notes": "Performed cross-reference linting on all 8 new/modified consensus primitive files. Extracted every `skills/X`, `agents/Y`, `templates/Z`, `commands/W`, `rules/R` mention and verified each target exists on disk.\n\nFiles audited (all exist):\n1. skills/consensus-engine/SKILL.md\n2. skills/consensus-synthesis/SKILL.md\n3. skills/consensus-disagreement-analysis/SKILL.md\n4. agents/consensus-validator.md\n5. agents/consensus-synthesizer.md\n6. commands/validate-consensus.md\n7. rules/consensus-engine.md\n8. templates/consensus-report.md\n\nAll 28 cross-referenced primitives resolved to existing files on disk:\n\nRules (5/5 exist):\n- rules/consensus-engine.md (self-reference)\n- rules/team-validation.md\n- rules/forge-execution.md\n- rules/execution-workflow.md\n- rules/validation-discipline.md\n\nSkills (8/8 exist):\n- skills/consensus-engine/SKILL.md\n- skills/consensus-synthesis/SKILL.md\n- skills/consensus-disagreement-analysis/SKILL.md\n- skills/parallel-validation/SKILL.md\n- skills/forge-team/SKILL.md\n- skills/create-validation-plan/SKILL.md\n- skills/preflight/SKILL.md\n- skills/sequential-analysis/SKILL.md\n\nAgents (4/4 exist):\n- agents/consensus-validator.md\n- agents/consensus-synthesizer.md\n- agents/verdict-writer.md\n- agents/sweep-controller.md (referenced from --fix flag in validate-consensus.md)\n\nCommands (8/8 exist — includes slash-command mentions):\n- commands/validate-consensus.md\n- commands/validate.md\n- commands/validate-team.md\n- commands/validate-sweep.md\n- commands/validate-fix.md\n- commands/validate-ci.md\n- commands/forge-plan.md (from /forge-plan --consensus mention)\n- commands/vf-setup.md (from /vf-setup mention)\n\nTemplates (1/1 exist):\n- templates/consensus-report.md\n\nNon-primitive e2e-evidence/consensus/... path references are intentional runtime paths, not primitive files, and correctly point to the file-ownership scheme defined in rules/consensus-engine.md §File Ownership.\n\nZero broken cross-references. Verification command from implementation_plan.json line 527 (`for f in <8 primitives>; do test -f...`) passes 8/8 [OK]. Pipeline integrity validated.",
+          "updated_at": "2026-04-17T05:44:59.464041+00:00"
+        },
+        {
+          "id": "subtask-7-3",
+          "description": "Dogfood dry-run: execute /validate-consensus in ORCHESTRATION mode against a trivial journey on the ValidationForge repo itself. Example journey: 'README.md exists, contains Iron Rule, contains Installation section, contains Verification Status section'. Spawn 2 lightweight consensus-validator agents (e.g., via the Task tool with run_in_background=true, each reading README.md and producing a report at e2e-evidence/consensus/validator-{N}/report.md), then invoke the consensus-synthesizer. Verify the final e2e-evidence/consensus/report.md is produced per templates/consensus-report.md, contains a confidence score, and represents all 6 acceptance criteria (AC1 ≥2 validators spawned, AC2 separate evidence subdirs, AC3 synthesis handled unanimous-PASS or whatever state occurred, AC4 if disagreement occurred, analysis was invoked, AC5 confidence present, AC6 evidence-inventory.txt per validator).",
+          "service": "plugin",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "e2e",
+            "steps": [
+              "Ensure e2e-evidence/consensus/ does not already contain a conflicting run",
+              "Spawn 2 consensus-validator agents with run_in_background=true, each assigned the README.md-sections journey",
+              "Wait for both validators to complete (poll TaskOutput)",
+              "Verify e2e-evidence/consensus/validator-1/report.md and e2e-evidence/consensus/validator-2/report.md exist and are non-empty",
+              "Verify e2e-evidence/consensus/validator-1/evidence-inventory.txt and validator-2/evidence-inventory.txt exist",
+              "Spawn consensus-synthesizer agent",
+              "Verify e2e-evidence/consensus/report.md is produced",
+              "Verify the report contains: Overall Verdict, Confidence (HIGH|MEDIUM|LOW), per-criterion vote table, Evidence Inventory",
+              "Confirm all 6 acceptance criteria from spec.md are observably satisfied in the generated artifacts"
+            ]
+          },
+          "status": "completed",
+          "notes": "Dogfood dry-run complete. Spawned 2 consensus-validator agents (run_in_background=true) targeting README.md sections journey; both returned PASS with HIGH confidence and independent evidence captured via different command strategies (V1: stat + grep -n; V2: test -f + awk + sed). Each validator wrote to its own e2e-evidence/consensus/validator-{N}/ subdirectory with non-empty report.md, evidence-inventory.txt, preflight.txt, and 4 per-criterion evidence files. Synthesizer produced e2e-evidence/consensus/report.md (16684 bytes, 218 lines) matching templates/consensus-report.md structure: Overall Verdict=PASS, Confidence=HIGH, agreement_ratio=1.00, UNANIMOUS_PASS on all 4 criteria. Zero-byte evidence count: 0. Report includes explicit \"Acceptance-Criteria Coverage\" table documenting satisfaction of AC1-AC6.",
+          "updated_at": "2026-04-17T05:53:02.834060+00:00"
+        },
+        {
+          "id": "subtask-7-4",
+          "description": "Write a short verification summary at e2e-evidence/consensus/verification-summary.md documenting which acceptance criteria are satisfied by which generated artifact. Include: table of 6 acceptance criteria → evidence file + observed content. This is the ship-readiness gate for the spec.",
+          "service": "plugin",
+          "files_to_modify": [],
+          "files_to_create": [
+            "e2e-evidence/consensus/verification-summary.md"
+          ],
+          "patterns_from": [
+            "templates/e2e-report.md",
+            "templates/verdict.md"
+          ],
+          "verification": {
+            "type": "manual",
+            "instructions": "Read e2e-evidence/consensus/verification-summary.md. Confirm: (1) All 6 acceptance criteria from .auto-claude/specs/019-consensus-engine/spec.md are listed; (2) Each criterion cites a specific file path from the phase-7-3 dogfood run; (3) Each criterion has an observation sentence describing what was observed in that file; (4) An overall ship/no-ship recommendation with HIGH/MEDIUM/LOW confidence."
+          },
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_phases": 7,
+    "total_subtasks": 17,
+    "services_involved": [
+      "rules",
+      "skills",
+      "agents",
+      "commands",
+      "templates",
+      "scripts",
+      "docs",
+      "plugin"
+    ],
+    "parallelism": {
+      "max_parallel_phases": 2,
+      "parallel_groups": [
+        {
+          "phases": [
+            "phase-4-command-and-templates",
+            "phase-5-aggregation-script"
+          ],
+          "reason": "phase-4 writes only to commands/ and templates/; phase-5 writes only to scripts/. They share no files, both depend on phase-1 (phase-5) or phase-3 (phase-4) which will already be complete at the point both are eligible."
+        },
+        {
+          "phases": [
+            "phase-3-agents"
+          ],
+          "reason": "phase-3 internally has two subtasks (consensus-validator and consensus-synthesizer) that write to different agent files and can be implemented in parallel by one coder; the phase as a whole is a single block."
+        }
+      ],
+      "recommended_workers": 1,
+      "speedup_estimate": "1.2x — most phases are strictly sequential because later primitives reference earlier ones. Only phase-4 and phase-5 can run truly in parallel. A single worker is recommended because the coder must maintain cross-reference consistency; parallel workers risk divergent vocabulary across skills/agents/commands."
+    },
+    "startup_command": "source auto-claude/.venv/bin/activate && python auto-claude/run.py --spec 019 --parallel 1"
+  },
+  "verification_strategy": {
+    "risk_level": "medium",
+    "skip_validation": false,
+    "test_creation_phase": "post_implementation",
+    "test_types_required": [
+      "manual",
+      "structural-benchmark",
+      "e2e-dogfood"
+    ],
+    "security_scanning_required": false,
+    "staging_deployment_required": false,
+    "acceptance_criteria": [
+      "At least 2 independent validator agents assess the same feature",
+      "Each validator captures its own evidence independently",
+      "Verdict synthesis algorithm handles agreement, partial agreement, and disagreement",
+      "Disagreements trigger root cause investigation with sequential analysis",
+      "CONSENSUS verdict includes confidence score based on agent agreement level",
+      "Evidence from all validators preserved in separate subdirectories"
+    ],
+    "verification_steps": [
+      {
+        "name": "Skill frontmatter benchmark",
+        "command": "bash scripts/benchmark/validate-skills.sh",
+        "expected_outcome": "All 44 skills (including 3 new consensus skills) have valid SKILL.md frontmatter",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Command frontmatter benchmark",
+        "command": "bash scripts/benchmark/validate-cmds.sh",
+        "expected_outcome": "All 16 commands (including /validate-consensus) have valid frontmatter",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Hook regression benchmark",
+        "command": "bash scripts/benchmark/test-hooks.sh",
+        "expected_outcome": "All 7 existing hooks still pass (no regressions from doc/index edits)",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Aggregation script smoke test",
+        "command": "bash -n scripts/consensus-aggregate.sh && EVIDENCE_DIR=/tmp/nonexistent bash scripts/consensus-aggregate.sh; echo exit=$?",
+        "expected_outcome": "Script is syntactically valid; exits non-zero (with clear error) when evidence dir is missing",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Cross-reference link check",
+        "command": "for f in skills/consensus-engine/SKILL.md skills/consensus-synthesis/SKILL.md skills/consensus-disagreement-analysis/SKILL.md agents/consensus-validator.md agents/consensus-synthesizer.md commands/validate-consensus.md rules/consensus-engine.md templates/consensus-report.md; do test -f \"$f\" && echo \"[OK] $f\" || echo \"[MISSING] $f\"; done",
+        "expected_outcome": "All 8 new primitives exist on disk",
+        "type": "command",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Acceptance-criteria manual mapping",
+        "command": "cat e2e-evidence/consensus/verification-summary.md",
+        "expected_outcome": "All 6 acceptance criteria listed with specific evidence file citations from the dogfood run",
+        "type": "manual",
+        "required": true,
+        "blocking": true
+      }
+    ],
+    "reasoning": "Medium risk. The change introduces a new engine with new primitives (rules, skills, agents, command, template, script) that compose with existing primitives and appear in user-facing docs. Risks: (a) inconsistent vocabulary between files → caught by cross-reference linting; (b) broken frontmatter → caught by benchmark scripts; (c) acceptance criteria not actually satisfied by the markdown → caught by dogfood run + verification-summary gate. Iron Rule forbids unit tests, so verification is benchmark-driven plus a dogfood e2e run that produces real evidence, which is the ValidationForge methodology being applied to itself."
+  },
+  "qa_acceptance": {
+    "unit_tests": {
+      "required": false,
+      "commands": [],
+      "minimum_coverage": null,
+      "reasoning": "ValidationForge Iron Rule forbids unit tests and mocks. Verification uses structural benchmarks + dogfood e2e, not unit tests."
+    },
+    "integration_tests": {
+      "required": true,
+      "commands": [
+        "bash scripts/benchmark/validate-skills.sh",
+        "bash scripts/benchmark/validate-cmds.sh",
+        "bash scripts/benchmark/test-hooks.sh"
+      ],
+      "services_to_test": [
+        "plugin"
+      ]
+    },
+    "e2e_tests": {
+      "required": true,
+      "commands": [
+        "# Dogfood: spawn 2 consensus-validator agents + consensus-synthesizer against README.md-sections journey",
+        "ls -la e2e-evidence/consensus/validator-1/ e2e-evidence/consensus/validator-2/ e2e-evidence/consensus/report.md"
+      ],
+      "flows": [
+        "spawn 2+ consensus-validator agents in parallel",
+        "each validator produces independent evidence in its own subdir",
+        "synthesizer reads all validator reports and produces unified consensus report with confidence score",
+        "if split verdict occurs, disagreement analysis is invoked and recorded"
+      ]
+    },
+    "browser_verification": {
+      "required": false,
+      "pages": []
+    },
+    "database_verification": {
+      "required": false,
+      "checks": []
+    },
+    "manual_verification": {
+      "required": true,
+      "checks": [
+        "rules/consensus-engine.md contains the full contract (roles, ownership, synthesis states, confidence formula, disagreement protocol)",
+        "SPECIFICATION.md §3.1 Engine 2 references the new primitives by path",
+        "skills/consensus-engine/SKILL.md, skills/consensus-synthesis/SKILL.md, skills/consensus-disagreement-analysis/SKILL.md all have valid frontmatter",
+        "agents/consensus-validator.md and agents/consensus-synthesizer.md have valid frontmatter and identity/protocol/rules structure",
+        "commands/validate-consensus.md has --validators flag defaulting to 3 and mirrors /validate-team structure",
+        "templates/consensus-report.md has placeholders for Overall Verdict, Confidence, per-criterion vote table, Dissenting Opinions, Disagreement Resolution, Evidence Inventory",
+        "scripts/consensus-aggregate.sh is executable, idempotent, read-only, follows existing scripts conventions",
+        "README.md, CLAUDE.md, COMMANDS.md, SKILLS.md, ARCHITECTURE.md all reference the new primitives and counts are consistent across all 5 files",
+        "Dogfood run in phase-7-3 produces the expected e2e-evidence/consensus/ artifact tree",
+        "e2e-evidence/consensus/verification-summary.md maps each of the 6 acceptance criteria to a specific observed artifact"
+      ]
+    }
+  },
+  "qa_signoff": null,
+  "executionPhase": "coding",
+  "status": "in_progress",
+  "planStatus": "in_progress",
+  "updated_at": "2026-04-17T05:45:35.880Z",
+  "last_updated": "2026-04-17T05:53:02.834065+00:00",
+  "recoveryNote": "Task recovered from stuck state at 2026-04-17T05:15:48.887Z"
+}

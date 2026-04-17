@@ -1,0 +1,26 @@
+=== ALL HEADINGS IN README.md (via awk) ===
+1: # ValidationForge
+7: ## The Iron Rule
+20: ## Why Not Unit Tests?
+34: ## Installation
+43: # Quick install via curl (requires published GitHub repo)
+46: # Or manual clone from GitHub (requires published GitHub repo)
+49: # Or local symlink (works without GitHub — use if repo is not yet published)
+64: # Clone into your project's .opencode/plugins/ directory (requires published GitHub repo)
+67: # Or symlink shared skills/commands
+83: ## Quick Start
+129: ## The 7-Phase Pipeline
+155: ## Platform Auto-Detection
+168: ## Team Validation
+183: ## Configuration
+195: ## Evidence Standards
+208: ## Benchmarking
+223: ## Inventory
+240: ## File Structure
+268: ## Verification Status
+286: ## Known Limitations
+302: ## Troubleshooting
+331: ## License
+
+=== GREP for Iron Rule (case-insensitive, heading lines) ===
+7:## The Iron Rule

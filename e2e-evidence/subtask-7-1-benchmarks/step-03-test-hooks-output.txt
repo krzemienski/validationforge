@@ -1,0 +1,38 @@
+=== ValidationForge Hook Test Suite ===
+
+--- block-test-files.js ---
+PASS: block-test-files.js — blocks .test.ts files
+PASS: block-test-files.js — allows normal .ts files
+PASS: block-test-files.js — allowlists e2e-evidence paths
+PASS: block-test-files.js — blocks __tests__ directory
+
+--- evidence-gate-reminder.js ---
+PASS: evidence-gate-reminder.js — injects checklist on task completion
+PASS: evidence-gate-reminder.js — silent on non-completion status
+
+--- validation-not-compilation.js ---
+PASS: validation-not-compilation.js — fires on build success
+PASS: validation-not-compilation.js — silent on normal commands
+
+--- completion-claim-validator.js ---
+PASS: completion-claim-validator.js — fires on claim without evidence
+PASS: completion-claim-validator.js — silent on non-completion output
+
+--- mock-detection.js ---
+PASS: mock-detection.js — detects jest.mock
+PASS: mock-detection.js — silent on normal imports
+PASS: mock-detection.js — detects sinon.stub
+
+--- evidence-quality-check.js ---
+PASS: evidence-quality-check.js — warns on empty evidence file
+PASS: evidence-quality-check.js — silent on evidence with content
+PASS: evidence-quality-check.js — silent on non-evidence paths
+
+--- validation-state-tracker.js ---
+PASS: validation-state-tracker.js — tracks npm run dev
+PASS: validation-state-tracker.js — silent on non-validation commands
+
+=== SUMMARY ===
+Total: 18  Pass: 18  Fail: 0
+{"total":18,"pass":18,"fail":0}
+EXIT: 0

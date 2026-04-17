@@ -1,0 +1,6 @@
+168 e2e-evidence/consensus/validator-2/preflight.txt
+2769 e2e-evidence/consensus/validator-2/report.md
+254 e2e-evidence/consensus/validator-2/step-01-readme-exists.log
+868 e2e-evidence/consensus/validator-2/step-02-iron-rule-section.log
+930 e2e-evidence/consensus/validator-2/step-03-installation-section.log
+981 e2e-evidence/consensus/validator-2/step-04-verification-status-section.log

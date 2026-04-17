@@ -1,6 +1,6 @@
 # ValidationForge Skills Index
 
-48 skills across 7 categories. All skills use Claude Code SKILL.md frontmatter for discovery.
+51 skills across 8 categories. All skills use Claude Code SKILL.md frontmatter for discovery.
 
 ## Platform Validation (15)
 
@@ -84,3 +84,11 @@
 | 46 | `forge-benchmark` | Measure validation posture across five dimensions. Track trends over time and compare against baseline targets. |
 | 47 | `validate-audit-benchmarks` | Run automated benchmark suite to score hook correctness, skill/command structural integrity, and aggregate quality metrics. |
 | 48 | `team-validation-dashboard` | Aggregate team validation metrics: posture scores, coverage %, regressions, journey ownership. Identifies critical projects (score <60). Use for CI/CD reporting, team reviews, regression tracking. |
+
+## Consensus Engine (3)
+
+| # | Skill | Description |
+|---|-------|-------------|
+| 49 | `consensus-engine` | Multi-agent CONSENSUS validation orchestration. Spawns at least 2 independent validator agents that assess the same feature with isolated evidence directories, then synthesizes their verdicts into a confidence-scored CONSENSUS verdict. Disagreements trigger root cause investigation. |
+| 50 | `consensus-synthesis` | Verdict synthesis algorithm for CONSENSUS validation. Aggregates independent validator verdicts -- handling agreement, partial agreement, and disagreement -- and computes a confidence score based on agent agreement level. Produces a unified evidence-backed CONSENSUS verdict. |
+| 51 | `consensus-disagreement-analysis` | Root cause investigation for validator disagreements in CONSENSUS validation. Triggered when independent validators reach conflicting verdicts. Uses sequential analysis to compare evidence, identify the source of disagreement, and resolve to a final verdict. |

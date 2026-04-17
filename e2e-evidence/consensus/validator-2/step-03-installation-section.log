@@ -1,0 +1,18 @@
+=== HEADING SEARCH: Installation ===
+34:## Installation
+
+=== awk all headings with NR (reference) ===
+34: ## Installation
+
+=== Context lines (sed window around first match) ===
+| CSS grid overflow on small screens | PASS (no visual rendering) | **FAIL** (Playwright screenshot shows overflow) |
+
+These are design scenarios where mock-based testing is structurally blind. ValidationForge targets exactly these gaps by validating against live systems.
+
+## Installation
+
+> **Note:** The GitHub repository (`https://github.com/krzemienski/validationforge`) may not be publicly published yet. If the curl/clone methods below fail with a 404, use the local symlink method instead.
+
+> **Important:** After installation, **restart Claude Code** before using ValidationForge. Plugins are loaded at session startup — hooks, skills, and commands will not be active in the session where you ran the installer.
+
+### Claude Code (install.sh)

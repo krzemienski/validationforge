@@ -1,0 +1,7 @@
+34:## Installation
+--- EXIT: 0 ---
+--- ALL INSTALLATION HITS ---
+34:## Installation
+38:> **Important:** After installation, **restart Claude Code** before using ValidationForge. Plugins are loaded at session startup — hooks, skills, and commands will not be active in the session where you ran the installer.
+290:1. **Plugin requires session restart to load** — After installation, Claude Code must be fully restarted before the plugin is recognized. Installation in a live session does not activate hooks, skills, or commands. This behavior is architectural (plugins load at session startup), not a bug, but it means the "install and immediately use" experience shown in the Quick Start has not been verified end-to-end in a single session.
+314:3. Restart the Claude Code session after plugin installation.
