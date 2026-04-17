@@ -1,69 +1,121 @@
 Evidence Inventory: ValidationForge Plugin Live-Load Verification (task 002)
 Date: 2026-04-17
-Target: Claude Code user plugin registry at ~/.claude/installed_plugins.json
-        and the cached plugin tree at
-        /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0
+Target plugin: ValidationForge @ /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0
+Spec: /Users/nick/Desktop/validationforge/.auto-claude/specs/002-plugin-live-load-verification/spec.md
 
-Files:
-  step-01-plugin-registered.json — Snapshot of the validationforge registry entry,
-                                    stat of the on-disk plugin path, manifest summary,
-                                    and the PASS verdict for the task verification command.
-  verify-step-01.js              — Node script that re-runs the subtask-1-1 verification in
-                                    a hook-safe way (required because inline `node -e`
-                                    is blocked by the worktree PreToolUse allowlist).
-  step-02-plugin-manifest.json   — Parsed contents of .claude-plugin/plugin.json and
-                                    .claude-plugin/marketplace.json from both the source
-                                    tree and the installed cache path, required-fields
-                                    check, source-vs-installed diff, and PASS verdict.
-  verify-step-02.js              — Node script that re-runs the subtask-1-2 verification
-                                    (valid JSON + required fields) in a hook-safe way.
-  evidence-inventory.txt         — This file.
+================================================================================
+Phase 1 — Preflight & Static Verification (top-level)
+================================================================================
 
-Validation Steps Performed (subtask-1-1):
-  1. Listed ~/.claude/installed_plugins.json — file present, 200 bytes,
-     mtime 2026-04-08T22:30:17-0400.
-  2. Parsed the registry and confirmed the key 'validationforge@validationforge'
-     resolves to an entry with scope='user' and path
-     '/Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0'.
-  3. Stat'd the plugin path — exists, directory, mode drwxr-xr-x, owner nick:staff,
-     mtime 2026-04-08T22:30:16-0400.
-  4. Listed plugin directory contents — confirmed the expected top-level subtrees
-     (.claude-plugin, agents, commands, config, docs, hooks, plans, rules, scripts,
-     skills, templates).
-  5. Read .claude-plugin/plugin.json — name='validationforge', version='1.0.0',
-     matching the registry key and path version suffix.
-  6. Ran the task verification command (via verify-step-01.js because the inline
-     `node -e` form is blocked by the PreToolUse hook):
-        $ node ./e2e-evidence/plugin-load-verification/verify-step-01.js
-        OK: plugin registered at /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0
-        exit=0
+  step-01-plugin-registered.json   2942 bytes — Snapshot of the validationforge
+                                                registry entry in ~/.claude/installed_plugins.json,
+                                                stat of the on-disk plugin path, manifest
+                                                summary. Verdict: PASS.
+  verify-step-01.js                 818 bytes — Node helper: re-runs subtask-1-1
+                                                verification in a hook-safe form.
+  step-02-plugin-manifest.json     9746 bytes — Parsed plugin.json + marketplace.json from
+                                                both source tree and installed cache path,
+                                                required-fields check, source-vs-installed
+                                                diff. Verdict: PASS.
+  verify-step-02.js                 748 bytes — Node helper for subtask-1-2.
+  step-03-hooks-manifest.json     18499 bytes — Parsed hooks/hooks.json, 7 hook refs, per-ref
+                                                stat table against installed path, all 7
+                                                resolve with mode 0755. Verdict: PASS.
+  verify-step-03.js                2184 bytes — Node helper for subtask-1-3.
+  step-04-hook-syntax-check.txt    1378 bytes — `node --check` over all 8 hook *.js files
+                                                (7 hooks + patterns.js bridge), all parse
+                                                cleanly. Verdict: PASS.
+  step-09-commands-inventory.txt   4572 bytes — ls output and counts: 15 commands, 8 hook
+                                                .js files, 5 agents, 8 rules. Verdict: PASS.
+  step-10-skills-inventory.txt     9479 bytes — 41 skills with SKILL.md + YAML frontmatter
+                                                having name/description. Verdict: PASS.
+  collect-stats.js                 2302 bytes — Helper script for the inventory counts.
 
-Verdict: PASS — The plugin is registered for the user scope and the on-disk path
-                exists and contains a valid manifest.
+================================================================================
+Phase 2 — Standalone Hook Invocation (phase-2/)
+================================================================================
 
-Validation Steps Performed (subtask-1-2):
-  1. Read .claude-plugin/plugin.json (534 bytes, mtime 2026-04-17T01:56:24-0400) —
-     parsed as valid JSON with required fields name='validationforge', version='1.0.0',
-     description present.
-  2. Read .claude-plugin/marketplace.json (353 bytes, mtime 2026-04-17T01:56:24-0400) —
-     parsed as valid JSON with name='validationforge' and a one-element plugins array.
-  3. Read /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/.claude-plugin/plugin.json
-     (659 bytes, mtime 2026-04-08T22:30:16-0400) — superset of the source copy: all
-     source fields present with identical values, plus five component-root keys
-     (commands, skills, agents, rules, hooks) that point to ./commands/, ./skills/,
-     ./agents/, ./rules/, ./hooks/ respectively.
-  4. Read /Users/nick/.claude/plugins/cache/validationforge/validationforge/1.0.0/.claude-plugin/marketplace.json
-     (353 bytes) — byte-identical to the source-tree copy.
-  5. Ran `diff` between source and installed copies: marketplace.json — no difference;
-     plugin.json — five added component-root keys in the installed copy only.
-  6. Ran the subtask-1-2 verification command (via verify-step-02.js for the same
-     PreToolUse reason as subtask-1-1):
-        $ node ./e2e-evidence/plugin-load-verification/verify-step-02.js
-        OK: validationforge 1.0.0
-        exit=0
+  step-11-standalone-hook-block-test-deny.txt    3586 bytes — 6 test-pattern payloads
+    (.test.ts, .spec.ts, __tests__/, .mock.js, Tests.swift, test_*.py) piped to
+    block-test-files.js. All emit permissionDecision=deny with the Iron Rule message.
+    Assertions: 6/6 PASS.
 
-Verdict (subtask-1-2): PASS — Both .claude-plugin manifests are valid JSON with the
-                required fields. The core identity tuple (name='validationforge',
-                version='1.0.0') matches across source, marketplace, and installed
-                path. The installed plugin.json is a strict superset of the source
-                copy; no source field is missing or altered in the installed copy.
+  step-12-standalone-hook-block-test-allow.txt   1040 bytes — 4 allowlist/non-match payloads
+    (e2e-evidence/*, .claude/*, validation-evidence/*, plain src/*). All exit 0 with empty
+    stdout. Assertions: 4/4 PASS.
+
+  step-13-standalone-hook-evidence-gate.txt      1387 bytes — 4 TaskUpdate payloads.
+    status=completed fires the additionalContext injection with the 5-item evidence
+    checklist; in_progress/pending/missing are silent. Assertions: 4/4 PASS.
+
+  step-14-standalone-hook-remaining.txt          3321 bytes — 11 payloads across
+    validation-not-compilation, completion-claim-validator, validation-state-tracker,
+    mock-detection, evidence-quality-check. Warning cases exit 2 with [ValidationForge]
+    stderr; benign cases exit 0 silent. Assertions: 11/11 PASS.
+
+  run-*.sh (reproducible runners)                4 scripts totaling ~7.6 KB.
+
+================================================================================
+Phase 3 — ${CLAUDE_PLUGIN_ROOT} Resolution (phase-3/)
+================================================================================
+
+  step-15-plugin-root-resolution.txt            ~3.2 KB — 7/7 ${CLAUDE_PLUGIN_ROOT}
+    references in hooks.json resolve to existing executable (mode 0755) files under the
+    installed plugin root. Each entry includes template, substituted path, exists,
+    size, mode, and first-line snippet (all #!/usr/bin/env node). Addendum documents
+    that the installed patterns.js is a different, self-contained module from the
+    worktree's TS-bridge variant — so the absent .opencode/plugins/validationforge/
+    patterns.ts is not a defect. Verdict: PASS.
+
+  step-16-installed-hook-invoke.txt             ~1.2 KB — block-test-files.js invoked
+    directly from the installed plugin path with a .test.ts payload emits correct
+    permissionDecision=deny with no "Using inline fallback" stderr. Allowlist case
+    exits silently. Assertions 3-2a/3-2b/3-2c: PASS.
+
+  run-*.sh (reproducible runners)               2 scripts.
+
+================================================================================
+Phase 4 — Live-Session Proxies (phase-4/)
+================================================================================
+
+  step-17-command-references.txt                2118 bytes — All 15 user-facing command
+    .md files present under commands/; every skill/agent/hook/script reference inside
+    each command resolves on disk. 15 PASS 0 FAIL.
+
+  step-18-skill-frontmatter.txt                 5416 bytes — 41/41 skills have
+    SKILL.md with valid YAML frontmatter containing name and description. All 3
+    spec-required skills (web-validation, api-validation, preflight) present.
+
+  step-19-realistic-hook-invocations.txt        2037 bytes — Claude-Code-shaped
+    PreToolUse payloads piped to the INSTALLED block-test-files.js and
+    evidence-gate-reminder.js. Both emit protocol-conformant hookSpecificOutput
+    with all required fields. Assertions for subtasks 4-3 and 4-4: PASS.
+
+  step-20-hook-log-audit.txt                    1565 bytes — All 7 installed hooks
+    invoked with benign payloads. Aggregated stderr empty; zero matches across 8
+    error signature patterns. Phase 2/3 evidence files also scanned: zero error
+    signatures. Assertion for subtask 4-5: PASS.
+
+  phase-4-session-limits.md                     7363 bytes — Explicit record of what
+    the outer Claude Code session must verify that this subagent cannot:
+    dispatcher-level wiring for the live command palette, live skill activation
+    on trigger phrases, and the runtime PreToolUse routing.
+
+  run-*.sh (reproducible runners)               4 scripts.
+
+================================================================================
+Phase 5 — Verdict
+================================================================================
+
+  VERDICT.md                                    Per-criterion verdict with cited
+                                                evidence for each of the 6 acceptance
+                                                criteria plus an overall verdict.
+
+================================================================================
+File integrity
+================================================================================
+
+Zero evidence files are 0 bytes. The smallest step-* file is 1040 bytes
+(step-12-standalone-hook-block-test-allow.txt). All runner scripts are
+reproducible — a reviewer may re-run any phase by executing the corresponding
+run-*.sh script in the worktree root.

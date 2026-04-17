@@ -59,3 +59,18 @@
 - **Completed remediation steps**: 5 (expanded validation) and 6 (task_plan honesty fix)
 - **Still blocked on steps 1-4**: Plugin load, `/vf-setup`, `/validate`, `/validate-benchmark` — all require session restart
 - **Next**: Restart session, verify plugin loads, execute steps 1-4
+
+## 2026-04-17 07:30 — Plugin Live-Load Verification (spec 002) — Phases 2-5
+- **Verdict:** PASS (with 5 documented outer-session residuals). See `e2e-evidence/plugin-load-verification/VERDICT.md`.
+- **Evidence directory:** `e2e-evidence/plugin-load-verification/`
+- **Per-criterion status:**
+  - Criterion 1 (Plugin registers without errors): PASS offline — step-01, step-02, phase-4/step-20. Live dispatcher log still needs outer session.
+  - Criterion 2 (15 commands in palette): PASS on-disk — step-09, phase-4/step-17 (15/15 PASS). Live palette listing still needs outer session.
+  - Criterion 3 (block-test-files DENIES .test.ts): PASS payload contract — phase-2/step-11, phase-3/step-16, phase-4/step-19. Live dispatcher-to-hook routing still needs outer session.
+  - Criterion 4 (evidence-gate-reminder fires on completed): PASS payload contract — phase-2/step-13, phase-4/step-19. Live TaskUpdate dispatcher still needs outer session.
+  - Criterion 5 (${CLAUDE_PLUGIN_ROOT} resolves): PASS offline — step-03, phase-3/step-15, phase-3/step-16 (all 7 refs resolve to mode-0755 executables).
+  - Criterion 6 (≥3 skills discoverable): PASS offline — step-10, phase-4/step-18 (41/41 skills parse; 3 spec-required present). Live activation on trigger phrase still needs outer session.
+- **Phases executed:** Phase 2 (standalone hook invocation — 4 subtasks, 25 assertions all PASS), Phase 3 (plugin-root resolution — 2 subtasks, 4 assertions all PASS), Phase 4 (live-session proxies — 4 scripts, 15 commands + 41 skills + 7 hooks all PASS), Phase 5 (this verdict).
+- **Session limits documented** in `phase-4/phase-4-session-limits.md` — the 5 dispatcher-level items that require the outer Claude Code session to discharge.
+- **Source files modified:** none (investigation workflow — no code changes).
+- **Commits on branch** `auto-claude/002-plugin-live-load-verification`: one per phase (phase-2, phase-3, phase-4, phase-5).
