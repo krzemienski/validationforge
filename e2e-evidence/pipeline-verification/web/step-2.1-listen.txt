@@ -1,0 +1,2 @@
+COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    44150 nick   12u  IPv6 0xb28f4f06f0111161      0t0  TCP *:3847 (LISTEN)

@@ -303,3 +303,62 @@ next subtask:  1.4  Create e2e-pipeline-check.sh harness
 ================================================================
  END OF SESSION 4 LOG
 ================================================================
+
+================================================================
+ SESSION 5 LOG -- 2026-04-17 (subtask 2.1)
+================================================================
+subtask:  2.1  Start blog-series/site on localhost:3847
+phase:    phase-2-web-run (parallel_safe=true, depends_on=phase-1-preflight)
+
+command:
+  cd /Users/nick/Desktop/blog-series/site
+  npx next start -p 3847
+
+server boot (/tmp/claude/blog-series-3847.log):
+  Next.js 16.1.6
+  - Local:         http://localhost:3847
+  - Network:       http://192.168.0.154:3847
+  Starting...
+  Ready in 992ms
+
+acceptance probe (plan row 2.1 acceptance):
+  curl -sI http://localhost:3847
+  -> HTTP/1.1 200 OK
+     content-type: text/html; charset=utf-8
+     content-length: 76249 bytes
+     X-Powered-By: Next.js
+     x-nextjs-cache: HIT
+     x-nextjs-prerender: 1
+
+pattern-file check (./scripts/health-check.sh):
+  bash ./scripts/health-check.sh http://localhost:3847 10 1
+  -> HEALTHY: http://localhost:3847 responded 200 after 0 seconds
+
+process binding:
+  lsof -nP -iTCP:3847 -sTCP:LISTEN
+  -> node  44150 nick  12u  IPv6  TCP *:3847 (LISTEN)
+
+sandbox note:
+  - Next.js listen(0.0.0.0:3847) returns EPERM inside the sandbox.
+  - Start command + loopback curl required dangerouslyDisableSandbox
+    for the bind and probe only; no fixture source was modified.
+  - Iron Rule compliance: no mocks, no test files, no stubs.
+
+evidence captured (./e2e-evidence/pipeline-verification/web/):
+  step-2.1-curl-head.txt         12 lines, 200 OK headers
+  step-2.1-health-check.txt      1 line, HEALTHY marker
+  step-2.1-listen.txt            1 line, node PID on :3847 (LISTEN)
+  step-2.1-evidence-manifest.md  cross-index of the above
+
+handoff:
+  - Next.js node PID 44150 remains running on :3847 so subtask 2.2
+    can invoke `claude --print "/validate-ci --platform web"` from a
+    live Claude Code session (per run-book section 2) without needing
+    to re-start.
+  - Do NOT kill PID 44150 until 2.2 has copied its evidence into
+    ./e2e-evidence/pipeline-verification/web/.
+
+next subtask:  2.2  Run /validate-ci --platform web from a live Claude Code session
+================================================================
+ END OF SESSION 5 LOG
+================================================================
