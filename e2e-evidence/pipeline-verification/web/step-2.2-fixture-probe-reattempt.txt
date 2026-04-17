@@ -1,0 +1,23 @@
+Subtask 2.2 — fixture re-probe before second attempt
+Captured: 2026-04-17T06:19:57Z
+Operator: auto-claude coder worker (sandboxed, second attempt)
+Working directory: /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/001-end-to-end-pipeline-verification
+
+Step 1 — restart fixture (Next.js 16.1.6 was no longer listening on :3847 at start of session):
+  cd /Users/nick/Desktop/blog-series/site && npx next start -p 3847 &
+  Background task ID: b7dm2033k (in-sandbox foreground reservation)
+  Wait: 6 seconds for ready
+
+Step 2 — HTTP HEAD probe (sandbox disabled for localhost network):
+  $ curl -sI http://localhost:3847 | head -3
+
+  HTTP/1.1 200 OK
+  Vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  x-nextjs-cache: HIT
+
+  curl exit code: 0
+  Probe timestamp: 2026-04-17T06:19:57Z
+
+Conclusion: The Next.js fixture at /Users/nick/Desktop/blog-series/site is
+healthy and serving HTTP 200 on localhost:3847. It is ready for the
+orchestrator's external `claude --print "/validate-ci --platform web"` run.
