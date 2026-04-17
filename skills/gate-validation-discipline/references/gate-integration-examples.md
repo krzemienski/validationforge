@@ -1,8 +1,8 @@
 # Gate Integration Examples
 
-## Integration with Ultrawork/Parallel Execution
+## Integration with Team Mode / Parallel Execution
 
-When multiple agents work in parallel (Ultrawork, Team mode), gate discipline applies
+When multiple agents work in parallel (Team mode), gate discipline applies
 to each agent independently:
 
 1. **Each agent verifies its own work.** Agent A cannot mark Agent B's task complete.
