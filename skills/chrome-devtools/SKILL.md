@@ -1,6 +1,6 @@
 ---
 name: chrome-devtools
-description: "Reach for this when browser debugging goes beyond what Playwright can show cleanly — a page feels slow and you need Core Web Vitals, a request is failing and you need the network waterfall, console errors are intermittent, or a memory leak needs heap comparison. Trigger phrases: 'check performance', 'Lighthouse score', 'Core Web Vitals', 'why is this slow', 'inspect the network tab', 'memory leak', 'LCP/CLS/FID', 'performance profiling', 'devtools inspection'. Provides performance traces, network inspection, console monitoring, Lighthouse audits, heap snapshots, and CPU/network throttling via the Chrome DevTools MCP server."
+description: "Use when Playwright MCP isn't detailed enough for debugging — Reach for this when browser debugging goes beyond what Playwright can show cleanly — a page feels slow and you need Core Web Vitals, a request is failing and you need the network waterfall, console errors are intermittent, or a memory leak needs heap comparison. Trigger phrases: 'check performance', 'Lighthouse score', 'Core Web Vitals', 'why is this slow', 'inspect the network tab', 'memory leak', 'LCP/CLS/FID', 'performance profiling', 'devtools inspection'. Provides performance traces, network inspection, console monitoring, Lighthouse audits, heap snapshots, and CPU/network throttling via the Chrome DevTools MCP server."
 triggers:
   - "chrome devtools"
   - "devtools inspection"
