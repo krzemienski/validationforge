@@ -1,10 +1,21 @@
 # Subtask 2.2 Handoff — Run `/validate-ci --platform web` Manually
 
-**Status:** BLOCKED inside auto-claude sandbox. Handoff required to a live
-Claude Code session running on the host with full permissions.
+**Status:** BLOCKED inside auto-claude sandbox (re-confirmed on second attempt).
+Handoff required to a live Claude Code session running on the host with full
+permissions.
 
-**Captured:** 2026-04-17T06:11:00Z by auto-claude coder worker for
-phase-2-web-run / subtask 2.2 of the "End-to-End Pipeline Verification" spec.
+**Captured:** 2026-04-17T06:11:00Z (initial), re-confirmed 2026-04-17T06:19:42Z
+(second attempt) by auto-claude coder workers for phase-2-web-run / subtask 2.2
+of the "End-to-End Pipeline Verification" spec.
+
+**Re-attempt log:**
+- The fixture had stopped between attempts and was restarted (background task
+  ID `b7dm2033k`). HTTP 200 re-confirmed at 2026-04-17T06:19:57Z — see
+  `./step-2.2-fixture-probe-reattempt.txt`.
+- The `claude` CLI invocation block was re-verified — same harness rejection
+  message. Evidence at `./step-2.2-claude-cli-blocked-reattempt.txt`.
+- `nohup` and `(npx … &)` shell forms are also harness-blocked; only the
+  `run_in_background: true` Bash-tool flag spawned the fixture successfully.
 
 ---
 
@@ -29,7 +40,8 @@ execution.
 1. Web fixture is running — verified immediately before handoff:
    - `curl -sI http://localhost:3847` → `HTTP/1.1 200 OK`
    - Listener: `node *:3847 (LISTEN)` (see `lsof -nP -iTCP:3847 -sTCP:LISTEN`)
-   - Evidence file: `./step-2.2-fixture-probe.txt`
+   - Evidence files: `./step-2.2-fixture-probe.txt` (initial),
+     `./step-2.2-fixture-probe-reattempt.txt` (second attempt, 06:19:57Z)
 2. Worktree location of this handoff:
    `/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/001-end-to-end-pipeline-verification/e2e-evidence/pipeline-verification/web/`
 3. Fixture evidence directory (where `/validate-ci` will write before copy):
