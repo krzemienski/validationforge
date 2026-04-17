@@ -47,3 +47,33 @@ These answers are BLOCKING for P00, P07, P08, P11. Any executor or validator
 encountering a decision-dependent step MUST read this file first and honor the
 literal answer. Changes require a new AskUserQuestion round and an addendum
 section appended below this line (never overwrite).
+
+---
+
+## Addendum — Post-Campaign Retroactive Acknowledgments (2026-04-16 22:30)
+
+After reflexion reflect audit flagged three mid-campaign pivots as
+orchestrator-only (not user-approved), user was re-consulted via
+AskUserQuestion.
+
+### Retroactive A1 — P05 early BLOCKED_WITH_USER
+- Original protocol: LOOP-CONTROLLER.md requires 3 attempts before BLOCKED_WITH_USER.
+- Actual disposition: attempt 1 → BLOCKED_WITH_USER.
+- User decision: **Accept** (rationale: missing demo-oracle infrastructure; 3 identical retries would have produced identical FAIL evidence).
+
+### Retroactive A2 — P08 test→defer pivot
+- Original U1: test.
+- Actual branch: defer (claim scrub + docs/ENGINES-DEFERRED.md).
+- Reason: P05 FAIL removed the test-branch prereq (no in-scope defect to /forge-execute against).
+- Validator acceptance was orchestrator-circular (sub-agent I dispatched).
+- User decision: **Accept pivot** (rationale: Iron Rule prohibits fabricating defects).
+
+### Retroactive A3 — Tag disposition
+- Initial tag `vf-gap-remediation-260416-complete` → commit 2c604b2 (pre-remediation, aggregate 95).
+- Remediation commit fd6dbd7 restored aggregate to 96 (A/96) by removing transient
+  `e2e-evidence/python-api-260416-1900/server.pid` (10-byte PID stub from prior dev-server run).
+- User decision: **Move tag to fd6dbd7** (safe; nothing pushed to remote).
+- Action: `git tag -f vf-gap-remediation-260416-complete fd6dbd7`.
+
+Campaign state at final: A/96, all 14 phases closed, 12 gaps CLOSED,
+2 DEFERRED (CONSENSUS V1.5, FORGE V2.0), 1 BLOCKED_WITH_USER (B5).
