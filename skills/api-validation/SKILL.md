@@ -64,6 +64,13 @@ Verify the response includes expected fields (status, version, uptime, etc.). A 
 
 ## Step 2: CRUD Validation Pattern
 
+**Prerequisite: `$TOKEN` must be set before Step 2.** The Create/Read/Update/Delete
+requests below all send `Authorization: Bearer $TOKEN`. The token is obtained in
+Step 3 ("Valid credentials"). If you are running steps individually — or the API
+requires auth on every CRUD endpoint — run Step 3's login request first, export
+`TOKEN=...`, then return here. If the API is unauthenticated, drop the
+`-H "Authorization: Bearer $TOKEN"` header from the snippets below.
+
 **Fast path**: If you just want to run the whole CRUD cycle, `bash scripts/crud-validator.sh --base-url=http://localhost:PORT --resource=posts --token=$TOKEN --evidence-dir=e2e-evidence/api` does steps 2.1–2.7 in one shot. The inline steps below exist for the cases where you need to inspect or modify a single step.
 
 For each resource in the API, execute the full CRUD cycle. Save every response.
