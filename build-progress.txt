@@ -230,3 +230,76 @@ next subtask:  1.3  Scaffold evidence dirs + run-book
 ================================================================
  END OF SESSION 3 LOG
 ================================================================
+
+----------------------------------------------------------------
+ SESSION 4 — PHASE 1 / SUBTASK 1.3  [COMPLETE]
+ Scaffold evidence directories + run-book
+----------------------------------------------------------------
+role:      coder (single subtask, isolated worktree)
+worktree:  .auto-claude/worktrees/tasks/001-end-to-end-pipeline-verification
+branch:    auto-claude/001-end-to-end-pipeline-verification
+
+delivered:
+  - e2e-evidence/pipeline-verification/web/.gitkeep     (0-byte placeholder)
+  - e2e-evidence/pipeline-verification/api/.gitkeep     (0-byte placeholder)
+  - e2e-evidence/pipeline-verification/run-book.md      (315 lines, 11,237 bytes)
+      + section 0: purpose + sandbox limitation preamble
+      + section 1: operator prerequisites
+          - sandbox-side checks (verify-setup, fixture decision, scaffolding)
+          - live-session checks (claude --version, ~/.claude/.vf-config.json)
+          - fixture reachability probes (:3847, :8000/health)
+      + section 2: web platform run (subtask 2.2)
+          - 2.1 start blog-series/site on :3847 with readiness wait loop
+          - 2.2 exact invocation: `cd /Users/nick/Desktop/blog-series/site`
+                  then `claude --print "/validate-ci --platform web"`
+                  + env table (HOME, PATH, VF_VERBOSE, FLAG_PLATFORM)
+                  + exit-code expectation table (0=PASS, 1=FAIL)
+          - 2.3 post-run cp -R relocation to pipeline-verification/web/
+          - 2.4 expected artifacts (>=4 files, 0 empty, report.md + plan + screenshots + json + exit-code.txt)
+          - 2.5 cleanup (kill $WEB_PID)
+      + section 3: api platform run (subtask 3.2)
+          - 3.1 venv + pip install + `python server.py` with readiness wait
+                  and step-00-readiness.json capture
+          - 3.2 exact invocation: `cd /Users/nick/Desktop/cg-ffmpeg`
+                  then `claude --print "/validate-ci --platform api"`
+                  + same env expectations
+                  + explicit note: no API keys or DB creds required
+          - 3.3 post-run cp -R relocation to pipeline-verification/api/
+          - 3.4 expected artifacts (>=3 files, jq-parseable json, evidence-inventory.txt, exit-code.txt)
+          - 3.5 cleanup (kill $API_PID, deactivate venv)
+      + section 4: sandbox-side 7-phase grep (pre-cursor to subtask 4.3)
+      + section 5: failure-handling table cross-referencing Iron Rules
+      + section 6: change log
+
+verification command (from implementation_plan.json subtask 1.3):
+  test -d ./e2e-evidence/pipeline-verification/web && \
+  test -d ./e2e-evidence/pipeline-verification/api && \
+  test -s ./e2e-evidence/pipeline-verification/run-book.md
+  -> exit 0  [PASS]
+
+acceptance audit:
+  [OK] both subdirectories exist
+  [OK] run-book.md is non-empty
+  [OK] documents exact `claude --print "/validate-ci --platform web"` invocation
+  [OK] documents exact `claude --print "/validate-ci --platform api"` invocation
+  [OK] specifies CWD for each run
+  [OK] specifies env vars (HOME/PATH/VF_VERBOSE/FLAG_PLATFORM)
+  [OK] enumerates expected artifacts per platform
+
+no-mock compliance:
+  - no test files created
+  - no fixture source code modified
+  - only new files live under ./e2e-evidence/pipeline-verification/
+  - .gitkeep files are 0-byte sentinels, not test evidence (explicit design;
+    the evidence-quality verifier only fails on 0-byte files under the
+    evidence tree AFTER a run — .gitkeep pre-dates any run)
+
+phase-1 gate status after subtask 1.3:
+  Only 1.4 (e2e-pipeline-check.sh harness) remains before phase-1 closes.
+  After 1.4, phases 2 and 3 can execute in parallel from the live session
+  per the run-book.
+
+next subtask:  1.4  Create e2e-pipeline-check.sh harness
+================================================================
+ END OF SESSION 4 LOG
+================================================================
