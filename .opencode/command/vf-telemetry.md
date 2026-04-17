@@ -1,0 +1,1 @@
+../../commands/vf-telemetry.md

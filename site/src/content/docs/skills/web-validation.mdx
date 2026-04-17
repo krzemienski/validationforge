@@ -114,13 +114,13 @@ non-blocking issue.
 ## Step 5: Network Request Validation
 
 ```
-browser_network_requests  includeStatic=false
+browser_network_requests  static=false
 ```
 
 Check for failed requests (4xx/5xx). Save evidence:
 
 ```
-browser_network_requests  includeStatic=false  filename="e2e-evidence/web-network-requests.txt"
+browser_network_requests  static=false  filename="e2e-evidence/web-network-requests.txt"
 ```
 
 ## Step 6: Form Validation
