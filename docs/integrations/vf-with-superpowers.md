@@ -472,6 +472,8 @@ e2e-evidence/
 
 Once the sweep's second attempt returns PASS on the real-wait journey, `report.md` shows all 5/5 PASS and the production-readiness audit runs. Superpowers' 27 unit tests live under `tests/` as the unit-layer safety net; VF's 5 journey verdicts live under `e2e-evidence/` as the system-layer proof. Both layers ship together — and the one defect that only surfaced when a real token met a real clock is now caught in regression on every future `/validate` run.
 
+For high-stakes features like this JWT refresh flow, it is worth adding a third layer after TDD + single-validator `/validate`: run `/validate-consensus` to spawn N independent validators and synthesize their verdicts into a single confidence-scored CONSENSUS verdict. CONSENSUS is a natural complement to Superpowers' RED/GREEN discipline — the TDD cycle proves the logic, `/validate` proves the single-validator runtime contract, and CONSENSUS proves that multiple independent validators agree on that contract. Follow up with `/validate-dashboard` to render the evidence tree into an HTML + markdown summary the PR reviewer can skim at a glance. VF's `preflight` skill now acts as a strict CLEAR / WARN / BLOCKED gate (Iron Rule 4): if the Superpowers-authored code compiles and unit-tests green but the service fails to boot, preflight short-circuits to BLOCKED rather than running journeys against a broken environment.
+
 ## Evidence of Coexistence
 
 The snippets below show both plugins active in the same session. They are illustrative, copy-pasteable reconstructions grounded in documented Superpowers and VF behavior, not live runtime captures.
@@ -488,15 +490,19 @@ Superpowers:
   /execute-plan         Dispatch subagents per task, RED/GREEN with two-stage review
 
 ValidationForge:
-  /vf-setup             Initialize ValidationForge
-  /validate             Full validation pipeline
-  /validate-plan        Plan only (no execution)
-  /validate-audit       Read-only audit with severity classification
-  /validate-fix         Fix FAIL verdicts (3-strike)
-  /validate-sweep       Autonomous fix-and-revalidate loop
-  /validate-team        Multi-agent parallel platform validation
-  /validate-benchmark   Measure validation posture
-  ... (7 more)
+  /vf-setup                  Initialize ValidationForge
+  /validate                  Full validation pipeline
+  /validate-plan             Plan only (no execution)
+  /validate-audit            Read-only audit with severity classification
+  /validate-fix              Fix FAIL verdicts (3-strike)
+  /validate-sweep            Autonomous fix-and-revalidate loop
+  /validate-team             Multi-agent parallel platform validation
+  /validate-team-dashboard   Aggregate team validation posture dashboard
+  /validate-consensus        Multi-agent CONSENSUS validation, confidence-scored
+  /validate-dashboard        HTML + markdown evidence summary after a run
+  /validate-benchmark        Measure validation posture
+  /validate-ci               Non-interactive CI/CD mode with exit codes
+  ... (1 more)
 ```
 
 ### Both skill catalogs available (including the name collision)
