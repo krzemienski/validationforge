@@ -1,0 +1,363 @@
+---
+title: Claude Code
+description: Install ValidationForge as a Claude Code plugin — three install methods, the on-disk directory layout, the PreToolUse / PostToolUse hook lifecycle, and the eight rules auto-installed to ~/.claude/rules/vf-*.md.
+---
+
+import { Aside, Tabs, TabItem, Steps, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+ValidationForge ships as a first-class Claude Code plugin. The plugin
+registers **two PreToolUse** and **five PostToolUse** hooks, auto-loads
+**41 skills** and **15 commands**, and installs **eight rules** into
+`~/.claude/rules/vf-*.md` so validation discipline persists across every
+session. This page covers installation, the on-disk layout, the hook
+lifecycle, and the rules the installer drops into place.
+
+<Aside type="note" title="Repo availability">
+  The GitHub repository (`https://github.com/krzemienski/validationforge`)
+  may not be publicly published yet. If **curl** or **git clone** return
+  `404`, use the **local symlink** method — it works entirely against a
+  local checkout.
+</Aside>
+
+## Install Methods
+
+All three methods end with the same on-disk layout at
+`~/.claude/plugins/validationforge`. Pick whichever matches how you
+obtained the source.
+
+<Tabs syncKey="cc-install-method">
+  <TabItem label="curl (quick)">
+    Single-line install that pipes `install.sh` into `bash`:
+
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
+    ```
+
+    The installer:
+
+    - Clones the repo to `~/.claude/plugins/validationforge`.
+    - Copies 8 rules to `~/.claude/rules/vf-*.md`.
+    - Creates `e2e-evidence/` if the current directory is a git repo.
+    - Writes `~/.claude/.vf-config.json` with the install path and version.
+
+    Two environment variables override defaults:
+
+    | Variable          | Default                                     | Purpose                                    |
+    | ----------------- | ------------------------------------------- | ------------------------------------------ |
+    | `VF_SOURCE`       | `https://github.com/krzemienski/validationforge` | Override the repo URL the installer clones from. |
+    | `VF_INSTALL_DIR`  | `~/.claude/plugins/validationforge`         | Override the install path. Must resolve under `$HOME` or a temp directory. |
+  </TabItem>
+  <TabItem label="git clone">
+    Manual clone if you prefer to skip the installer and run the copy
+    steps yourself:
+
+    ```bash
+    git clone --depth 1 https://github.com/krzemienski/validationforge \
+      ~/.claude/plugins/validationforge
+    ```
+
+    After cloning, run `/vf-setup` inside a project to install the rules
+    and the `.vf/active-config.json` enforcement profile.
+  </TabItem>
+  <TabItem label="local symlink">
+    Works entirely offline against an existing checkout — use this if
+    the repo is not yet published:
+
+    ```bash
+    ln -s /path/to/your/local/validationforge \
+      ~/.claude/plugins/validationforge
+    ```
+
+    The plugin loader treats the symlink target as the plugin root, so
+    edits to the local checkout take effect on the next Claude Code
+    restart without a re-install.
+  </TabItem>
+</Tabs>
+
+<Aside type="caution" title="Restart Claude Code">
+  After running **any** install method, **fully quit and relaunch
+  Claude Code** before using ValidationForge. Plugins are loaded at
+  session startup — hooks, skills, and commands will **not** be active
+  in the session where you ran the installer.
+</Aside>
+
+## Directory Layout
+
+Every install method produces the same plugin root at
+`~/.claude/plugins/validationforge`. This is the directory
+`${CLAUDE_PLUGIN_ROOT}` resolves to at hook-execution time.
+
+```
+~/.claude/plugins/validationforge/
+├── .claude-plugin/
+│   ├── plugin.json             ← Plugin manifest (name, version, homepage)
+│   └── marketplace.json        ← Marketplace metadata
+├── hooks/
+│   ├── hooks.json              ← Hook registration (Pre/PostToolUse)
+│   ├── block-test-files.js
+│   ├── evidence-gate-reminder.js
+│   ├── validation-not-compilation.js
+│   ├── completion-claim-validator.js
+│   ├── validation-state-tracker.js
+│   ├── mock-detection.js
+│   ├── evidence-quality-check.js
+│   └── patterns.js             ← CommonJS bridge → patterns.ts
+├── skills/                     ← 41 SKILL.md files (one per skill dir)
+├── commands/                   ← 15 slash command .md files
+├── agents/                     ← 5 agent .md files
+├── rules/                      ← 8 rule source files
+├── config/
+│   ├── strict.json             ← Enforcement profiles applied by /vf-setup
+│   ├── standard.json
+│   └── permissive.json
+├── scripts/                    ← Shell helpers (sync-opencode.sh, benchmark/*)
+└── install.sh                  ← The installer this page describes
+```
+
+Meanwhile, at the user level — written by the installer and by
+[`/vf-setup`](/commands/vf-setup/):
+
+```
+~/.claude/
+├── rules/
+│   └── vf-*.md                 ← 8 rules, vf- prefix avoids plugin collisions
+├── .vf-config.json             ← { setupCompleted, installDir, scope, ... }
+└── plugins/validationforge/    ← The plugin root above
+```
+
+And at the project level, after a local `/vf-setup`:
+
+```
+<your-project>/
+├── .claude/
+│   ├── CLAUDE.md               ← Project-level VF reference
+│   └── rules/
+│       └── *.md                ← 8 rules (no vf- prefix in local installs)
+├── .vf/
+│   └── active-config.json      ← Active enforcement profile (strict | standard | permissive)
+└── e2e-evidence/               ← Evidence output directory
+```
+
+## Hook Lifecycle
+
+The plugin registers hooks in `hooks/hooks.json`. The Claude Code
+harness pipes a JSON object to each hook's stdin and reads the
+response. Hooks exit `0` to allow (or silently append context) and
+exit `2` to flag feedback on stderr.
+
+### PreToolUse (2)
+
+Run **before** the tool executes. Can block the call by writing
+`{"permissionDecision":"deny","reason":"..."}` to stdout.
+
+```
+Claude Code Harness                     Hook Script
+   |                                         |
+   |-- stdin: JSON {tool_name, tool_input} ->|
+   |                                         |-- parse stdin
+   |                                         |-- evaluate patterns
+   |                                         |
+   |                             (if blocking)|-- stdout: JSON {decision, ...}
+   |                             (if blocking)|-- exit 0
+   |                                         |
+   |                             (if passing) |-- exit 0 (silent)
+   |<----------------------------------------|
+```
+
+| Hook                          | Matcher                   | What it does                                                                                          |
+| ----------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `block-test-files.js`         | `Write\|Edit\|MultiEdit`  | Reads `tool_input.file_path`, matches against `TEST_PATTERNS`. Denies 15 patterns: `*.test.*`, `*.spec.*`, `_test.go`, `test_*.py`, `*Tests.swift`, `__tests__/`, `__mocks__/`, etc. Allowlists `e2e-evidence/` and `.claude/`. |
+| `evidence-gate-reminder.js`   | `TaskUpdate`              | Injects an evidence checklist via `{"additionalContext":"..."}` whenever a task is marked complete.   |
+
+### PostToolUse (5)
+
+Run **after** the tool executes. Can flag feedback on stderr and exit
+`2`; cannot reverse the tool call.
+
+```
+Claude Code Harness                     Hook Script
+   |                                         |
+   |-- stdin: JSON {tool_name, tool_input, ->|
+   |          tool_result}                   |-- parse stdin
+   |                                         |-- evaluate patterns
+   |                                         |
+   |                           (if feedback) |-- stderr: reminder text
+   |                           (if feedback) |-- exit 2
+   |                                         |
+   |                           (if no-op)    |-- exit 0 (silent)
+   |<----------------------------------------|
+```
+
+| Hook                               | Matcher                   | What it does                                                                                          |
+| ---------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `validation-not-compilation.js`    | `Bash`                    | Matches `tool_result` against `BUILD_PATTERNS`. Reminds that "build succeeded" is not functional validation. |
+| `completion-claim-validator.js`    | `Bash`                    | Matches `tool_result` against `COMPLETION_PATTERNS`. Warns on claims like "all tests pass" when `e2e-evidence/` is empty. |
+| `validation-state-tracker.js`      | `Bash`                    | Matches the command against `VALIDATION_COMMAND_PATTERNS` (`playwright`, `lighthouse`, `simctl`, `curl localhost`). Reminds to capture evidence when a validation tool is invoked. |
+| `mock-detection.js`                | `Edit\|Write\|MultiEdit`  | Matches written content against `MOCK_PATTERNS`. Warns on `jest.mock`, `sinon.stub`, `unittest.mock`, and 17 other mock frameworks. |
+| `evidence-quality-check.js`        | `Edit\|Write\|MultiEdit`  | Warns when a file inside `e2e-evidence/` is written with empty or near-empty content — 0-byte evidence is invalid. |
+
+<Aside type="tip" title="Shared pattern source">
+  All hook pattern lists come from a single `patterns.ts` file shared
+  with the OpenCode plugin. `hooks/patterns.js` is a CommonJS bridge
+  that reads `patterns.ts`, strips TypeScript syntax, and evaluates it
+  in a `vm` sandbox — so adding a pattern in one place covers both
+  platforms.
+</Aside>
+
+## Skills and Commands
+
+After install the plugin auto-loads from the plugin root:
+
+- **41 skills** under `skills/*/SKILL.md`. Each `SKILL.md` has YAML
+  frontmatter with `name`, `description`, and `triggers`. Claude Code
+  scans the plugin directory on startup and loads a skill into context
+  when a user message or agent prompt matches one of its triggers.
+- **15 commands** under `commands/*.md`. Nine **validation** commands
+  have no tool restriction; six **forge** commands specify
+  `allowed-tools` in frontmatter to constrain execution scope.
+- **5 agents** under `agents/*.md` (`platform-detector`,
+  `evidence-capturer`, `verdict-writer`, `validation-lead`,
+  `sweep-controller`).
+
+See [Commands](/commands/) and [Skills](/skills/) for the full index.
+
+## Rules Auto-Installed
+
+The installer (and `/vf-setup --global`) copies every file in the
+plugin's `rules/` directory into `~/.claude/rules/` with a `vf-`
+prefix. The prefix avoids collisions with rules from other Claude
+Code plugins. `/vf-setup --local` drops the prefix and writes into the
+project's `.claude/rules/` instead.
+
+| Rule file (plugin)                | Installed as (global)                       | Purpose                                                           |
+| --------------------------------- | ------------------------------------------- | ----------------------------------------------------------------- |
+| `rules/validation-discipline.md`  | `~/.claude/rules/vf-validation-discipline.md` | The Iron Rule — no mocks, no test files, no unbacked verdicts.    |
+| `rules/evidence-management.md`    | `~/.claude/rules/vf-evidence-management.md`   | Directory structure, naming, quality, and retention for evidence. |
+| `rules/platform-detection.md`     | `~/.claude/rules/vf-platform-detection.md`    | Detection priority and platform-specific validation routing.      |
+| `rules/execution-workflow.md`     | `~/.claude/rules/vf-execution-workflow.md`    | The 7-phase pipeline (RESEARCH → SHIP) in detail.                 |
+| `rules/team-validation.md`        | `~/.claude/rules/vf-team-validation.md`       | Multi-agent roles, evidence ownership, coordination protocol.     |
+| `rules/forge-execution.md`        | `~/.claude/rules/vf-forge-execution.md`       | Phase gates, fix-loop discipline, persisted state between runs.   |
+| `rules/forge-team-orchestration.md` | `~/.claude/rules/vf-forge-team-orchestration.md` | Validator assignment, evidence ownership, verdict synthesis.      |
+| `rules/benchmarking.md`           | `~/.claude/rules/vf-benchmarking.md`          | Metric collection, integrity, comparative analysis.               |
+
+The installer logs the count when it finishes:
+
+```text
+[VF] OK: 8 rules installed
+```
+
+## After Install: `/vf-setup`
+
+Installing the plugin drops the files into place; **`/vf-setup` wires
+it into a specific project**. Running it picks an enforcement profile,
+scaffolds `e2e-evidence/`, installs rules into `.claude/rules/`, and
+verifies MCP server availability.
+
+<Steps>
+
+1. **Restart Claude Code** after install so the plugin is loaded.
+
+2. Inside your project, run one of:
+
+   ```
+   /vf-setup                    # Interactive wizard
+   /vf-setup --strict           # Strict enforcement, no prompts
+   /vf-setup --standard         # Standard enforcement (default)
+   /vf-setup --permissive       # Advisory-only enforcement
+   ```
+
+3. The wizard writes `.vf/active-config.json` from `config/*.json`,
+   installs the eight rules into `.claude/rules/`, scaffolds
+   `e2e-evidence/`, and records the setup to
+   `~/.claude/.vf-config.json`.
+
+4. From then on, `/validate`, `/validate-plan`, `/validate-fix`, and
+   friends all read `.vf/active-config.json` to decide which hooks
+   block vs. warn.
+
+</Steps>
+
+See the full [**`/vf-setup` command reference**](/commands/vf-setup/) for
+every flag, the step-by-step wizard, the verification output, and the
+uninstall steps.
+
+## Verifying the Install
+
+Three quick checks to confirm the plugin is actually loaded:
+
+1. **Manifest present**
+
+   ```bash
+   cat ~/.claude/plugins/validationforge/.claude-plugin/plugin.json
+   ```
+
+   You should see `"name": "validationforge"` and a `"version"`.
+
+2. **Plugin registered by Claude Code**
+
+   ```bash
+   jq '.plugins[].path' ~/.claude/installed_plugins.json
+   ```
+
+   One of the returned paths should be
+   `~/.claude/plugins/validationforge`.
+
+3. **Hook script runs standalone**
+
+   ```bash
+   echo '{"tool_name":"Write","tool_input":{"file_path":"foo.test.ts"}}' \
+     | node ~/.claude/plugins/validationforge/hooks/block-test-files.js
+   ```
+
+   Expected output:
+
+   ```json
+   {"permissionDecision":"deny","reason":"... matches TEST_PATTERNS ..."}
+   ```
+
+If all three pass and `/vf-setup` is recognized at the slash-command
+prompt, the plugin is active.
+
+## Uninstall
+
+```bash
+# Remove the plugin files
+rm -rf ~/.claude/plugins/validationforge
+
+# Remove the globally installed rules (vf- prefix)
+rm -f ~/.claude/rules/vf-*.md
+
+# Remove the installer config
+rm -f ~/.claude/.vf-config.json
+
+# Project-level cleanup (run inside a project)
+rm -rf .claude/rules .vf
+# Keep e2e-evidence/ to preserve past verdicts, or rm -rf it if you prefer.
+```
+
+Restart Claude Code after uninstall so the hooks stop firing.
+
+## Next Steps
+
+<CardGrid>
+  <LinkCard
+    title="/vf-setup command"
+    description="Full flag reference, wizard steps, and verification output for the per-project setup command."
+    href="/commands/vf-setup/"
+  />
+  <LinkCard
+    title="Configuration profiles"
+    description="Strict, standard, and permissive enforcement profiles — which rules block, which warn, and how to switch between them."
+    href="/configuration/"
+  />
+  <LinkCard
+    title="All commands"
+    description="The 15 slash commands — /validate, /validate-fix, /validate-team, and the Forge family — that drive the 7-phase pipeline."
+    href="/commands/"
+  />
+  <LinkCard
+    title="Getting started"
+    description="End-to-end walkthrough from install to your first evidence-backed verdict."
+    href="/getting-started/"
+  />
+</CardGrid>
