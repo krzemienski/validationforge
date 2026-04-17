@@ -19,7 +19,7 @@ Run `bash scripts/verify-opencode-plugin.sh` to reproduce the static verificatio
 |---|---|---|---|
 | Skills (48) | Loaded via `.claude-plugin/plugin.json` | Shared via `commands/` directory reference | OpenCode does not have a `skills/` equivalent; skill instructions are embedded in command prompts when invoked |
 | Commands (17) | Loaded via `commands/*.md` | Discoverable via command reuse pattern | Claude-Code-native slash commands are prompt files; OpenCode reads the same files |
-| Hooks (9 scripts) | Registered via `hooks/hooks.json` | Re-implemented in `index.ts` as `permission.ask`, `tool.execute.after`, `shell.env` handlers | Patterns sourced from shared `patterns.ts` (single source of truth); `patterns.js` bridges CC hooks |
+| Hooks (9 scripts) | Registered via `hooks/hooks.json` | Re-implemented in `index.ts` as `tool.execute.before`, `tool.execute.after`, `shell.env` handlers | Patterns sourced from shared `patterns.ts` (TypeScript source of truth); `hooks/lib/patterns.js` is the pre-compiled CJS output `require()`d by CC hooks — no runtime bridge. See ADR `docs/adr/001-patterns-no-vm-bridge.md`. |
 | Agents (5) | Loaded via `agents/*.md` | **Not surfaced** | OpenCode plugin model does not expose a subagent registry matching Claude Code's; agent definitions remain CC-only |
 | Rules (8) | Installed to `.claude/rules/` or `~/.claude/rules/` | **Not surfaced** | Rules are enforced by Claude Code context injection, not an OpenCode concept |
 | Custom MCP-like tools | N/A | `vf_validate`, `vf_check_evidence` registered directly in the plugin | OpenCode-only — exposes ValidationForge pipeline entrypoints as first-class tools |
@@ -30,10 +30,10 @@ The OpenCode plugin (`index.ts`, 161 lines) registers:
 
 1. **Two custom tools** (`vf_validate`, `vf_check_evidence`) — callable directly from the agent loop inside OpenCode sessions.
 2. **Three hook handlers**:
-   - `permission.ask` — intercepts file-write requests, denies writes whose path matches `isBlockedTestFile` (test/mock/spec patterns)
-   - `tool.execute.after` — post-tool observer for reminding about validation discipline
-   - `shell.env` — injects VF-aware environment variables into shell calls
-3. **Shared pattern enforcement** — imports from `patterns.ts` (the same source used by `hooks/patterns.js` in Claude Code, via a CommonJS bridge)
+   - `tool.execute.before` — intercepts `write`/`edit`/`multiedit` tool calls and throws to reject writes whose path matches `isBlockedTestFile` (test/mock/spec patterns). Replaced the earlier `permission.ask` binding, which was not a documented OpenCode event — see [review C1](../plans/reports/review-260417-1631-full-codebase.md) and commit `a24019b`.
+   - `tool.execute.after` — post-tool observer that attaches `vf_reminder` / `vf_warning` / `vf_note` metadata when output looks like a build-success claim, a completion claim without evidence, a mock pattern, or an empty evidence file.
+   - `shell.env` — injects `VF_EVIDENCE_DIR`, `VF_VERSION`, `VF_ENFORCEMENT` into shell calls.
+3. **Shared pattern enforcement** — imports from `patterns.ts` (TypeScript source of truth). The CC side uses a pre-compiled sibling at `hooks/lib/patterns.js`; no runtime bridge or `vm.runInNewContext` is involved. See [ADR 001](./adr/001-patterns-no-vm-bridge.md) for why.
 
 ## Known Limitations
 
