@@ -87,6 +87,41 @@ Audit each journey end-to-end. A broken step *within* a journey (e.g. checkout p
 
 Aim for ~5–15 top-level journeys for any non-trivial app. Fewer than 5 usually means you missed admin/settings/error-recovery paths; more than 15 means you're auditing at the wrong granularity — collapse adjacent features into a single journey entry instead.
 
+## Phase 3: Evidence Capture
+
+Exercise each feature from the Phase 2 inventory against the real running system and record what you observe.
+
+- Exercise EVERY feature, not just the happy path — capture both success and failure states
+- Use platform-specific capture commands (see **Concrete capture commands by platform** below)
+- Name evidence files `e2e-evidence/audit/feature-{NN}-{name}.{ext}` to match the numbered inventory
+- Record error messages verbatim and note response times >2s (UI) / >500ms (API)
+- If a feature can't be reached, that IS the finding — record it as UNKNOWN, never guess
+
+See **Evidence Capture Rules** below for the full rule set.
+
+## Phase 4: Classification
+
+Rate each captured finding using the severity matrix — never leave a finding unclassified.
+
+- Use the 5-level severity scale: CRITICAL / HIGH / MEDIUM / LOW / INFO
+- Security issues and data loss are ALWAYS CRITICAL, no exceptions
+- When in doubt, classify UP — it's safer to over-report than miss a release-blocker
+- "Works but looks wrong" is at least MEDIUM, never LOW
+
+See **Severity Matrix** above for full definitions and classification rules.
+
+## Phase 5: Report
+
+Synthesize all classified findings into `e2e-evidence/audit-report.md` — stakeholders read this first.
+
+- Lead with a 1-paragraph Executive Summary (features audited, PASS/FAIL counts, overall health)
+- Include a Findings Summary severity count table and per-feature Findings list with evidence paths
+- Order Priority Recommendations by impact — CRITICAL first
+- Include an Evidence Index mapping every evidence file to its description
+- Use `references/audit-report-template.md` as the canonical structure
+
+See **Audit Report Structure** below for the full section list.
+
 ## Severity Matrix
 
 | Severity | Definition | Action |
