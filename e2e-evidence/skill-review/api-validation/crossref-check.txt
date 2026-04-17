@@ -1,0 +1,18 @@
+=== Cross-refs to api-validation from other skills ===
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/functional-validation/SKILL.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/parallel-validation/SKILL.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/fullstack-validation/SKILL.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/e2e-validate/references/fullstack-validation.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/e2e-validate/SKILL.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/research-validation/SKILL.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/api-validation/SKILL.md
+
+=== Cross-refs to cli-validation from other skills ===
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/functional-validation/SKILL.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/e2e-validate/SKILL.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/cli-validation/SKILL.md
+
+=== Cross-refs to fullstack-validation from other skills ===
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/functional-validation/SKILL.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/fullstack-validation/SKILL.md
+/Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/004-skill-deep-review-top-10/skills/e2e-validate/SKILL.md

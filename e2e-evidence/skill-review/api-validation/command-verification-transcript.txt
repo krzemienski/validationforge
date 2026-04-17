@@ -1,0 +1,19 @@
+=== curl version ===
+curl 8.7.1 (x86_64-apple-darwin25.0) libcurl/8.7.1 (SecureTransport) LibreSSL/3.3.6 zlib/1.2.12 nghttp2/1.68.1
+Release-Date: 2024-03-27
+
+=== jq version ===
+jq-1.8.1
+
+=== test jq filters used in api-validation skill ===
+abc
+tk1
+tk2
+0
+3
+
+=== curl syntax tests ===
+
+HTTP_STATUS:200---
+
+HTTP_STATUS:200

@@ -1,0 +1,21 @@
+=== jq type 'array' / 'object' handling ===
+
+--- type detection for array ---
+"array"
+--- type detection for object ---
+"object"
+
+--- fullstack F: api-users-list.json expression with array ---
+2
+--- fullstack F: api-users-list.json expression with object missing .data ---
+0
+--- fullstack F: api-users-list.json with .data field ---
+2
+
+=== psql -h localhost flag test (safe — reads password from env if set) ===
+psql: error: connection to server at "localhost" (::1), port 5432 failed: FATAL:  role "postgres" does not exist
+(expected: either 'SELECT 1' or connection failure — tests flag form)
+
+=== 2>&1 | tee behavior ===
+hello
+world

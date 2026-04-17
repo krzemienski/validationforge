@@ -1,0 +1,13 @@
+=== exit code echo 0 pattern gotcha ===
+The pattern: $BINARY --help 2>&1 | tee file.txt; echo "Exit: $?" >> file.txt
+Problem: $? after a pipeline is the LAST command's exit code (tee), NOT $BINARY
+
+true  | false exit code: 1  (expected 1 for false)
+true  | true  exit code: 0 (expected 0)
+false | true  exit code: 0 (expected 0 — DANGEROUS: false was masked)
+
+With PIPESTATUS (bash-specific):
+PIPESTATUS: 
+
+With set -o pipefail:
+pipefail exit: 1

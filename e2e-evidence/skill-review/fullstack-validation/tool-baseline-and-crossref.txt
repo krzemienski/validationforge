@@ -1,0 +1,31 @@
+=== Fullstack tool versions ===
+--- psql ---
+psql (PostgreSQL) 18.3
+--- pg_isready ---
+pg_isready (PostgreSQL) 18.3
+--- mysql ---
+(eval):1: command not found: mysql
+--- mysqladmin ---
+mysqladmin not found
+mysqladmin: not installed
+--- sqlite3 ---
+3.51.0 2025-06-12 13:14:41 f0ca7bba1c5e232e5d279fad6338121ab55af0c8c68c84cdfb18ba5114dcaapl (64-bit)
+--- mongosh ---
+mongosh not found
+mongosh: not installed
+
+=== Check relationship claims ===
+skills/fullstack-validation references api-validation skill at:
+6:  References api-validation and web-validation skills for layer-specific procedures.
+76:After the database is verified, validate the API layer. Follow the full `api-validation` skill procedure.
+96:Run the full CRUD pattern from `api-validation` skill against at least one resource. Save all evidence.
+
+skills/fullstack-validation references web-validation skill at:
+6:  References api-validation and web-validation skills for layer-specific procedures.
+102:After the API is verified, validate the frontend. Follow the full `web-validation` skill procedure.
+
+e2e-validate ref to fullstack:
+6:  Supports iOS, web, API, CLI, and fullstack projects.
+37:| 5 | Frontend AND backend in same project | **fullstack** | All tools, bottom-up |
+71:| fullstack | `references/fullstack-validation.md` | Bottom-up: DB → API → Frontend |
+106:4. Always validate bottom-up for fullstack projects

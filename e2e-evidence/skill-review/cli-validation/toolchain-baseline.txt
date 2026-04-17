@@ -1,0 +1,25 @@
+=== CLI toolchain baseline ===
+--- node ---
+v25.9.0
+--- npm ---
+8.5.1
+--- pnpm ---
+10.11.0
+--- cargo ---
+cargo 1.94.1 (Homebrew)
+--- go ---
+go version go1.26.2 darwin/arm64
+--- python3 ---
+Python 3.12.13
+--- pip3 ---
+pip 25.3 from /Users/nick/Library/Python/3.12/lib/python/site-packages/pip (python 3.12)
+
+=== Exit code verification (macOS bash) ===
+true exit: 0
+false exit: 1
+nonexistent exit: 127
+explicit-2 exit: 2
+
+=== chmod 000 behavior as root or not ===
+not root — chmod 000 blocks reads as expected for non-root user
+
