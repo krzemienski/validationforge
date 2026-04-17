@@ -25,7 +25,7 @@ We applied VF's methodology to VF's own codebase: hooks invoked directly, script
 
 Key findings:
 - `block-test-files.js` produces the exact deny JSON structure Claude Code reads to block test file creation
-- All 48 skills, 17 commands, 5 agents, and 8 rules exist on disk — cross-references resolve
+- All 52 skills, 19 commands, 7 agents, and 9 rules exist on disk — cross-references resolve
 - `install.sh` passes `bash -n` and contains `git clone`, rules install loop, and config write
 - `detect-platform.sh` correctly classifies VF itself as `generic` (meta-tool, no framework)
 
@@ -316,7 +316,7 @@ What has actually been verified about ValidationForge, and what has not:
 
 | Area | Status |
 |------|--------|
-| File inventory (48 skills, 17 commands, 7 hooks, 5 agents, 8 rules) | Verified on disk |
+| File inventory (52 skills, 19 commands, 7 hooks, 7 agents, 9 rules) | Verified on disk |
 | Hook syntax and functional behavior (all 7) | Verified — syntax PASS, functional tests PASS |
 | Cross-references (commands → skills, agents, rules) | Verified — zero broken references |
 | Plugin manifest format | Verified — matches ECC 1.8.0 and OMC patterns |
