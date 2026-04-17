@@ -1,6 +1,15 @@
 #!/usr/bin/env node
-// PreToolUse hook: Inject evidence checklist when marking tasks complete.
-// Matches: TaskUpdate (when status = "completed")
+// PreToolUse hook: Inject evidence checklist when marking a task/todo complete.
+//
+// Supports two payload shapes so the hook works both in stock Claude Code
+// (TodoWrite tool — todos array) and in environments with a custom task
+// manager (TaskUpdate tool — single status field):
+//
+//   TodoWrite:  { tool_input: { todos: [{ id, status, ... }, ...] } }
+//   TaskUpdate: { tool_input: { status: "completed", ... } }
+//
+// The hook fires when ANY todo is being marked completed, or when the
+// TaskUpdate status is "completed".
 //
 // Config-driven enforcement via config-loader.js:
 //   enabled  → inject evidence checklist (advisory)
@@ -24,9 +33,15 @@ process.stdin.on('end', () => {
 
     const data = JSON.parse(input);
     const toolInput = data.tool_input || {};
-    const status = toolInput.status || '';
 
-    if (status !== 'completed') {
+    // Detect "completing a task" across both payload shapes.
+    const singleStatus = toolInput.status || '';
+    const todos = Array.isArray(toolInput.todos) ? toolInput.todos : [];
+    const isCompleting =
+      singleStatus === 'completed' ||
+      todos.some((t) => t && t.status === 'completed');
+
+    if (!isCompleting) {
       process.exit(0);
     }
 
