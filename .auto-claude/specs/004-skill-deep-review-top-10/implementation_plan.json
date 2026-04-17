@@ -2,7 +2,7 @@
   "feature": "Skill Deep Review (Top 10)",
   "description": "Deep-review the 10 most critical ValidationForge skills (5 priority + 5 platform-routing). Read every SKILL.md plus its reference/workflow files line-by-line. Verify every command, every cross-reference, every PASS criterion. Fix broken instructions, stale references, and inaccurate PASS criteria. Document per-skill findings and consolidate into a summary report.",
   "created_at": "2026-04-11T02:22:17.031Z",
-  "updated_at": "2026-04-17T06:14:11.538Z",
+  "updated_at": "2026-04-17T06:35:00.000Z",
   "status": "in_progress",
   "planStatus": "in_progress",
   "xstateState": "ready",
@@ -248,7 +248,7 @@
         {
           "id": "phase-2-subtask-2",
           "name": "Review web-validation skill",
-          "status": "pending",
+          "status": "completed",
           "activeForm": "Reviewing web-validation skill",
           "parallel_safe": true,
           "files_involved": [
@@ -271,7 +271,9 @@
             "Every MCP tool mentioned verified to exist in current server",
             "Responsive viewport table reviewed"
           ],
-          "description": "No description"
+          "description": "No description",
+          "notes": "Deep-reviewed web-validation skill. Findings in e2e-evidence/skill-review/web-validation/findings.md (~530 lines). 0 CRITICAL, 4 HIGH, 8 MEDIUM, 4 LOW. HIGH issues: F1 browser_network_requests parameter name is wrong — skill uses includeStatic=true/false but current Playwright MCP accepts a resourceType filter only (no includeStatic flag); F2 browser_click invocations are missing required element= human-readable description kwarg (current server requires both ref= AND element=) — sibling e2e-validate/references/web-validation.md already uses the correct two-arg form; F3 browser_console_messages does NOT accept filename= kwarg — skill conflates writing to a file with the MCP call, which will error; F4 dev-server detection script is missing Bun (bun.lockb), Deno (deno.json/deno.lock), Vue CLI, Angular (angular.json), Vite standalone (vite.config.*), Nuxt, SvelteKit, and modern Rails (bin/rails server) — full gap table in dev-server-detection-gap-analysis.txt. MEDIUM: placeholder PORT literal is untemplated (hardcoded 3000 in the readiness-wait loop contradicts the PORT convention used elsewhere), flat evidence path e2e-evidence/web-*.png violates CLAUDE.md journey-slug/step-NN convention (same class of issue as F3 in ios-validation), Step 2 health check pipes HTML to head -20 which is fragile for SSR frameworks that emit minified head, Step 6 form fill uses ref= placeholders without calling browser_snapshot first to obtain them, Step 7 responsive table omits mobile-landscape (667x375) and 2xl desktop (2560x1440) that are in sibling responsive-validation skill's canon, Step 8 route-coverage bash loop doesn't follow redirects (-L missing) so 301/302 routes register as non-200, no mention of condition-based-waiting skill for the 30-second polling loop, missing Related Skills section (unlike playwright-validation and chrome-devtools siblings). LOW: 4 items (no When to Use section, DEV_PID captured but never used for cleanup, no explicit teardown/kill step, JSON evidence from curl piped through jq not mentioned despite being standard). Cross-reference check: 6 web-related skills present (web-validation, web-testing, playwright-validation, chrome-devtools, responsive-validation, e2e-validate). ./skills/e2e-validate/references/web-validation.md is MORE accurate than ./skills/web-validation/SKILL.md — flagged as staleness signal. MCP tool names verified via external Playwright MCP and Chrome DevTools MCP GitHub READMEs (fetched via Agent tool; MCP resolve-library-id blocked by sandbox). Transcripts saved: command-verification-transcript.txt, dev-server-detection-gap-analysis.txt, mcp-tool-name-verification.txt, viewport-table-crosscheck.txt. No mocks/test-files created. Iron Rule preserved.",
+          "updated_at": "2026-04-17T06:35:00.000000+00:00"
         },
         {
           "id": "phase-2-subtask-3",
@@ -541,5 +543,5 @@
     "last_completed_subtask": null,
     "next_subtask": "phase-1-subtask-1"
   },
-  "last_updated": "2026-04-17T06:22:04.094691+00:00"
+  "last_updated": "2026-04-17T06:35:00.000000+00:00"
 }

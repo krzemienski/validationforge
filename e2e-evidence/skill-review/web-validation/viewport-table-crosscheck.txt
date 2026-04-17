@@ -1,0 +1,59 @@
+Responsive viewport table cross-check
+======================================
+Date: 2026-04-17
+
+Within ValidationForge, four skills define responsive viewport tables. They
+disagree.
+
+web-validation/SKILL.md (Step 7, line 127-132):
+  Desktop  1920x1080
+  Laptop   1280x720
+  Tablet   768x1024
+  Mobile   375x667
+
+playwright-validation/SKILL.md (line 84-89):
+  Mobile S (iPhone SE)      375×812
+  Mobile L (iPhone 14 PMax)  428×896
+  Tablet (iPad Mini)         768×1024
+  Desktop                    1440×900
+
+(Note: iPhone SE is 375×667 on the real hardware; 375×812 is closer to
+iPhone 12-14 — playwright-validation has its own internal error here.)
+
+responsive-validation/SKILL.md (line 22-30):
+  iPhone SE          375×667
+  iPhone 15          393×852
+  iPhone 15 Pro Max  430×932
+  iPad Mini          768×1024
+  iPad Pro 12.9      1024×1366
+  Laptop             1280×800
+  Desktop            1440×900
+  Wide Desktop       1920×1080
+
+e2e-validate/references/web-validation.md (line 108-113):
+  Desktop  1920×1080
+  Laptop   1280×720
+  Tablet   768×1024
+  Mobile   375×667
+  (matches web-validation exactly)
+
+Analysis
+--------
+- web-validation + e2e-validate reference agree (same table).
+- responsive-validation extends with 4 additional device classes.
+- playwright-validation is the outlier — uses a 4-row subset that doesn't
+  match either, uses 1440×900 for desktop (not 1920×1080), and its
+  "iPhone SE 375×812" entry contradicts responsive-validation's
+  "iPhone SE 375×667" (which matches Apple's spec).
+
+Recommendation for this review (phase 2)
+----------------------------------------
+Flag as MEDIUM:
+- web-validation's 4-viewport set is fine as a minimum baseline, but it
+  should cite or link responsive-validation for comprehensive matrix.
+- The PASS Criteria Template line 182 lists "mobile (375px), tablet (768px),
+  desktop (1920px)" — drops the Laptop 1280 row that appears in the Step 7
+  table. Inconsistent even within the same file.
+
+No CRITICAL; no HIGH. But users who run web-validation then compare
+screenshots to responsive-validation output get three different pictures.

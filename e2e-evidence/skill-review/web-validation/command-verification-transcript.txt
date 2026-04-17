@@ -1,0 +1,134 @@
+Web-validation skill command verification
+==========================================
+Date: 2026-04-17
+Sandbox: curl, jq, bash available. Playwright and Chrome DevTools MCP not
+executed (no running browser session in this worktree).
+
+curl --version
+--------------
+curl 8.7.1 (x86_64-apple-darwin25.0) libcurl/8.7.1 (SecureTransport)
+Release-Date: 2024-03-27
+
+jq --version
+------------
+jq-1.8.1
+
+Verified: Step 1 readiness loop (line 39)
+-----------------------------------------
+Command form:
+  curl -s http://localhost:3000 -o /dev/null -w "%{http_code}" 2>/dev/null | grep -q "200"
+
+Tested with no server running:
+  curl output: "000"
+  grep -q "200" result: no match (exit 1)
+  Loop behavior: 30 iterations × 1s = 30s total wait — correct.
+
+Tested response code parsing: OK.
+
+Note: Loop counts only "200" as ready; any 3xx redirect (e.g., /→/en for i18n
+frameworks, /→/login for auth gated SPAs) will NOT match and the wait will
+time out despite the server being ready. A more robust test would be
+`grep -E "^(2|3)[0-9][0-9]$"` or `test "$CODE" \!= "000"`.
+
+Verified: Step 8 route-check loop
+----------------------------------
+Command form:
+  STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:PORT$route")
+
+Tested with no server: STATUS=000. Skill says "Any non-200 response (except
+expected redirects) is a finding." — but the bash loop has no whitelist for
+redirects; all 301/302 would fire as a finding unless a validator manually
+filters. Flag as MEDIUM.
+
+Verified: `lsof -ti:PORT | xargs kill -9` (Common Failures row 1)
+----------------------------------------------------------------
+lsof: available on macOS. The PIPE form is safe if PORT is numeric but will
+kill EVERYTHING listening on PORT without confirmation — potentially harmful
+on a workstation running multiple dev servers on the same port.
+
+Playwright MCP tool names verified via github.com/microsoft/playwright-mcp
+--------------------------------------------------------------------------
+Source: general-purpose agent fetched tool list 2026-04-17.
+
+Verified present:
+  browser_navigate   (param: url)           ← skill uses this ✓
+  browser_snapshot                          ← skill uses this ✓
+  browser_take_screenshot (param: filename) ← skill uses this ✓
+  browser_click (params: element, ref)      ← skill uses this ✓ BUT omits
+                                              required `element` description
+  browser_console_messages                  ← skill uses this ✓
+  browser_network_requests                  ← skill uses this ✓
+  browser_fill_form                         ← skill uses this ✓
+  browser_resize (width, height)            ← skill uses this ✓
+
+Parameter mismatches:
+  Skill uses:     browser_network_requests  includeStatic=false
+  MCP actual:     browser_network_requests  static=<bool>
+  Impact: Tool call with `includeStatic` will either be rejected by the MCP
+  server or silently ignored; "filter out static assets" intent is unmet.
+
+  Skill uses:     browser_click  ref="LINK_REF"
+  MCP actual:     requires both `ref` and `element` (human-readable
+                  description)
+  Impact: MCP server will reject the call with a "missing required parameter
+  'element'" error.
+
+  Skill uses:     browser_console_messages  filename="..."
+  MCP tool-list:  does NOT document a `filename` param; caller saves output
+                  themselves.
+  Impact: Lines 82-86 of the skill imply the tool writes to disk; it does
+  not — the validator must redirect or `tee` the response themselves.
+
+  Skill uses:     browser_network_requests  filename="..."
+  MCP actual:     `filename` IS a valid param on network_requests per the
+                  agent report. OK.
+
+Chrome DevTools MCP tool names verified via github.com/ChromeDevTools/chrome-devtools-mcp
+------------------------------------------------------------------------------------------
+Source: general-purpose agent fetched docs/tool-reference.md 2026-04-17.
+
+Verified present:
+  navigate_page  (params: url, type[url|back|forward|reload], ...)  ← skill uses this ✓
+  take_snapshot                                                     ← skill uses this ✓
+  take_screenshot (param: filePath)                                 ← skill uses this ✓
+  click (param: uid, NOT ref)                                       ← skill uses this ✓
+  list_console_messages (param: types)                              ← skill absent
+  list_network_requests (param: resourceTypes)                      ← skill absent
+  fill (param: uid, value)                                          ← skill absent
+  resize_page                                                       ← skill absent
+
+Important: Skill Step 4 (Console Error Check) references ONLY the Playwright
+tool `browser_console_messages` — NO Chrome DevTools equivalent is shown.
+The Playwright Step 3 demonstrates equivalence between the two MCPs, but
+Steps 4/5/6/7 silently drop the Chrome DevTools path. A validator using
+Chrome DevTools MCP has to guess the tool names.
+
+Additionally: Skill Step 7 (Responsive Testing) shows `browser_resize` only;
+no Chrome DevTools equivalent (`resize_page`) is shown.
+
+Responsive viewport table cross-check
+-------------------------------------
+Skill Step 7 uses:
+  Desktop 1920x1080, Laptop 1280x720, Tablet 768x1024, Mobile 375x667.
+
+playwright-validation/SKILL.md uses:
+  Mobile S 375×812, Mobile L 428×896, Tablet 768×1024, Desktop 1440×900.
+
+e2e-validate/references/web-validation.md uses:
+  Desktop 1920×1080, Laptop 1280×720, Tablet 768×1024, Mobile 375×667.
+
+The orchestrator reference matches web-validation. playwright-validation
+diverges (no desktop, adds mobile-large). Flag as MEDIUM — inconsistency
+inside the same product.
+
+"Related Skills" / "Integration with ValidationForge" section
+-------------------------------------------------------------
+grep -n "Related\|Integration with" ./skills/web-validation/SKILL.md
+(no output — neither section exists)
+
+Siblings:
+  playwright-validation/SKILL.md  line 208: "## Integration with ValidationForge"
+  chrome-devtools/SKILL.md        line 200: "## Integration with ValidationForge"
+  web-testing/SKILL.md            line 210: "## Integration with ValidationForge"
+
+web-validation is the odd one out. Same pattern as ios-validation F5.

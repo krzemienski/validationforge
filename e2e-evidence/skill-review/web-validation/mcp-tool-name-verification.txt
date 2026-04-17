@@ -1,0 +1,101 @@
+MCP tool name verification — web-validation SKILL.md claims vs. current servers
+================================================================================
+Date: 2026-04-17
+Method: agent-fetched github.com tool reference docs for both MCP servers.
+
+PLAYWRIGHT MCP (github.com/microsoft/playwright-mcp)
+------------------------------------------------------
+Source: README.md + src/tools/ directory (current HEAD).
+
++------------------------------+---------+--------------------------+--------------------------+
+| Tool name in skill           | Exists? | Params in skill          | Current MCP params       |
++------------------------------+---------+--------------------------+--------------------------+
+| browser_navigate             |   YES   | url                      | url                      |
+| browser_snapshot             |   YES   | (none)                   | (none)                   |
+| browser_take_screenshot      |   YES   | filename                 | filename, element,       |
+|                              |         |                          | type, fullPage           |
+| browser_click                |   YES   | ref                      | element (REQUIRED), ref  |
+|                              |         |                          | MISMATCH: skill omits    |
+|                              |         |                          | required `element` param |
+| browser_console_messages     |   YES   | level=error, filename    | (filter/level supported);|
+|                              |         |                          | but `filename` param NOT |
+|                              |         |                          | documented on this tool. |
+|                              |         |                          | MISMATCH                 |
+| browser_network_requests     |   YES   | includeStatic=false      | `static` (boolean) +     |
+|                              |         | filename                 | `requestBody`,           |
+|                              |         |                          | `requestHeaders`,        |
+|                              |         |                          | `filter`, `filename`     |
+|                              |         |                          | MISMATCH on includeStatic|
+| browser_fill_form            |   YES   | fields=[{name,type,      | fields=[{name,type,      |
+|                              |         | ref,value}]              | ref,value}]              |
+|                              |         |                          | OK — shape matches       |
+| browser_resize               |   YES   | width, height            | width, height            |
++------------------------------+---------+--------------------------+--------------------------+
+
+Severity by mismatch:
+- browser_network_requests `includeStatic` → `static`: HIGH (call will be
+  rejected or silently ignored — either way, filtering intent unmet).
+- browser_click missing `element`: HIGH (MCP rejects missing-required-param;
+  every click example in the skill fails first time).
+- browser_console_messages `filename` kwarg: MEDIUM (no such param; the
+  caller must redirect output manually. Skill implies the tool writes the
+  file itself — misleading instruction).
+
+Additional Playwright tools the skill could reference (missing):
+  browser_hover, browser_drag, browser_evaluate, browser_press_key,
+  browser_type, browser_select_option, browser_wait_for,
+  browser_navigate_back, browser_handle_dialog, browser_file_upload,
+  browser_tabs. Not required for an 8-step skill, but for a Step 4
+  "Console Error Check" alternative flow (filter by text), Step 6 form
+  validation with keyboard shortcuts, and Step 8 route coverage
+  (`browser_navigate_back` for browser-history verification) — adding a
+  pointer to these would close the "need deeper tooling" gap.
+
+CHROME DEVTOOLS MCP (github.com/ChromeDevTools/chrome-devtools-mcp)
+--------------------------------------------------------------------
+Source: docs/tool-reference.md (current HEAD).
+
++------------------------------+---------+--------------------------+--------------------------+
+| Tool name in skill           | Exists? | Params in skill          | Current MCP params       |
++------------------------------+---------+--------------------------+--------------------------+
+| navigate_page                |   YES   | url                      | url, type,               |
+|                              |         |                          | handleBeforeUnload, ...  |
+|                              |         |                          | OK                       |
+| take_snapshot                |   YES   | (none)                   | (none) — OK              |
+| take_screenshot              |   YES   | filePath                 | filePath, format,        |
+|                              |         |                          | fullPage, quality, uid   |
+|                              |         |                          | OK                       |
+| click                        |   YES   | uid                      | uid, dblClick,           |
+|                              |         |                          | includeSnapshot          |
+|                              |         |                          | OK                       |
++------------------------------+---------+--------------------------+--------------------------+
+
+Tools the skill does NOT show for Chrome DevTools (missing-equivalence gap):
+  list_console_messages      ← Step 4 Playwright-only
+  list_network_requests      ← Step 5 Playwright-only
+  fill (single input)        ← Step 6 fill_form is shown for DevTools? NO —
+                              only Playwright's browser_fill_form is shown
+  fill_form                  ← Step 6 Playwright-only
+  resize_page                ← Step 7 Playwright-only (skill uses
+                              `browser_resize` for viewport)
+  type_text / press_key      ← not shown at all
+  emulate                    ← not shown at all (dark mode, CPU throttling,
+                              network conditions, geolocation all missing
+                              from the skill — while chrome-devtools/SKILL.md
+                              has an entire Pattern 5 for exactly this)
+
+Severity by missing tool:
+- Missing Chrome DevTools equivalents for Steps 4-8: MEDIUM. A validator who
+  cannot run Playwright (for any reason — MCP not installed, CI constraints)
+  has NO path forward except reading chrome-devtools/SKILL.md directly. The
+  skill should either (a) show both paths end-to-end, or (b) explicitly
+  state "Playwright MCP is preferred; for Chrome DevTools-only flows, see
+  chrome-devtools/SKILL.md".
+
+SUMMARY
+=======
+Tool-name verification surfaces 3 HIGH mismatches (all Playwright-side,
+affecting Step 5 network filtering, Step 3/6 click calls, and Step 4 console
+saving), plus MEDIUM gaps for the Chrome DevTools path across Steps 4-8.
+No CRITICAL (no misnamed tool that would silently succeed and produce a
+false PASS).

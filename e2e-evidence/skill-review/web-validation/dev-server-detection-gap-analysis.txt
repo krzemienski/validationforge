@@ -1,0 +1,93 @@
+Dev-server detection script — gap analysis
+==========================================
+Source: ./skills/web-validation/SKILL.md lines 19-34
+
+Current detection order:
+  1. pnpm-lock.yaml       → pnpm dev
+  2. package-lock.json    → npm run dev
+  3. yarn.lock            → yarn dev
+  4. manage.py            → python manage.py runserver
+  5. Gemfile              → bundle exec rails server
+
+Missing ecosystem indicators (in order of common use as of 2026):
+
+  Package managers / runtimes not detected:
+  -----------------------------------------
+  bun.lockb / bun.lock     → bun dev     — Bun is in wide use; no detection.
+  deno.json / deno.lock    → deno task dev — no detection.
+  npm-shrinkwrap.json      → npm run dev  — legacy npm lockfile; no detection.
+
+  Frameworks with non-"dev" script names:
+  ---------------------------------------
+  vite.config.{js,ts}      → usually "dev" but Vite apps can be bare
+                            (no package.json scripts) — no detection.
+  astro.config.{mjs,ts}    → "dev"/"start" varies.
+  next.config.{js,mjs,ts}  → "dev" conventionally; happens to work via
+                            pnpm/npm/yarn detection above.
+  remix.config.{js}        → usually "dev".
+  nuxt.config.{js,ts}      → "dev".
+  sveltekit.config.{js}    → "dev".
+  expo.json / app.json     → "start" (Expo web).
+  vue.config.js            → "serve" (Vue CLI) — NOT "dev". Current script
+                            running `pnpm dev` on a Vue CLI project will
+                            run the wrong script.
+  angular.json             → "start" — NOT "dev". Same issue.
+
+  Non-JS web frameworks:
+  ----------------------
+  requirements.txt + app.py   → Flask/FastAPI (uvicorn/gunicorn).
+  composer.json + artisan     → Laravel (php artisan serve).
+  pom.xml / build.gradle      → Spring Boot (mvn spring-boot:run).
+  mix.exs                     → Phoenix (mix phx.server).
+  Cargo.toml + server crate   → Rust axum/actix.
+  go.mod + main.go            → Go stdlib/gin/echo/fiber.
+
+  Container orchestrations:
+  -------------------------
+  docker-compose.yml          → docker compose up — not detected; the
+                               preflight review (phase-1 F12) flagged a
+                               similar gap but opposite direction (pref­light
+                               script prioritises docker-compose over pkg
+                               manager; web-validation ignores it entirely).
+
+Impact assessment
+-----------------
+MEDIUM: On a pnpm/npm/yarn repo with Vite/Next/Astro, the script works (dev
+  script is "dev"). So the happy path is functional for ~70% of modern JS
+  web projects.
+
+HIGH: On Vue CLI / Angular / Bun / Deno / Rails-only-via-Gemfile-check /
+  any Python-non-Django / any Ruby-non-Rails / any non-JS backend, the
+  script either silently picks the wrong runner or (on Bun/Deno) falls
+  through to nothing and DEV_PID is $\! of the LAST child process — which
+  can be undefined behavior.
+
+  `DEV_PID=$\!` on line 33 runs OUTSIDE any of the if/elif branches. If
+  NONE of the conditions match (Bun project, Deno project, Laravel, etc.),
+  `$\!` is "the PID of the last backgrounded job in this shell" — which
+  could be any prior `&` command from the user's session, or empty on a
+  fresh shell. Future `kill $DEV_PID` commands could target the wrong
+  process.
+
+Suggested fix
+-------------
+Reorder and extend detection to handle the 80% case. Example:
+
+  if [ -f bun.lockb ] || [ -f bun.lock ]; then DEV_CMD="bun dev"
+  elif [ -f pnpm-lock.yaml ]; then DEV_CMD="pnpm dev"
+  elif [ -f yarn.lock ]; then DEV_CMD="yarn dev"
+  elif [ -f package-lock.json ]; then DEV_CMD="npm run dev"
+  elif [ -f deno.json ] || [ -f deno.lock ]; then DEV_CMD="deno task dev"
+  elif [ -f manage.py ]; then DEV_CMD="python manage.py runserver"
+  elif [ -f app.py ]; then DEV_CMD="python app.py"
+  elif [ -f Gemfile ]; then DEV_CMD="bundle exec rails server"
+  else
+    echo "ERROR: unknown dev-server framework; set DEV_CMD manually" >&2
+    exit 1
+  fi
+
+  eval "$DEV_CMD" &
+  DEV_PID=$\!
+
+Also add a note: verify `package.json` "scripts" has a "dev" entry before
+trusting the detection; Vue CLI and Angular projects need "serve" or "start".
