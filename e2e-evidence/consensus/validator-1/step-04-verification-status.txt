@@ -1,0 +1,5 @@
+268:## Verification Status
+--- EXIT: 0 ---
+--- ALL VERIFICATION STATUS HITS ---
+210:> **Design intent — not yet empirically verified.** The scoring algorithm is implemented in `scripts/benchmark/` and `/validate-benchmark` wires it together, but the command has never been executed against a real project. The dimension weights, grade thresholds, and metric formulas below are design targets, not measured or validated values. See [Verification Status](#verification-status).
+268:## Verification Status

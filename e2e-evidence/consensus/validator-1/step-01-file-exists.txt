@@ -1,0 +1,11 @@
+16777231 404338017 -rw-r--r-- 1 nick staff 0 18949 "Apr 17 01:39:05 2026" "Apr 17 01:37:53 2026" "Apr 17 01:37:53 2026" "Apr 17 01:37:53 2026" 4096 40 0 README.md
+---
+   18949 README.md
+---
+     333 README.md
+--- HEAD OF FILE ---
+# ValidationForge
+
+**No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
+
+> **44 skills | 16 commands | 7 hooks | 7 agents | 8 rules | 8 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
