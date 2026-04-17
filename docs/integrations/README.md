@@ -28,6 +28,8 @@ Each integration guide follows the same 8-section template so you can skim or de
 - **Complement, don't replace.** VF does not try to take over orchestration (OMC's job), code-quality enforcement (ECC's job), or TDD discipline (Superpowers' job). It validates their output.
 - **No-mock still applies.** When VF enters the loop, the Iron Rules in the main [README](../README.md#iron-rules) take over for the validation phase. Test files produced by Superpowers or ECC remain in their own directories; VF never runs against mocks.
 - **Evidence is the contract.** Regardless of which plugin produced the code, VF's verdict is backed by `e2e-evidence/` citations. If an upstream plugin claims "done," VF's job is to prove or disprove that claim with evidence.
+- **High-stakes features get CONSENSUS.** For changes where a single validator's verdict isn't enough (auth, payments, data migrations), pair any upstream plugin with VF's `/validate-consensus` command — it spawns N independent validators, synthesizes their verdicts, and attaches a confidence score to the final PASS/FAIL.
+- **Every run produces a dashboard.** VF's `evidence-dashboard` skill (invoked via `/validate-dashboard`) renders the per-journey evidence tree into an HTML + markdown summary so reviewers of the upstream plugin's PR can see the verdict at a glance.
 
 ## Related reading
 
