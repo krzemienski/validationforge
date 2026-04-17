@@ -129,7 +129,144 @@ If ECC's `tdd-guide` is going to write test files during this session, run VF in
 /vf-setup --config permissive
 ```
 
-Switch to `standard` or `strict` once the ECC-owned TDD phase is complete and you are ready for VF's gates to be fully binding. See [Troubleshooting](#troubleshooting) for the full set of resolutions to the test-file-gate conflict.
+Switch to `standard` or `strict` once the ECC-owned TDD phase is complete and you are ready for VF's gates to be fully binding. See [Configuration — resolving the test-file-blocking conflict](#configuration--resolving-the-test-file-blocking-conflict) below for the full set of resolutions and an allowlist-based hybrid, and [Troubleshooting](#troubleshooting) for session-time symptoms.
+
+## Configuration — resolving the test-file-blocking conflict
+
+The single sharpest edge between the two plugins is this: **ECC's `tdd-guide` writes test files; VF's `block-test-files` hook blocks them.** The hook is wired into the `PreToolUse` pipeline for `Write|Edit|MultiEdit` (see `hooks/hooks.json`), so any attempt to create a path matching the test-file pattern is denied before it reaches the filesystem. The two enforcement levels shipped with VF make the tension explicit:
+
+- `config/standard.json` — `block_test_files: true` and `hooks.block-test-files: "enabled"` (hard block).
+- `config/permissive.json` — `block_test_files: false` and `hooks.block-test-files: "warn"` (warning only).
+
+Pick one of the three resolution paths below based on how you want the two plugins to share a working tree.
+
+### Path (a) — Session or project isolation (recommended for teams that want both strict modes)
+
+Run ECC's `/tdd-guide` in a session or project where VF is **not installed**, then merge the resulting code (plus any unit-test files) into the project where VF lives. This keeps both plugins in their strictest configurations:
+
+```bash
+# Session A — ECC-only project, no VF plugin registered
+git clone https://github.com/everything-claude-code/everything-claude-code.git
+cd everything-claude-code
+./install.sh --target claude typescript python
+cd -
+
+# Do the ECC TDD cycle here — tests/*.spec.ts freely created
+/tdd-guide
+
+# Commit the resulting code + tests, then move to the VF-enabled project
+git add src tests && git commit -m "ECC TDD cycle complete"
+```
+
+```bash
+# Session B — ValidationForge-enabled project, installed with strict defaults
+curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
+/vf-setup --config standard
+
+# Pull the ECC-authored branch and validate the running system — no new test files needed
+git pull origin ecc-tdd-cycle
+/validate
+```
+
+The TDD files were written in Session A where no VF hook existed; Session B never sees a `Write` tool call targeting `tests/`, so `block-test-files` never fires. Both plugins stay at their intended strictness.
+
+### Path (b) — Hybrid: keep `block-test-files` enabled, but allowlist the ECC test output
+
+If you want a single session/project where both plugins run simultaneously, add an explicit allowlist to VF's config so ECC's test-output directories are exempt from the block. This preserves the hook's protective intent (it still blocks *ad hoc* test-file writes by the model) while carving out the directory ECC owns.
+
+Below is a suggested modification to `config/permissive.json` — copy it into `.vf/config.json` or edit the shipped file in place. The `block_test_files_allowlist` entry adds explicit glob patterns that the hook should exempt. Patterns follow the same conventions as ECC's `tdd-guide` scaffolding (`tests/`, `__tests__/`, `spec/`, plus the Go idiom of `_test.go` suffixes).
+
+```json
+{
+  "name": "permissive-ecc-hybrid",
+  "description": "Permissive VF config with ECC's tdd-guide output directories allowlisted so unit tests coexist with system validation.",
+  "strictness": "permissive",
+  "evidence_dir": "e2e-evidence",
+  "ci_mode": false,
+  "rules": {
+    "block_test_files": true,
+    "block_test_files_allowlist": [
+      "tests/**/*.spec.ts",
+      "tests/**/*.spec.js",
+      "tests/**/*.spec.py",
+      "tests/**/*_test.go",
+      "__tests__/**/*",
+      "spec/**/*.spec.*"
+    ],
+    "block_mock_patterns": true,
+    "require_evidence_on_completion": true,
+    "require_validation_plan": false,
+    "require_preflight": false,
+    "require_baseline": false,
+    "max_recovery_attempts": 3,
+    "fail_on_missing_evidence": false,
+    "require_screenshot_review": false
+  },
+  "hooks": {
+    "block-test-files": "enabled",
+    "evidence-gate-reminder": "enabled",
+    "validation-not-compilation": "enabled",
+    "completion-claim-validator": "enabled",
+    "mock-detection": "enabled"
+  }
+}
+```
+
+Install both plugins, drop this config into place, and run `/vf-setup` so VF picks up the new allowlist on next session start:
+
+```bash
+# 1. ECC first
+git clone https://github.com/everything-claude-code/everything-claude-code.git
+cd everything-claude-code && ./install.sh --target claude typescript python && cd -
+
+# 2. ValidationForge second (installs last so its hooks are authoritative)
+curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
+
+# 3. Drop the hybrid config in place and re-run setup
+mkdir -p .vf && cp config/permissive.json .vf/config.json
+# …then edit .vf/config.json to add the block_test_files_allowlist patterns above.
+/vf-setup --config .vf/config.json
+```
+
+The allowlist is additive — anything outside the glob patterns still trips the hard block, so the model cannot sneak test files under an unrelated path like `src/__tests__/inline.spec.ts` unless you explicitly allow it. Keep the allowlist tight: every new pattern is one more place a stray test can appear.
+
+### Path (c) — Sequential workflow: ECC first, then enable VF
+
+If your team is comfortable treating TDD and validation as serial phases, run ECC's TDD loop with VF's `block-test-files` hook disabled, then switch VF into its gated configuration for the validation phase. This is the simplest bash-only resolution:
+
+```bash
+# 1. Install both plugins (both install.sh invocations)
+git clone https://github.com/everything-claude-code/everything-claude-code.git
+cd everything-claude-code && ./install.sh --target claude typescript python && cd -
+curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
+
+# 2. ECC phase — VF in permissive mode so tdd-guide can write test files freely
+/vf-setup --config permissive
+/build-error-resolver
+/security-review
+/tdd-guide                       # writes tests/*.spec.ts, block-test-files is a warn only
+
+# 3. Commit the ECC-authored code + tests before flipping strictness
+git add src tests && git commit -m "ECC phase: compile-clean + unit tests green"
+
+# 4. VF phase — switch to standard (or strict) so block-test-files is a hard block again
+/vf-setup --config standard
+/validate                        # no new test files written; real-system evidence captured
+```
+
+The flip between `permissive` and `standard` is a single command. Commit between the two so the ECC-authored test files are saved before VF's gate returns to its hard-block posture — that way any later model invocation that accidentally tries to touch a test file is denied, but the unit tests ECC already wrote remain on disk.
+
+### Choosing between (a), (b), and (c)
+
+| Situation | Preferred path |
+|-----------|----------------|
+| Teams that want both plugins in their strictest posture | (a) Session/project isolation |
+| Single repository where both plugins run every session | (b) Hybrid config with allowlist |
+| Single repository where TDD and validation run as serial phases | (c) Sequential workflow |
+| Short-lived feature branch, TDD done once, VF runs on every push | (c) Sequential workflow |
+| CI job that runs `/validate` nightly on an ECC-authored main branch | (a) or (c) |
+
+All three paths preserve ECC's test files on disk and keep VF's validation evidence under `e2e-evidence/`; they differ only in how the two plugins negotiate the write pipeline during a session.
 
 ## Worked Example
 
