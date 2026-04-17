@@ -187,16 +187,33 @@ browser_take_screenshot  filename="e2e-evidence/integration-frontend-after-api-u
 ```
 
 ### Delete cascade
-```bash
-# 1. Delete via frontend
-# (capture the delete action via browser automation)
 
+Reuse the resource ID captured from the earlier create step (see
+"Frontend-to-database write path" above) — assign it to `ITEM_ID` from the
+curl response before starting this block. Do NOT leave `DELETED_ID` as a
+literal placeholder.
+
+```bash
+# Prereq: capture the ID of the just-created item from e2e-evidence/integration-create-api-verify.json
+ITEM_ID=$(jq -r '.[0].id // .data[0].id // .id' e2e-evidence/integration-create-api-verify.json)
+echo "Deleting ITEM_ID=$ITEM_ID"
+```
+
+```
+# 1. Delete via frontend
+browser_navigate  url="http://localhost:FE_PORT/items"
+browser_snapshot                                        # Get ref for the row's delete control
+browser_click  element="delete button for Integration Test Item"  ref="DELETE_BTN_REF"
+browser_take_screenshot  filename="e2e-evidence/integration-delete-frontend.png"
+```
+
+```bash
 # 2. Verify API returns 404
-curl -s -w "\nHTTP_STATUS:%{http_code}" http://localhost:API_PORT/api/items/DELETED_ID \
+curl -s -w "\nHTTP_STATUS:%{http_code}" http://localhost:API_PORT/api/items/$ITEM_ID \
   | tee e2e-evidence/integration-api-after-delete.txt
 
 # 3. Verify database row removed
-psql $DATABASE_URL -c "SELECT count(*) FROM items WHERE id = 'DELETED_ID'" \
+psql $DATABASE_URL -c "SELECT count(*) FROM items WHERE id = '$ITEM_ID'" \
   | tee e2e-evidence/integration-db-after-delete.txt
 ```
 
