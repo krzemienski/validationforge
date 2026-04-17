@@ -2,7 +2,7 @@
 
 **No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
 
-> **51 skills | 18 commands | 7 registered hooks (+3 support .js) | 7 agents | 9 rules | 17 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
+> **52 skills | 19 commands | 7 registered hooks (+3 support .js) | 7 agents | 9 rules | 18 shell scripts | Dual-platform: Claude Code plugin + OpenCode plugin**
 
 ## The Iron Rule
 
@@ -122,7 +122,10 @@ The uninstaller removes `~/.claude/plugins/validationforge`, deletes all copied 
 /validate-sweep              # Autonomous fix-and-revalidate loop until PASS
 /validate-benchmark          # Measure validation posture (coverage, evidence, speed)
 /validate-consensus          # Multi-agent CONSENSUS validation with synthesized verdict and confidence scoring
+/validate-dashboard          # Generate evidence summary dashboard (HTML + markdown)
 ```
+
+The `/validate-dashboard` command aggregates the most recent validation run into a single, reviewable summary. It reads journey verdicts and evidence from `e2e-evidence/` and writes two artifacts: `e2e-evidence/dashboard.md` (plain-text summary suitable for PR comments and CI logs) and `e2e-evidence/dashboard.html` (a self-contained HTML page with clickable evidence links and per-journey PASS/FAIL badges). Run it after `/validate` to share validation results with reviewers.
 
 ### Forge Commands
 
@@ -137,7 +140,7 @@ The uninstaller removes `~/.claude/plugins/validationforge`, deletes all copied 
 
 ### Skills
 
-Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 51 skills across 8 categories.
+Skills are loaded automatically by Claude Code based on SKILL.md frontmatter triggers. See [SKILLS.md](./SKILLS.md) for the complete index of all 52 skills across 8 categories.
 
 ### Hooks
 
@@ -252,8 +255,8 @@ Designed grade thresholds (pending empirical calibration): A (90+), B (80–89),
 
 | Primitive | Count | Location |
 |-----------|------:|----------|
-| Skills | 51 | `skills/*/SKILL.md` |
-| Commands | 18 | `commands/*.md` |
+| Skills | 52 | `skills/*/SKILL.md` |
+| Commands | 19 | `commands/*.md` |
 | CC Hooks | 7 registered + 3 support .js | `hooks/*.js` + `hooks/hooks.json` |
 | Agents | 7 | `agents/*.md` |
 | Rules | 8 | `rules/*.md` |
@@ -275,8 +278,8 @@ validationforge/
 |   +-- patterns.ts                   Shared regex patterns (source of truth)
 |   +-- package.json                  Package manifest
 |   +-- tsconfig.json                 TypeScript config
-+-- skills/                           51 skills (SKILL.md frontmatter), incl. 3 consensus-engine skills
-+-- commands/                         18 slash commands (incl. /validate-consensus)
++-- skills/                           52 skills (SKILL.md frontmatter), incl. 3 consensus-engine + evidence-dashboard
++-- commands/                         19 slash commands (incl. /validate-consensus, /validate-dashboard)
 +-- hooks/                            7 enforcement hooks + 1 patterns bridge
 |   +-- hooks.json                    Hook registration manifest
 |   +-- patterns.js                   CommonJS bridge to patterns.ts

@@ -26,6 +26,7 @@ No-mock validation platform for Claude Code. Ship verified code, not "it compile
 /validate-sweep              # Autonomous fix-and-revalidate loop until PASS
 /validate-benchmark          # Measure validation posture (coverage, evidence, enforcement, speed)
 /validate-consensus          # Multi-agent CONSENSUS validation with synthesized verdict and confidence scoring
+/validate-dashboard          # Generate evidence summary dashboard (HTML + markdown) after validation
 ```
 
 ## The 7-Phase Pipeline
@@ -129,16 +130,16 @@ History tracked in `.vf/benchmarks/`.
 
 ## Inventory
 
-### Commands (18)
+### Commands (19)
 
 **Validation Commands**
-vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-team-dashboard, validate-sweep, validate-benchmark, validate-consensus, vf-telemetry
+vf-setup, validate, validate-plan, validate-audit, validate-fix, validate-ci, validate-team, validate-team-dashboard, validate-sweep, validate-benchmark, validate-consensus, validate-dashboard, vf-telemetry
 
 **Forge Commands**
 forge-setup, forge-plan, forge-benchmark, forge-install-rules
 forge-execute (planned V2.0), forge-team (planned V1.5)
 
-### Skills (51)
+### Skills (52)
 
 **Platform Validation (15)**
 ios-validation, ios-validation-gate, ios-validation-runner, ios-simulator-control, playwright-validation, web-validation, web-testing, chrome-devtools, api-validation, cli-validation, fullstack-validation, react-native-validation, flutter-validation, django-validation, rust-cli-validation
@@ -155,8 +156,8 @@ sequential-analysis, research-validation, retrospective-validation, ai-evidence-
 **Specialized (7)**
 accessibility-audit, responsive-validation, parallel-validation, coordinated-validation, e2e-testing, e2e-validate, create-validation-plan
 
-**Operational (5)**
-baseline-quality-assessment, condition-based-waiting, error-recovery, production-readiness-audit, full-functional-audit
+**Operational (6)**
+baseline-quality-assessment, condition-based-waiting, error-recovery, production-readiness-audit, full-functional-audit, evidence-dashboard
 
 **Forge Orchestration (7)**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, validate-audit-benchmarks, team-validation-dashboard, coordinated-validation

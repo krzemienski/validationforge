@@ -1,0 +1,20 @@
+=== ValidationForge Benchmark Aggregator ===
+
+--- Running hook tests ---
+Hooks: 18/18 pass (100%)
+
+--- Running skill validation ---
+Skills: 42/42 pass (100%)
+
+--- Running command validation ---
+Commands: 16/16 pass (100%)
+
+=== AGGREGATE ===
+Weighted score: 100%
+Grade: A
+
+Baseline saved to /Users/nick/Desktop/validationforge/.auto-claude/worktrees/tasks/012-evidence-summary-dashboard/audit-artifacts/benchmark-baseline.json
+
+=== NEW ASSET VERIFICATION ===
+PASS: evidence-dashboard (172 lines)
+PASS: validate-dashboard (201 lines)

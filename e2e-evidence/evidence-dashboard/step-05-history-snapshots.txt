@@ -1,0 +1,100 @@
+Historical Snapshots — Evidence Dashboard second-run verification (subtask-5-2)
+===============================================================================
+
+Purpose
+-------
+Prove that the dashboard generator archived both runs and that the second run
+triggered the historical-comparison rendering path (HISTORICAL_DELTA_TABLE
+populated in place of the "No prior runs yet — baseline" empty state).
+
+Command executed
+----------------
+  $ bash scripts/generate-dashboard.sh --evidence-dir e2e-evidence --project-name validationforge
+
+Generator JSON contract (second run)
+------------------------------------
+  {"dashboard_md":"e2e-evidence/dashboard.md","dashboard_html":"e2e-evidence/dashboard.html","quality_score":92,"grade":"A","pass":2,"fail":0,"total":2}
+
+Trend indicator grep (second run dashboard.md)
+----------------------------------------------
+  $ grep -E 'Trend:|No prior runs' e2e-evidence/dashboard.md
+  **Trend:** IMPROVING (quality score +7, pass rate 0%)
+
+  Result: a real IMPROVING trend line is rendered — NOT the baseline
+  empty-state message. This satisfies the subtask-5-2 acceptance gate.
+
+`ls -la e2e-evidence/.history/` — both run files present
+--------------------------------------------------------
+  total 32
+  drwxr-xr-x@ 6 nick  staff  192 Apr 17 01:53 .
+  drwxr-xr-x@ 7 nick  staff  224 Apr 17 01:43 ..
+  -rw-r--r--@ 1 nick  staff  201 Apr 17 01:28 .gitignore
+  -rw-r--r--@ 1 nick  staff  315 Apr 17 01:28 run-2026-04-17T05-28-10Z.json
+  -rw-r--r--@ 1 nick  staff  300 Apr 17 01:42 run-2026-04-17T05-42-26Z.json
+  -rw-r--r--@ 1 nick  staff  406 Apr 17 01:53 run-2026-04-17T05-53-23Z.json
+
+  Both run files exist (multiple snapshots archived from preceding runs).
+  The most recent snapshot — run-2026-04-17T05-53-23Z.json — was written by
+  THIS second-run invocation. The immediately prior snapshot
+  run-2026-04-17T05-42-26Z.json (produced during subtask-5-1) is the one the
+  trend comparison consumed.
+
+Snapshot contents — prior run (subtask-5-1 output)
+--------------------------------------------------
+  e2e-evidence/.history/run-2026-04-17T05-42-26Z.json (300 bytes)
+  {"timestamp":"2026-04-17T05:42:26Z","project_name":"validationforge","overall_verdict":"PASS","pass_count":1,"fail_count":0,"total_journeys":1,"aggregate_quality_score":85,"grade":"B","journeys":[{"name":"web-validation","verdict":"PASS","confidence":"HIGH","evidence_count":13,"quality_score":85}]}
+
+Snapshot contents — current run (subtask-5-2 output)
+----------------------------------------------------
+  e2e-evidence/.history/run-2026-04-17T05-53-23Z.json (406 bytes)
+  {"timestamp":"2026-04-17T05:53:23Z","project_name":"validationforge","overall_verdict":"PASS","pass_count":2,"fail_count":0,"total_journeys":2,"aggregate_quality_score":92,"grade":"A","journeys":[{"name":"evidence-dashboard","verdict":"PASS","confidence":"HIGH","evidence_count":5,"quality_score":100},{"name":"web-validation","verdict":"PASS","confidence":"HIGH","evidence_count":13,"quality_score":85}]}
+
+Trend math (verified against both snapshots)
+--------------------------------------------
+  pass_rate prior   = 1/1  = 100%
+  pass_rate current = 2/2  = 100%
+  pass_rate_delta   = 0%
+
+  quality_score prior   = 85
+  quality_score current = 92
+  quality_score_delta   = +7
+
+  Trend classification: quality_score_delta >= +3  ⇒  IMPROVING
+                        (thresholds per scripts/generate-dashboard.sh:
+                         +3 IMPROVING, -3 REGRESSING, else STABLE)
+
+  New journeys       : evidence-dashboard        (in current, absent prior)
+  Removed journeys   : (none)
+  Regressed journeys : (none — no PASS → FAIL transition)
+  Recovered journeys : (none — no FAIL → PASS transition)
+
+Dashboard.html delta table (verified via full-page Playwright screenshot
+at step-04-second-run-with-history.png)
+------------------------------------------------------------------------
+  | Metric         | Prior | Current | Delta |
+  |----------------|-------|---------|-------|
+  | Pass Rate      | 100%  | 100%    | 0%    |
+  | Quality Score  | 85    | 92      | +7    |
+  | Total Journeys | 1     | 2       | +1    |
+  | PASS           | 1     | 2       | +1    |
+  | FAIL           | 0     | 0       | 0     |
+
+Browser render check (Playwright 1.57.0 + Chromium 1200)
+--------------------------------------------------------
+  - viewport            : 1280x1800
+  - waitUntil           : networkidle
+  - pageerror events    : 0
+  - console messages    : 0
+  - failed requests     : 0
+  - screenshot          : 333501 bytes, fullPage, PNG
+  - conclusion          : dashboard.html remains fully self-contained under
+                          the new historical-comparison render path.
+
+Subtask-5-2 verification — all gates PASS
+-----------------------------------------
+  [✓] Generator ran a second time (exit 0, JSON contract emitted)
+  [✓] grep dashboard.md for 'Trend:' prints IMPROVING (not baseline empty-state)
+  [✓] Full-page screenshot of dashboard.html captured showing delta table
+      (step-04-second-run-with-history.png)
+  [✓] ls of e2e-evidence/.history/ shows multiple run-*.json files
+      (this file, step-05-history-snapshots.txt)

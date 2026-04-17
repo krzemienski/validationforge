@@ -1,0 +1,48 @@
+# Evidence Summary Dashboard
+
+**Project:** {{PROJECT_NAME}}
+**Run Date:** {{RUN_DATE}}
+**Generator:** ValidationForge
+
+## Overall Verdict: {{OVERALL_VERDICT}}
+
+## Summary
+
+| Metric | Value |
+|--------|-------|
+| Total Journeys | {{TOTAL_JOURNEYS}} |
+| PASS | {{PASS_COUNT}} |
+| FAIL | {{FAIL_COUNT}} |
+| Aggregate Quality Score | {{QUALITY_SCORE}} / 100 |
+| Quality Grade | {{QUALITY_GRADE}} |
+
+## Journey Results
+
+| Journey | Verdict | Confidence | Evidence Count | Quality Score | Link |
+|---------|---------|------------|----------------|---------------|------|
+{{JOURNEY_TABLE}}
+
+## Evidence Index
+
+Every evidence artifact captured during this run, grouped by journey. Each entry links to the file on disk relative to this dashboard.
+
+{{EVIDENCE_INDEX}}
+
+## Historical Comparison
+
+{{HISTORICAL_DELTA_TABLE}}
+
+## How to Read This Dashboard
+
+- **Verdict** — PASS means every acceptance criterion for the journey was backed by specific, cited evidence. FAIL means at least one criterion was missing evidence or contradicted by the captured artifacts.
+- **Confidence** — HIGH when multiple independent evidence types corroborate the verdict; MEDIUM when evidence is present but thin; LOW when the verdict rests on a single artifact.
+- **Evidence Count** — Number of non-empty artifacts under the journey's evidence directory. Zero-byte files are excluded.
+- **Quality Score** — 0–100 score per the ValidationForge evidence rubric (evidence_exists 30, evidence_cites_specific_files 25, screenshots_describe_observations 20, verdicts_cite_evidence 15, no_false_claims 10). See `commands/validate-benchmark.md` for the full rubric.
+- **Quality Grade** — A (≥90), B (≥80), C (≥70), D (≥60), F (<60). Matches `scripts/benchmark/aggregate-results.sh`.
+
+## Related Artifacts
+
+- Full verdict report: `e2e-evidence/report.md`
+- Per-journey verdicts: `e2e-evidence/<journey>/VERDICT.md`
+- Raw evidence files: `e2e-evidence/<journey>/`
+- Historical snapshots: `e2e-evidence/.history/`
