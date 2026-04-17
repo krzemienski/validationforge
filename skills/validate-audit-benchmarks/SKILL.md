@@ -17,6 +17,8 @@ context_priority: reference
 
 Score the structural integrity and functional correctness of ValidationForge primitives.
 
+This skill audits ValidationForge ITSELF — the plugin's hooks, skills, commands, and rules — not a user's project (use `forge-benchmark` for that). Each of the four dimensions maps to a load-bearing surface: hooks are the enforcement layer (a silent hook failure defeats every downstream primitive), skills are the invocable surface (if frontmatter breaks, the skill becomes unreachable), commands are the user UX (the public entrypoint to every workflow), and rules are the policy layer (they shape what "correct" means across the plugin). A regression on any dimension is a release blocker.
+
 ## When to Use
 
 - After modifying hooks, skills, or commands
