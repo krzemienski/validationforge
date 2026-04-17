@@ -2,7 +2,7 @@
   "feature": "Skill Deep Review (Top 10)",
   "description": "Deep-review the 10 most critical ValidationForge skills (5 priority + 5 platform-routing). Read every SKILL.md plus its reference/workflow files line-by-line. Verify every command, every cross-reference, every PASS criterion. Fix broken instructions, stale references, and inaccurate PASS criteria. Document per-skill findings and consolidate into a summary report.",
   "created_at": "2026-04-11T02:22:17.031Z",
-  "updated_at": "2026-04-17T06:01:46.960Z",
+  "updated_at": "2026-04-17T06:14:11.538Z",
   "status": "in_progress",
   "planStatus": "in_progress",
   "xstateState": "ready",
@@ -219,7 +219,7 @@
         {
           "id": "phase-2-subtask-1",
           "name": "Review ios-validation skill",
-          "status": "pending",
+          "status": "completed",
           "activeForm": "Reviewing ios-validation skill",
           "parallel_safe": true,
           "files_involved": [
@@ -241,7 +241,9 @@
             "Every Step 1..9 verified",
             "PASS criteria template reviewed for completeness"
           ],
-          "description": "No description"
+          "description": "No description",
+          "notes": "Deep-reviewed ios-validation skill. Findings in e2e-evidence/skill-review/ios-validation/findings.md (~630 lines). 0 CRITICAL, 3 HIGH, 7 MEDIUM, 5 LOW. HIGH issues: F1 idb UI automation block uses unconfirmed --udid booted pseudonym + wrong --x/--y flag syntax (canonical form is positional X Y per fbidb.io); F2 \"Xcode MCP tools\" sub-section lists unattributed tool names (idb_tap/idb_input/idb_gesture/idb_find_element) with no MCP server citation; F3 flat evidence path e2e-evidence/ios-*.png violates CLAUDE.md's journey-slug/step-NN convention that sibling iOS skills (ios-validation-gate, ios-validation-runner) already follow. MEDIUM: placeholder inconsistency (BUNDLE_ID literal vs $BUNDLE_ID shell var), missing Related Skills + When to Use sections, hardcoded sleep 3 contradicts condition-based-waiting, log-stream predicate assumes subsystem==bundleID (empty-log false-PASS risk), Step 9 crash-timeline anchor brittle on cached builds + inconsistency with runner's *.crash vs validation's *.ips, brew install idb-companion in Common Failures is incomplete (missing pip3 install fb-idb), PASS criteria omits accessibility tree/log-non-empty check/backend correlation/configurable perf thresholds. LOW: 5 minor items (iPhone 16 hardcoded, timeout 10 short, mkdir-p as \"verification\", video filename, missing SIGKILL warning). Cross-reference check: 4 iOS skills in ./skills/ (ios-simulator-control, ios-validation, ios-validation-gate, ios-validation-runner) all verified present. ios-validation has NO Related Skills section — flagged as F5. Command syntax verified via external docs (NSHipster/fbidb.io/log(1) man page/Apple forums) because xcodebuild/xcrun are blocked by project allowlist. Transcripts saved: command-verification-transcript.txt, skills-directory-listing.txt. No mocks/test-files created. Iron Rule preserved.",
+          "updated_at": "2026-04-17T06:22:04.094683+00:00"
         },
         {
           "id": "phase-2-subtask-2",
@@ -539,5 +541,5 @@
     "last_completed_subtask": null,
     "next_subtask": "phase-1-subtask-1"
   },
-  "last_updated": "2026-04-17T06:10:22.628139+00:00"
+  "last_updated": "2026-04-17T06:22:04.094691+00:00"
 }

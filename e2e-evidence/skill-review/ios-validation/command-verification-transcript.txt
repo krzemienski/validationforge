@@ -1,0 +1,71 @@
+# Command Verification Transcript — ios-validation SKILL.md
+# Date: 2026-04-17
+
+## Environment Constraint
+
+The project sandbox / hooks allowlist blocks direct execution of `xcodebuild`
+and `xcrun` (tested — both return "Command 'xcodebuild'/'xcrun' is not in the
+allowed commands for this project"). Verification proceeded by:
+  1. Reading SKILL.md line-by-line
+  2. Cross-referencing other iOS skills in ./skills/ (ios-validation-gate,
+     ios-validation-runner, ios-simulator-control) for consistency
+  3. Consulting Apple's official docs and community references (NSHipster,
+     fbidb.io, Sarunw, Apple developer forums, log(1) man page) via agent
+     research
+
+## Path of installed tools (via `which`)
+
+$ which xcodebuild
+/usr/bin/xcodebuild
+
+$ which xcrun
+/usr/bin/xcrun
+
+$ which idb
+idb not found
+
+$ which fb-idb
+fb-idb not found
+
+The idb/fb-idb CLI tools are NOT installed on this machine, which matches the
+SKILL.md's "idb installed (optional)" note — tooling is optional.
+
+## Skill directory cross-check (./skills/)
+
+$ ls ./skills/ | grep -i ios
+ios-simulator-control
+ios-validation
+ios-validation-gate
+ios-validation-runner
+
+All four iOS-family skills exist. ios-validation (the subject of this review)
+does NOT currently reference any of the other three from a "Related Skills"
+section — confirmed by re-reading the SKILL.md in full (no Related Skills
+header anywhere).
+
+## External command verification summary (citations in findings.md)
+
+Verified VALID against Apple + community docs:
+  - xcrun simctl install|launch|openurl|spawn|io "booted"  — NSHipster, iOS Dev Recipes
+  - xcrun simctl launch --console-pty                       — Apple Dev Forums (recent Xcode)
+  - xcrun simctl io ... recordVideo --codec=h264|hevc       — Sarunw
+  - xcrun simctl spawn ... log stream --predicate ... --level debug --timeout N
+                                                            — log(1) man page, ss64
+  - xcrun simctl list devices booted -j (top-level "devices" key)
+                                                            — NSHipster
+
+Verified INCORRECT or UNCONFIRMED:
+  - `idb ui describe-all --udid booted` — idb documents --udid as accepting a
+     real UDID; "booted" pseudonym is NOT confirmed (fbidb.io/docs/commands).
+  - `idb ui tap --x 200 --y 400` — canonical documented form is POSITIONAL
+     `idb ui tap X Y`, not `--x/--y` named flags (fbidb.io, facebook/idb).
+  - `brew install idb-companion` alone is INSUFFICIENT — requires separate
+     `pip3 install fb-idb` for the CLI (fbidb.io/docs/installation).
+
+Verified CORRECT on a macOS-version claim:
+  - Crash logs in ~/Library/Logs/DiagnosticReports are `*.ips` on modern
+     macOS (Monterey 12+, Sonoma 14, Sequoia 15). Apple Developer:
+     "Acquiring crash reports and diagnostic logs".
+  - ios-validation uses `*.ips` (CORRECT).
+  - ios-validation-runner uses `*.crash` (STALE — needs updating, but out of
+     scope for this subtask; flagged as an inconsistency between skills).
