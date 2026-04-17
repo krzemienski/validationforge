@@ -1,6 +1,6 @@
 # ValidationForge Skills Index
 
-51 skills across 8 categories. All skills use Claude Code SKILL.md frontmatter for discovery.
+52 skills across 8 categories. All skills use Claude Code SKILL.md frontmatter for discovery.
 
 ## Platform Validation (15)
 
