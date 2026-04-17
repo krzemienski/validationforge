@@ -120,7 +120,7 @@ git clone --depth 1 https://github.com/krzemienski/validationforge .opencode/plu
 bash scripts/sync-opencode.sh
 ```
 
-The OpenCode plugin (`index.ts`) registers `permission.ask`, `tool.execute.after`, and `shell.env` hooks along with two custom tools (`vf_validate`, `vf_check_evidence`). Patterns are imported directly from `patterns.ts`.
+The OpenCode plugin (`index.ts`) registers `tool.execute.before`, `tool.execute.after`, and `shell.env` hooks along with two custom tools (`vf_validate`, `vf_check_evidence`). Patterns are imported directly from `patterns.ts` (Bun's native TypeScript loader — no bridge needed).
 
 ### Initialize for Your Project
 
@@ -204,7 +204,7 @@ Hooks enforce discipline automatically. See [ARCHITECTURE.md](./ARCHITECTURE.md)
 | `validation-state-tracker.js` | PostToolUse | Bash | Tracks validation activity, reminds to capture evidence |
 | `mock-detection.js` | PostToolUse | Edit\|Write\|MultiEdit | Warns on `jest.mock`, `sinon.stub`, `unittest.mock`, etc. |
 | `evidence-quality-check.js` | PostToolUse | Edit\|Write\|MultiEdit | Warns on empty evidence files |
-| `patterns.js` | (bridge) | (none) | CommonJS bridge: loads `patterns.ts` for CC hooks via `vm` sandbox |
+| `lib/patterns.js` | (library) | (none) | Pre-compiled CJS output of `patterns.ts` — `require()`'d by all 7 CC hooks. Single source of truth for regex patterns shared with the OpenCode plugin. |
 
 ## The 7-Phase Pipeline
 
@@ -332,7 +332,7 @@ validationforge/
 +-- commands/                         19 slash commands (incl. /validate-consensus, /validate-dashboard)
 +-- hooks/                            7 enforcement hooks + 1 patterns bridge
 |   +-- hooks.json                    Hook registration manifest
-|   +-- patterns.js                   CommonJS bridge to patterns.ts
+|   +-- lib/patterns.js               Pre-compiled CJS output of patterns.ts (CC-hook source of truth)
 +-- agents/                           7 specialist agents (incl. consensus-validator, consensus-synthesizer)
 +-- rules/                            8 enforcement rules
 +-- config/                           3 enforcement profiles
@@ -379,7 +379,7 @@ These are honest disclosures about what ValidationForge has **not** been verifie
 
 5. **Skill content quality partially verified** — Of the 48 skill directories, 5 were deep-reviewed (frontmatter, content accuracy, cross-reference validity) and the remaining 40 were spot-checked for file presence and frontmatter structure. Content correctness and trigger accuracy for the unreviewed skills is assumed, not confirmed.
 
-6. **OpenCode plugin not verified in live OpenCode session** — The OpenCode plugin (`index.ts`) compiles without errors and follows the documented plugin interface, but has never been loaded into a running OpenCode session. Hook registration (`permission.ask`, `tool.execute.after`, `shell.env`) and custom tool availability (`vf_validate`, `vf_check_evidence`) are unconfirmed at runtime.
+6. **OpenCode plugin not verified in live OpenCode session** — The OpenCode plugin (`index.ts`) compiles without errors and follows the documented plugin interface, but has never been loaded into a running OpenCode session. Hook registration (`tool.execute.before`, `tool.execute.after`, `shell.env`) and custom tool availability (`vf_validate`, `vf_check_evidence`) are unconfirmed at runtime.
 
 ## Troubleshooting
 
@@ -406,9 +406,17 @@ These are honest disclosures about what ValidationForge has **not** been verifie
 1. Run `/vf-setup` or `mkdir -p e2e-evidence` in your project root.
 2. The installer creates this automatically if you run it inside a git repository.
 
-### patterns.js bridge failure
+### Patterns out of sync between CC hooks and OpenCode plugin
 
-If CC hooks log `[ValidationForge] patterns.js: Could not load ...`, the bridge falls back to inline patterns. Check that `patterns.ts` exists at `.opencode/plugins/validationforge/patterns.ts` relative to the project root. The bridge uses `vm.runInNewContext` to strip TypeScript syntax at runtime.
+The CC hooks `require('./lib/patterns')` (pre-compiled CJS) and the OpenCode plugin imports `patterns.ts` directly. They are deliberately parallel sources of truth — if you edit one, recompile/port the change to the other. To regenerate `hooks/lib/patterns.js` from the TypeScript source:
+
+```bash
+# From the repo root
+npx tsc --module commonjs --target es2019 --outDir hooks/lib \
+  .opencode/plugins/validationforge/patterns.ts
+```
+
+No runtime bridge, no `vm` sandbox — the CC hooks just read a plain CommonJS module.
 
 ## Privacy & Telemetry
 

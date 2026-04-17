@@ -40,7 +40,7 @@ CC Harness                            Hook Script
    |<-------------------------------------|
 ```
 
-- `block-test-files.js` -- Matches `Write|Edit|MultiEdit`. Reads `tool_input.file_path`, checks against `TEST_PATTERNS` from patterns.js. If matched and not in `ALLOWLIST`, writes `{"permissionDecision":"deny","reason":"..."}` to stdout and exits 0.
+- `block-test-files.js` -- Matches `Write|Edit|MultiEdit`. Reads `tool_input.file_path`, checks against `TEST_PATTERNS` from `lib/patterns.js`. If matched and not in `ALLOWLIST`, writes `{"permissionDecision":"deny","reason":"..."}` to stdout and exits 0.
 - `evidence-gate-reminder.js` -- Matches `TaskUpdate`. Writes `{"additionalContext":"..."}` to stdout with an evidence checklist and exits 0.
 
 **PostToolUse hooks** (run after the tool executes):
@@ -149,7 +149,7 @@ Validation commands (9) have no `allowed-tools` restriction. Forge commands (6) 
 ```
 OpenCode Harness                      Plugin Hooks
    |                                      |
-   |-- permission.ask(input, output) ---->|
+   |-- tool.execute.before(input, output) ---->|
    |   (before Write/Edit/MultiEdit)      |-- isBlockedTestFile(filePath)
    |                                      |-- if blocked: output.status = "deny"
    |<-------------------------------------|
@@ -165,7 +165,7 @@ OpenCode Harness                      Plugin Hooks
    |<-------------------------------------|
 ```
 
-- `permission.ask` -- Mirrors `block-test-files.js`. Calls `isBlockedTestFile()` from `patterns.ts`. Sets `output.status = "deny"` if matched.
+- `tool.execute.before` -- Mirrors `block-test-files.js`. Calls `isBlockedTestFile()` from `patterns.ts`. Throws to reject the tool call when a test/mock file path is matched.
 - `tool.execute.after` -- Mirrors all 5 PostToolUse CC hooks. Checks bash output for build success and completion claims, checks write content for mock patterns, checks evidence files for empty content. Attaches `vf_reminder`, `vf_warning`, or `vf_note` to `output.metadata`.
 - `shell.env` -- Injects `VF_EVIDENCE_DIR=e2e-evidence`, `VF_VERSION=1.0.0`, `VF_ENFORCEMENT=standard` into the shell environment.
 
@@ -201,16 +201,16 @@ A single source of truth for all regex patterns used across both platforms.
   +-- OC plugin (index.ts)
   |     imports directly via TypeScript: import { isBlockedTestFile, ... } from "./patterns"
   |
-  +-- CC hooks (hooks/patterns.js)
-        CommonJS bridge using vm.runInNewContext():
-        1. Reads patterns.ts from disk
-        2. Strips TypeScript syntax (export, type annotations, function defs)
-        3. Evaluates in vm sandbox to extract const arrays
-        4. Falls back to inline copy if patterns.ts is unavailable
-        CC hooks: require('./patterns') -> { TEST_PATTERNS, ALLOWLIST, ... }
+  +-- CC hooks (hooks/lib/patterns.js)
+        Plain pre-compiled CommonJS output of patterns.ts — NOT a runtime bridge.
+        Generated once via `tsc --module commonjs` and committed to the repo.
+        CC hooks: require('./lib/patterns') -> { TEST_PATTERNS, ALLOWLIST, ... }
+        To regenerate after editing patterns.ts:
+          npx tsc --module commonjs --target es2019 --outDir hooks/lib \
+            .opencode/plugins/validationforge/patterns.ts
 ```
 
-Hooks that consume patterns.js:
+Hooks that consume `lib/patterns.js`:
 - `block-test-files.js` -- TEST_PATTERNS, ALLOWLIST
 - `completion-claim-validator.js` -- COMPLETION_PATTERNS
 - `mock-detection.js` -- MOCK_PATTERNS
