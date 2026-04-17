@@ -15,10 +15,10 @@
 │ criteria │    │ criteria │    │ running  │    │ evidence │
 └──────────┘    └──────────┘    └──────┬───┘    └────┬─────┘
                                        │              │
-                                  FAIL?│         FAIL?│
-                                       ▼              ▼
-                                     STOP           (fix loop
-                                                    if --fix)
+                             BLOCKED?  │         FAIL?│
+                            (Iron Rule │              ▼
+                                #4)    ▼         (fix loop
+                                     STOP         if --fix)
                                                        │
 ┌──────────┐    ┌──────────┐    ┌──────────┐          │
 │ Phase 6  │◀───│ Phase 5  │◀───│ Phase 4  │◀─────────┘
@@ -97,26 +97,36 @@ Proceed with validation? [Y/n/edit]
 
 **Skip this gate** with `--ci` flag.
 
-### Phase 2: Preflight
+### Phase 2: Preflight (MANDATORY — Iron Rule #4)
 
-Execute `workflows/preflight.md`:
+CLAUDE.md Iron Rule #4: "NEVER skip preflight — if it fails, STOP."
+
+Invoke the `preflight` skill. See `../../../skills/preflight/SKILL.md`.
+
 1. Verify build compiles without errors
 2. Check runtime prerequisites (server, simulator, database)
 3. Verify required tools are available (playwright, xcrun, curl, etc.)
 4. Confirm MCP servers are reachable if needed
-5. Output: `e2e-evidence/preflight.md`
+5. Attempt auto-fix once per failed check (rules in `preflight/references/auto-fix-actions.md`)
+6. Write verdict to `e2e-evidence/preflight-report.md`
 
 Skills used: `preflight`, `build-quality-gates`
 
-**Phase Gate:** If preflight FAILS, STOP the pipeline. Do not proceed to Execute.
+**Gate behavior:**
+- `CLEAR` → proceed to Phase 3 (Execute).
+- `WARN` → proceed to Phase 3; flag the warning in the eventual report.
+- `BLOCKED` → **STOP the pipeline.** Do not run Execute, Analyze, Verdict, Ship, or Fix. Surface the preflight report; resolve manually; re-run.
+
+This step may be skipped only with the explicit `--skip-preflight` override (an emergency flag that logs a warning). Never skip preflight silently.
 
 ```
-Preflight status:
-  Build: PASS | FAIL
+Preflight verdict:
+  Build:    PASS | FAIL
   Services: PASS | FAIL
-  Tools: PASS | FAIL
+  Tools:    PASS | FAIL
+  Overall:  CLEAR | WARN | BLOCKED
 
-→ If any FAIL: pipeline halted. Fix prerequisites before retrying.
+→ BLOCKED: pipeline halted. Fix prerequisites before retrying.
 ```
 
 ### Phase 3: Execute

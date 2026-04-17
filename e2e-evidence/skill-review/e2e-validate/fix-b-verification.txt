@@ -1,0 +1,75 @@
+Fix B — e2e-validate preflight invocation gate — verification
+==============================================================
+Files edited:
+  1. skills/e2e-validate/SKILL.md
+  2. skills/e2e-validate/workflows/full-run.md
+  3. skills/e2e-validate/workflows/ci-mode.md
+Date: 2026-04-17
+
+Finding addressed: CRITICAL F1 (e2e-validate/findings.md)
+  "Orchestrator never invokes the preflight skill, violating Iron Rule #4"
+
+Before fix:
+  grep -i preflight skills/e2e-validate/SKILL.md
+  -> single occurrence in Related Skills table only (line 124)
+  grep -i preflight skills/e2e-validate/workflows/*.md
+  -> ZERO occurrences in any workflow file
+
+After fix:
+  skills/e2e-validate/SKILL.md:
+    - Line 42: new "## Preflight Gate (MANDATORY — Iron Rule #4)" section
+    - Lines 49-55: per-flag preflight behavior documented
+    - Line 58: preflight report output location
+    - Line 65: Command Routing (none) now reads "preflight → analyze → ..."
+    - Line 66: new `--preflight` flag routing to preflight skill
+    - Lines 69-71: --execute/--fix/--audit say "Preflight gate + ..."
+    - Line 73: --ci says "Non-interactive, preflight-gated, no approval gates"
+    - Line 77: --skip-preflight emergency override documented
+
+  skills/e2e-validate/workflows/full-run.md:
+    - Lines 8-34: Pipeline Flow ASCII diagram now starts with PREFLIGHT
+      (adds BLOCKED → STOP branch)
+    - Line 41: new "### Phase 0: Preflight (MANDATORY — Iron Rule #4)"
+    - Lines 43-51: preflight invocation mechanics (checklist location,
+      auto-fix actions, re-check, verdict write to e2e-evidence/preflight-report.md)
+    - Lines 54-57: gate behavior — CLEAR/WARN proceed, BLOCKED STOP
+    - Lines 59-61: --skip-preflight emergency semantics + Iron Rule #4 quote
+
+  skills/e2e-validate/workflows/ci-mode.md:
+    - Line 24: new "### Step 1: Preflight Gate (MANDATORY — Iron Rule #4)"
+    - Lines 36-42: CI exit-code behavior (CLEAR, WARN → stdout tag, BLOCKED → exit 2)
+    - Line 44: --skip-preflight emergency semantics
+    - Step renumbering: old Step 1 -> Step 2, Step 2 -> Step 3 (with
+      Preflight added to the 6-item phase list), Step 3 -> Step 4 (Structured
+      Output), Step 4 -> Step 5 (Evidence Artifact Path), Step 5 -> Step 6
+      (Exit Codes), Step 6 -> Step 7 (Timeout Handling)
+
+Structural consistency check — PASS:
+  full-run.md phases: 0, 1, 2, 3, 4, 5, 6 (contiguous, no duplicates)
+  ci-mode.md steps:   1, 2, 3, 4, 5, 6, 7 (contiguous, no duplicates)
+
+Cross-reference reciprocal check — PASS:
+  preflight/SKILL.md line 87:
+    "- `e2e-validate` — Preflight is the first step of validation execution"
+  This claim was aspirational before Fix B; it is now mechanically true.
+
+Iron Rule #4 compliance:
+  CLAUDE.md line 77: "NEVER skip preflight — if it fails, STOP."
+  e2e-validate now has:
+    - Top-level SKILL.md section mandating preflight
+    - Pipeline diagram showing PREFLIGHT → STOP (BLOCKED) arrow
+    - Phase 0 / Step 1 enforcement in both workflow files
+    - Explicit --skip-preflight override (with warning) for legitimate
+      emergency use only
+  An agent following e2e-validate literally will now run preflight first
+  for any of --execute, --fix, --audit, --ci (full pipeline), and will
+  abort on BLOCKED — resolving the false-PASS path described in F1.
+
+No regressions:
+  - All other phases (Analyze/Plan/Approve/Execute/Fix/Report) unchanged.
+  - All other workflow files (analyze.md, plan.md, execute.md,
+    fix-and-revalidate.md, audit.md, report.md) unchanged.
+  - All other SKILL.md sections (Scope, Iron Rule, Platform Detection,
+    Validation Order, Platform References, Workflow Files, Success Criteria,
+    Rules, Security Policy, Related Skills) unchanged.
+  - YAML frontmatter intact.

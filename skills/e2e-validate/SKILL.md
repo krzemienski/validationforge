@@ -66,22 +66,42 @@ If the auto-detected platform is wrong, override with `--platform <type>` and re
 
 Auto-detection script: `scripts/detect-platform.sh` (in the plugin root).
 
+## Preflight Gate (MANDATORY — Iron Rule #4)
+
+Before any workflow below executes, the `preflight` skill MUST run and its
+verdict MUST be `CLEAR` (or `WARN` with documented acceptance). This is not
+optional — CLAUDE.md Iron Rule #4 states: "NEVER skip preflight — if it
+fails, STOP."
+
+- **`--execute`, `--fix`, `--audit`** → invoke `preflight` first; abort on
+  `BLOCKED`; continue on `CLEAR`/`WARN`.
+- **`--analyze`, `--plan`, `--report`** → these are read-only against source
+  files; preflight is still recommended but non-blocking (the skill will
+  emit a soft warning if prerequisites are missing so downstream phases
+  can plan around them).
+- **`--ci`** → preflight runs as Step 1 of `workflows/ci-mode.md`; a
+  `BLOCKED` verdict exits with code 2 (pipeline error).
+
+The preflight step writes its report to `e2e-evidence/preflight-report.md`.
+Subsequent workflow phases must read that report before starting.
+
 ## Command Routing
 
 Start with no flag (full pipeline). Use the others when you need a specific phase in isolation.
 
 | Flag | When to use | Effect | Workflow |
 |------|-------------|--------|----------|
-| (none) | Default — you want the whole thing | Full pipeline: analyze → plan → approve → execute → report | `workflows/full-run.md` |
+| (none) | Default — you want the whole thing | Full pipeline: preflight → analyze → plan → approve → execute → report | `workflows/full-run.md` |
+| `--preflight` | You just want the gate (prereq check) | Run preflight gate only; emit CLEAR/WARN/BLOCKED verdict | `preflight` skill |
 | `--analyze` | Just want to know what platform/journeys exist | Discovery only, no planning or execution | `workflows/analyze.md` |
 | `--plan` | You want to write/review PASS criteria before running anything | Plan only, no execution | `workflows/plan.md` |
-| `--execute` | Plan already exists, run it | Execute the plan | `workflows/execute.md` |
-| `--fix` | Previous run FAILED, want auto-recovery | 3-strike failure recovery + re-validate | `workflows/fix-and-revalidate.md` |
-| `--audit` | Pre-release review, don't change code | Read-only severity classification | `workflows/audit.md` |
+| `--execute` | Plan already exists, run it | Preflight gate + execute the plan | `workflows/execute.md` |
+| `--fix` | Previous run FAILED, want auto-recovery | Preflight gate + 3-strike failure recovery + re-validate | `workflows/fix-and-revalidate.md` |
+| `--audit` | Pre-release review, don't change code | Preflight gate + read-only severity classification | `workflows/audit.md` |
 | `--report` | Need a saved report for stakeholders | Generate/export report from last run | `workflows/report.md` |
-| `--ci` | Running in CI/CD, no humans around | Non-interactive, no approval gates, exit codes | `workflows/ci-mode.md` |
+| `--ci` | Running in CI/CD, no humans around | Non-interactive, preflight-gated, no approval gates, exit codes | `workflows/ci-mode.md` |
 
-**Modifiers:** `--platform <type>` (override detection), `--scope <path>` (limit scope), `--parallel` (sub-agents), `--verbose` (inline evidence).
+**Modifiers:** `--platform <type>` (override detection), `--scope <path>` (limit scope), `--parallel` (sub-agents), `--verbose` (inline evidence), `--skip-preflight` (emergency override; logs a warning — only when preflight itself is broken, never to bypass a legitimate BLOCKED verdict).
 
 ## Validation Order
 
