@@ -169,20 +169,23 @@ done
 If `idb` is available, use it for precise interactions:
 
 ```bash
+# Capture the UDID of the booted simulator first (idb ui takes a UDID, not "booted").
+UDID=$(xcrun simctl list devices booted | grep -Eo '[0-9A-F-]{36}' | head -1)
+
 # Get accessibility tree (find tap targets)
-idb ui describe-all --udid booted 2>&1 | tee e2e-evidence/ios-accessibility-tree.txt
+idb ui describe-all --udid "$UDID" 2>&1 | tee e2e-evidence/ios-accessibility-tree.txt
 
-# Tap at coordinates
-idb ui tap --x 200 --y 400 --udid booted
+# Tap at positional x y (idb ui tap takes positional coordinates, not --x/--y flags)
+idb ui tap --udid "$UDID" 200 400
 
-# Swipe (scroll down)
-idb ui swipe --x 200 --y 600 --delta-x 0 --delta-y -300 --udid booted
+# Swipe: positional start-x start-y end-x end-y
+idb ui swipe --udid "$UDID" 200 600 200 300
 
 # Type text into focused field
-idb ui text "hello world" --udid booted
+idb ui text --udid "$UDID" "hello world"
 
 # Press hardware button
-idb ui button HOME --udid booted
+idb ui button --udid "$UDID" HOME
 ```
 
 If using Xcode MCP tools instead:
