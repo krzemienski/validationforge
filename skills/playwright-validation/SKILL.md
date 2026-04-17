@@ -135,7 +135,7 @@ Save output to `e2e-evidence/web-playwright/step-05-console-errors.txt`.
 ### Step 7: Network Request Verification
 
 ```
-browser_network_requests → includeStatic=false
+browser_network_requests → static=false
 ```
 
 Save to `e2e-evidence/web-playwright/step-06-network.txt`.
