@@ -259,6 +259,10 @@ e2e-evidence/
   report.md  ← Verdict Writer only
 ```
 
+## Integration Guides
+
+Using ValidationForge with OMC, ECC, and Superpowers — see [integrations/README.md](integrations/README.md) for the hub.
+
 ## Contributing
 
 ValidationForge is MIT licensed. Contributions welcome.
