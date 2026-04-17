@@ -1,0 +1,25 @@
+---
+title: /validate-consensus
+description: Spawn N independent validators to assess the same feature and synthesize a unified consensus verdict with confidence scoring.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Spawn N (≥2, default 3) **independent** validator agents against the **same** feature, let each capture evidence blindly, then synthesize their per-journey verdicts into a single consensus verdict with a confidence score derived from the level of agreement. Disagreements trigger root-cause investigation before a final verdict is emitted.
+
+This is ValidationForge's **execution-time agreement gate**: where `/validate` is one validator and `/validate-team` is N validators across N platforms, `/validate-consensus` is N validators against the **same** journeys. The goal is **confidence**, not **coverage**.
+
+The authoritative contract for this command is `rules/consensus-engine.md`. In any conflict between this file and the rule, the rule wins.
+
+## Full Reference
+
+The full command definition — including flags, pipeline stages, and examples —
+lives in the repo:
+
+- [`commands/validate-consensus.md`](https://github.com/krzemienski/validationforge/blob/main/commands/validate-consensus.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for `/validate-consensus` is the
+  `commands/validate-consensus.md` file in the ValidationForge repo. Slash commands are
+  executed by Claude Code — the `.md` file is the executable spec.
+</Aside>

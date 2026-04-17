@@ -1,0 +1,23 @@
+---
+title: /validate-dashboard
+description: Generate or regenerate the evidence summary dashboard from e2e-evidence/
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Generate or regenerate the ValidationForge evidence summary dashboard from `e2e-evidence/`. Produces a shareable `dashboard.md` and self-contained `dashboard.html` with per-journey PASS/FAIL verdicts, evidence citations, quality scores, and — when prior runs exist — a historical trend comparison.
+
+This command is a user-facing wrapper around `scripts/generate-dashboard.sh`. It is invoked automatically at the end of `/validate`; use this command to regenerate after editing evidence by hand, to review past runs, or to open the HTML in a browser.
+
+## Full Reference
+
+The full command definition — including flags, pipeline stages, and examples —
+lives in the repo:
+
+- [`commands/validate-dashboard.md`](https://github.com/krzemienski/validationforge/blob/main/commands/validate-dashboard.md)
+
+<Aside type="note" title="Thin reference page">
+  This page is a thin index entry. The canonical source for `/validate-dashboard` is the
+  `commands/validate-dashboard.md` file in the ValidationForge repo. Slash commands are
+  executed by Claude Code — the `.md` file is the executable spec.
+</Aside>
