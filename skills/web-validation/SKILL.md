@@ -92,7 +92,7 @@ browser_navigate  url="http://localhost:PORT"
 browser_snapshot                                    # Get accessibility tree
 browser_take_screenshot  filename="e2e-evidence/web-01-homepage.png"
 
-browser_click  ref="LINK_REF"                       # Navigate via link
+browser_click  element="primary navigation link"  ref="LINK_REF"   # Navigate via link
 browser_take_screenshot  filename="e2e-evidence/web-02-next-page.png"
 ```
 
@@ -112,22 +112,23 @@ take_screenshot  filePath="e2e-evidence/web-02-next-page.png"
 browser_console_messages  level="error"
 ```
 
-Save results. If errors found:
-```
-browser_console_messages  level="error"  filename="e2e-evidence/web-console-errors.txt"
-```
+Save results. If errors found, capture the tool output into evidence via a
+follow-up file-write (e.g. save the MCP tool response body to
+`e2e-evidence/web-console-errors.txt`). The `browser_console_messages` MCP tool
+returns console entries in its response — it does not accept a `filename`
+parameter and cannot write evidence itself.
 
 Any JavaScript error in the console is a FAIL unless it is a known, documented, non-blocking issue.
 
 ## Step 5: Network Request Validation
 
 ```
-browser_network_requests  includeStatic=false
+browser_network_requests  static=false
 ```
 
 Check for failed requests (4xx/5xx). Save evidence:
 ```
-browser_network_requests  includeStatic=false  filename="e2e-evidence/web-network-requests.txt"
+browser_network_requests  static=false  filename="e2e-evidence/web-network-requests.txt"
 ```
 
 ## Step 6: Form Validation
@@ -144,7 +145,7 @@ Test with valid data:
 ```
 browser_snapshot                                    # Get refs for form fields
 browser_fill_form  fields=[{ref: "EMAIL_REF", value: "user@example.com"}, {ref: "PASS_REF", value: "SecurePass123!"}]
-browser_click  ref="SUBMIT_REF"
+browser_click  element="submit button (valid form)"  ref="SUBMIT_REF"
 browser_take_screenshot  filename="e2e-evidence/web-form-valid-submit.png"
 ```
 
@@ -152,7 +153,7 @@ Test with invalid data:
 ```
 browser_snapshot                                    # Get refs for form fields
 browser_fill_form  fields=[{ref: "EMAIL_REF", value: "not-an-email"}, {ref: "PASS_REF", value: ""}]
-browser_click  ref="SUBMIT_REF"
+browser_click  element="submit button (invalid form)"  ref="SUBMIT_REF"
 browser_take_screenshot  filename="e2e-evidence/web-form-invalid-submit.png"
 ```
 
