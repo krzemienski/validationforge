@@ -189,7 +189,7 @@ consensus-engine, consensus-synthesis, consensus-disagreement-analysis
 | mock-detection | Edit/Write (post) | Detect mock patterns in code |
 | evidence-quality-check | Edit/Write (post) | Warn on empty evidence files |
 
-### Rules (8)
+### Rules (9)
 
 | Rule | Purpose |
 |------|---------|
@@ -201,6 +201,7 @@ consensus-engine, consensus-synthesis, consensus-disagreement-analysis
 | benchmarking | Metric collection, integrity, comparative analysis |
 | forge-execution | Phase gates, fix loop discipline, state persistence |
 | forge-team-orchestration | Validator assignment, evidence ownership, verdict synthesis |
+| consensus-engine | Execution-time agreement gate — N independent validators synthesize a confidence-scored CONSENSUS verdict |
 
 ### Integration Guides (3)
 
