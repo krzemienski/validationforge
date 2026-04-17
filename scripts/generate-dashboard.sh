@@ -530,16 +530,199 @@ else
   JOURNEY_TABLE_MD="${JOURNEY_TABLE_MD%$'\n'}"
 fi
 
-# Historical delta table — placeholder content. Phase 2 will replace this
-# with real comparison logic. For now we emit a baseline message when history
-# is empty or archival is disabled.
+# ------------------------------------------------------------------
+# Historical comparison: compute deltas against the most recent
+# prior snapshot in $EVIDENCE_DIR/.history/. When there is no prior
+# snapshot (first run), emit the baseline empty-state message.
+#
+# Trend indicator thresholds (quality_score_delta):
+#   >= +3  → IMPROVING
+#   <= -3  → REGRESSING
+#   else   → STABLE
+# ------------------------------------------------------------------
 HISTORY_DIR="$EVIDENCE_DIR/.history"
 HIST_COUNT=0
+PRIOR_SNAPSHOT=""
 if [ -d "$HISTORY_DIR" ]; then
   HIST_COUNT=$(find "$HISTORY_DIR" -maxdepth 1 -type f -name 'run-*.json' 2>/dev/null | wc -l | tr -d ' ')
+  # ISO-8601 timestamps in filenames → lexical sort == chronological sort.
+  PRIOR_SNAPSHOT="$(find "$HISTORY_DIR" -maxdepth 1 -type f -name 'run-*.json' 2>/dev/null | LC_ALL=C sort | tail -1)"
 fi
+
+# Default: no prior runs — this is the baseline.
 HISTORICAL_DELTA_TABLE_MD="_No prior runs yet — this is baseline._"
 HISTORICAL_DELTA_TABLE_HTML="<p><em>No prior runs yet — this is baseline.</em></p>"
+
+if [ "$HIST_COUNT" -ge 1 ] && [ -n "$PRIOR_SNAPSHOT" ] && [ -f "$PRIOR_SNAPSHOT" ]; then
+  prior_content="$(cat "$PRIOR_SNAPSHOT" 2>/dev/null || printf '')"
+
+  # -- Extract top-level scalar fields from the one-line JSON snapshot --
+  prior_pass="$(printf '%s' "$prior_content" | grep -o '"pass_count":[0-9]*' | head -1 | cut -d: -f2 || true)"
+  prior_fail="$(printf '%s' "$prior_content" | grep -o '"fail_count":[0-9]*' | head -1 | cut -d: -f2 || true)"
+  prior_total="$(printf '%s' "$prior_content" | grep -o '"total_journeys":[0-9]*' | head -1 | cut -d: -f2 || true)"
+  prior_quality="$(printf '%s' "$prior_content" | grep -o '"aggregate_quality_score":[0-9]*' | head -1 | cut -d: -f2 || true)"
+  prior_timestamp="$(printf '%s' "$prior_content" | grep -o '"timestamp":"[^"]*"' | head -1 | sed 's/^"timestamp":"//; s/"$//' || true)"
+  prior_pass="${prior_pass:-0}"
+  prior_fail="${prior_fail:-0}"
+  prior_total="${prior_total:-0}"
+  prior_quality="${prior_quality:-0}"
+  prior_timestamp="${prior_timestamp:-unknown}"
+
+  # -- Extract per-journey (name, verdict) pairs from the snapshot --
+  # Each journey object is rendered by the archival emitter as
+  #   {"name":"X","verdict":"Y","confidence":"Z","evidence_count":N,"quality_score":M}
+  prior_journeys_file="$TMP_WORK/prior-journeys.tsv"
+  : > "$prior_journeys_file"
+  while IFS= read -r pair; do
+    [ -n "$pair" ] || continue
+    pname="$(printf '%s' "$pair" | sed -n 's/^"name":"\(.*\)","verdict":"[^"]*"$/\1/p')"
+    pverdict="$(printf '%s' "$pair" | sed -n 's/^"name":"[^"]*","verdict":"\([^"]*\)"$/\1/p')"
+    [ -n "$pname" ] || continue
+    printf '%s\t%s\n' "$pname" "$pverdict" >> "$prior_journeys_file"
+  done < <(printf '%s' "$prior_content" | grep -oE '"name":"[^"]*","verdict":"[^"]*"' || true)
+
+  # -- Pass-rate deltas (integer percent) --
+  if [ "$prior_total" -gt 0 ]; then
+    prior_pass_rate=$(( prior_pass * 100 / prior_total ))
+  else
+    prior_pass_rate=0
+  fi
+  if [ "$TOTAL" -gt 0 ]; then
+    current_pass_rate=$(( PASS_COUNT * 100 / TOTAL ))
+  else
+    current_pass_rate=0
+  fi
+  pass_rate_delta=$(( current_pass_rate - prior_pass_rate ))
+  quality_score_delta=$(( AGG_QUALITY - prior_quality ))
+
+  # -- Trend indicator --
+  if [ "$quality_score_delta" -ge 3 ]; then
+    TREND="IMPROVING"
+    TREND_CLASS="improving"
+  elif [ "$quality_score_delta" -le -3 ]; then
+    TREND="REGRESSING"
+    TREND_CLASS="regressing"
+  else
+    TREND="STABLE"
+    TREND_CLASS="stable"
+  fi
+
+  # -- Classify per-journey changes into temp files (empty-safe) --
+  new_file="$TMP_WORK/delta-new.txt"
+  removed_file="$TMP_WORK/delta-removed.txt"
+  regressed_file="$TMP_WORK/delta-regressed.txt"
+  recovered_file="$TMP_WORK/delta-recovered.txt"
+  current_names_file="$TMP_WORK/delta-current-names.txt"
+  : > "$new_file"; : > "$removed_file"; : > "$regressed_file"; : > "$recovered_file"; : > "$current_names_file"
+
+  if [ "$TOTAL" -gt 0 ]; then
+    for i in "${!J_NAMES[@]}"; do
+      cname="${J_NAMES[$i]}"
+      cverdict="${J_VERDICTS[$i]}"
+      printf '%s\n' "$cname" >> "$current_names_file"
+      pverdict="$(awk -F'\t' -v n="$cname" '$1==n { print $2; exit }' "$prior_journeys_file")"
+      if [ -z "$pverdict" ]; then
+        printf '%s\n' "$cname" >> "$new_file"
+      elif [ "$pverdict" = "PASS" ] && [ "$cverdict" = "FAIL" ]; then
+        printf '%s\n' "$cname" >> "$regressed_file"
+      elif [ "$pverdict" = "FAIL" ] && [ "$cverdict" = "PASS" ]; then
+        printf '%s\n' "$cname" >> "$recovered_file"
+      fi
+    done
+  fi
+
+  # removed_journeys: names present in prior but absent in current
+  while IFS=$'\t' read -r pname pverdict; do
+    [ -n "$pname" ] || continue
+    if ! grep -Fxq "$pname" "$current_names_file" 2>/dev/null; then
+      printf '%s\n' "$pname" >> "$removed_file"
+    fi
+  done < "$prior_journeys_file"
+
+  # -- Formatting helpers --
+  fmt_signed() {
+    local n="$1"
+    if [ "$n" -gt 0 ]; then printf '+%s' "$n"
+    elif [ "$n" -lt 0 ]; then printf '%s' "$n"
+    else printf '0'
+    fi
+  }
+  # Markdown comma-joined list from a file, or "_(none)_".
+  render_names_md() {
+    local file="$1"
+    if [ -s "$file" ]; then
+      LC_ALL=C paste -sd ',' "$file" | sed 's/,/, /g'
+    else
+      printf '_(none)_'
+    fi
+  }
+  # HTML comma-joined list from a file, or "<em>(none)</em>".
+  render_names_html() {
+    local file="$1"
+    if [ -s "$file" ]; then
+      local first=1
+      local n n_h
+      while IFS= read -r n; do
+        [ -n "$n" ] || continue
+        n_h="$(html_escape "$n")"
+        if [ "$first" -eq 1 ]; then
+          printf '<code>%s</code>' "$n_h"
+          first=0
+        else
+          printf ', <code>%s</code>' "$n_h"
+        fi
+      done < "$file"
+    else
+      printf '<em>(none)</em>'
+    fi
+  }
+
+  q_delta_str="$(fmt_signed "$quality_score_delta")"
+  p_delta_str="$(fmt_signed "$pass_rate_delta")"
+  pass_delta_str="$(fmt_signed "$(( PASS_COUNT - prior_pass ))")"
+  fail_delta_str="$(fmt_signed "$(( FAIL_COUNT - prior_fail ))")"
+  total_delta_str="$(fmt_signed "$(( TOTAL - prior_total ))")"
+
+  # -- Render markdown --
+  md=""
+  md+="**Trend:** $TREND (quality score ${q_delta_str}, pass rate ${p_delta_str}%)"$'\n\n'
+  md+="Compared to prior run at \`$prior_timestamp\`."$'\n\n'
+  md+="| Metric | Prior | Current | Delta |"$'\n'
+  md+="|--------|-------|---------|-------|"$'\n'
+  md+="| Pass Rate | ${prior_pass_rate}% | ${current_pass_rate}% | ${p_delta_str}% |"$'\n'
+  md+="| Quality Score | $prior_quality | $AGG_QUALITY | $q_delta_str |"$'\n'
+  md+="| Total Journeys | $prior_total | $TOTAL | $total_delta_str |"$'\n'
+  md+="| PASS | $prior_pass | $PASS_COUNT | $pass_delta_str |"$'\n'
+  md+="| FAIL | $prior_fail | $FAIL_COUNT | $fail_delta_str |"$'\n\n'
+  md+="- **New journeys:** $(render_names_md "$new_file")"$'\n'
+  md+="- **Removed journeys:** $(render_names_md "$removed_file")"$'\n'
+  md+="- **Regressed (PASS → FAIL):** $(render_names_md "$regressed_file")"$'\n'
+  md+="- **Recovered (FAIL → PASS):** $(render_names_md "$recovered_file")"
+  HISTORICAL_DELTA_TABLE_MD="$md"
+
+  # -- Render HTML --
+  prior_timestamp_h="$(html_escape "$prior_timestamp")"
+  html=""
+  html+="<p><span class=\"trend-indicator trend-${TREND_CLASS}\">${TREND}</span>"
+  html+="<span>quality score ${q_delta_str}, pass rate ${p_delta_str}%</span></p>"$'\n'
+  html+="<p>Compared to prior run at <code>${prior_timestamp_h}</code>.</p>"$'\n'
+  html+="<div class=\"table-wrap\"><table class=\"journeys\">"
+  html+="<thead><tr><th scope=\"col\">Metric</th><th scope=\"col\">Prior</th><th scope=\"col\">Current</th><th scope=\"col\">Delta</th></tr></thead>"
+  html+="<tbody>"
+  html+="<tr><td>Pass Rate</td><td>${prior_pass_rate}%</td><td>${current_pass_rate}%</td><td>${p_delta_str}%</td></tr>"
+  html+="<tr><td>Quality Score</td><td>${prior_quality}</td><td>${AGG_QUALITY}</td><td>${q_delta_str}</td></tr>"
+  html+="<tr><td>Total Journeys</td><td>${prior_total}</td><td>${TOTAL}</td><td>${total_delta_str}</td></tr>"
+  html+="<tr><td>PASS</td><td>${prior_pass}</td><td>${PASS_COUNT}</td><td>${pass_delta_str}</td></tr>"
+  html+="<tr><td>FAIL</td><td>${prior_fail}</td><td>${FAIL_COUNT}</td><td>${fail_delta_str}</td></tr>"
+  html+="</tbody></table></div>"$'\n'
+  html+="<ul>"
+  html+="<li><strong>New journeys:</strong> $(render_names_html "$new_file")</li>"
+  html+="<li><strong>Removed journeys:</strong> $(render_names_html "$removed_file")</li>"
+  html+="<li><strong>Regressed (PASS → FAIL):</strong> $(render_names_html "$regressed_file")</li>"
+  html+="<li><strong>Recovered (FAIL → PASS):</strong> $(render_names_html "$recovered_file")</li>"
+  html+="</ul>"
+  HISTORICAL_DELTA_TABLE_HTML="$html"
+fi
 
 # ------------------------------------------------------------------
 # Template rendering (safe literal substitution)
