@@ -6,10 +6,10 @@ Dual-platform enforcement architecture for Claude Code (CC) and OpenCode (OC). B
 
 | Primitive | Count | CC Location | OC Location |
 |-----------|------:|-------------|-------------|
-| Skills | 41 | `skills/*/SKILL.md` | (shared via symlink) |
-| Commands | 15 | `commands/*.md` | (shared via symlink) |
+| Skills | 44 | `skills/*/SKILL.md` | (shared via symlink) |
+| Commands | 16 | `commands/*.md` | (shared via symlink) |
 | Hooks | 8 | `hooks/*.js` + `hooks.json` | `.opencode/plugins/validationforge/index.ts` |
-| Agents | 5 | `agents/*.md` | (shared) |
+| Agents | 7 | `agents/*.md` | (shared) |
 | Rules | 8 | `rules/*.md` | (shared) |
 | Shell Scripts | 8 | `scripts/` + `scripts/benchmark/` | (shared) |
 | Config Profiles | 3 | `config/*.json` | (shared) |
@@ -242,6 +242,41 @@ VERDICT: verdict-writer agent synthesizes all evidence
 SHIP (optional): production-readiness-audit skill
 ```
 
+### Consensus Engine
+
+The Consensus Engine runs N independent validator agents in parallel against the same journey set, then reconciles their verdicts into a single unified report. Disagreements between validators (e.g. PASS vs. FAIL on the same journey) surface systematic bias, flaky evidence, or genuinely ambiguous PASS criteria before they reach the ship gate.
+
+```
+User invokes /validate-consensus
+  |
+  v
++------------------+
+|   Coordinator    |  (assigns journey set, seeds evidence dirs)
++--------+---------+
+         |
+   +-----+------+------+------+ ... +--------+
+   v            v      v      v     v        v
++-------+  +-------+  +-------+  ...  +-------+
+|Valid. |  |Valid. |  |Valid. |       |Valid. |
+|   1   |  |   2   |  |   3   |       |   N   |
++---+---+  +---+---+  +---+---+       +---+---+
+    |          |          |               |
+    |  evidence -> e2e-evidence/v{i}/     |
+    +----------+----------+---------------+
+                          |
+                          v
+                 +-------------------+
+                 |   Synthesizer     |  (disagreement analysis,
+                 |                   |   evidence cross-check,
+                 |                   |   consensus verdict)
+                 +---------+---------+
+                           |
+                           v
+                 e2e-evidence/report.md  (unified verdict)
+```
+
+The Coordinator is typically the `validation-lead` agent. Each Validator is a `consensus-validator` agent pinned to its own evidence directory (`e2e-evidence/v1/`, `e2e-evidence/v2/`, etc.) so writes never collide. The `consensus-synthesizer` agent reads all per-validator reports, flags disagreements using the `consensus-disagreement-analysis` skill, and emits the final report.
+
 ### Skill Dependency Graph
 
 Skills are layered. Higher skills depend on lower ones:
@@ -259,8 +294,17 @@ L3: |create-         |  |full-       |  |baseline-       |  (Planners)
     +-------+--------+  |audit       |  |assessment      |
             |           +-----+------+  +-------+--------+
             |                 |                 |
-              +---------------+-------------+
-              v               v             v
+            |     +-----------+-------------+
+            |     v                         |
+            |  +--------------------------+ |
+            |  | consensus-engine         | |  (Specialized: parallel
+            |  | consensus-synthesis      | |   N-validator consensus,
+            |  | consensus-disagreement-  | |   disagreement reconciliation)
+            |  | analysis                 | |
+            |  +------------+-------------+ |
+            |               |               |
+              +-------------+---------------+
+              v             v               v
     +----------------+  +----------+  +----------------+
 L2: |functional-     |  |preflight |  |condition-      |  (Protocols)
     |validation      |  |          |  |based-waiting   |
@@ -328,6 +372,8 @@ e2e-validate
 | `verdict-writer` | `agents/verdict-writer.md` | Synthesizes evidence into PASS/FAIL verdicts with citations |
 | `validation-lead` | `agents/validation-lead.md` | Orchestrates multi-agent validation teams across platforms |
 | `sweep-controller` | `agents/sweep-controller.md` | Controls autonomous fix-and-revalidate loops (3-strike limit) |
+| `consensus-validator` | `agents/consensus-validator.md` | Runs a full validation pass as one member of an N-validator consensus panel; writes evidence to its own `e2e-evidence/v{i}/` directory |
+| `consensus-synthesizer` | `agents/consensus-synthesizer.md` | Reconciles per-validator reports from the Consensus Engine, applies disagreement analysis, and emits the unified verdict |
 
 ---
 
