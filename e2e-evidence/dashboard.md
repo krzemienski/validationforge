@@ -1,7 +1,7 @@
 # Evidence Summary Dashboard
 
-**Project:** validationforge
-**Run Date:** 2026-04-17T05:53:23Z
+**Project:** 012-evidence-summary-dashboard
+**Run Date:** 2026-04-17T06:07:15Z
 **Generator:** ValidationForge
 
 ## Overall Verdict: PASS
@@ -13,14 +13,14 @@
 | Total Journeys | 2 |
 | PASS | 2 |
 | FAIL | 0 |
-| Aggregate Quality Score | 92 / 100 |
-| Quality Grade | A |
+| Aggregate Quality Score | 87 / 100 |
+| Quality Grade | B |
 
 ## Journey Results
 
 | Journey | Verdict | Confidence | Evidence Count | Quality Score | Link |
 |---------|---------|------------|----------------|---------------|------|
-| evidence-dashboard | PASS | HIGH | 5 | 100 | [VERDICT.md](evidence-dashboard/VERDICT.md) |
+| evidence-dashboard | PASS | HIGH | 8 | 89 | [VERDICT.md](evidence-dashboard/VERDICT.md) |
 | web-validation | PASS | HIGH | 13 | 85 | [VERDICT.md](web-validation/VERDICT.md) |
 
 ## Evidence Index
@@ -34,6 +34,9 @@ Every evidence artifact captured during this run, grouped by journey. Each entry
 - [`evidence-dashboard/step-01-dashboard-md-content.md`](evidence-dashboard/step-01-dashboard-md-content.md)
 - [`evidence-dashboard/step-02-dashboard-html-rendered.png`](evidence-dashboard/step-02-dashboard-html-rendered.png)
 - [`evidence-dashboard/step-03-quality-score-output.txt`](evidence-dashboard/step-03-quality-score-output.txt)
+- [`evidence-dashboard/step-04-second-run-with-history.png`](evidence-dashboard/step-04-second-run-with-history.png)
+- [`evidence-dashboard/step-05-history-snapshots.txt`](evidence-dashboard/step-05-history-snapshots.txt)
+- [`evidence-dashboard/step-06-benchmark-output.txt`](evidence-dashboard/step-06-benchmark-output.txt)
 
 ### web-validation
 
@@ -55,19 +58,19 @@ Every evidence artifact captured during this run, grouped by journey. Each entry
 
 ## Historical Comparison
 
-**Trend:** IMPROVING (quality score +7, pass rate 0%)
+**Trend:** REGRESSING (quality score -5, pass rate 0%)
 
-Compared to prior run at `2026-04-17T05:42:26Z`.
+Compared to prior run at `2026-04-17T05:53:23Z`.
 
 | Metric | Prior | Current | Delta |
 |--------|-------|---------|-------|
 | Pass Rate | 100% | 100% | 0% |
-| Quality Score | 85 | 92 | +7 |
-| Total Journeys | 1 | 2 | +1 |
-| PASS | 1 | 2 | +1 |
+| Quality Score | 92 | 87 | -5 |
+| Total Journeys | 2 | 2 | 0 |
+| PASS | 2 | 2 | 0 |
 | FAIL | 0 | 0 | 0 |
 
-- **New journeys:** evidence-dashboard
+- **New journeys:** _(none)_
 - **Removed journeys:** _(none)_
 - **Regressed (PASS → FAIL):** _(none)_
 - **Recovered (FAIL → PASS):** _(none)_
