@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-04-17T17:50:13Z",
+  "timestamp": "2026-04-17T18:13:33Z",
   "project_dir": "/Users/nick/Desktop/validationforge",
   "dimensions": {
     "coverage": {
       "score": 95,
       "weight": 35,
       "journey_count": 18,
-      "plans_found": 220
+      "plans_found": 236
     },
     "evidence_quality": {
       "score": 100,
