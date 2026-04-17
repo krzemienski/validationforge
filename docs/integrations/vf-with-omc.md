@@ -47,44 +47,93 @@ graph LR
 
 ## Installation and Configuration
 
-Install OMC first so its hooks register before VF's stricter gates take precedence. Both plugins are Claude Code plugins discovered from `~/.claude/plugins/`, so side-by-side installation is supported out of the box.
+Install OMC first so its hooks register before VF's stricter gates take precedence. Both plugins are Claude Code plugins discovered from `~/.claude/plugins/`, so side-by-side installation is supported out of the box. The two install flows are deliberately different — OMC is published to a Claude Code plugin marketplace, so `/plugin install` is the idiomatic path. VF ships with a `install.sh` script that clones the repo to `~/.claude/plugins/validationforge`, copies its eight rules to `~/.claude/rules/vf-*.md`, and scaffolds `e2e-evidence/` when run inside a git repo. Installing via the script preserves VF's rule layout and evidence scaffolding, which `/plugin install` does not do.
 
-### Install both plugins
+### Install both plugins (side-by-side)
 
 ```bash
-# 1. Install OMC (orchestration)
+# 1. Install OMC (orchestration) via Claude Code's plugin marketplace
 /plugin marketplace add oh-my-claudecode/oh-my-claudecode
 /plugin install oh-my-claudecode@oh-my-claudecode
 
 # 2. Run OMC setup so its MCP server and CLAUDE.md injections are wired
 /omc-setup
 
-# 3. Install ValidationForge (validation) — install LAST so VF's PreToolUse hooks are authoritative
-/plugin marketplace add validationforge/validationforge
-/plugin install validationforge@validationforge
+# 3. Install ValidationForge (validation) via install.sh — installs LAST so
+#    VF's PreToolUse hooks are authoritative, and runs the rule copy + evidence scaffold
+curl -fsSL https://raw.githubusercontent.com/krzemienski/validationforge/main/install.sh | bash
+# Or the local-symlink path when the repo is not yet public:
+# ln -s /path/to/local/validationforge ~/.claude/plugins/validationforge
 
 # 4. Run VF setup so platform detection and e2e-evidence scaffolding are ready
 /vf-setup
 ```
 
-### settings.json coexistence
+Restart Claude Code after both installs — plugins (hooks, skills, commands) are loaded at session startup and will not be active in the session where you ran the installers.
 
-Both plugins merge their hook definitions into Claude Code's hook pipeline. VF's `block-test-files` (PreToolUse on Write/Edit) should fire **after** OMC's own file-op hooks so it can veto test-file writes that OMC's `tdd-guide` or `test-engineer` agents might attempt. The default install order above produces this ordering. If you have a custom `.claude/settings.json`, verify VF's hooks appear after OMC's:
+### Sample `.claude/settings.json` with both plugins registered
+
+Both plugins merge their hook definitions into Claude Code's hook pipeline and both are registered under the top-level `plugins` array. A minimal, conflict-free `~/.claude/settings.json` that registers both looks like:
 
 ```json
 {
+  "plugins": [
+    { "name": "oh-my-claudecode", "path": "~/.claude/plugins/oh-my-claudecode" },
+    { "name": "validationforge",  "path": "~/.claude/plugins/validationforge" }
+  ],
   "hooks": {
     "PreToolUse": [
       { "plugin": "oh-my-claudecode", "matcher": "Write|Edit|MultiEdit" },
-      { "plugin": "validationforge",   "matcher": "Write|Edit|MultiEdit" }
+      { "plugin": "validationforge",  "matcher": "Write|Edit|MultiEdit" }
     ],
     "PostToolUse": [
       { "plugin": "oh-my-claudecode", "matcher": "Bash" },
-      { "plugin": "validationforge",   "matcher": "Bash" }
+      { "plugin": "validationforge",  "matcher": "Bash" }
     ]
   }
 }
 ```
+
+Each plugin keeps its own `.claude-plugin/plugin.json` manifest under its install root; they do not conflict because their `name` fields (`oh-my-claudecode` vs `validationforge`) are distinct. You do not need to merge or edit the per-plugin manifests — Claude Code reads them independently. For reference, the two manifests look like this when placed side-by-side:
+
+```json
+// ~/.claude/plugins/oh-my-claudecode/.claude-plugin/plugin.json
+{
+  "name": "oh-my-claudecode",
+  "version": "4.7.7",
+  "description": "Multi-agent orchestration, consensus planning, and execution loops for Claude Code."
+}
+
+// ~/.claude/plugins/validationforge/.claude-plugin/plugin.json
+{
+  "name": "validationforge",
+  "version": "1.0.0",
+  "description": "No-mock validation platform for Claude Code. Ship verified code, not 'it compiled' code."
+}
+```
+
+Because the `name` fields differ, Claude Code loads both plugins side-by-side. Commands, skills, hooks, agents, and rules are namespaced by plugin name, so `/omc-setup` and `/vf-setup` never collide even though both appear in `/help`.
+
+### Recommended hook ordering: VF fires AFTER OMC
+
+**Rule:** VF's hooks must fire **after** OMC's execution hooks on every hook event they share (PreToolUse, PostToolUse). This is not a preference — it is what makes the build-then-prove contract work.
+
+Why: OMC's execution hooks mutate intermediate state. Its `state-guard`, `execution-log`, and `tdd-guide` hooks run during iterations of `/ralph`, `/autopilot`, and `/omc-team` and frequently allow transient writes (scaffolding files, draft routes, partial schemas). If VF's `block-test-files`, `mock-detection`, and `evidence-quality-check` hooks fired **first**, they would be evaluating those intermediate writes and either blocking work that OMC intends to later revise, or approving writes that OMC has not yet finalized. With VF ordered **last**, VF always sees the final state that OMC has committed to on that tool call, and its veto applies to the artifact that will actually reach the validator — not to scratch work.
+
+The default install order above (OMC first, VF last) produces the correct ordering because Claude Code registers hooks in install order. If you have a hand-edited `.claude/settings.json`, verify VF's hook entries appear **after** OMC's under each event (the sample above is correctly ordered). Re-running `/vf-setup` repairs the order if it drifts.
+
+### Environment variables
+
+**None of VF's variables interact with OMC's, and OMC exports no variables that VF reads.** Call this out explicitly because it is the question people ask first when combining two shell-driven tools, and the answer is the short, clean one: *there are no interacting environment variables between the two plugins*.
+
+| Variable | Plugin | Purpose | Interaction with the other plugin |
+|----------|:------:|---------|-----------------------------------|
+| `VF_SOURCE` | VF | Override the `install.sh` git source URL | None — install-time only, does not affect OMC |
+| `VF_INSTALL_DIR` | VF | Override the `install.sh` target directory (must be under `$HOME` or a temp path) | None — install-time only, does not affect OMC |
+| (OMC exports none that VF reads) | OMC | — | — |
+| (VF exports none that OMC reads) | VF | — | — |
+
+In short: both plugins are pure-runtime through Claude Code's settings pipeline; there is no shared env-var surface, no `PATH`-ordering concern, and no overlapping variable names. You can export whatever OMC needs for its own subprocesses without worrying about VF, and vice versa. If a future version of either plugin introduces an env var that the other reads, it will be called out in this guide's changelog — until then, assume zero interaction.
 
 ### Enforcement level
 
