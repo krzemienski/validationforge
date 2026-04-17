@@ -1,0 +1,40 @@
+{
+  "ran_at": "2026-04-17T07:05:00Z",
+  "skills": [
+    {
+      "name": "coordinated-validation",
+      "old_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — snapshot had inlined wall-clock formula at line 350"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — wall-clock formula `total ≈ DB + API + max(Web, iOS)` re-inlined at line 193 with concrete example"
+      },
+      "delta": "+0.00",
+      "previous_delta": "-0.25",
+      "regression_closed": true,
+      "notes": "Eval 1 A4 (wall-clock formula) now covered inline in Troubleshooting and Performance section; no longer requires loading references/troubleshooting.md. Eval 2 (BLOCKED vs FAIL) unchanged — always passed."
+    },
+    {
+      "name": "flutter-validation",
+      "old_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — snapshot had iOS DiagnosticReports and Android adb logcat inlined in Step 7"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — Step 7 now split into Dart-side and Native-layer subsections; both `~/Library/Logs/DiagnosticReports/Runner*` (iOS) and `adb logcat -d -s AndroidRuntime:E` (Android) re-inlined at lines 183-190"
+      },
+      "delta": "+0.00",
+      "previous_delta": "-0.25",
+      "regression_closed": true,
+      "notes": "Eval 1 A4 (platform-specific crash paths) now covered inline — no longer requires loading references/flutter-logs-crashes.md for the core native-layer crash check. Eval 2 (gradle error guidance) unchanged — Common Failures table preserved."
+    }
+  ],
+  "conclusion": "Both regressions closed: each skill now scores 4/4 with_skill matching the 4/4 snapshot baseline, restoring delta from -0.25 to 0.00."
+}

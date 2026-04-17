@@ -1,0 +1,39 @@
+{
+  "name": "full-functional-audit",
+  "eval": 1,
+  "ran_at": "2026-04-17T07:08:00Z",
+  "assertions": [
+    "A1: Source-based scanning of routes/components (Web: routing table + component list)",
+    "A2: API discovery via OpenAPI spec parsing or endpoint enumeration",
+    "A3: Journey grouping (auth, onboarding, core workflow, settings, admin)",
+    "A4: Target-feature sizing heuristic (~20 features representing all journey phases)"
+  ],
+  "old_skill": {
+    "pass_count": 2,
+    "total": 4,
+    "pass_rate": 0.50,
+    "pass_detail": {
+      "A1": "partial — Phase 2 mentions 'Map every user-facing feature' + 'Numbered feature list' but no scanning technique",
+      "A2": "miss — no OpenAPI or endpoint enumeration guidance",
+      "A3": "miss — no journey grouping (auth/checkout/admin)",
+      "A4": "partial — says 'every discoverable feature' but no ~20 sizing target"
+    },
+    "key_miss": "Phase 2 named but hollow — no source-based discovery commands, no journey grouping, no 20-feature sizing heuristic"
+  },
+  "with_skill": {
+    "pass_count": 4,
+    "total": 4,
+    "pass_rate": 1.0,
+    "pass_detail": {
+      "A1": "pass — explicit `find app pages src/pages src/app -name 'page.*'` for Next.js and `grep -rnE '.(get|post|put|delete)('` for Express/Fastify",
+      "A2": "pass — `jq -r '.paths | keys[]' openapi.json` and `yq '.paths | keys' openapi.yaml`",
+      "A3": "pass — explicit Journey A-E block covering Authentication, Product discovery, Checkout, Account, Admin",
+      "A4": "pass — 'Aim for ~5–15 top-level journeys'; 'raw count exceeds ~20' triggers journey grouping"
+    },
+    "key_miss": "none — all 4 assertions directly addressed in new Phase 2 Feature Inventory Techniques section"
+  },
+  "delta": "+0.50",
+  "previous_delta": "+0.00",
+  "gap_closed": true,
+  "notes": "New Phase 2 section (lines 40-88) adds 6-stack source-based discovery (Next.js, Flask/Django, Express, OpenAPI, iOS, CLI), journey grouping with 5 worked examples, and 5–15 journey sizing heuristic. Lifts pass-rate from 0.50 to 1.0 — exceeds the ≥0.75 target."
+}

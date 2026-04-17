@@ -1,0 +1,96 @@
+{
+  "ran_at": "2026-04-17T07:05:00Z",
+  "note": "eval #2 (not #1) results for 4 skills that floored at 0.75/0.50 on eval #1. Second-eval check to detect whether the first eval's ceiling was an artifact of that specific prompt or a broader skill limitation. Reference files (baseline-capture-commands.md, real-system-validation-guide.md) are byte-identical between snapshot and current skills.",
+  "skills": [
+    {
+      "name": "ios-validation",
+      "eval2_prompt_first_line": "I built and installed the app on simulator. It launched and rendered the main screen. Now I need to test a deep link: myapp://item/123. Walk me through capturing evidence that the deep link actually works.",
+      "assertions": [
+        "Invokes xcrun simctl openurl with myapp://item/123",
+        "Takes screenshot via xcrun simctl io booted screenshot to e2e-evidence/",
+        "Inserts sleep ~2s between openurl and screenshot to let UI settle",
+        "Instructs describing what the screenshot SHOWS (item detail vs wrong screen) as the actual evidence"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — Step 7 Deep Link Testing + Evidence Quality section cover all 4 assertions in the snapshot"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — same Step 7 + Evidence Quality section retained; description/triggers expanded but protocol body unchanged"
+      },
+      "delta": "+0.00",
+      "eval1_delta_was": "+0.00"
+    },
+    {
+      "name": "no-mocking-validation-gates",
+      "eval2_prompt_first_line": "I'm working on a React Native app and someone on my team created __tests__/ with jest.mock() calls. The skill should block file creation, but we already have these. How do I convert to real validation?",
+      "assertions": [
+        "Acknowledges existing violation and explains mock-drift risk",
+        "Redirects to real-system validation (start Metro / real simulator)",
+        "Points to real API endpoints rather than mocks",
+        "References real-system-validation-guide.md and/or the Three-Step DIAGNOSE/FIX/VERIFY correction"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — Iron Rule + Three-Step Correction + reference pointer are all present in snapshot"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — same content retained; current adds 'when to use' framing and inline JS/Py/Swift/Go examples but eval #2 is satisfied by snapshot text already"
+      },
+      "delta": "+0.00",
+      "eval1_delta_was": "+0.00"
+    },
+    {
+      "name": "baseline-quality-assessment",
+      "eval2_prompt_first_line": "I want to update our Express API from v4 to v5. What baseline evidence do I capture before the upgrade, and how do I prove the upgrade didn't break anything?",
+      "assertions": [
+        "Captures baseline BEFORE the upgrade and stores under e2e-evidence/baseline/",
+        "Runs multiple API validation surfaces (health, CRUD, auth, errors, pagination) and saves curl responses",
+        "Specifies storage path convention (baseline/api-<endpoint>.json)",
+        "Requires an explicit post-upgrade re-capture + side-by-side compare (status codes, response structure, auth behavior)"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — 4-Step Process + identical baseline-capture-commands.md (curl with %{http_code}/%{time_total}, baseline/api-* paths) + Post-Change Comparison section in snapshot"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — reference file is byte-identical; only SKILL.md description/triggers expanded. Eval #2 is API-oriented (not login-oriented), so the eval-1 'login-specific capture' complaint doesn't apply here."
+      },
+      "delta": "+0.00",
+      "eval1_delta_was": "+0.00"
+    },
+    {
+      "name": "full-functional-audit",
+      "eval2_prompt_first_line": "Auditing a web app. I find: Button says 'Delete' but tooltip says 'Remove Item'. On click, API returns 204 (success) and item vanishes. Is this CRITICAL, HIGH, MEDIUM, LOW, or INFO?",
+      "assertions": [
+        "Classifies the finding as MEDIUM",
+        "Rules out CRITICAL (no data loss, no crash, feature actually works)",
+        "Rules out LOW (labeled control; precise wording matters to users)",
+        "Requires evidence capture (screenshot of tooltip vs button text + 204 API response)"
+      ],
+      "old_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — Severity Matrix + 'When in doubt, classify UP' + Evidence Capture Rules cover this exactly in snapshot"
+      },
+      "with_skill": {
+        "pass_count": 4,
+        "pass_rate": 1.0,
+        "key_miss": "none — Severity Matrix and classification rules are unchanged. The new Phase 2 'Feature Inventory Techniques' section addresses eval #1 (discovering 40+ pages), which is orthogonal to eval #2's severity-classification question."
+      },
+      "delta": "+0.00",
+      "eval1_delta_was": "+0.50"
+    }
+  ],
+  "aggregate_delta": "+0.00",
+  "findings": "Eval #2 reveals that all four skills already covered their second-eval scenarios at 1.0 — both in snapshot and current form — so the zero deltas here are genuine (both versions pass), not a sign of lingering gaps. This confirms the eval-1 ceilings were prompt-specific, not structural: eval #1 probed a narrow failure mode (Xcode scheme UI path, fix menu for slow deps, login-specific capture, feature-inventory guidance) that the skills happened to under-cover, while eval #2 targeted well-covered areas (deep-link capture, existing-violation remediation, API baseline capture, severity classification) that the original protocol text handled fully. For full-functional-audit specifically, the new Phase 2 section is orthogonal to eval #2 — it will manifest as a +0.50 improvement only if we re-run eval #1 (feature discovery). Net signal: no broader skill weakness hiding behind the eval-1 floors; the targeted fixes (ios-validation description expansion, no-mocking inline examples, full-functional-audit Phase 2) should be validated by re-running eval #1, not eval #2."
+}

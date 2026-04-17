@@ -37,6 +37,56 @@ audit invalidates every finding captured before the change.
 | 4. Classification | Rate every finding using severity matrix | Classified findings list |
 | 5. Report | Produce structured audit report | `e2e-evidence/audit-report.md` |
 
+## Phase 2: Feature Inventory Techniques
+
+Most audits fail here — not because the auditor can't execute features, but because they never catalog them all. Use source-based discovery so you don't miss anything that's real; use journey grouping so the audit scales when there are more than 20 features.
+
+### Source-based discovery (pick what matches your stack)
+
+```sh
+# Next.js / React Router — extract routes from the filesystem
+find app pages src/pages src/app -name 'page.*' -o -name 'route.*' 2>/dev/null \
+  | sort | tee e2e-evidence/audit/routes.txt
+
+# Flask / Django — extract route handlers
+grep -rE '@app\.route|path\(|url\(|router\.(get|post|put|delete)' \
+  --include='*.py' . | tee e2e-evidence/audit/routes.txt
+
+# Express / Fastify — find middleware + route declarations
+grep -rnE '\.(get|post|put|delete|patch)\(' --include='*.ts' --include='*.js' src/ \
+  | tee e2e-evidence/audit/routes.txt
+
+# OpenAPI / Swagger — enumerate documented endpoints
+jq -r '.paths | keys[]' openapi.json 2>/dev/null \
+  || yq '.paths | keys' openapi.yaml | tee e2e-evidence/audit/routes.txt
+
+# iOS / SwiftUI — view structs (coarse but useful)
+grep -rnE 'struct [A-Z][A-Za-z0-9]*View' Sources/ | tee e2e-evidence/audit/views.txt
+
+# CLI — subcommands from argparse / cobra / commander
+grep -rnE 'add_parser|AddCommand|\.command\(' . | tee e2e-evidence/audit/subcommands.txt
+```
+
+Every feature file a user can reach is a candidate feature. Dedupe, then promote to the numbered feature list in the next step.
+
+### Journey grouping (scales past 20 features)
+
+When the raw count exceeds ~20, auditing each individually bloats the report and loses signal. Group related features into user journeys:
+
+```
+Journey A — Authentication (login, signup, forgot password, logout, session timeout)
+Journey B — Product discovery (home, search, category, filters, detail)
+Journey C — Checkout (cart, address, payment, review, confirmation, receipt email)
+Journey D — Account (profile, orders, saved items, notifications)
+Journey E — Admin (dashboard, users, content, reports, settings)
+```
+
+Audit each journey end-to-end. A broken step *within* a journey (e.g. checkout payment fails) is a HIGH/CRITICAL even if every surrounding feature works — the journey is what the user cares about.
+
+### Target-feature sizing
+
+Aim for ~5–15 top-level journeys for any non-trivial app. Fewer than 5 usually means you missed admin/settings/error-recovery paths; more than 15 means you're auditing at the wrong granularity — collapse adjacent features into a single journey entry instead.
+
 ## Severity Matrix
 
 | Severity | Definition | Action |
