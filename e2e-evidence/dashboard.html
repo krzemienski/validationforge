@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>Evidence Summary Dashboard — validationforge</title>
+<style>
+  /* ----------------------------------------------------------------------
+     ValidationForge Evidence Summary Dashboard
+     Self-contained: no external CSS, no CDN, no fonts, no JS libraries.
+     Works fully offline when opened as a file:// URL.
+     ---------------------------------------------------------------------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #f5f7fa;
+    color: #1f2937;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  a { color: #2563eb; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, pre, .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 13px;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* ---------- Header ---------- */
+  .header {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+  .header-title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin: 0 0 6px;
+  }
+  .header-project {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: #111827;
+    word-break: break-word;
+  }
+  .header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 32px;
+    font-size: 14px;
+    color: #4b5563;
+  }
+  .header-meta strong {
+    color: #111827;
+    font-weight: 600;
+  }
+  .verdict-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .verdict-pass { background: #d1fae5; color: #065f46; }
+  .verdict-fail { background: #fee2e2; color: #991b1b; }
+  .verdict-unknown { background: #e5e7eb; color: #374151; }
+
+  /* ---------- Stat cards ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px 22px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+  .stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin: 0 0 8px;
+  }
+  .stat-value {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #111827;
+  }
+  .stat-value.pass { color: #059669; }
+  .stat-value.fail { color: #dc2626; }
+  .stat-sub {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #6b7280;
+  }
+  .grade {
+    display: inline-block;
+    min-width: 48px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .grade-A { background: #d1fae5; color: #065f46; }
+  .grade-B { background: #dbeafe; color: #1e40af; }
+  .grade-C { background: #fef3c7; color: #92400e; }
+  .grade-D { background: #fed7aa; color: #9a3412; }
+  .grade-F { background: #fee2e2; color: #991b1b; }
+
+  /* ---------- Sections ---------- */
+  .section {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+  .section h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .section h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  /* ---------- Journey table ---------- */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+  table.journeys {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  table.journeys th,
+  table.journeys td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+  }
+  table.journeys th {
+    background: #f9fafb;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #4b5563;
+    white-space: nowrap;
+  }
+  table.journeys tr:last-child td { border-bottom: 0; }
+  table.journeys tr:hover td { background: #f9fafb; }
+  .journey-name {
+    font-weight: 600;
+    color: #111827;
+  }
+  .confidence {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .conf-high { background: #d1fae5; color: #065f46; }
+  .conf-medium { background: #fef3c7; color: #92400e; }
+  .conf-low { background: #fee2e2; color: #991b1b; }
+
+  /* ---------- Journey cards (collapsible via <details>) ---------- */
+  .journey-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  details.journey-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+  details.journey-card[open] { border-color: #c7d2fe; }
+  details.journey-card > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-weight: 600;
+    color: #111827;
+    user-select: none;
+  }
+  details.journey-card > summary::-webkit-details-marker { display: none; }
+  details.journey-card > summary::after {
+    content: "▸";
+    font-size: 12px;
+    color: #6b7280;
+    transition: transform 0.15s ease;
+  }
+  details.journey-card[open] > summary::after { transform: rotate(90deg); }
+  details.journey-card > summary:hover { background: #f9fafb; }
+  .journey-body {
+    padding: 14px 18px 18px;
+    border-top: 1px solid #e5e7eb;
+    background: #fafbfc;
+  }
+  .journey-body ul {
+    margin: 6px 0 12px;
+    padding-left: 20px;
+  }
+  .journey-body li { margin: 3px 0; }
+  .journey-body .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 10px;
+  }
+
+  /* ---------- Evidence index ---------- */
+  .evidence-index {
+    font-size: 14px;
+  }
+  .evidence-index ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .evidence-index li { margin: 3px 0; }
+
+  /* ---------- Historical / trends ---------- */
+  .trend-indicator {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+  .trend-improving { background: #d1fae5; color: #065f46; }
+  .trend-stable    { background: #e0e7ff; color: #3730a3; }
+  .trend-regressing { background: #fee2e2; color: #991b1b; }
+
+  /* ---------- How to read ---------- */
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 24px;
+    font-size: 13px;
+    color: #4b5563;
+  }
+  .legend dt {
+    font-weight: 600;
+    color: #111827;
+  }
+  .legend dd { margin: 0 0 8px 0; }
+
+  /* ---------- Footer ---------- */
+  .footer {
+    margin-top: 32px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 12px;
+  }
+
+  /* ---------- Responsive (≤ 900px) ---------- */
+  @media (max-width: 900px) {
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  /* ---------- Responsive (≤ 640px) ---------- */
+  @media (max-width: 640px) {
+    .wrap { padding: 20px 14px 48px; }
+    .header { padding: 20px 20px; }
+    .header-project { font-size: 22px; }
+    .header-meta { gap: 10px 20px; font-size: 13px; }
+    .section { padding: 18px 18px; }
+    .stats { grid-template-columns: 1fr; gap: 12px; }
+    .stat-value { font-size: 28px; }
+    .legend { grid-template-columns: 1fr; }
+    table.journeys th,
+    table.journeys td { padding: 8px 10px; font-size: 13px; }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    body { background: #ffffff; }
+    .wrap { max-width: none; padding: 0; }
+    .section, .header, .stat-card, details.journey-card {
+      box-shadow: none;
+      border-color: #d1d5db;
+      break-inside: avoid;
+    }
+    details.journey-card { page-break-inside: avoid; }
+    details.journey-card[open] > summary::after,
+    details.journey-card > summary::after { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <header class="header">
+    <p class="header-title">Evidence Summary Dashboard</p>
+    <h1 class="header-project">validationforge</h1>
+    <div class="header-meta">
+      <span><strong>Run Date:</strong> 2026-04-17T05:42:26Z</span>
+      <span><strong>Generator:</strong> ValidationForge</span>
+      <span><strong>Overall Verdict:</strong> <span class="verdict-badge verdict-pass">PASS</span></span>
+    </div>
+  </header>
+
+  <!-- Summary stat cards -->
+  <section class="stats" aria-label="Summary statistics">
+    <div class="stat-card">
+      <p class="stat-label">Total Journeys</p>
+      <div class="stat-value">1</div>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">PASS</p>
+      <div class="stat-value pass">1</div>
+      <div class="stat-sub">of 1 journeys</div>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">FAIL</p>
+      <div class="stat-value fail">0</div>
+      <div class="stat-sub">of 1 journeys</div>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Quality Grade</p>
+      <div class="stat-value"><span class="grade grade-B">B</span></div>
+      <div class="stat-sub">85 / 100</div>
+    </div>
+  </section>
+
+  <!-- Journey Results Table -->
+  <section class="section" aria-labelledby="journey-results-heading">
+    <h2 id="journey-results-heading">Journey Results</h2>
+    <div class="table-wrap">
+      <table class="journeys">
+        <thead>
+          <tr>
+            <th scope="col">Journey</th>
+            <th scope="col">Verdict</th>
+            <th scope="col">Confidence</th>
+            <th scope="col">Evidence</th>
+            <th scope="col">Quality</th>
+            <th scope="col">Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="journey-name">web-validation</td><td><span class="verdict-badge verdict-pass">PASS</span></td><td><span class="confidence conf-high">HIGH</span></td><td>13</td><td>85 / 100</td><td><a href="web-validation/VERDICT.md">VERDICT.md</a></td></tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Per-Journey Detail Cards (collapsible) -->
+  <section class="section" aria-labelledby="journey-details-heading">
+    <h2 id="journey-details-heading">Journey Details</h2>
+    <div class="journey-cards">
+      <details class="journey-card"><summary><span>web-validation <span class="verdict-badge verdict-pass">PASS</span></span><span class="mono">85/100</span></summary><div class="journey-body"><div class="meta"><span><strong>Confidence:</strong> HIGH</span><span><strong>Evidence files:</strong> 13</span><span><strong>Verdict:</strong> <a href="web-validation/VERDICT.md">VERDICT.md</a></span></div><h3>Evidence files</h3><ul><li><a href="web-validation/VERDICT.md"><code>VERDICT.md</code></a></li><li><a href="web-validation/evidence-inventory.txt"><code>evidence-inventory.txt</code></a></li><li><a href="web-validation/expanded/VERDICT.md"><code>VERDICT.md</code></a></li><li><a href="web-validation/expanded/mobile-about.png"><code>mobile-about.png</code></a></li><li><a href="web-validation/expanded/mobile-homepage.png"><code>mobile-homepage.png</code></a></li><li><a href="web-validation/expanded/mobile-post07.png"><code>mobile-post07.png</code></a></li><li><a href="web-validation/expanded/post01-full.png"><code>post01-full.png</code></a></li><li><a href="web-validation/expanded/post09-full.png"><code>post09-full.png</code></a></li><li><a href="web-validation/expanded/post18-full.png"><code>post18-full.png</code></a></li><li><a href="web-validation/step-01-homepage-full.png"><code>step-01-homepage-full.png</code></a></li><li><a href="web-validation/step-02-post03-viewport.png"><code>step-02-post03-viewport.png</code></a></li><li><a href="web-validation/step-03-post03-full.png"><code>step-03-post03-full.png</code></a></li><li><a href="web-validation/step-04-post04-navigation.png"><code>step-04-post04-navigation.png</code></a></li></ul></div></details>
+
+    </div>
+  </section>
+
+  <!-- Evidence Index -->
+  <section class="section" aria-labelledby="evidence-index-heading">
+    <h2 id="evidence-index-heading">Evidence Index</h2>
+    <p>Every evidence artifact captured during this run, grouped by journey. Each entry links to the file on disk relative to this dashboard.</p>
+    <div class="evidence-index">
+      <h3>web-validation</h3>
+<ul><li><a href="web-validation/VERDICT.md"><code>web-validation/VERDICT.md</code></a></li><li><a href="web-validation/evidence-inventory.txt"><code>web-validation/evidence-inventory.txt</code></a></li><li><a href="web-validation/expanded/VERDICT.md"><code>web-validation/expanded/VERDICT.md</code></a></li><li><a href="web-validation/expanded/mobile-about.png"><code>web-validation/expanded/mobile-about.png</code></a></li><li><a href="web-validation/expanded/mobile-homepage.png"><code>web-validation/expanded/mobile-homepage.png</code></a></li><li><a href="web-validation/expanded/mobile-post07.png"><code>web-validation/expanded/mobile-post07.png</code></a></li><li><a href="web-validation/expanded/post01-full.png"><code>web-validation/expanded/post01-full.png</code></a></li><li><a href="web-validation/expanded/post09-full.png"><code>web-validation/expanded/post09-full.png</code></a></li><li><a href="web-validation/expanded/post18-full.png"><code>web-validation/expanded/post18-full.png</code></a></li><li><a href="web-validation/step-01-homepage-full.png"><code>web-validation/step-01-homepage-full.png</code></a></li><li><a href="web-validation/step-02-post03-viewport.png"><code>web-validation/step-02-post03-viewport.png</code></a></li><li><a href="web-validation/step-03-post03-full.png"><code>web-validation/step-03-post03-full.png</code></a></li><li><a href="web-validation/step-04-post04-navigation.png"><code>web-validation/step-04-post04-navigation.png</code></a></li></ul>
+
+    </div>
+  </section>
+
+  <!-- Historical Comparison -->
+  <section class="section" aria-labelledby="historical-heading">
+    <h2 id="historical-heading">Historical Comparison</h2>
+    <p><span class="trend-indicator trend-stable">STABLE</span><span>quality score 0, pass rate 0%</span></p>
+<p>Compared to prior run at <code>2026-04-17T05:28:10Z</code>.</p>
+<div class="table-wrap"><table class="journeys"><thead><tr><th scope="col">Metric</th><th scope="col">Prior</th><th scope="col">Current</th><th scope="col">Delta</th></tr></thead><tbody><tr><td>Pass Rate</td><td>100%</td><td>100%</td><td>0%</td></tr><tr><td>Quality Score</td><td>85</td><td>85</td><td>0</td></tr><tr><td>Total Journeys</td><td>1</td><td>1</td><td>0</td></tr><tr><td>PASS</td><td>1</td><td>1</td><td>0</td></tr><tr><td>FAIL</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div>
+<ul><li><strong>New journeys:</strong> <em>(none)</em></li><li><strong>Removed journeys:</strong> <em>(none)</em></li><li><strong>Regressed (PASS → FAIL):</strong> <em>(none)</em></li><li><strong>Recovered (FAIL → PASS):</strong> <em>(none)</em></li></ul>
+  </section>
+
+  <!-- How to Read -->
+  <section class="section" aria-labelledby="how-to-read-heading">
+    <h2 id="how-to-read-heading">How to Read This Dashboard</h2>
+    <dl class="legend">
+      <dt>Verdict</dt>
+      <dd>PASS means every acceptance criterion for the journey was backed by specific, cited evidence. FAIL means at least one criterion was missing evidence or contradicted by the captured artifacts.</dd>
+      <dt>Confidence</dt>
+      <dd>HIGH when multiple independent evidence types corroborate the verdict; MEDIUM when evidence is present but thin; LOW when the verdict rests on a single artifact.</dd>
+      <dt>Evidence Count</dt>
+      <dd>Number of non-empty artifacts under the journey's evidence directory. Zero-byte files are excluded.</dd>
+      <dt>Quality Score</dt>
+      <dd>0–100 per the ValidationForge evidence rubric (evidence_exists 30, evidence_cites_specific_files 25, screenshots_describe_observations 20, verdicts_cite_evidence 15, no_false_claims 10). See <code>commands/validate-benchmark.md</code>.</dd>
+      <dt>Quality Grade</dt>
+      <dd>A (≥90), B (≥80), C (≥70), D (≥60), F (&lt;60). Matches <code>scripts/benchmark/aggregate-results.sh</code>.</dd>
+      <dt>Trend Indicator</dt>
+      <dd>IMPROVING / STABLE / REGRESSING based on quality-score delta vs. the most recent prior run.</dd>
+    </dl>
+  </section>
+
+  <!-- Related Artifacts -->
+  <section class="section" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related Artifacts</h2>
+    <ul>
+      <li>Full verdict report: <code><a href="report.md">e2e-evidence/report.md</a></code></li>
+      <li>Per-journey verdicts: <code>e2e-evidence/&lt;journey&gt;/VERDICT.md</code></li>
+      <li>Raw evidence files: <code>e2e-evidence/&lt;journey&gt;/</code></li>
+      <li>Historical snapshots: <code>e2e-evidence/.history/</code></li>
+    </ul>
+  </section>
+
+  <footer class="footer">
+    Generated by ValidationForge · 2026-04-17T05:42:26Z
+  </footer>
+
+</div>
+</body>
+</html>

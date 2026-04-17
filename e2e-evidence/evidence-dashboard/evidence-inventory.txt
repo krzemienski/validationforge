@@ -1,0 +1,40 @@
+Evidence Inventory: Evidence Summary Dashboard — Integration Verification (subtask-5-1)
+Date: 2026-04-17T05:42:26Z
+Target: scripts/generate-dashboard.sh against real e2e-evidence/web-validation/
+
+Files:
+  step-01-dashboard-md-content.md       — Verbatim copy of generated e2e-evidence/dashboard.md (3534 B)
+  step-02-dashboard-html-rendered.png   — Playwright/chromium full-page screenshot of dashboard.html (file:// URL, 1280x1800 viewport)
+  step-03-quality-score-output.txt      — Generator JSON output, score breakdown, trend math, browser console-check results
+  VERDICT.md                            — Subtask-5-1 verdict citing each acceptance criterion against captured evidence
+  evidence-inventory.txt                — This file
+
+Validation Steps Performed:
+  1. Confirmed working directory and worktree isolation (pwd inside .auto-claude/worktrees/tasks/012-evidence-summary-dashboard).
+  2. Inspected pre-existing real evidence at e2e-evidence/web-validation/ (13 files, VERDICT.md present, evidence-inventory.txt present, expanded/ subdirectory with 7 PNGs+VERDICT, 4 step-NN PNGs).
+  3. Inspected pre-existing prior history snapshot e2e-evidence/.history/run-2026-04-17T05-28-10Z.json so that a trend section would be rendered.
+  4. Ran `bash scripts/generate-dashboard.sh --evidence-dir e2e-evidence --project-name validationforge`. Exit code 0. Generator emitted single-line JSON summary to stdout.
+  5. Verified e2e-evidence/dashboard.md exists and is non-empty (3534 B, `test -s` passed).
+  6. Verified e2e-evidence/dashboard.html exists and is non-empty (17752 B, `test -s` passed).
+  7. Verified new history snapshot e2e-evidence/.history/run-2026-04-17T05-42-26Z.json was written (300 B).
+  8. Cross-checked Evidence Index in dashboard.md — 13 link lines under ### web-validation matched 1-to-1 with `find e2e-evidence/web-validation -type f` output (zero missing, zero extras).
+  9. Confirmed Journey Results table contains a PASS row for web-validation linking to web-validation/VERDICT.md.
+  10. Captured step-01 by `cp e2e-evidence/dashboard.md e2e-evidence/evidence-dashboard/step-01-dashboard-md-content.md`.
+  11. Rendered e2e-evidence/dashboard.html in headless Chromium 1208 (Playwright 1.59.1) at viewport 1280x1800, waitUntil=networkidle, registered listeners on console/pageerror/requestfailed.
+  12. Captured step-02 by `page.screenshot({ path: ..., fullPage: true })`. Result: 292176 B PNG.
+  13. Read back step-02 PNG visually; confirmed it shows: header with "validationforge" + run date + Overall Verdict PASS pill, four stat cards (Total=1, Pass=1, Fail=0, Quality Grade=B 85/100), Journey Results table row with PASS/HIGH/13/85/VERDICT.md link, Journey Details collapsed card, Evidence Index with 13 hyperlinked file paths, Historical Comparison section with STABLE pill and delta table, How to Read explanatory section, Related Artifacts list.
+  14. Wrote step-03 capturing the generator JSON, the parsed fields, the per-dimension quality breakdown, the history snapshot contents, the trend computation, and the playwright console-check result (errors:[], consoleCount:0, requestFailures:0).
+  15. Wrote VERDICT.md citing each of the six product acceptance criteria from spec.md and the four subtask-5-1 specific gates (a)-(d) against the captured evidence.
+
+Browser console check (Playwright on file:// URL):
+  - pageerror events:    0
+  - console messages:    0
+  - failed requests:     0
+  - Conclusion:          dashboard.html is fully self-contained; no external assets attempted; no JS errors.
+
+Result Summary:
+  - Overall Verdict:     PASS
+  - Aggregate Score:     85 / 100
+  - Quality Grade:       B (acceptance gate (d) "A or B" satisfied)
+  - All 6 spec acceptance criteria met with cited evidence
+  - All 4 subtask-5-1 gates (a)-(d) met with cited evidence

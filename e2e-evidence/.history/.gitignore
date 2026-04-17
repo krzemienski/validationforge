@@ -1,0 +1,4 @@
+# ValidationForge history snapshots — local-only by default.
+# Remove this file (or add explicit allow rules) if your team wants
+# to commit snapshots so trend data travels with the repo.
+run-*.json

@@ -1,0 +1,56 @@
+Quality Score & Generator Output Capture
+==========================================
+Date: 2026-04-17T05:42:26Z
+Command:
+  bash scripts/generate-dashboard.sh --evidence-dir e2e-evidence --project-name validationforge
+
+Exit code: 0
+
+Stdout JSON summary line (single line, generator contract per subtask-1-3):
+  {"dashboard_md":"e2e-evidence/dashboard.md","dashboard_html":"e2e-evidence/dashboard.html","quality_score":85,"grade":"B","pass":1,"fail":0,"total":1}
+
+Parsed fields:
+  dashboard_md   = e2e-evidence/dashboard.md
+  dashboard_html = e2e-evidence/dashboard.html
+  quality_score  = 85   (out of 100)
+  grade          = B    (B threshold: ≥80, A threshold: ≥90)
+  pass           = 1
+  fail           = 0
+  total          = 1
+
+Output file checks:
+  e2e-evidence/dashboard.md   — 3534 bytes, non-empty (test -s OK)
+  e2e-evidence/dashboard.html — 17752 bytes, non-empty (test -s OK)
+
+History snapshot written:
+  e2e-evidence/.history/run-2026-04-17T05-42-26Z.json (300 bytes)
+    {"timestamp":"2026-04-17T05:42:26Z","project_name":"validationforge","overall_verdict":"PASS","pass_count":1,"fail_count":0,"total_journeys":1,"aggregate_quality_score":85,"grade":"B","journeys":[{"name":"web-validation","verdict":"PASS","confidence":"HIGH","evidence_count":13,"quality_score":85}]}
+
+Pre-existing prior history snapshot (used for trend comparison):
+  e2e-evidence/.history/run-2026-04-17T05-28-10Z.json (315 bytes)
+
+Trend (rendered into dashboard.md and dashboard.html):
+  STABLE — quality score 85 → 85 (Δ 0), pass rate 100% → 100% (Δ 0%)
+
+Per-journey breakdown (from generator computation against real evidence):
+  web-validation
+    verdict        : PASS
+    confidence     : HIGH (≥3 evidence files + cited filenames in VERDICT.md)
+    evidence_count : 13 non-empty files (no zero-byte files detected)
+    quality_score  : 85 / 100
+      evidence_exists                     30 / 30
+      evidence_cites_specific_files       25 / 25  (VERDICT.md cites step-01..step-04 PNGs)
+      screenshots_describe_observations   15 / 20  (≥3 observation verbs found in VERDICT.md)
+      verdicts_cite_evidence              15 / 15  (PASS verdict + cites)
+      no_false_claims                     10 / 10  (zero empty files)
+
+Acceptance gate (subtask-5-1, criterion (d)):
+  Required: overall grade A or B given existing high-quality evidence.
+  Observed: grade = B (score 85). PASS.
+
+Browser console check (Playwright, file:// URL):
+  pageerror events     : 0
+  console messages     : 0
+  request failures     : 0
+  Verdict              : dashboard.html renders cleanly with no console errors,
+                         no failed asset requests, no JS exceptions.
