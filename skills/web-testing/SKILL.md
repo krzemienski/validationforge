@@ -39,6 +39,8 @@ Not every feature needs all 5 layers. Use the decision matrix below.
 
 ## Decision Matrix
 
+**When in doubt: Layer 2 (E2E) is always safe.** Not every feature needs all 5 layers — use this matrix as a guide.
+
 | Feature Type | Layer 1 | Layer 2 | Layer 3 | Layer 4 | Layer 5 |
 |-------------|---------|---------|---------|---------|---------|
 | New page/route | YES | YES | YES | YES | - |
@@ -51,12 +53,11 @@ Not every feature needs all 5 layers. Use the decision matrix below.
 
 ### Why some intersections are skipped ("-")
 
-- **Authentication flow / Layer 3 (a11y):** a11y isn't critical for the auth form itself — login forms are typically short, keyboard-navigable by default, and gated behind screen-reader testing of the post-auth surface. If you need full a11y coverage (password reset, MFA prompts), switch to `web-validation` and add Layer 3 explicitly.
-- **API integration / Layer 3 (a11y) & Layer 4 (perf):** API integration is a data-layer concern — no new DOM surface, so a11y and Core Web Vitals don't apply. Run Layer 5 (security) instead to verify auth/authz on the new endpoints.
-- **Style/layout change / Layer 1 (integration) & Layer 4 (perf) & Layer 5 (security):** pure CSS/layout changes don't touch data flow, don't add render-blocking JS, and don't introduce new inputs — skip those layers unless the change adds images or web fonts (then add Layer 4).
-- **Performance optimization / Layers 1-3, 5:** by definition the feature is Layer 4. Don't re-run integration/E2E unless the optimization changed rendering logic.
-- **Form with user input / Layer 4 (perf):** form pages are usually lightweight; Layer 4 only applies if the form page also does heavy rendering (live previews, autocomplete against large datasets).
-- **New page/route / Layer 5 (security):** Layer 5 is skipped on pure presentation pages. Add it the moment the route accepts user input, reads from query params in a sensitive way, or renders authenticated content.
+- **Auth flow skips a11y (Layer 3):** login forms are short and keyboard-navigable by default — add Layer 3 via `web-validation` only for password reset / MFA surfaces.
+- **API integration skips a11y + perf (Layers 3–4):** no new DOM surface means Core Web Vitals and WCAG don't apply — run Layer 5 instead to verify auth/authz on new endpoints.
+- **Style/layout change skips Layers 1, 4, 5:** pure CSS doesn't touch data, JS, or inputs — add Layer 4 only if the change introduces images or web fonts.
+- **Performance optimization skips Layers 1–3, 5:** by definition the work is Layer 4 — don't re-run other layers unless rendering logic changed.
+- **Form + new page skip security/perf conditionally:** Layer 5 kicks in the moment a route accepts user input or renders authenticated content; Layer 4 only when the form page does heavy rendering (live previews, large-dataset autocomplete).
 
 ## Layer 1: Integration Validation
 
