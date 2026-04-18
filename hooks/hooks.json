@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/block-test-files.js\""
+            "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH\" node \"${CLAUDE_PLUGIN_ROOT}/hooks/block-test-files.js\""
           }
         ]
       },
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/evidence-gate-reminder.js\""
+            "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH\" node \"${CLAUDE_PLUGIN_ROOT}/hooks/evidence-gate-reminder.js\""
           }
         ]
       }
@@ -26,15 +26,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/validation-not-compilation.js\""
+            "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH\" node \"${CLAUDE_PLUGIN_ROOT}/hooks/validation-not-compilation.js\""
           },
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/completion-claim-validator.js\""
+            "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH\" node \"${CLAUDE_PLUGIN_ROOT}/hooks/completion-claim-validator.js\""
           },
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/validation-state-tracker.js\""
+            "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH\" node \"${CLAUDE_PLUGIN_ROOT}/hooks/validation-state-tracker.js\""
           }
         ]
       },
@@ -43,11 +43,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/mock-detection.js\""
+            "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH\" node \"${CLAUDE_PLUGIN_ROOT}/hooks/mock-detection.js\""
           },
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/evidence-quality-check.js\""
+            "command": "PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH\" node \"${CLAUDE_PLUGIN_ROOT}/hooks/evidence-quality-check.js\""
           }
         ]
       }
