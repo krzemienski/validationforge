@@ -621,13 +621,19 @@ fs.writeFileSync(outputFile, html, 'utf8');
 console.log(`[generate-report] Dashboard written: ${outputFile} (${Math.round(html.length / 1024)}KB)`);
 
 // Open in browser
+// H1: use execFileSync with an argv array — never interpolate the file path
+// into a shell command string. argv[3] flowed straight into a shell
+// template literal before; a filename containing `"`, `$(...)`, or backticks
+// executed arbitrary commands. execFileSync passes the argument directly
+// to the underlying exec*() call, so no shell is involved.
 function openInBrowser(file) {
+  const { execFileSync } = require('child_process');
   try {
-    execSync(`open "${file}" 2>/dev/null`);
+    execFileSync('open', [file], { stdio: 'ignore' });
     console.log(`[generate-report] Opened in browser (macOS).`);
   } catch (_) {
     try {
-      execSync(`xdg-open "${file}" 2>/dev/null`);
+      execFileSync('xdg-open', [file], { stdio: 'ignore' });
       console.log(`[generate-report] Opened in browser (Linux).`);
     } catch (__) {
       console.log(`[generate-report] Open manually: file://${path.resolve(file)}`);

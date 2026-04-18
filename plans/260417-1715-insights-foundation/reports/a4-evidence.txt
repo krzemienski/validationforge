@@ -1,0 +1,8 @@
+--- VG-A4 LARGE (ctxWindow=200000 forced; expect [ctx-warn]) ---
+{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"[ctx-warn] 63% context used (~125000 of 200000 tokens). Consider /compact or write checkpoint to ~/.claude/state/debug-checkpoint.json."}}exit=0
+
+--- VG-A4 LARGE #2 (debounce; expect empty) ---
+output=[] len=0
+
+--- VG-A4 SMALL (state cleared; expect empty, not warn) ---
+output=[] len=0

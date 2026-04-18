@@ -11,20 +11,26 @@
 // The hook fires when ANY todo is being marked completed, or when the
 // TaskUpdate status is "completed".
 //
-// Config-driven enforcement via config-loader.js:
+// Config-driven enforcement via resolve-profile.js:
 //   enabled  → inject evidence checklist (advisory)
 //   warn     → inject evidence checklist (advisory, same as enabled)
 //   disabled → exit immediately, no action
 
-const { loadConfig } = require('./lib/config-loader');
+const { resolveProfile, hookState } = require('./lib/resolve-profile');
 
+// H10: cap stdin to 2MB. Fail-safe exit 0 on oversize input — hooks should
+// never block a tool call over their own input-bound bugs.
+const MAX_INPUT_BYTES = 2 * 1024 * 1024;
 let input = '';
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => input += chunk);
+process.stdin.on('data', chunk => {
+  if (input.length + chunk.length > MAX_INPUT_BYTES) process.exit(0);
+  input += chunk;
+});
 process.stdin.on('end', () => {
   try {
-    const config = loadConfig();
-    const hookMode = config.getHookConfig('evidence-gate-reminder');
+    const profile = resolveProfile();
+    const hookMode = hookState(profile, 'evidence-gate-reminder');
 
     // disabled → pass through immediately, no enforcement
     if (hookMode === 'disabled') {

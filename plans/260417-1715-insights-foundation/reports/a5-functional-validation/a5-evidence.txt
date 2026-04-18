@@ -1,0 +1,17 @@
+--- A5.1a: real detector .py file (valid) → hook silent ---
+exit=0
+
+--- A5.1b: bad .py via real hook → exit=2 ---
+exit=2
+Syntax error(s) in edited files:
+/tmp/scratch_bad.py: Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+
+--- A5.2: context warn functional (see plans/260417-1715-insights-foundation/reports/a4-evidence.txt) ---
+
+--- A5.3: no __pycache__ pollution in detector repo ---
+__pycache__ dir count in detector repo: 26 (baseline — hook tests targeted /tmp only)
+
+--- Plan A PASS: new hooks registered ---
+/Users/nick/.claude/hooks/context-threshold-warn.js
+/Users/nick/.claude/hooks/syntax-check-after-edit.js

@@ -1,0 +1,14 @@
+total 24
+drwxr-xr-x@ 5 nick  staff   160 Apr 17 18:08 .
+drwxr-xr-x@ 3 nick  staff    96 Apr 17 18:08 ..
+-rw-r--r--@ 1 nick  staff  1187 Apr 17 18:08 audit-campaign.schema.json
+-rw-r--r--@ 1 nick  staff  1367 Apr 17 18:08 debug-checkpoint.schema.json
+-rw-r--r--@ 1 nick  staff  1783 Apr 17 18:08 gt-campaign.schema.json
+=== /Users/nick/.claude/state/schemas/audit-campaign.schema.json ===
+valid
+=== /Users/nick/.claude/state/schemas/debug-checkpoint.schema.json ===
+valid
+=== /Users/nick/.claude/state/schemas/gt-campaign.schema.json ===
+valid
+--- VG-0.3 skill dirs absent ---
+phase=0.3 skill_dirs_absent_check exit=0

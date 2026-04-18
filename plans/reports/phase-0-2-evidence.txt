@@ -1,0 +1,5 @@
+-rw-r--r--@ 1 nick  staff  3282 Apr 17 18:09 /Users/nick/.claude/rules/audit-workflow.md
+-rw-r--r--@ 1 nick  staff  3590 Apr 17 18:10 /Users/nick/Desktop/yt-transition-shorts-detector/.claude/rules/detector-project-conventions.md
+--- cross-reference check ---
+/Users/nick/.claude/rules/audit-workflow.md
+/Users/nick/Desktop/yt-transition-shorts-detector/.claude/rules/detector-project-conventions.md

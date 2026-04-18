@@ -53,17 +53,20 @@ function readConfig() {
   }
 }
 
-// The core rules expected to be installed.  Mirrors verify-setup.sh.
-const REQUIRED_RULES = [
-  'validation-discipline',
-  'evidence-management',
-  'platform-detection',
-  'execution-workflow',
-  'team-validation',
-  'benchmarking',
-  'forge-execution',
-  'forge-team-orchestration',
-];
+// The core rules expected to be installed. Derived from the filesystem at
+// require-time so a new rule added to rules/ is picked up automatically —
+// no hand-maintained mirror to drift. Falls back to [] on fs error so the
+// CLI still runs if the rules/ dir is missing (npm package may be incomplete).
+const REQUIRED_RULES = (() => {
+  try {
+    return fs.readdirSync(RULES_SOURCE)
+      .filter(f => f.endsWith('.md'))
+      .map(f => path.basename(f, '.md'))
+      .sort();
+  } catch (_) {
+    return [];
+  }
+})();
 
 // ---------------------------------------------------------------------------
 // Command: --version / -v

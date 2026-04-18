@@ -1,0 +1,11 @@
+--- frontmatter ---
+---
+name: evidence-gate
+description: "Use BEFORE any bugfix edit in src/ or lib/. Creates .debug/<issue-id>/evidence.md with input/output, visual evidence path, minimal repro, ONE root-cause hypothesis, and failed-approaches cross-check. Required by Plan C's PreToolUse enforcer. Triggers: fixing a bug, debugging root cause, before editing to fix, investigate a failing test that isn't a real test (real reproduction), 'why is X failing'. Complements (not replaces) ck-debug and fix — use evidence-gate to structure the hypothesis record before ck-debug deep-dive or fix patch application."
+user-invocable: true
+---
+
+# Evidence Gate
+
+Gate that enforces evidence-first debugging. Invoke BEFORE editing any file in `src/` or
+`lib/` that is meant to fix a bug. Blocks impulsive patching by requiring a recorded

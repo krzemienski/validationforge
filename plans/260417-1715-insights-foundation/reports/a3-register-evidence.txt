@@ -1,0 +1,5 @@
+node "$HOME/.claude/hooks/dev-server-restart-reminder.js"
+node "$HOME/.claude/hooks/skill-invocation-tracker.js"
+node "$HOME/.claude/hooks/plan-format-kanban.cjs"
+node "$HOME/.claude/hooks/post-edit-simplify-reminder.cjs"
+node ~/.claude/hooks/syntax-check-after-edit.js

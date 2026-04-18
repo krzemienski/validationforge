@@ -9,6 +9,7 @@
     "block_test_files": false,
     "block_mock_patterns": false,
     "require_evidence_on_completion": false,
+    "reject_empty_evidence": false,
     "require_validation_plan": false,
     "require_preflight": false,
     "require_baseline": false,
