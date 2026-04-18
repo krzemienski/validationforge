@@ -1,5 +1,19 @@
 # ValidationForge
 
+[![Featured in Agentic Development Blog — Post #11](https://img.shields.io/badge/Agentic%20Development%20Blog-Post%20%2311-blue)](https://github.com/krzemienski/agentic-development-guide)
+
+## Related Post
+
+**Featured in the Agentic Development Blog series — Post #11: ValidationForge — The Capstone (No-Mock Validation Platform)**
+
+- Send date: Mon Jun 22, 2026
+- LinkedIn: _link added on send day_
+- Canonical blog post: https://ai.hack.ski/blog/<slug-set-on-send-day>
+- Series hub: [agentic-development-guide](https://github.com/krzemienski/agentic-development-guide)
+
+---
+
+
 **No-mock functional validation for Claude Code and OpenCode.** Ship verified code, not "it compiled" code.
 
 > **52 skills | 19 commands | 7 registered hooks | 7 agents | 9 rules | 26 shell scripts (20 core + 6 benchmark) | Dual-platform: Claude Code plugin + OpenCode plugin**
