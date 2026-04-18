@@ -2,21 +2,26 @@
 // PostToolUse hook: Remind that compilation success is NOT validation.
 // Matches: Bash (after build/compile commands)
 //
-// Config-driven enforcement via config-loader.js:
+// Config-driven enforcement via resolve-profile.js:
 //   enabled  → exit(2) when build succeeds (hard block reminder)
 //   warn     → write warning to stderr but exit(0) (advisory only)
 //   disabled → exit immediately, no action
 
 const { BUILD_PATTERNS } = require('./lib/patterns');
-const { loadConfig } = require('./lib/config-loader');
+const { resolveProfile, hookState } = require('./lib/resolve-profile');
 
+// H10: cap stdin to 2MB. Fail-safe exit 0 on oversize input.
+const MAX_INPUT_BYTES = 2 * 1024 * 1024;
 let input = '';
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => input += chunk);
+process.stdin.on('data', chunk => {
+  if (input.length + chunk.length > MAX_INPUT_BYTES) process.exit(0);
+  input += chunk;
+});
 process.stdin.on('end', () => {
   try {
-    const config = loadConfig();
-    const hookMode = config.getHookConfig('validation-not-compilation');
+    const profile = resolveProfile();
+    const hookMode = hookState(profile, 'validation-not-compilation');
 
     // disabled → pass through immediately, no enforcement
     if (hookMode === 'disabled') {
@@ -25,7 +30,14 @@ process.stdin.on('end', () => {
 
     const data = JSON.parse(input);
     const result = data.tool_result || {};
-    const output = typeof result === 'string' ? result : (result.stdout || '');
+    const rawOutput = typeof result === 'string' ? result : (result.stdout || '');
+    // H3: cap stdout scan to 200KB to bound regex cost on large/adversarial
+    // Bash stdout. Slice from the tail — build success markers live at the
+    // end of output, not the start.
+    const MAX_SCAN_BYTES = 200 * 1024;
+    const output = rawOutput.length > MAX_SCAN_BYTES
+      ? rawOutput.slice(-MAX_SCAN_BYTES)
+      : rawOutput;
 
     const isBuildSuccess = BUILD_PATTERNS.some(p => p.test(output));
 

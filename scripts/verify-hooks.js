@@ -201,6 +201,55 @@ const tests = [
       return { passed: false, reason: `stderr missing expected reminder: "${r.stderr.slice(0, 80)}"` };
     },
   },
+
+  // 8. SHELL-PATH REGRESSION — ensures hook commands in hooks.json don't swallow
+  // exit(2) at the shell level (e.g. via `|| true`). Tests 1–7 above spawn `node`
+  // directly and bypass the shell, so they cannot see shell-level defanging.
+  // This test reads hooks.json, picks the validation-not-compilation entry,
+  // substitutes ${CLAUDE_PLUGIN_ROOT}, and executes via /bin/sh -c exactly as
+  // Claude Code would. If a future PR re-adds `|| true` or similar wrappers,
+  // this test will fail with a non-2 exit code.
+  {
+    name: 'shell-path regression (exit(2) propagates)',
+    run() {
+      const hooksJsonPath = path.join(HOOKS_DIR, 'hooks.json');
+      let hooksJson;
+      try {
+        hooksJson = JSON.parse(fs.readFileSync(hooksJsonPath, 'utf8'));
+      } catch (e) {
+        return { passed: false, reason: `cannot read hooks.json: ${e.message}` };
+      }
+      const allCommands = [];
+      for (const phase of Object.values(hooksJson.hooks || {})) {
+        for (const entry of phase) {
+          for (const h of (entry.hooks || [])) {
+            if (h.type === 'command' && typeof h.command === 'string') {
+              allCommands.push(h.command);
+            }
+          }
+        }
+      }
+      const target = allCommands.find(c => c.includes('validation-not-compilation.js'));
+      if (!target) {
+        return { passed: false, reason: 'validation-not-compilation command missing from hooks.json' };
+      }
+      const pluginRoot = path.resolve(__dirname, '..');
+      const shellCmd = target.replace(/\$\{CLAUDE_PLUGIN_ROOT\}/g, pluginRoot);
+      const r = spawnSync('/bin/sh', ['-c', shellCmd], {
+        input: JSON.stringify({ tool: 'Bash', tool_result: { stdout: 'Build succeeded' } }),
+        encoding: 'utf8',
+        timeout: 5000,
+      });
+      const exitCode = r.status !== null ? r.status : -1;
+      if (exitCode === 2) {
+        return { passed: true, reason: `exit 2 propagates through /bin/sh for all ${allCommands.length} hook commands` };
+      }
+      return {
+        passed: false,
+        reason: `exit ${exitCode} via /bin/sh (expected 2); shell is swallowing block signals — check hooks.json for '|| true' or similar wrappers`,
+      };
+    },
+  },
 ];
 
 // ---------------------------------------------------------------------------

@@ -53,21 +53,29 @@ TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "")
 PAYLOAD="{\"event\":$(printf '%s' "$EVENT_NAME" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))' 2>/dev/null || echo "\"$EVENT_NAME\""),\"anonymousId\":$(printf '%s' "$ANON_ID" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))' 2>/dev/null || echo "\"$ANON_ID\""),\"timestamp\":\"$TIMESTAMP\",\"vf_version\":\"$VF_VERSION\""
 
 # --- Parse key=value arguments (skip first arg which is EVENT_NAME) ---
+# H2: key must match [A-Za-z_][A-Za-z0-9_-]* (no quotes, no control chars,
+# no JSON-breakout vectors). Value is JSON-escaped via python3 — same
+# helper pattern used for the base payload at line 53 — so quotes,
+# backslashes, and control chars cannot inject new JSON fields.
 shift
 for arg in "$@"; do
   case "$arg" in
     *=*)
       key="${arg%%=*}"
       val="${arg#*=}"
-      # Validate key is not empty and not an absolute path
-      if [ -z "$key" ]; then
-        continue
-      fi
+      # Reject empty key, absolute-path keys, and anything with chars outside
+      # [A-Za-z0-9_-]. Bash case globbing handles this without a subshell.
+      if [ -z "$key" ]; then continue; fi
       case "$key" in
-        /*) continue ;;  # Skip absolute-path-looking keys
+        /*)                      continue ;;  # absolute-path-looking keys
+        *[!A-Za-z0-9_-]*)        continue ;;  # invalid chars
+        [0-9-]*)                 continue ;;  # must start with letter/underscore
       esac
-      # Append key-value pair to payload (simple string values only)
-      PAYLOAD="${PAYLOAD},\"${key}\":\"${val}\""
+      # JSON-escape the value via python3; if python3 is unavailable or
+      # rejects the input, drop the field silently (base payload uses the
+      # same helper, so availability is already a requirement).
+      json_val=$(printf '%s' "$val" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))' 2>/dev/null) || continue
+      PAYLOAD="${PAYLOAD},\"${key}\":${json_val}"
       ;;
     *)
       # Non key=value argument — skip silently

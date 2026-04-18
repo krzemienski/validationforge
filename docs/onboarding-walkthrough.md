@@ -117,7 +117,7 @@ cat ~/.claude/.vf-config.json
 ls -la e2e-evidence/
 
 # Plugin structure is valid
-node /path/to/validationforge/scripts/verify-plugin-structure.js
+node /path/to/validationforge/scripts/verify-hooks.js
 ```
 
 ## What's Next

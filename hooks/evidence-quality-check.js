@@ -17,9 +17,14 @@ const { resolveProfile, hookState, ruleEnabled } = require('./lib/resolve-profil
 
 const HOOK_NAME = 'evidence-quality-check';
 
+// H10: cap stdin to 2MB. Fail-safe exit 0 on oversize input.
+const MAX_INPUT_BYTES = 2 * 1024 * 1024;
 let input = '';
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => input += chunk);
+process.stdin.on('data', chunk => {
+  if (input.length + chunk.length > MAX_INPUT_BYTES) process.exit(0);
+  input += chunk;
+});
 process.stdin.on('end', () => {
   try {
     // Env overrides — highest precedence, exit immediately

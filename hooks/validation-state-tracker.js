@@ -3,21 +3,26 @@
 // Fires after Bash commands to detect validation-related operations
 // and remind about evidence capture.
 //
-// Config-driven enforcement via config-loader.js:
+// Config-driven enforcement via resolve-profile.js:
 //   enabled  → exit(2) when validation activity detected (hard block reminder)
 //   warn     → write warning to stderr but exit(0) (advisory only)
 //   disabled → exit immediately, no action
 
 const { VALIDATION_COMMAND_PATTERNS } = require('./lib/patterns');
-const { loadConfig } = require('./lib/config-loader');
+const { resolveProfile, hookState } = require('./lib/resolve-profile');
 
+// H10: cap stdin to 2MB. Fail-safe exit 0 on oversize input.
+const MAX_INPUT_BYTES = 2 * 1024 * 1024;
 let input = '';
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => input += chunk);
+process.stdin.on('data', chunk => {
+  if (input.length + chunk.length > MAX_INPUT_BYTES) process.exit(0);
+  input += chunk;
+});
 process.stdin.on('end', () => {
   try {
-    const config = loadConfig();
-    const hookMode = config.getHookConfig('validation-state-tracker');
+    const profile = resolveProfile();
+    const hookMode = hookState(profile, 'validation-state-tracker');
 
     // disabled → pass through immediately, no enforcement
     if (hookMode === 'disabled') {
