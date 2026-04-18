@@ -222,15 +222,20 @@ function cmdHelp() {
   print('  vf help                       Show this help message');
   print('');
   print('Claude Code slash commands (run inside Claude Code):');
-  print('  /vf-setup                     Initialize ValidationForge for this project');
-  print('  /validate                     Full pipeline: detect → plan → execute → verdict');
-  print('  /validate-plan                Plan only (no execution)');
-  print('  /validate-audit               Read-only audit with severity classification');
-  print('  /validate-fix                 Fix FAIL verdicts and re-validate');
-  print('  /validate-ci                  Non-interactive CI/CD mode with exit codes');
-  print('  /validate-team                Multi-agent parallel platform validation');
-  print('  /validate-sweep               Autonomous fix-and-revalidate loop until PASS');
-  print('  /validate-benchmark           Measure validation posture');
+  // L8: derive the list from commands/*.md at runtime so adding a new
+  // slash command automatically surfaces in `vf help` without having
+  // to update this file. Drift class eliminated.
+  const COMMANDS_DIR = path.join(PKG_ROOT, 'commands');
+  try {
+    const cmdFiles = fs.readdirSync(COMMANDS_DIR)
+      .filter(f => f.endsWith('.md'))
+      .sort();
+    for (const file of cmdFiles) {
+      print('  /' + path.basename(file, '.md'));
+    }
+  } catch (_) {
+    print('  (commands/ directory unavailable — did the package install cleanly?)');
+  }
   print('');
   print('Documentation: https://validationforge.dev');
   print('Repository:    https://github.com/krzemienski/validationforge');

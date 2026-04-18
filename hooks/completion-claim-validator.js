@@ -9,21 +9,22 @@
 
 const { COMPLETION_PATTERNS } = require('./lib/patterns');
 const { resolveProfile, hookState } = require('./lib/resolve-profile');
+const { shouldSkip } = require('./lib/env-overrides');
 const fs = require('fs');
 const path = require('path');
 
 const EVIDENCE_SUBDIR = 'e2e-evidence';
 
-// Review finding M4: never resolve EVIDENCE_DIR against a relative CWD —
-// an attacker or a drive-by `cd` in a Bash tool call could redirect the
-// gate to an unrelated directory. Prefer, in order:
+// Review finding L3 (tightened): resolve EVIDENCE_DIR only from trusted
+// roots. `data.cwd` on the hook payload is attacker-influenceable (a
+// crafted Bash tool_input can set it to point at a pre-seeded directory
+// with fake fresh evidence), so it is intentionally excluded. Prefer,
+// in order:
 //   1. CLAUDE_PROJECT_ROOT env var (set by Claude Code for the active project)
-//   2. The `cwd` field on the hook JSON payload (project root per CC hook spec)
-//   3. process.cwd() as a last-resort fallback
-function resolveEvidenceDir(data) {
+//   2. process.cwd() as the last-resort fallback
+function resolveEvidenceDir(/* data */) {
   const candidates = [
     process.env.CLAUDE_PROJECT_ROOT,
-    data && data.cwd,
     process.cwd(),
   ].filter(Boolean);
   for (const root of candidates) {
@@ -44,6 +45,7 @@ process.stdin.on('data', chunk => {
 });
 process.stdin.on('end', () => {
   try {
+    if (shouldSkip('completion-claim-validator')) process.exit(0);
     const profile = resolveProfile();
     const hookMode = hookState(profile, 'completion-claim-validator');
 
@@ -67,7 +69,7 @@ process.stdin.on('end', () => {
 
     if (isCompletionClaim) {
       // Resolve evidence dir against the project root, not the hook's CWD.
-      const evidenceDir = resolveEvidenceDir(data);
+      const evidenceDir = resolveEvidenceDir();
 
       // Check evidence exists AND is recent (within last 24 hours) AND
       // non-empty (empty files fail the quality gate — review M4 tightening).

@@ -69,7 +69,8 @@ export const BUILD_PATTERNS = [
   /cargo build/i,
   /go build/i,
   /xcodebuild.*succeeded/i,
-  /BUILD SUCCEEDED/,
+  // L11: /BUILD SUCCEEDED/ literal dropped — /build succeeded/i above
+  // already matches case-insensitively.
 ];
 
 export const COMPLETION_PATTERNS = [
@@ -85,7 +86,9 @@ export const VALIDATION_COMMAND_PATTERNS = [
   /simctl/i,
   /xcrun/i,
   /curl.*localhost/i,
-  /npm run (dev|start|build)/i,
+  // L10: `npm run build` intentionally not duplicated here — BUILD_PATTERNS
+  // already fires validation-not-compilation on build output. Adding it in
+  // both sets produced two overlapping exit-2 reminders per `npm run build`.
   /xcodebuild/i,
   /idb /i,
 ];

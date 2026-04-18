@@ -14,6 +14,7 @@
 //   VF_SKIP_HOOKS=... → exit 0 silently if "evidence-quality-check" is listed
 
 const { resolveProfile, hookState, ruleEnabled } = require('./lib/resolve-profile');
+const { shouldSkip } = require('./lib/env-overrides');
 
 const HOOK_NAME = 'evidence-quality-check';
 
@@ -28,9 +29,7 @@ process.stdin.on('data', chunk => {
 process.stdin.on('end', () => {
   try {
     // Env overrides — highest precedence, exit immediately
-    if (process.env.DISABLE_OMC === '1') process.exit(0);
-    const skipHooks = (process.env.VF_SKIP_HOOKS || '').split(',').map(s => s.trim());
-    if (skipHooks.includes(HOOK_NAME)) process.exit(0);
+    if (shouldSkip(HOOK_NAME)) process.exit(0);
 
     const profile = resolveProfile();
     const state   = hookState(profile, HOOK_NAME);
@@ -47,7 +46,9 @@ process.stdin.on('end', () => {
 
     const content = toolInput.content || toolInput.new_string || '';
 
-    if (content.length === 0) {
+    // M5: trim whitespace-only writes; a file that's just "\n\n\n" is
+    // the same as a 0-byte file for evidence purposes (no observation).
+    if (content.trim().length === 0) {
       process.stderr.write(
         `[ValidationForge] evidence-quality-check [${profile.name}]: Empty evidence file detected.\n` +
         '0-byte files are INVALID evidence. Capture real content (screenshots, logs, API responses).\n'

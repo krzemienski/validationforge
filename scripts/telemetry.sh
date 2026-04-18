@@ -40,9 +40,20 @@ if [ -z "$ENDPOINT" ] || [ "$ENDPOINT" = "null" ]; then
   ENDPOINT="$DEFAULT_ENDPOINT"
 fi
 
-# --- Validate endpoint URL scheme: https:// only ---
+# --- Validate endpoint URL: https:// + canonical VF host only ---
+# M8: a compromised user config that flips .telemetry.endpoint could
+# exfiltrate the anonymousId + every key=value the caller attaches to
+# any host on the internet. Pin to *.validationforge.dev by default;
+# require VF_ALLOW_ALT_TELEMETRY=1 to opt in to an alternate host
+# (mirrors the VF_ALLOW_ALT_SOURCE pattern in install.sh).
 case "$ENDPOINT" in
-  https://*) ;;
+  https://telemetry.validationforge.dev/*|https://*.validationforge.dev/*|https://validationforge.dev/*)
+    : ;;  # canonical host — accept
+  https://*)
+    if [ "${VF_ALLOW_ALT_TELEMETRY:-0}" != "1" ]; then
+      exit 0   # non-canonical https endpoint, opt-in required — silent skip
+    fi
+    ;;
   *) exit 0 ;;  # Silently skip if endpoint is not https
 esac
 

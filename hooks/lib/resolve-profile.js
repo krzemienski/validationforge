@@ -5,20 +5,22 @@
 //   2. ~/.claude/.vf-config.json  `strictness` or `enforcement` field
 //   3. config/standard.json fallback
 //
-// Performance notes (review finding H5):
-//   • A module-level cache memoizes the first resolve() call so any
-//     downstream lookups in the same hook process skip fs entirely.
+// Performance notes:
 //   • Fast path: when the resolved profile name is "standard" AND the
 //     profile file isn't present, we hand back STANDARD_DEFAULTS without
 //     touching the filesystem at all.
 //   • VF_PROFILE=standard with no user config short-circuits to the
 //     in-memory defaults on the very first call.
+//   • Review finding M3: the former module-level memoization cache was
+//     removed — hooks are one-shot processes that call resolveProfile()
+//     exactly once, so the cache had zero observable effect in production
+//     and risked mutation-across-calls if a consumer ever mutated the
+//     returned profile.data.
 //
 // Exports:
 //   resolveProfile()             → { name, data, source }
 //   hookState(profile, hookName) → "enabled" | "warn" | "disabled"
 //   ruleEnabled(profile, rule)   → boolean
-//   loadConfig()                 → compat shim (same shape as config-loader.js)
 
 'use strict';
 
@@ -61,18 +63,19 @@ const STANDARD_DEFAULTS = Object.freeze({
   }),
 });
 
-// ────────────────────────────────────────────────────────────
-// Module-level cache. Hooks run as one-shot processes, but the
-// resolver can be called several times per hook — cache saves
-// each subsequent lookup the double-fs cost.
-// ────────────────────────────────────────────────────────────
-let _cache = null;
-
 function readProfileFile(name) {
+  const p = path.join(CONFIG_DIR, `${name}.json`);
+  // Missing file is the common case (fall-through to defaults) — silent.
+  if (!fs.existsSync(p)) return null;
+  // Present but unreadable/malformed is an operator error — emit a one-
+  // liner to stderr so the user knows their config edit didn't take
+  // effect (review finding M4 — previously swallowed silently).
   try {
-    const raw = fs.readFileSync(path.join(CONFIG_DIR, `${name}.json`), 'utf8');
-    return JSON.parse(raw);
-  } catch (_) {
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch (e) {
+    process.stderr.write(
+      `[VF] WARN: ${p} present but unreadable (${e.message}); using standard defaults.\n`
+    );
     return null;
   }
 }
@@ -91,23 +94,18 @@ function userConfigStrictness() {
 }
 
 /**
- * Resolve the active profile. Memoized after the first call in-process.
+ * Resolve the active profile.
  * @returns {{ name: string, data: object, source: string }}
  */
 function resolveProfile() {
-  if (_cache) return _cache;
-
   // ── Fast path: VF_PROFILE env var
   const envVal = (process.env.VF_PROFILE || '').trim().toLowerCase();
   if (VALID.includes(envVal)) {
-    // Skip fs entirely when the env requests plain "standard"
     if (envVal === 'standard') {
-      _cache = { name: 'standard', data: STANDARD_DEFAULTS, source: 'env:VF_PROFILE:fast-path' };
-      return _cache;
+      return { name: 'standard', data: STANDARD_DEFAULTS, source: 'env:VF_PROFILE:fast-path' };
     }
     const data = readProfileFile(envVal) || STANDARD_DEFAULTS;
-    _cache = { name: envVal, data, source: 'env:VF_PROFILE' };
-    return _cache;
+    return { name: envVal, data, source: 'env:VF_PROFILE' };
   }
 
   // ── User config file
@@ -116,19 +114,12 @@ function resolveProfile() {
     const data = readProfileFile(userLevel) || STANDARD_DEFAULTS;
     const cfgPath = process.env.VF_CONFIG_PATH ||
       path.join(os.homedir(), '.claude', '.vf-config.json');
-    _cache = { name: userLevel, data, source: `user-config:${cfgPath}` };
-    return _cache;
+    return { name: userLevel, data, source: `user-config:${cfgPath}` };
   }
 
   // ── Nothing set — return the frozen defaults without touching fs.
-  _cache = { name: 'standard', data: STANDARD_DEFAULTS, source: 'fallback:defaults' };
-  return _cache;
+  return { name: 'standard', data: STANDARD_DEFAULTS, source: 'fallback:defaults' };
 }
-
-/**
- * Clear the cache. Intended for tests only.
- */
-function _resetCacheForTests() { _cache = null; }
 
 function hookState(profile, hookName) {
   const hooks = (profile && profile.data && profile.data.hooks) || STANDARD_DEFAULTS.hooks;
@@ -142,33 +133,9 @@ function ruleEnabled(profile, ruleName) {
   return rules[ruleName] !== false;
 }
 
-// ────────────────────────────────────────────────────────────
-// Back-compat shim — same shape as the old config-loader.js.
-// Lets legacy hooks keep their `loadConfig()` import while we
-// consolidate to a single resolver (review findings H5 + H6).
-// ────────────────────────────────────────────────────────────
-function loadConfig() {
-  const profile = resolveProfile();
-  const hooks   = (profile.data && profile.data.hooks) || STANDARD_DEFAULTS.hooks;
-  const rules   = (profile.data && profile.data.rules) || STANDARD_DEFAULTS.rules;
-  return {
-    enforcement: profile.name,
-    rules,
-    getHookConfig(hookName) {
-      const value = hooks[hookName];
-      if (value === 'disabled' || value === 'warn' || value === 'enabled') {
-        return value;
-      }
-      return 'enabled';
-    },
-  };
-}
-
 module.exports = {
   resolveProfile,
   hookState,
   ruleEnabled,
-  loadConfig,
   STANDARD_DEFAULTS,
-  _resetCacheForTests,
 };

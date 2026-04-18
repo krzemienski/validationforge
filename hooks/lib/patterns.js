@@ -72,7 +72,6 @@ exports.BUILD_PATTERNS = [
     /cargo build/i,
     /go build/i,
     /xcodebuild.*succeeded/i,
-    /BUILD SUCCEEDED/,
 ];
 exports.COMPLETION_PATTERNS = [
     /all.*pass/i,
@@ -86,7 +85,6 @@ exports.VALIDATION_COMMAND_PATTERNS = [
     /simctl/i,
     /xcrun/i,
     /curl.*localhost/i,
-    /npm run (dev|start|build)/i,
     /xcodebuild/i,
     /idb /i,
 ];

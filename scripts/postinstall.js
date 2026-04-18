@@ -145,9 +145,25 @@ if (!DRY_RUN) {
 
   if (existingStat) {
     if (existingStat.isSymbolicLink() || existingStat.isFile()) {
+      // Symlinks and pointer-files are safe to unlink — they're always
+      // artifacts of a prior VF install.
       fs.unlinkSync(PLUGIN_LINK);
     } else if (existingStat.isDirectory()) {
-      fs.rmSync(PLUGIN_LINK, { recursive: true, force: true });
+      // M10: refuse to silently rm -rf a pre-existing real directory at
+      // this path (e.g. a previous git-clone install from install.sh
+      // that the user may have customized or has uncommitted work in).
+      // Require explicit VF_ALLOW_OVERWRITE=1 to opt in to destructive
+      // replacement. install.sh makes the same distinction.
+      if (process.env.VF_ALLOW_OVERWRITE === '1') {
+        warn(`Overwriting pre-existing directory at ${PLUGIN_LINK} (VF_ALLOW_OVERWRITE=1)`);
+        fs.rmSync(PLUGIN_LINK, { recursive: true, force: true });
+      } else {
+        warn(`Pre-existing directory at ${PLUGIN_LINK} — refusing to replace.`);
+        warn(`  If this is a stale prior install you want to discard, re-run with:`);
+        warn(`    VF_ALLOW_OVERWRITE=1 npm install -g validationforge`);
+        warn(`  Or remove the directory manually and retry.`);
+        process.exit(1);
+      }
     }
   }
 

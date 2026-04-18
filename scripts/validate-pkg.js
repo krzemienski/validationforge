@@ -10,6 +10,15 @@ if (missing.length) {
   process.exit(1);
 }
 
+// M20: engines field alone isn't enough — must declare engines.node so
+// consumers on older Node can't silently install a package that uses
+// Node 18+ APIs (fetch, structuredClone, Array.prototype.at, top-level
+// await). Schema-level assertion keeps future regressions out.
+if (!p.engines || typeof p.engines.node !== 'string' || p.engines.node.length === 0) {
+  console.error('FAIL: package.json engines.node must be a non-empty string (e.g. ">=16").');
+  process.exit(1);
+}
+
 if (!p.scripts.postinstall) {
   console.error('FAIL: scripts.postinstall is missing');
   process.exit(1);

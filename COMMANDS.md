@@ -54,3 +54,20 @@ Both families access the same pipeline. The difference:
 
 - **Validation commands** (`/validate*`, `/vf-setup`, `/vf-telemetry`) are the user-facing interface. No `allowed-tools` restriction -- they use whatever Claude Code makes available.
 - **Forge commands** (`/forge-*`) are the orchestration layer. Each specifies `allowed-tools` in frontmatter to constrain which Claude Code tools the command may invoke. Forge commands are typically called by skills or agents rather than directly by users.
+
+## CLI (`vf`)
+
+`npm install -g validationforge` installs a `vf` binary (points at `bin/vf.js`) for
+out-of-Claude-Code tasks. Mirrors what `vf help` prints at runtime.
+
+| Subcommand | Purpose |
+|------------|---------|
+| `vf --version` / `vf -v` | Print installed package version |
+| `vf status` | Show plugin registration + rules install state |
+| `vf install-rules` | Copy `rules/*.md` into `.claude/rules/` for the current project |
+| `vf install-rules --global` | Copy `rules/*.md` into `~/.claude/rules/vf-*.md` (all projects) |
+| `vf install-rules --local` | Explicit local install (same as default) |
+| `vf help` / `vf --help` / `vf -h` | Show help (auto-generated from `commands/*.md`) |
+
+The help subcommand enumerates every slash command in this index at runtime, so adding a
+new `.md` under `commands/` automatically shows up in `vf help` without manual sync.

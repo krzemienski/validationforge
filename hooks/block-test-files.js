@@ -17,6 +17,7 @@
 
 const { TEST_PATTERNS, ALLOWLIST } = require('./lib/patterns');
 const { resolveProfile, hookState, ruleEnabled } = require('./lib/resolve-profile');
+const { shouldSkip } = require('./lib/env-overrides');
 
 const HOOK_NAME = 'block-test-files';
 
@@ -33,9 +34,7 @@ process.stdin.on('data', chunk => {
 process.stdin.on('end', () => {
   try {
     // Env overrides — highest precedence, exit immediately
-    if (process.env.DISABLE_OMC === '1') process.exit(0);
-    const skipHooks = (process.env.VF_SKIP_HOOKS || '').split(',').map(s => s.trim());
-    if (skipHooks.includes(HOOK_NAME)) process.exit(0);
+    if (shouldSkip(HOOK_NAME)) process.exit(0);
 
     const profile = resolveProfile();
     const state   = hookState(profile, HOOK_NAME);

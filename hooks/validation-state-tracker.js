@@ -10,6 +10,7 @@
 
 const { VALIDATION_COMMAND_PATTERNS } = require('./lib/patterns');
 const { resolveProfile, hookState } = require('./lib/resolve-profile');
+const { shouldSkip } = require('./lib/env-overrides');
 
 // H10: cap stdin to 2MB. Fail-safe exit 0 on oversize input.
 const MAX_INPUT_BYTES = 2 * 1024 * 1024;
@@ -21,6 +22,7 @@ process.stdin.on('data', chunk => {
 });
 process.stdin.on('end', () => {
   try {
+    if (shouldSkip('validation-state-tracker')) process.exit(0);
     const profile = resolveProfile();
     const hookMode = hookState(profile, 'validation-state-tracker');
 

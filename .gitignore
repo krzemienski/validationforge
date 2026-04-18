@@ -44,3 +44,11 @@ logs/security/
 .vf/team/dashboard.html
 .vf/.gap-closure.lock
 benchmark/
+
+# Session / workspace artifacts (review finding M19 — do not commit)
+skill-audit-workspace/
+worktree-merge-evidence/
+progress.txt
+build-progress.txt
+logs/
+.ruff_cache/
