@@ -585,7 +585,7 @@ HN/Reddit     →    Case studies     →    /validate-audit →  Enterprise dem
 | 04 | iOS Streaming Bridge | iOS platform ref | "Validating through the simulator" | Try iOS validation |
 | 05 | iOS Patterns | iOS validation skills | "4,241 files, zero unit tests" | Read the methodology |
 | 06 | Parallel Worktrees | FORGE parallel | "Autonomous agents need autonomous validation" | See FORGE engine |
-| 07 | Prompt Engineering Stack | Skill dependency graph | "How 41 skills build on each other" | Explore the skills |
+| 07 | Prompt Engineering Stack | Skill dependency graph | "How 52 skills build on each other" | Explore the skills |
 | 08 | Ralph Orchestrator | FORGE loops | "Build → validate → fix, automatically" | Try /validate-sweep |
 | 09 | Session Mining | Evidence analysis | "Mining validation evidence for insights" | See evidence pipeline |
 | 10 | Stitch Design-to-Code | Design validation | "Screenshot-driven validation" | Try design validation |
