@@ -7,7 +7,7 @@ enumerates the security controls present in option (b) — the more audit-releva
 surface — so administrators and auditors can review them in one place.
 
 **Last-verified:** 2026-04-17 against `install.sh` + `uninstall.sh` at commit
-`3a796d6` (`v1.0.0`).
+`fabf053` (`v1.0.0`). Post-review hardening applied: postinstall.js directory-removal guard (M10), telemetry.sh endpoint lockdown (M8), sync-opencode.sh symlink atomicity (M7).
 
 ---
 

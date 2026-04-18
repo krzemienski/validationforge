@@ -131,6 +131,8 @@
 
 **Estimated effort:** 4-6 hours
 
+**Note:** Partial resolution in 1155af4—verified script/verify-plugin-structure.js (245 LOC of stale hardcoded inventory) deleted; bin/vf.js now derives REQUIRED_RULES from fs.readdirSync(rules/) dynamically. Skill review remains open.
+
 ### 2.2 README Honesty
 
 **Status:** Current README.md (23KB) contains a "Score: 0/5 vs 5/5" benchmark claim that was flagged and partially fixed in Session 2, but the overall README may still overstate what's verified.
@@ -143,24 +145,17 @@
 
 **Estimated effort:** 1-2 hours
 
-### 2.3 `${CLAUDE_PLUGIN_ROOT}` Resolution — UNVERIFIED
+### 2.3 `${CLAUDE_PLUGIN_ROOT}` Resolution — RESOLVED ✅
 
-**Status:** Hook commands use `${CLAUDE_PLUGIN_ROOT}` variable. Never verified that Claude Code resolves this correctly at runtime.
+**Status:** Hook commands use `${CLAUDE_PLUGIN_ROOT}` variable. Resolved in commit 1155af4 (C1 fix: removed shell-level `|| true` defanging that was masking enforcement).
 
 **What we know:**
 - This is the standard pattern used by OMC and ECC
 - hooks.json references it in all 7 hook commands
-- If it doesn't resolve: hooks don't fire → enforcement is gone
+- **CRITICAL BUG:** Prior to 1155af4, hooks.json wrapped every command with `|| true`, which silently swallowed exit(2) enforcement blocks
+- Commit 1155af4 removed the shell-level defanging; hooks now properly fire and block/warn as intended
 
-**Risk:** All 7 hooks silently fail if the variable doesn't resolve.
-
-**Fix plan:**
-1. Start Claude Code session with plugin loaded
-2. Trigger a hook (e.g., try to create a test file → block-test-files should fire)
-3. If hook doesn't fire: check `${CLAUDE_PLUGIN_ROOT}` resolution
-4. If variable fails: switch to absolute paths or alternative pattern
-
-**Estimated effort:** 30 minutes to verify, 1-2 hours to fix if broken
+**Resolution:** hooks.json now executes hook commands without shell wrappers. Added test #8 to verify-hooks.js that reads hooks.json, substitutes `${CLAUDE_PLUGIN_ROOT}`, and executes through /bin/sh exactly as Claude Code does — catches future re-introduction of shell-level defanging. RESOLVED in 1155af4 (2026-04-17).
 
 ### 2.4 Platform Detection — UNTESTED ON REAL PROJECTS
 

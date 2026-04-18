@@ -156,8 +156,8 @@ sequential-analysis, research-validation, retrospective-validation, ai-evidence-
 **Specialized (7)**
 accessibility-audit, responsive-validation, parallel-validation, coordinated-validation, e2e-testing, e2e-validate, create-validation-plan
 
-**Operational (6)**
-baseline-quality-assessment, condition-based-waiting, error-recovery, production-readiness-audit, full-functional-audit, evidence-dashboard
+**Operational (5)**
+baseline-quality-assessment, condition-based-waiting, error-recovery, production-readiness-audit, full-functional-audit
 
 **Forge Orchestration (7)**
 forge-setup, forge-plan, forge-execute, forge-team, forge-benchmark, validate-audit-benchmarks, team-validation-dashboard

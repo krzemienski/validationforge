@@ -113,7 +113,7 @@ Both plugins merge their hook definitions into Claude Code's hook pipeline and b
 }
 ```
 
-Each plugin keeps its own `.claude-plugin/plugin.json` manifest under its install root; they do not conflict because their `name` fields (`superpowers` vs `validationforge`) are distinct. Commands, skills, hooks, agents, and rules are namespaced by plugin name, so `/brainstorm` and `/validate` never collide even though both appear in `/help`.
+Each plugin keeps its own `.claude-plugin/plugin.json` manifest under its install root; they do not conflict because their `name` fields (`superpowers` vs `validationforge`) are distinct. Claude Code auto-discovers plugins and their manifests from `~/.claude/plugins/`. Commands, skills, hooks, agents, and rules are namespaced by plugin name, so `/brainstorm` and `/validate` never collide even though both appear in `/help`.
 
 ### Sample `marketplace.json` registering both plugins
 

@@ -55,13 +55,13 @@ When you opt-in to telemetry, a random UUID is generated and stored in `~/.claud
 
 ## Telemetry Endpoint
 
-Events are sent via HTTPS POST to:
+Events are sent via HTTPS POST to the canonical endpoint:
 
 ```
 https://telemetry.validationforge.dev/events
 ```
 
-Only HTTPS endpoints are permitted — the telemetry script validates the URL scheme and rejects non-HTTPS targets. All transmission is fire-and-forget with a 5-second timeout (`--max-time 5`). Failures are silent and never block VF operations.
+Only HTTPS endpoints are permitted — the telemetry script validates the URL scheme and rejects non-HTTPS targets. Custom endpoints require explicit opt-in via the `VF_ALLOW_ALT_TELEMETRY=1` environment variable. All transmission is fire-and-forget with a 5-second timeout (`--max-time 5`). Failures are silent and never block VF operations. Payload keys are validated as `[A-Za-z_][A-Za-z0-9_-]*` and values are JSON-escaped to prevent injection.
 
 ## How to Enable Telemetry
 

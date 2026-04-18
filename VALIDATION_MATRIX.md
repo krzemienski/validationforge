@@ -81,3 +81,22 @@ Legend:
 | Pin typescript version | Spec 023 changed `5.5.4` to `^5.5.0` | Restored to `5.5.4` at `fd25447` |
 | SKILLS.md conflict | Spec 017 had stale 41-skill catalog | Kept HEAD 45-skill version |
 | CLAUDE.md skill count | Spec 023 added 4 skills | Updated count from 41 to 45 |
+
+## Review Remediation (2026-04-17)
+
+**Campaign**: Full-codebase review (24 findings: 1 CRITICAL, 10 HIGH, 8 MEDIUM, 6 LOW) resolved in commits `1155af4` (C1+12 HIGH) and `fabf053` (M/L batch + H7 correction).
+
+| Gate | Status | Finding Count | Evidence |
+|------|--------|:---:|----------|
+| VG-Security (C1+H1-H6) | PASS | 7 | `plans/reports/review-260417-2200-GH-0-security-findings.md` |
+| VG-Performance (H10-H12, M3) | PASS | 5 | `plans/reports/review-260417-2200-GH-0-performance-findings.md` |
+| VG-Quality (H7-H9, M/L) | PASS | 12 | `plans/reports/review-260417-2200-GH-0-quality-findings.md` |
+| VG-PostFix (regression) | PASS | 8 | `plans/reports/review-260417-2307-GH-0-post-fix-verification.md` |
+
+**Key resolutions:**
+- **C1**: hooks.json `|| true` shell wrapping removed (was defanging all enforcement)
+- **H8**: bin/vf.js now derives REQUIRED_RULES dynamically from rules/ (was hardcoded 8-item list)
+- **H6**: verify-plugin-structure.js (245 LOC stale inventory) deleted
+- **H7**: plugin.json component keys added then corrected per official schema (fabf053)
+- **M15**: verify-cache.js now reads version from package.json (no hand-maintained mirror)
+- **All 7 hooks**: stdin capped at 2MB, stdout scan at 200KB with tail-slice (H3/H4/H5/H10)

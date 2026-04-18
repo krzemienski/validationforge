@@ -154,13 +154,19 @@ fix/*         Bug fixes — branch from main
 
 2. Make your changes following the patterns in existing files.
 
-3. Verify the OpenCode plugin still builds:
+3. Verify hook functionality:
+
+   ```bash
+   node scripts/verify-hooks.js
+   ```
+
+4. Verify the OpenCode plugin still builds:
 
    ```bash
    cd .opencode/plugins/validationforge && npm run build
    ```
 
-4. Verify the dependency pins are intact:
+5. Verify the dependency pins are intact:
 
    ```bash
    node -e "const p=require('./.opencode/plugins/validationforge/package.json'); \
@@ -169,7 +175,7 @@ fix/*         Bug fixes — branch from main
      console.log(ok ? 'PINNED' : 'FAIL')"
    ```
 
-5. Commit and open a pull request.
+6. Commit and open a pull request.
 
 ### Commit Style
 

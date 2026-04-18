@@ -6,6 +6,54 @@ Format: loose semver; dates ISO 8601; newest first.
 
 ---
 
+## 2026-04-17 — Review Remediation: C1+12 HIGH + M/L Batch
+
+**Scope**: Full-codebase review (24 findings: 1 CRITICAL, 10 HIGH, 8 MEDIUM, 6 LOW) resolved in 2 commits: `1155af4` (C1+12 HIGH) and `fabf053` (M/L batch + H7 correction). See evidence: [`plans/reports/review-260417-2200-GH-0-security-findings.md`](../plans/reports/review-260417-2200-GH-0-security-findings.md).
+
+### Fixed — CRITICAL
+
+- **hooks.json shell-level defanging** (C1). Removed `|| true` suffix from all 7 hook commands. Prior behavior: exit(2) enforcement blocks were silently swallowed at the shell level, defanging every advertised validation gate. Tests 1-7 in `verify-hooks.js` spawned node directly and could not detect this. Added test #8 that reads hooks.json, substitutes `${CLAUDE_PLUGIN_ROOT}`, and executes through `/bin/sh -c` exactly as Claude Code would—catches future re-introduction of shell wrappers. Commit `1155af4`.
+
+### Fixed — HIGH
+
+- **Stale plugin-structure verifier** (H6). Deleted `scripts/verify-plugin-structure.js` (245 LOC of hand-maintained inventory mirrors with 0/6 checks currently passing on main) and updated the sole reference in `docs/onboarding-walkthrough.md`. Commit `1155af4`.
+- **REQUIRED_RULES drift** (H8). Changed `bin/vf.js` to derive `REQUIRED_RULES` from `fs.readdirSync(rules/)` instead of an 8-entry hardcoded list. First run caught real drift: `consensus-engine` missing from user install. Commit `1155af4`.
+- **Plugin manifest stale** (H7). Added `commands/`, `skills/`, `agents/`, `hooks/` directory declarations to `plugin.json` (align with internal verifiers and CC plugin convention). **CORRECTED in fabf053**: removed these keys after verification against official plugin schema—CC auto-discovers from default directories; `skills` field is invalid per spec. Commits `1155af4` + `fabf053`.
+- **Config-loader duplication** (H9). Migrated 4 legacy hooks from `hooks/lib/config-loader.js` to canonical `resolve-profile.js` API; deleted the 19-LOC compat shim. Nothing outside hooks/ imported it. Commit `1155af4`.
+- **Input buffer bombs** (H3+H4+H5+H10). Capped stdin at 2MB (MAX_INPUT_BYTES) across all 7 hooks; capped stdout scan at 200KB (MAX_SCAN_BYTES) with tail-slice for 2 hooks that scan Bash output. ReDoS/buffer-bomb no longer blocks hot path. Commit `1155af4`.
+- **Directory-size false positive** (H5). `completion-claim-validator.js`: capped `readdirSync` at 200 entries and descend one level into directory entries. APFS directory inodes always report non-zero size, so `stat.size>0` on dir entry was falsely passing the fresh-evidence gate for empty journey directories. Commit `1155af4`.
+- **Shell-injection in report opener** (H1). `scripts/generate-report.js`: replaced `execSync` shell template literal in `openInBrowser` with `execFileSync` argv array. argv[3] was flowing through shell unescaped. Commit `1155af4`.
+- **Telemetry JSON injection** (H2). `scripts/telemetry.sh`: validate key with `[A-Za-z_][A-Za-z0-9_-]*` and JSON-escape value via `python3 json.dumps` (same helper pattern as base payload). Previous concat allowed quotes/backslash/ctrl chars to inject new JSON fields. Commit `1155af4`.
+- **Config profile schema gap** (H11). Added `reject_empty_evidence` to all three config profiles (strict/standard true, permissive false). Previously consumed by `evidence-quality-check` but absent from profile schema—worked by accident via default. Commit `1155af4`.
+- **Hook verification broken path** (H12). Rewrote `scripts/verify-hook-exists.js` to check canonical install path (`~/.claude/plugins/validationforge/hooks/`) with manifest-based fallback. Previous path (`~/.claude/hooks/`) was never written by `install.sh` or `postinstall.js`. Commit `1155af4`.
+
+### Fixed — MEDIUM
+
+- **Module-level cache eliminated** (M3). Dropped memoization from `resolve-profile.js`. Each hook is a one-shot process calling `resolveProfile()` exactly once, so cache had zero observable effect. Removes mutation-across-calls risk. Commit `fabf053`.
+- **Corrupt JSON silent-fail** (M4). `readProfileFile` now distinguishes missing file (silent) from present-but-unreadable (stderr warn). Corrupt `strict.json` previously fell through to standard defaults with no operator signal. Commit `fabf053`.
+- **Whitespace-only evidence** (M5). `evidence-quality-check` treats whitespace-only writes as empty evidence (`content.trim().length === 0`), matching rule intent ("0-byte files INVALID"). Commit `fabf053`.
+- **Symlink replace race** (M7). `sync-opencode.sh` refuses to overwrite pre-existing non-symlinks and uses `ln -sfn` for atomic symlink replacement (matches `install.sh` hardened pattern). Commit `fabf053`.
+- **Telemetry endpoint lockdown** (M8). `telemetry.sh` pins endpoint to `*.validationforge.dev` by default. Any alternate https host requires `VF_ALLOW_ALT_TELEMETRY=1` (mirrors `VF_ALLOW_ALT_SOURCE` pattern in `install.sh`). Prevents tampered `~/.claude/.vf-config.json` from exfiltrating anonymousId+event data to attacker host. Commit `fabf053`.
+- **Unguarded directory removal** (M10). `postinstall.js` refuses to silently `rm -rf` pre-existing real directory at `~/.claude/plugins/validationforge`. Requires `VF_ALLOW_OVERWRITE=1` to force. Symlinks and pointer files still replaced freely (always VF artifacts). Commit `fabf053`.
+- **Workspace clutter** (M19). `.gitignore` now excludes session/workspace artifacts (`skill-audit-workspace/`, `worktree-merge-evidence/`, `progress.txt`, `build-progress.txt`, `logs/`, `.ruff_cache/`). Commit `fabf053`.
+- **Silently-broken engines.node** (M20). `validate-pkg.js` explicitly asserts `engines.node` is non-empty string. Prevents future PR shipping with `engines.node` empty/missing, which would let Node<16 consumers silently install then fail at runtime. Commit `fabf053`.
+- **COMMANDS.md CLI section** (M24). Gained CLI (`vf`) subcommand section documenting every binary command (version/status/install-rules/help). Commit `fabf053`.
+
+### Fixed — LOW
+
+- **Evidence path attenuation** (L3). Dropped `data.cwd` from `completion-claim-validator`'s evidence-dir candidate list. CWD field on hook payload is attacker-influenceable (crafted Bash `tool_input` could redirect gate at pre-seeded fake evidence dir). Only `CLAUDE_PROJECT_ROOT` and `process.cwd()` are trusted roots. Commit `fabf053`.
+- **Help text hardcoded** (L8). `vf.js` `help` now derives slash-command list from `commands/*.md` (was 9 of 19, now all 19). Commit `fabf053`.
+- **Missing env-overrides** (L9+L13). NEW `hooks/lib/env-overrides.js` applied to all 7 hooks (was 3 of 7). Commit `fabf053`.
+- **Duplicate patterns** (L10+L11). `patterns.ts` and `patterns.js`: removed `/npm run (dev|start|build)/i` dup and dropped `/BUILD SUCCEEDED/` literal. Commit `fabf053`.
+- **Cache version drift** (M15). `verify-cache.js` replaced hardcoded requirement for commands/skills keys with check that (a) cache exists, (b) metadata complete, (c) default component dirs exist on disk. Reads version from `package.json` so cache path stays in sync with advertised version—no hand-maintained mirror. Commit `fabf053`.
+
+### Verification
+
+- `verify-hooks.js`: 8/8 tests passing (added shell-path regression test #8).
+- All functional checks pass. Post-fix verification: [`plans/reports/review-260417-2307-GH-0-post-fix-verification.md`](../plans/reports/review-260417-2307-GH-0-post-fix-verification.md).
+
+---
+
 ## 2026-04-17 — Post-Review Remediation Release
 
 **Scope**: Full-codebase `/start:review` produced 24 findings (1 CRITICAL, 10 HIGH,

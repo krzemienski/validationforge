@@ -341,13 +341,15 @@ validationforge/
 ├── .claude-plugin/
 │   ├── plugin.json              # Plugin manifest
 │   └── marketplace.json         # Marketplace listing
-├── agents/                      # 5 agent definitions
+├── agents/                      # 7 agent definitions
+│   ├── consensus-synthesizer.md
+│   ├── consensus-validator.md
 │   ├── evidence-capturer.md
 │   ├── platform-detector.md
 │   ├── sweep-controller.md
 │   ├── validation-lead.md
 │   └── verdict-writer.md
-├── commands/                    # 15 slash commands
+├── commands/                    # 19 slash commands
 │   ├── validate.md
 │   ├── validate-audit.md
 │   ├── validate-benchmark.md
@@ -356,13 +358,16 @@ validationforge/
 │   ├── validate-plan.md
 │   ├── validate-sweep.md
 │   ├── validate-team.md
+│   ├── validate-team-dashboard.md
+│   ├── validate-consensus.md
 │   ├── vf-setup.md
 │   ├── forge-benchmark.md
 │   ├── forge-execute.md
 │   ├── forge-install-rules.md
 │   ├── forge-plan.md
 │   ├── forge-setup.md
-│   └── forge-team.md
+│   ├── forge-team.md
+│   └── forge-team-dashboard.md
 ├── config/                      # Enforcement presets
 │   ├── strict.json
 │   ├── standard.json
@@ -376,7 +381,7 @@ validationforge/
 │   ├── validation-state-tracker.js
 │   ├── mock-detection.js
 │   └── evidence-quality-check.js
-├── rules/                       # 8 rule files
+├── rules/                       # 9 rule files
 │   ├── validation-discipline.md
 │   ├── execution-workflow.md
 │   ├── evidence-management.md
@@ -384,13 +389,14 @@ validationforge/
 │   ├── team-validation.md
 │   ├── benchmarking.md
 │   ├── forge-execution.md
-│   └── forge-team-orchestration.md
-├── skills/                      # 40 skill directories
+│   ├── forge-team-orchestration.md
+│   └── consensus-engine.md
+├── skills/                      # 52 skill directories
 │   ├── functional-validation/
 │   ├── ios-validation/
 │   ├── web-validation/
 │   ├── api-validation/
-│   └── ... (40 total)
+│   └── ... (52 total)
 ├── templates/                   # Report and plan templates
 ├── scripts/                     # Utility scripts
 ├── install.sh                   # Installer script

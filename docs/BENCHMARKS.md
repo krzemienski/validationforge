@@ -150,7 +150,7 @@ Checks `tool_input.command` for validation-related commands.
 
 ## Skill Benchmarks
 
-40 skills across 7 categories. Each criterion scored 0-2 per skill.
+52 skills across 7 categories. Each criterion scored 0-2 per skill.
 
 ### Evaluation Criteria (all categories)
 
@@ -185,7 +185,7 @@ Checks `tool_input.command` for validation-related commands.
 
 ## Command Benchmarks
 
-15 commands in two patterns: `validate-*` (name + triggers) and `forge-*` (description + allowed-tools).
+19 commands in two patterns: `validate-*` (name + triggers) and `forge-*` (description + allowed-tools).
 
 ### Evaluation Criteria
 
@@ -228,7 +228,7 @@ Checks `tool_input.command` for validation-related commands.
 
 ## Agent Benchmarks
 
-5 agents. Each evaluated on role clarity, constraints, and protocol compliance.
+7 agents. Each evaluated on role clarity, constraints, and protocol compliance.
 
 ### Evaluation Criteria
 

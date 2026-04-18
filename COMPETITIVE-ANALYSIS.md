@@ -93,9 +93,9 @@
 **Head-to-head:**
 | Metric | ClaudeKit | VF |
 |--------|:---------:|:--:|
-| Total skills | 39 | 40 |
-| Total commands | 62 | 15 |
-| Total agents | 17 | 5 |
+| Total skills | 39 | 52 |
+| Total commands | 62 | 19 |
+| Total agents | 17 | 7 |
 | Focus | Generic workflow | Validation only |
 | Testing stance | Recommends unit tests | **Blocks unit tests** |
 | Evidence system | None | **3-tier with verdicts** |
@@ -195,7 +195,7 @@ These are infrastructure, not direct competitors, but signal market maturity:
 | Fix-and-revalidate loops | — | — | — | partial | — | — | — | **3-strike** |
 | CI/CD integration | — | — | — | — | — | — | — | **exit codes** |
 | Benchmark scoring | — | — | — | — | — | — | — | **4 dimensions** |
-| Multi-agent validation | — | — | — | partial | — | — | — | **5 agents** |
+| Multi-agent validation | — | — | — | partial | — | — | — | **7 agents** |
 | Evidence quality gates | — | — | — | — | — | — | — | **3 tiers** |
 
 **Result:** VF has 9 unique features. Nearest competitor (OMC) has 2 partial matches. The gap is massive.
@@ -210,7 +210,7 @@ These are infrastructure, not direct competitors, but signal market maturity:
 |------|:-----:|:-----------:|
 | **Methodology ownership** ("The Iron Rule", "Evidence-Based Shipping") | DEEP | Hard — requires philosophical commitment |
 | **Content engine** (18 blog posts, mined from real development sessions) | DEEP | Very hard — months of real-session mining |
-| **Platform depth** (40 skills with iOS/Web/API/CLI knowledge) | MEDIUM | Copyable but time-intensive |
+| **Platform depth** (52 skills with iOS/Web/API/CLI knowledge) | MEDIUM | Copyable but time-intensive |
 | **First-mover** in "AI Code Validation" category | HIGH | Erodes over 12-18 months |
 | **AI-native architecture** (improves with Claude model upgrades) | LOW | Everyone benefits equally |
 

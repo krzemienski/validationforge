@@ -116,7 +116,7 @@ cat ~/.claude/.vf-config.json
 # Evidence directory was created
 ls -la e2e-evidence/
 
-# Plugin structure is valid
+# Hook functionality verified
 node /path/to/validationforge/scripts/verify-hooks.js
 ```
 

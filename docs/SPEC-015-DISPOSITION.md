@@ -32,6 +32,12 @@ Per CAMPAIGN_STATE.md (2026-04-09 quarantine decision):
 2. **The destructive deletions (protected files) were NOT merged** — only the documentation site component survived to main.
 3. **The quarantine was justified but the merged result is safe** — no protected file deletions in the actual merge.
 
+**Note (2026-04-17):** The "protected files" referenced in the quarantine decision (`config-loader.js`, `verify-e2e.js`) have since been intentionally removed in commit `1155af4` as part of the full-codebase review remediation:
+- `config-loader.js` was consolidated into `resolve-profile.js` (3-line compat shim) — H9 fix
+- `verify-plugin-structure.js` (245 LOC stale inventory) was deleted — H6 fix
+
+These removals were justified remediation, not destructive cargo-cult deletions. The quarantine concern about "deletes protected files" is now obsolete.
+
 ---
 
 ## Why DROP Is Correct

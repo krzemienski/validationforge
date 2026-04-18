@@ -64,5 +64,6 @@ Record findings in `e2e-evidence/opencode-live-session/` and update this documen
 - Verification script: [`scripts/verify-opencode-plugin.sh`](../scripts/verify-opencode-plugin.sh)
 - Plugin entrypoint: [`.opencode/plugins/validationforge/index.ts`](../.opencode/plugins/validationforge/index.ts)
 - Shared patterns: [`.opencode/plugins/validationforge/patterns.ts`](../.opencode/plugins/validationforge/patterns.ts)
-- CC-side bridge: [`hooks/patterns.js`](../hooks/patterns.js)
+- CC-side patterns bridge: [`hooks/lib/patterns.js`](../hooks/lib/patterns.js)
+- CC-side env overrides: [`hooks/lib/env-overrides.js`](../hooks/lib/env-overrides.js)
 - README Known Limitations: [`../README.md`](../README.md#known-limitations) — item #6

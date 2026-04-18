@@ -89,7 +89,7 @@ Restart Claude Code after both installs — plugins (hooks, skills, commands, ru
 
 ### Sample `.claude/settings.json` with both plugins registered
 
-Both plugins merge their hook definitions into Claude Code's hook pipeline. The two name fields (`everything-claude-code` vs `validationforge`) keep them from colliding:
+Both plugins merge their hook definitions into Claude Code's hook pipeline. The two name fields (`everything-claude-code` vs `validationforge`) keep them from colliding. Claude Code auto-discovers plugins from `~/.claude/plugins/` and loads each plugin's manifest independently:
 
 ```json
 {

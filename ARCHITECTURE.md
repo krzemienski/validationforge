@@ -394,8 +394,8 @@ e2e-evidence/              scripts/generate-dashboard.sh        e2e-evidence/
 | Script | Purpose |
 |--------|---------|
 | `scripts/benchmark/test-hooks.sh` | Tests all 7 CC hooks with real JSON stdin payloads |
-| `scripts/benchmark/validate-skills.sh` | Validates structural integrity of all 46 skill SKILL.md files |
-| `scripts/benchmark/validate-cmds.sh` | Validates structural integrity of all 16 command .md files |
+| `scripts/benchmark/validate-skills.sh` | Validates structural integrity of all 52 skill SKILL.md files |
+| `scripts/benchmark/validate-cmds.sh` | Validates structural integrity of all 19 command .md files |
 | `scripts/benchmark/aggregate-results.sh` | Aggregates benchmark scores into a unified report |
 
 ---
@@ -443,7 +443,7 @@ Three enforcement profiles in `config/`:
 
 ## Rules
 
-8 enforcement rules installed to `~/.claude/rules/vf-*.md` by `install.sh` or `/forge-install-rules`:
+9 enforcement rules installed to `~/.claude/rules/vf-*.md` by `install.sh` or `/forge-install-rules`:
 
 | Rule | File | Purpose |
 |------|------|---------|
@@ -455,3 +455,4 @@ Three enforcement profiles in `config/`:
 | benchmarking | `rules/benchmarking.md` | Metric collection, integrity, comparative analysis |
 | forge-execution | `rules/forge-execution.md` | Phase gates, fix loop discipline, state persistence |
 | forge-team-orchestration | `rules/forge-team-orchestration.md` | Validator assignment, evidence ownership, verdict synthesis |
+| consensus-engine | `rules/consensus-engine.md` | N-validator agreement gate, voting protocol, disagreement analysis |

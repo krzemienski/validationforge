@@ -6,11 +6,11 @@ Authoritative guide to how ValidationForge manages its context window footprint.
 
 ## The Problem
 
-Claude Code's context window is finite. ValidationForge has 41 skills totaling 6,782 lines. Loading all of them at session start leaves little room for the user's actual codebase — defeating the purpose of a validation tool.
+Claude Code's context window is finite. ValidationForge has 52 skills totaling ~8,400 lines. Loading all of them at session start leaves little room for the user's actual codebase — defeating the purpose of a validation tool.
 
 | Scenario | Lines Consumed | Risk |
 |----------|---------------|------|
-| All 41 skills loaded | ~6,782 | User codebase crowded out |
+| All 52 skills loaded | ~8,400 | User codebase crowded out |
 | Critical only (default) | ~777 | ✅ Safe — codebase remains visible |
 | Critical + standard | ~2,655 | Acceptable for active validation run |
 | Critical + standard + reference | ~6,782 | Avoid — full load |

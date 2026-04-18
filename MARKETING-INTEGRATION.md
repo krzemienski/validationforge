@@ -40,7 +40,7 @@ ValidationForge ran its own 7-phase validation pipeline against its own codebase
 **Key proof points for marketing use:**
 - `block-test-files.js` produces exact deny JSON Claude Code reads — not just documentation, actively enforced
 - Platform detection correctly classifies VF as `generic` (meta-tool) — the script works on its own project
-- 41 skills, 15 commands, 5 agents, 8 rules all verified to exist on disk — no phantom references
+- 52 skills, 19 commands, 7 agents, 9 rules all verified to exist on disk — no phantom references
 - `install.sh` verified deployable: `bash -n` passes, git clone + rules install + config write all present
 
 **Recommended usage:**
@@ -66,7 +66,7 @@ ValidationForge ran its own 7-phase validation pipeline against its own codebase
 | 04 | iOS Streaming Bridge | iOS validation skills | "Validating SSE through the iOS simulator" | "VF auto-detects iOS projects" |
 | 05 | iOS Patterns | ios-validation-gate | "4,241 files, zero unit tests — all validated through real devices" | "Read the methodology" |
 | 06 | Parallel Worktrees | FORGE parallelism | "18,945 agent sessions need autonomous validation" | "See FORGE parallel validation" |
-| 07 | Prompt Engineering Stack | Skill dependency graph | "How 40 VF skills build on each other in 5 layers" | "Explore the skill architecture" |
+| 07 | Prompt Engineering Stack | Skill dependency graph | "How 52 VF skills build on each other in 5 layers" | "Explore the skill architecture" |
 | 10 | Stitch Design-to-Code | design-validation | "Screenshot-driven visual validation" | "Try design validation" |
 | 11 | Spec-Driven Development | create-validation-plan | "Specs become validation plans automatically" | "Generate a validation plan" |
 | 13 | Sequential Thinking | error-recovery skill | "84 debugging steps distilled into VF's 3-strike protocol" | "See the fix protocol" |
@@ -79,7 +79,7 @@ ValidationForge ran its own 7-phase validation pipeline against its own codebase
 | 09 | Session Mining | evidence analysis | "Mining validation evidence for actionable insights" | "See the evidence pipeline" |
 | 12 | Cross-Session Memory | evidence persistence | "Evidence that survives across sessions" | "Configure evidence retention" |
 | 14 | Multi-Agent Merge | CONSENSUS conflicts | "When 3 reviewers disagree — how VF resolves" | "Explore CONSENSUS" |
-| 15 | Skills Anatomy | SKILL.md architecture | "Inside a VF skill file — how 40 skills work" | "Contribute a platform skill" |
+| 15 | Skills Anatomy | SKILL.md architecture | "Inside a VF skill file — how 52 skills work" | "Contribute a platform skill" |
 | 16 | Claude Code Plugins | plugin.json manifest | "VF as a Claude Code plugin — install guide" | "Install in 30 seconds" |
 | 17 | CCB Evolution | FORGE autonomous | "From bash scripts to self-correcting agents" | "See FORGE engine" |
 | 18 | SDK vs CLI | Distribution patterns | "How plugins reach developers at scale" | "Join the VF community" |

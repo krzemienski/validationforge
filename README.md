@@ -334,7 +334,7 @@ validationforge/
 |   +-- hooks.json                    Hook registration manifest
 |   +-- lib/patterns.js               Pre-compiled CJS output of patterns.ts (CC-hook source of truth)
 +-- agents/                           7 specialist agents (incl. consensus-validator, consensus-synthesizer)
-+-- rules/                            8 enforcement rules
++-- rules/                            9 enforcement rules
 +-- config/                           3 enforcement profiles
 +-- templates/                        7 report templates
 +-- scripts/                          core + benchmark shell scripts

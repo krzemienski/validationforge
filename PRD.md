@@ -11,7 +11,7 @@ ValidationForge is the first functional validation framework for AI-generated co
 
 In a market where 40+ tools help developers *write* code with AI, zero tools help them *prove* it works. ValidationForge fills this gap as a free, open-source Claude Code plugin backed by a cloud services revenue model.
 
-**Current Status:** Comprehensive scaffolding complete (41 skills, 15 commands, 7 hooks, 5 agents, 8 rules). Methodology proven through manual validation (7/7 journeys PASS against real Next.js project). Automated `/validate` pipeline not yet verified end-to-end.
+**Current Status:** Comprehensive scaffolding complete (52 skills, 19 commands, 7 hooks, 7 agents, 9 rules). Methodology proven through manual validation (7/7 journeys PASS against real Next.js project). Automated `/validate` pipeline not yet verified end-to-end.
 
 **Product Frame:** Framework + Tool. "AI Code Validation" is the methodology. ValidationForge is the tool that implements it. The 18-post blog series is the category-defining content engine.
 
@@ -19,11 +19,11 @@ In a market where 40+ tools help developers *write* code with AI, zero tools hel
 
 | Metric | Value |
 |--------|-------|
-| Skills | 41 (16 core + 25 extensions) |
-| Commands | 15 (9 validate + 6 forge) |
-| Hooks | 7 (3 blocking, 4 advisory) |
-| Agents | 5 (detection, capture, verdict, lead, sweep) |
-| Rules | 8 |
+| Skills | 52 (8 core + 44 extensions) |
+| Commands | 19 (9 validate + 10 forge) |
+| Hooks | 7 (2 PreToolUse blocking, 5 PostToolUse advisory) |
+| Agents | 7 (platform-detector, evidence-capturer, verdict-writer, validation-lead, sweep-controller, consensus-validator, consensus-synthesizer) |
+| Rules | 9 (8 execution + 1 consensus) |
 | Platforms supported | 6 (iOS, Web, API, CLI, Fullstack, Generic) |
 | Benchmark scenarios designed | 5 (categories where mocks structurally fail) |
 | Evidence tiers | 3 (Deterministic, Behavioral, Heuristic) |
@@ -105,7 +105,7 @@ ValidationForge operates at two levels:
 
 1. **The Framework:** "AI Code Validation" — a methodology for proving AI-generated code works. Defined by The Iron Rule, evidence standards, and the 7-phase pipeline. Evangelized through the 18-post blog series.
 
-2. **The Tool:** The Claude Code plugin that implements the framework. 41 skills of platform-specific validation knowledge, 7 hooks of enforcement, and 5 agents that execute the pipeline.
+2. **The Tool:** The Claude Code plugin that implements the framework. 52 skills of platform-specific validation knowledge, 7 hooks of enforcement, and 7 agents that execute the pipeline.
 
 This dual framing is intentional. The METHODOLOGY creates a category that can't be commoditized. The TOOL provides the free, accessible entry point.
 
@@ -486,7 +486,7 @@ e2e-evidence/
 1. **Methodology ownership**: "The Iron Rule" and "Evidence-Based Shipping" are VF-coined concepts
 2. **Content engine**: 18 blog posts evangelizing the methodology
 3. **Development context**: Born from 23,479 AI coding sessions — the validation gaps encountered are why VF was built
-4. **Platform depth**: 41 skills with platform-specific knowledge that takes months to build
+4. **Platform depth**: 52 skills with platform-specific knowledge that takes months to build
 5. **AI-native architecture**: Skills that improve with every Claude model upgrade
 6. **First-mover**: No direct competitor exists in "functional validation for AI coding"
 
@@ -495,7 +495,7 @@ e2e-evidence/
 | Feature | ClaudeKit | OMC | Cline | Cursor | VF |
 |---------|:---------:|:---:|:-----:|:------:|:--:|
 | Platform auto-detection | — | — | — | — | **6 platforms** |
-| No-mock enforcement | — | — | — | — | **7 hooks** |
+| No-mock enforcement | — | — | — | — | **7 hooks** (2 blocking, 5 advisory) |
 | Evidence capture pipeline | — | — | — | — | **3-agent** |
 | PASS/FAIL verdicts | — | — | — | — | **Formal + cited** |
 | 3-strike fix protocol | — | — | — | — | **Built-in** |
@@ -702,7 +702,7 @@ Extends the Midnight Observatory design system:
 
 ### 11.1 Phase 1: Open-Source + Consulting (Months 1-6)
 
-**Free (MIT License):** Full plugin — all 41 skills, 15 commands, 7 hooks, 5 agents, 8 rules.
+**Free (MIT License):** Full plugin — all 52 skills, 19 commands, 7 hooks, 7 agents, 9 rules.
 
 **Revenue streams:**
 - Validation strategy consulting: $5K-50K per engagement
@@ -786,10 +786,10 @@ Extends the Midnight Observatory design system:
 **Status:** Scaffolding complete, methodology proven manually
 
 **Verified:**
-- [x] 41 skill directories with SKILL.md files
+- [x] 52 skill directories with SKILL.md files
 - [x] 15 command .md files
-- [x] 7 hooks (syntax + functional tests)
-- [x] 5 agent .md files, 8 rule .md files
+- [x] 7 hooks (2 PreToolUse, 5 PostToolUse; syntax + functional tests)
+- [x] 7 agent .md files, 9 rule .md files
 - [x] Cross-references intact (zero broken)
 - [x] Hook bug fixed (object vs string)
 - [x] Manual validation: 7/7 journeys PASS against Next.js project

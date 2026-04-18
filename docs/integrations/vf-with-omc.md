@@ -94,7 +94,7 @@ Both plugins merge their hook definitions into Claude Code's hook pipeline and b
 }
 ```
 
-Each plugin keeps its own `.claude-plugin/plugin.json` manifest under its install root; they do not conflict because their `name` fields (`oh-my-claudecode` vs `validationforge`) are distinct. You do not need to merge or edit the per-plugin manifests — Claude Code reads them independently. For reference, the two manifests look like this when placed side-by-side:
+Each plugin keeps its own `.claude-plugin/plugin.json` manifest under its install root; they do not conflict because their `name` fields (`oh-my-claudecode` vs `validationforge`) are distinct. Claude Code auto-discovers plugins from the `~/.claude/plugins/` directory and reads each plugin's manifest independently. For reference, the two manifests look like this when placed side-by-side:
 
 ```json
 // ~/.claude/plugins/oh-my-claudecode/.claude-plugin/plugin.json
