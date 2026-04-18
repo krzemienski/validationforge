@@ -1,0 +1,26 @@
+{
+  "skill_name": "evidence-gate",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "hey the OCR is dropping the sponsored label on frame 340 of seq_B_120-150s.mp4 — WhiteTextOCR should catch it but phase1.json shows nothing at that timestamp. can you fix it in src/yt_shorts_detector/ocr.py?",
+      "expected_output": "Model invokes evidence-gate and creates .debug/ocr-dropping-sponsored/evidence.md BEFORE touching any file under src/. The evidence.md must contain: observed symptom (frame 340, seq_B_120-150s.mp4, no label in phase1.json vs expected label visible), a visual evidence path (extracted frame PNG or mask image), a shell command that reproduces the miss, and ONE specific hypothesis naming a function or line number in ocr.py as the suspected root cause. Model does not emit any Edit/Write on src/ until all sections are filled.",
+      "files": [],
+      "expectations": []
+    },
+    {
+      "id": 2,
+      "prompt": "login is working fine on my local machine but keeps throwing 500s in staging whenever a user tries to sign in with Google OAuth — started right after yesterday's deploy to staging.example.com. logs are in /var/log/app/auth.log. can you debug this and fix it?",
+      "expected_output": "Model invokes evidence-gate and creates .debug/staging-oauth-500/evidence.md before any code edit. Observed symptom section explicitly contrasts local (passes) vs staging (500 on Google OAuth callback). Visual evidence path references auth.log or a captured HTTP response showing the 500 body. Minimal repro names the staging URL and OAuth endpoint. Hypothesis section names ONE specific function, env var, or config key suspected to differ between environments. No edits to src/ or lib/ until evidence.md is complete.",
+      "files": [],
+      "expectations": []
+    },
+    {
+      "id": 3,
+      "prompt": "rename handle_click to on_click across the whole codebase — wrong name from the start, no bug, just want consistent naming before the PR review tomorrow",
+      "expected_output": "Model does NOT invoke evidence-gate. It recognises this as a pure rename refactor with no behavior change (explicitly excluded in the skill's 'When NOT to invoke' section) and proceeds directly: grep for all occurrences of handle_click, then apply the rename via Edit or a bulk-replace bash command. Evidence-gate must not appear in the model's workflow.",
+      "files": [],
+      "expectations": []
+    }
+  ]
+}

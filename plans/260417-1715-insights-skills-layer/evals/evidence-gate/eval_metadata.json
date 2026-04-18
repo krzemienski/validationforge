@@ -1,0 +1,20 @@
+[
+  {
+    "eval_id": 1,
+    "eval_name": "ocr-sponsored-label-missing-frame-340",
+    "prompt": "hey the OCR is dropping the sponsored label on frame 340 of seq_B_120-150s.mp4 — WhiteTextOCR should catch it but phase1.json shows nothing at that timestamp. can you fix it in src/yt_shorts_detector/ocr.py?",
+    "assertions": []
+  },
+  {
+    "eval_id": 2,
+    "eval_name": "staging-oauth-500-post-deploy",
+    "prompt": "login is working fine on my local machine but keeps throwing 500s in staging whenever a user tries to sign in with Google OAuth — started right after yesterday's deploy to staging.example.com. logs are in /var/log/app/auth.log. can you debug this and fix it?",
+    "assertions": []
+  },
+  {
+    "eval_id": 3,
+    "eval_name": "rename-handle-click-refactor-no-trigger",
+    "prompt": "rename handle_click to on_click across the whole codebase — wrong name from the start, no bug, just want consistent naming before the PR review tomorrow",
+    "assertions": []
+  }
+]

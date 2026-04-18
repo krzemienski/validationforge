@@ -1,0 +1,15 @@
+[harness] tmp: /var/folders/x9/t9mpdpkn4wn6mj59k7b48l9w0000gn/T/checkpoint-lib-harness-dWSRLz
+[harness] Branch 1: read/write roundtrip on all 3 schemas
+[harness]   OK: debug-checkpoint roundtrip campaignId
+[harness]   OK: audit-campaign roundtrip currentPhase
+[harness]   OK: gt-campaign roundtrip baselineScore
+[harness] Branch 2: appendFailedApproach rotation at 500 entries
+[harness]   OK: pre-rotation entry count = 500
+[harness]   OK: rotated archive created (1 files)
+[harness]   OK: post-rotation fresh log has exactly 1 entry
+[harness] Branch 3: schemaVersion mismatch refusal
+[harness]   refused with: refuse write: /var/folders/x9/t9mpdpkn4wn6mj59k7b48l9w0000gn/T/checkpoint-lib-harness-dWSRLz/bad-version.json invalid against debug-checkpoint: schemaVersion mismatch: expected 1.0, got 9.99
+[harness]   OK: writeCheckpoint refused schemaVersion 9.99
+[harness]   OK: no file written on refusal
+[harness] === PASS (0 failures) ===
+exit=0

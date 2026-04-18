@@ -1,0 +1,24 @@
+{
+  "name": "linkedin-publisher",
+  "version": "0.1.0",
+  "description": "Scaffold for autonomous LinkedIn publishing via the official Posts API. Requires LinkedIn Developer App registration before use.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "lp": "./bin/lp"
+  },
+  "scripts": {
+    "auth": "node bin/lp auth",
+    "run": "node bin/lp run",
+    "test": "node bin/lp test"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "open": "^10.1.0",
+    "playwright": "^1.59.1"
+  },
+  "license": "MIT",
+  "author": "Nick Krzemienski"
+}

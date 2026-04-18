@@ -6,6 +6,31 @@ Format: loose semver; dates ISO 8601; newest first.
 
 ---
 
+## 2026-04-18 — LinkedIn Publisher Queue + Launchd Automation (Phase 1)
+
+**Scope**: Delivered LinkedIn publisher queue system with automated Mon/Thu posting via launchd.
+
+### Added
+
+- **`integrations/linkedin-publisher/bin/lp` subcommands**:
+  - `queue list` — enumerate queued posts with metadata
+  - `queue peek` — preview next queued post
+  - `queue next [--dry]` — dequeue and process (or dry-run)
+- **`integrations/linkedin-publisher/src/schedule.js`**:
+  - `listQueue()` + `peekQueue()` API methods
+  - Retry logic for LinkedIn 401 responses (stale OAuth tokens)
+- **`linkedin-queue.json`**: Seeded 16 posts for production queue
+- **launchd automation** (`~/Library/LaunchAgents/com.validationforge.linkedin-publisher.plist`):
+  - Scheduled Mon+Thu 08:30 ET; loads automatically on user login
+  - Logs to `/tmp/com.validationforge.linkedin-publisher.log`
+- **Documentation**: `integrations/linkedin-publisher/README.md` updated with queue subcommand syntax + launchd setup
+
+### Status
+
+- Phase 1 COMPLETE. Phase 2 (ai.hack.ski integration) deferred out-of-repo per [`plans/260418-1036-unblock-automation-and-remaining-launch/`](../plans/260418-1036-unblock-automation-and-remaining-launch/).
+
+---
+
 ## 2026-04-17 — Review Remediation: C1+12 HIGH + M/L Batch
 
 **Scope**: Full-codebase review (24 findings: 1 CRITICAL, 10 HIGH, 8 MEDIUM, 6 LOW) resolved in 2 commits: `1155af4` (C1+12 HIGH) and `fabf053` (M/L batch + H7 correction). See evidence: [`plans/reports/review-260417-2200-GH-0-security-findings.md`](../plans/reports/review-260417-2200-GH-0-security-findings.md).

@@ -52,3 +52,11 @@ progress.txt
 build-progress.txt
 logs/
 .ruff_cache/
+
+# LinkedIn publisher — runtime state, logs, and captures (may contain tokens/cookies/API responses)
+integrations/linkedin-publisher/.env
+integrations/linkedin-publisher/.env.local
+integrations/linkedin-publisher/linkedin-queue.json
+integrations/linkedin-publisher/.lp*
+# Matches: .lp.log, .lp.stdout.log, .lp.stderr.log, .lp-cookie.log, .lp-prefill.log, .lp-ios.log,
+# .lp-har.json, .lp-auth-flow*.log, .lp-replay.log, and any future .lp* capture.

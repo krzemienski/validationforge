@@ -1,0 +1,147 @@
+#!/usr/bin/env node
+// linkedin-publisher CLI
+// Subcommands: auth | queue add | run | test
+// Scaffold; requires LinkedIn Developer App credentials in .env.
+
+import 'dotenv/config';
+import path from 'node:path';
+import { promises as fs } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { runAuthFlow } from '../src/auth.js';
+import { addToQueue, runQueue, listQueue, peekQueue } from '../src/schedule.js';
+import { publishPost } from '../src/publish.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+function usage() {
+  console.log(`lp — linkedin-publisher CLI
+
+Usage:
+  lp auth                                   Run OAuth flow, capture tokens to .env
+  lp queue add <md-file> --at <iso-time>    Schedule a post; --media <path> optional
+                                            [--id <slug>]
+  lp queue list                             Show all queued/published/failed items
+  lp queue peek                             Show next due item + countdown (no publish)
+  lp queue next [--dry]                     Publish any items whose scheduled_at<=now
+  lp run                                    Alias for 'queue next' (legacy)
+  lp test --md <md-file>                    Dry-run a publish (no network call to /posts)
+`);
+}
+
+function parseFlags(argv) {
+  const out = { _: [] };
+  for (let i = 0; i < argv.length; i += 1) {
+    const a = argv[i];
+    if (a.startsWith('--')) {
+      const key = a.slice(2);
+      const val = argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : true;
+      out[key] = val;
+      if (val !== true) i += 1;
+    } else {
+      out._.push(a);
+    }
+  }
+  return out;
+}
+
+async function cmdAuth() {
+  await runAuthFlow();
+}
+
+async function cmdQueueAdd(args) {
+  const flags = parseFlags(args);
+  const mdFile = flags._[0];
+  if (!mdFile || !flags.at) {
+    console.error('usage: lp queue add <md-file> --at <iso-time> [--media <path>] [--id <slug>]');
+    process.exit(2);
+  }
+  const id = flags.id || path.basename(mdFile, path.extname(mdFile));
+  await addToQueue({
+    id,
+    markdownPath: mdFile,
+    mediaPath: flags.media || null,
+    scheduledAt: flags.at,
+  });
+  console.log(`queued ${id} @ ${flags.at}`);
+}
+
+async function cmdRun(args = []) {
+  const flags = parseFlags(args);
+  const result = await runQueue({ dryRun: Boolean(flags.dry) });
+  console.log(`done; processed=${result.processed}`);
+}
+
+async function cmdQueueList() {
+  const { total, buckets } = await listQueue();
+  if (!total) {
+    console.log('queue is empty');
+    return;
+  }
+  console.log(`queue: ${total} items total`);
+  for (const [status, items] of Object.entries(buckets)) {
+    if (!items.length) continue;
+    console.log(`\n[${status}] (${items.length})`);
+    for (const it of items) {
+      const when = it.scheduled_at || '(no time)';
+      const media = it.media_path ? ` media=${path.basename(it.media_path)}` : '';
+      const urn = it.post_urn ? ` → ${it.post_urn}` : '';
+      console.log(`  - ${it.id}  ${when}  ${it.markdown_path}${media}${urn}`);
+    }
+  }
+}
+
+async function cmdQueuePeek() {
+  const peek = await peekQueue({});
+  if (!peek) {
+    console.log('no queued items');
+    return;
+  }
+  const { item, is_due, fires_in_ms } = peek;
+  console.log(JSON.stringify({
+    id: item.id,
+    scheduled_at: item.scheduled_at,
+    markdown_path: item.markdown_path,
+    media_path: item.media_path,
+    is_due,
+    fires_in_hours: Math.round(fires_in_ms / 3_600_000 * 10) / 10,
+  }, null, 2));
+}
+
+async function cmdTest(args) {
+  const flags = parseFlags(args);
+  const mdFile = flags.md;
+  if (!mdFile) {
+    console.error('usage: lp test --md <md-file>');
+    process.exit(2);
+  }
+  const abs = path.resolve(process.cwd(), mdFile);
+  const raw = await fs.readFile(abs, 'utf8');
+  const text = raw.replace(/^---\n[\s\S]*?\n---\n/, '').trim();
+  const result = await publishPost({
+    accessToken: process.env.LINKEDIN_ACCESS_TOKEN || 'dry-run-token',
+    personUrn: process.env.LINKEDIN_PERSON_URN || 'urn:li:person:dry-run',
+    text,
+    dryRun: true,
+  });
+  console.log(JSON.stringify(result, null, 2));
+}
+
+async function main() {
+  const [cmd, sub, ...rest] = process.argv.slice(2);
+  try {
+    if (cmd === 'auth') return cmdAuth();
+    if (cmd === 'queue' && sub === 'add') return cmdQueueAdd(rest);
+    if (cmd === 'queue' && sub === 'list') return cmdQueueList();
+    if (cmd === 'queue' && sub === 'peek') return cmdQueuePeek();
+    if (cmd === 'queue' && sub === 'next') return cmdRun(rest);
+    if (cmd === 'run') return cmdRun([sub, ...rest].filter(Boolean));
+    if (cmd === 'test') return cmdTest([sub, ...rest].filter(Boolean));
+    usage();
+    process.exit(cmd ? 2 : 0);
+  } catch (err) {
+    console.error('error:', err.message);
+    process.exit(1);
+  }
+}
+
+main();

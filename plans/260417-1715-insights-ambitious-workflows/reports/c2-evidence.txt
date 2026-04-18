@@ -1,0 +1,20 @@
+=== VG-C2 scenarios (retry post-fix) ===
+
+--- 1. SHADOW (no evidence.md) — expect exit=0, stdout [enforcer:shadow] ---
+exit=0
+stdout={"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"[enforcer:shadow] would block — Missing /tmp/c2-test-61277/.debug/test-c2/evidence.md. Invoke /evidence-gate first."}}
+stderr=
+
+--- 2. ENFORCE no evidence.md — expect exit=2, stderr 'Root-cause enforcer:' ---
+exit=2
+stdout=
+stderr=Root-cause enforcer: Missing /tmp/c2-test-61277/.debug/test-c2/evidence.md. Invoke /evidence-gate first.
+
+--- 3. ENFORCE with complete evidence.md — expect exit=0 ---
+exit=0
+stdout=
+stderr=
+
+--- 4. DISABLE env CLAUDE_SKIP_ROOT_CAUSE_GATE=1 — expect exit=0 ---
+exit=0
+stdout=

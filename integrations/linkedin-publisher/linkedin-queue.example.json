@@ -1,0 +1,18 @@
+{
+  "items": [
+    {
+      "id": "post-01-launch-day",
+      "markdown_path": "../../copy/blog-series-adapted/post-01-launch-day.md",
+      "media_path": "../../creatives/screenshots/hero-01-dashboard.png",
+      "scheduled_at": "2026-04-21T12:30:00Z",
+      "status": "queued"
+    },
+    {
+      "id": "post-02-why-no-mocks",
+      "markdown_path": "../../copy/blog-series-adapted/post-02-why-no-mocks.md",
+      "media_path": null,
+      "scheduled_at": "2026-04-24T12:30:00Z",
+      "status": "queued"
+    }
+  ]
+}

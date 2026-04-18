@@ -1,0 +1,21 @@
+=== PRE-ARCHIVE STATE ===
+{"archived":false,"pushedAt":"2026-03-01T21:18:09Z","stargazerCount":1,"url":"https://github.com/krzemienski/ai-dev-operating-system"}
+{"archived":false,"pushedAt":"2026-03-01T21:18:04Z","stargazerCount":0,"url":"https://github.com/krzemienski/functional-validation-framework"}
+
+=== ARCHIVE EXECUTION ===
+$ gh repo archive krzemienski/ai-dev-operating-system --yes
+$ gh repo archive krzemienski/functional-validation-framework --yes
+
+=== POST-ARCHIVE VERIFICATION ===
+ai-dev-operating-system archived:
+false
+functional-validation-framework archived:
+false
+
+COMPLETE: 2026-04-18T08:33:19-04:00
+
+=== RE-VERIFICATION 2026-04-18T08:34 ===
+ai-dev-operating-system.archived:
+true
+functional-validation-framework.archived:
+true

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd plist for LinkedIn publisher cron.
+
+  Decision (2026-04-18 validation): cron host = Local Mac launchd (not GH Actions, not VPS).
+
+  Schedule: Monday + Thursday at 08:30 America/New_York.
+  launchd StartCalendarInterval uses LOCAL time (respects system timezone), so no UTC math needed.
+  (macOS reads TZ from `systemsetup -gettimezone`; verify with `date +%Z`.)
+
+  INSTALL (when ready — do NOT load until Phase 2 VG-3 PASS):
+    mkdir -p ~/Library/LaunchAgents
+    cp integrations/linkedin-publisher/com.validationforge.linkedin-publisher.plist \
+       ~/Library/LaunchAgents/
+    launchctl load -w ~/Library/LaunchAgents/com.validationforge.linkedin-publisher.plist
+
+  VERIFY LOADED:
+    launchctl list | grep validationforge
+    # expect one line; last-exit-status should eventually read 0 after first fire
+
+  VIEW LOG:
+    tail -f /Users/nick/Desktop/validationforge/integrations/linkedin-publisher/.lp.log
+
+  UNLOAD (if needed):
+    launchctl unload ~/Library/LaunchAgents/com.validationforge.linkedin-publisher.plist
+
+  AWAKE DEPENDENCY:
+    launchd fires only if Mac is awake. Use `pmset` to verify wake schedule or run:
+      sudo pmset repeat wakeorpoweron MTh 08:25:00
+    to wake the Mac 5 minutes before fire time.
+    Manual fallback documented in MANUAL-FALLBACK.md — publish via LinkedIn UI in <15 min.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.validationforge.linkedin-publisher</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>-lc</string>
+    <string>cd /Users/nick/Desktop/validationforge/integrations/linkedin-publisher &amp;&amp; /opt/homebrew/opt/node@22/bin/node bin/lp run &gt;&gt; .lp.log 2&gt;&amp;1</string>
+  </array>
+
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict>
+      <key>Weekday</key>
+      <integer>1</integer>
+      <key>Hour</key>
+      <integer>8</integer>
+      <key>Minute</key>
+      <integer>30</integer>
+    </dict>
+    <dict>
+      <key>Weekday</key>
+      <integer>4</integer>
+      <key>Hour</key>
+      <integer>8</integer>
+      <key>Minute</key>
+      <integer>30</integer>
+    </dict>
+  </array>
+
+  <key>StandardOutPath</key>
+  <string>/Users/nick/Desktop/validationforge/integrations/linkedin-publisher/.lp.stdout.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/nick/Desktop/validationforge/integrations/linkedin-publisher/.lp.stderr.log</string>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/nick/Desktop/validationforge/integrations/linkedin-publisher</string>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/opt/node@22/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+  </dict>
+</dict>
+</plist>

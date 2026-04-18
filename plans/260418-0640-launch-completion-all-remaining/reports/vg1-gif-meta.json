@@ -1,0 +1,18 @@
+{
+  "programs": [],
+  "stream_groups": [],
+  "streams": [
+    {
+      "width": 900,
+      "height": 540
+    }
+  ],
+  "format": {
+    "duration": "29.340000",
+    "size": "205983"
+  },
+  "source": "demo/vf-demo.gif",
+  "output": "assets/campaigns/260418-validationforge-launch/creatives/vf-demo-hero.gif",
+  "note_on_1200x627": "Source is 900x540; inline LinkedIn GIFs work at this aspect. 1200x627 OG-preview = separate asset.",
+  "verdict": "VG-1 PASS: duration 29.34s <30s cap, size 201KB <5MB"
+}
