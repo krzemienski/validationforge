@@ -1,0 +1,26 @@
+Open-sourced the first of several things I've been building at withagents.dev.
+
+It's called ValidationForge — a Claude Code / OpenCode plugin that blocks AI agents from creating mock files in `src/` and forces validation through real interfaces: curl, simctl, Playwright, the shell. Every PASS/FAIL verdict has to cite specific evidence — a file path, a response body, a build log line. Confident prose without a citation is rejected by the harness.
+
+Why I built it: across 23,479 sessions / 3.4M lines of AI code in 42 days, five times the build passed every gate — type-check, lint, unit test, CI green — and still broke in production. Each one was a category where mock-based testing is structurally blind:
+
+• API field rename — frontend crashed 14 min post-deploy. The mock still returned the old field.
+• JWT expiry tightened 60 → 15 min — the refresh endpoint bug nobody had exercised, because the unit test mocked time.
+• iOS deep-link regression — `simctl openurl` opened the wrong screen. The mock URL handler passed the test.
+• DB migration — clean in-memory mock certified a migration prod rejected on the first duplicate email.
+• CSS overflow at 768px — JSDOM doesn't paint. Customer support ticket was the first signal.
+
+When the agent writes both the code AND the test, "build passing" means the agent agrees with itself. That's not the same thing as the feature working.
+
+I call it Compilation Theater. VF is the gate between compilation and human review.
+
+Self-validated against itself last week: 6/6 journeys PASS, 13/13 criteria, 0 fix attempts. Evidence directory is public in the repo — argue with the files directly if a verdict looks wrong.
+
+This is product #1. More on the way — the rest of the stack (agent runbooks, memory/context, operator UX) plus the technical writing behind each one, landing on withagents.dev.
+
+I'm taking on a small number of engagements this quarter — architecture reviews, embedded sprints, monthly retainers — for teams shipping AI-generated code who've started to feel the validation gap. No pitch decks. Describe what you're building and I'll tell you honestly if I can help.
+
+And if you just want to talk about agent development — DMs are open. I can't stop thinking about this stuff and I like the company.
+
+→ Product: github.com/krzemienski/validationforge
+→ Work & writing: withagents.dev
