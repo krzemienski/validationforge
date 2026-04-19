@@ -1,0 +1,9 @@
+Open-sourced something this weekend.
+
+It's a Claude Code plugin that blocks AI agents from creating mock files in `src/` and forces validation through real interfaces — curl, simctl, Playwright. Every PASS/FAIL verdict has to cite specific evidence: a file path, a response body, a build log line.
+
+Self-validated against itself: 6/6 PASS, 0 fix attempts. Receipts in the repo.
+
+Long writeup coming Wednesday on the validation gap nobody is filling.
+
+→ github.com/krzemienski/validationforge

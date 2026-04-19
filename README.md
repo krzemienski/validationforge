@@ -1,15 +1,15 @@
 # ValidationForge
 
-[![Featured in Agentic Development Blog — Post #11](https://img.shields.io/badge/Agentic%20Development%20Blog-Post%20%2311-blue)](https://github.com/krzemienski/agentic-development-guide)
+[![Launch week — Apr 20–30, 2026](https://img.shields.io/badge/launch-week-green)](https://github.com/krzemienski/validationforge)
 
 ## Related Post
 
-**Featured in the Agentic Development Blog series — Post #11: ValidationForge — The Capstone (No-Mock Validation Platform)**
+Soft-launch week for ValidationForge is in progress.
 
-- Send date: Mon Jun 22, 2026
-- LinkedIn: _link added on send day_
-- Canonical blog post: https://ai.hack.ski/blog/<slug-set-on-send-day>
-- Series hub: [agentic-development-guide](https://github.com/krzemienski/agentic-development-guide)
+- GitHub repo: https://github.com/krzemienski/validationforge
+- Self-validation evidence: ./e2e-evidence/self-validation/report.md
+- Long-form essay: _publishes Wed Apr 22, 2026_
+- Series hub: https://github.com/krzemienski/agentic-development-guide
 
 ---
 

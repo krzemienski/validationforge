@@ -1,0 +1,36 @@
+Open-sourced something this weekend — and I'm attaching the full breakdown of why.
+
+Over the last six weeks I ran 23,479 coding sessions through Claude Code across 27 projects. 3.4M lines of AI-generated code. Most of it shipped. Some of it didn't.
+
+Five times in 42 days, code passed every gate — type-check, lint, unit test, CI green — and still broke in production. Every one of those bugs was a category where mock-based testing is structurally blind:
+
+• API field rename — frontend crashed 14 minutes post-deploy. The mock still returned the old field name.
+• JWT expiry change — refresh endpoint bug nobody had ever exercised, because the unit test mocked time entirely.
+• iOS deep-link regression — `xcrun simctl openurl` opened the wrong screen, but the mock URL handler passed the test.
+• DB migration — clean mock database certified a migration that prod rejected on the first duplicate email.
+• CSS overflow at 768px — JSDOM doesn't paint. The first signal was a customer support ticket from an older Android phone.
+
+When the agent writes both the code AND the test, "build passing" means the agent agrees with itself. That's not the same thing as the feature working.
+
+I call it Compilation Theater.
+
+So I built ValidationForge — a Claude Code plugin (also an OpenCode plugin) that does a few stubborn things on purpose:
+
+→ Blocks AI agents from creating test, mock, or stub files inside `src/`. Deterministic JavaScript hook, no LLM cost. It just refuses the write.
+→ Runs a 7-phase pipeline against the REAL system: curl for APIs, simctl for iOS, Playwright for web, shell for CLIs.
+→ Requires every PASS/FAIL verdict to cite specific evidence — a file path, a response body, a build log line. Confident prose without an evidence citation is rejected by the harness.
+→ Commits evidence alongside the code so verdicts are auditable months later.
+
+Self-validated against itself last week: 6/6 journeys PASS, 13/13 criteria, 0 fix attempts. Full evidence directory is public in the repo — if you think a verdict is wrong, you can argue with the file directly.
+
+MIT licensed. Free. No telemetry by default. Composes cleanly with OMC (orchestration), Superpowers (TDD discipline), ECC (multi-language rules). Integration guides in the repo.
+
+→ github.com/krzemienski/validationforge
+
+The attached piece (linked below) goes deeper: the 3 failure modes I see most often in teams adopting agentic dev, the 5 practices teams who succeed converge on, and what I'm offering to orgs that want help closing the validation gap at scale.
+
+If your team ships AI-generated code and you have had an incident review where "but the tests passed" appeared unironically — you are not alone. You are at the leading edge of a curve a lot of orgs are about to ride down.
+
+Compilation is necessary. It is not sufficient.
+
+The next bar is evidence.
