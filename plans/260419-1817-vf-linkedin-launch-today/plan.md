@@ -34,8 +34,13 @@ scheduled (Apr 22 blog part 1, etc.).
 | Oracle B.1 URL drift | ✓ | No `validationforge/validationforge` matches in site/ |
 | Oracle B.2 getting-started Aside | ✓ | Already says "Fallback install path" |
 | Oracle B.3 CNAME file | ✓ | Present, uncommitted, contains `validationforge.dev` |
-| Oracle A.1 topics | ⚠ | Missing `no-mock`, `functional-testing`, `quality-assurance` |
-| Oracle A.2 README purge | ✗ | Still references Post #11, "Mon Jun 22, 2026", "link added on send day" |
+| Oracle A.1 topics | ✓ | All 3 added — `no-mock`, `functional-testing`, `quality-assurance` now live (10 topics total) |
+| Oracle A.2 README purge | ✓ | Lines 3-12 rewritten to launch-week badge + Related Post block |
+| withagents.dev deployed | ✓ | `dpl_LzT1sCt3mmaH5hkM5zRBhTKYm3Lq`, `withagents-site.vercel.app`, all 13 key routes 200 |
+| LinkedIn post live | ✓ | `urn:li:share:7451771702121934848` — public URL reachable (HTTP 200, 5/5 tokens) |
+| Plans reread | ✓ | See `audit-plans-reread.md` + `CONFIDENCE-REPORT.md` in this plan dir |
+| X thread | ⚠ drafted | `x-thread-v2.md` ready but not posted — gated on LinkedIn-conflict resolution |
+| VF on withagents.dev `/projects/` | ✗ | Not in parallel session's lane yet — handoff filed |
 
 ## Phases
 
