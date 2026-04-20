@@ -100,6 +100,54 @@ home page should at minimum acknowledge VF exists.
   the HTTP 201 response
 - `plans/260419-1817-vf-linkedin-launch-today/evidence-post-live.png` —
   retained screenshot of the deleted v1 PDF post (for audit)
+- **Public URL reachability check** (2026-04-19 20:36 ET, curl with stock
+  Chrome UA, no auth): HTTP 200, 97,774 bytes, `pageKey=d_public_post`,
+  HTML contains all 5 signature tokens (`ValidationForge`, `Compilation
+  Theater`, `23,479`, `3.4M`, `Nick Krzemienski`). Post is publicly
+  indexable and shareable without a LinkedIn account.
+
+## Lessons (durable — grep for these on future launches)
+
+### LESSON-01 — Never publish long-form to LinkedIn as a PDF carousel
+
+LinkedIn's document post (`content.media.id = urn:li:document:...`)
+renders as a swipeable PDF card. This format is culturally associated
+with marketing carousels — listicle slides, infographic decks, sales
+collateral. Using it for thought-leadership long-form positions the
+brand as marketing-adjacent, not practitioner-credible.
+
+**What happened:** Fired `urn:li:ugcPost:7451768403029245952` as a PDF
+doc post. User rejected within minutes. Cost: ~15 min engineering + one
+round-trip of frustration.
+
+**What to do instead for long-form:**
+1. If ≤3,000 chars → feed post via OAuth `/rest/posts` with `commentary`
+2. If 3,000–20,000 chars → publish to `withagents.dev` or a GitHub page,
+   then post a feed-post teaser linking to it
+3. If truly long-form on-platform → LinkedIn Articles (Pulse editor).
+   Requires browser automation or Pulse API (not in current scope).
+
+### LESSON-02 — "Launch today" ≠ "fire whatever is soonest-queued"
+
+When the user says "launch," examine which post is the HERO, not which
+has the soonest `scheduled_at`. Queue order is a calendar artifact;
+launch intent is editorial.
+
+**What happened:** I grabbed `w1-mon-soft-launch` (95-word teaser) from
+`lp queue peek` because it was the next due item. The actual hero was
+`w2-wed-personal-brand-hero` (2,976 words). User corrected me.
+
+**What to do instead:** Before firing, ask "which of these queued items
+is the launch ANNOUNCEMENT vs a supporting piece?" Look for signal words
+in the source files: "hero", "announcement", "launch-post", "canonical".
+
+### LESSON-03 — Cookie-auth is the emergency fallback, not the default
+
+The cookie publisher (`publish-via-cookie.js`) works but violates LinkedIn
+ToS §8 and carries a ban ladder. OAuth (`w_member_social`) is the
+official path and should always be tried first. The 3,000-char limit on
+`commentary` applies to both paths equally — it's a LinkedIn platform
+limit, not an OAuth scope limit.
 
 ## Ban-risk posture
 
