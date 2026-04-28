@@ -2,6 +2,8 @@
 
 [![Launch week — Apr 20–30, 2026](https://img.shields.io/badge/launch-week-green)](https://github.com/krzemienski/validationforge)
 
+🌐 **Live site:** [vf.withagents.dev](https://vf.withagents.dev)
+
 ## Related Post
 
 Soft-launch week for ValidationForge is in progress.
