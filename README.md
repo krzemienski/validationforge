@@ -1,8 +1,13 @@
 # ValidationForge
 
-[![Launch week — Apr 20–30, 2026](https://img.shields.io/badge/launch-week-green)](https://github.com/krzemienski/validationforge)
+> No-mock functional validation for Claude Code and OpenCode — ship verified code, not "it compiled" code.
 
-🌐 **Live site:** [vf.withagents.dev](https://vf.withagents.dev)
+Live site: [vf.withagents.dev](https://vf.withagents.dev)
+Field journal entry: [withagents.dev/posts/post-03-functional-validation](https://withagents.dev/posts/post-03-functional-validation)
+
+---
+
+[![Launch week — Apr 20–30, 2026](https://img.shields.io/badge/launch-week-green)](https://github.com/krzemienski/validationforge)
 
 ## Related Post
 
